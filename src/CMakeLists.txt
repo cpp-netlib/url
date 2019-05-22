@@ -27,22 +27,22 @@ set(Skyr_SRCS
         ${CMAKE_CURRENT_SOURCE_DIR}/url_error.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/url_search_parameters.cpp
 
-        ${CMAKE_SOURCE_DIR}/include/skyr/details/to_bytes.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/external/tl/optional.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/external/tl/expected.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/config.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/optional.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/expected.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/string_traits.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/percent_encode.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/unicode.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/domain.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/url_record.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/url_parse.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/url_serialize.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/url.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/url_error.hpp
-        ${CMAKE_SOURCE_DIR}/include/skyr/url_search_parameters.hpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/details/to_bytes.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/external/tl/optional.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/external/tl/expected.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/config.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/optional.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/expected.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/string_traits.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/percent_encode.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/unicode.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/domain.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/url_record.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/url_parse.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/url_serialize.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/url.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/url_error.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/skyr/url_search_parameters.hpp)
 
 if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)
 		LIST(APPEND Skyr_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/filesystem.cpp)
