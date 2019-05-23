@@ -46,7 +46,7 @@ set(Skyr_SRCS
 
 if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)
 		LIST(APPEND Skyr_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/filesystem.cpp)
-		LIST(APPEND Skyr_SRCS ${CMAKE_SOURCE_DIR}/include/skyr/filesystem.hpp)
+		LIST(APPEND Skyr_SRCS ${Skyr_SOURCE_DIR}/include/skyr/filesystem.hpp)
 endif()
 
 add_library(skyr-url ${Skyr_SRCS})
