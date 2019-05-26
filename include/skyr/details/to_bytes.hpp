@@ -27,7 +27,7 @@ template <class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, wchar_t>::value>::type> {
   expected<std::string, std::error_code> operator()(const Source &source) const {
-    return wstring_to_bytes(source);
+    return unicode::wstring_to_bytes(source);
   }
 };
 
@@ -35,7 +35,7 @@ template <class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char16_t>::value>::type> {
   expected<std::string, std::error_code> operator()(const Source &source) const {
-    return utf16_to_bytes(source);
+    return unicode::utf16_to_bytes(source);
   }
 };
 

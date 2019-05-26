@@ -412,7 +412,7 @@ class url {
   expected<void, std::error_code> set_hash(string_type &&hash);
   /// @}
 
-  /// \returns A copy to the underlying `url_record` implementation.
+  /// \returns A copy of the underlying `url_record` implementation.
   url_record record() const;
 
   /// Tests whether the URL uses a
@@ -477,7 +477,7 @@ class url {
   /// Returns the underlying string
   ///
   /// \returns `href_`
-  operator string_type() const;
+  explicit operator string_type() const;
 
  private:
 

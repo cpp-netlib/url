@@ -50,7 +50,8 @@ class url_record {
 
   /// Constructor
   url_record()
-    : cannot_be_a_base_url{false} {}
+    : cannot_be_a_base_url{false}
+    , validation_error{false} {}
 
   /// Tests if the URL is a special scheme
   /// \returns `true` if the URL scheme is a special scheme, `false`

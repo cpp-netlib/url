@@ -15,27 +15,35 @@ namespace skyr {
 /// basic_string<charT>
 template <class T, class charT>
 using is_basic_string =
-  std::is_same<typename std::remove_cv<T>::type, std::basic_string<charT>>;
+  std::is_same<
+      typename std::remove_cv<T>::type,
+      std::basic_string<charT>>;
 
 /// Meta-function to test if the type is of the form
 /// basic_string_view<charT>
 template <class T, class charT>
 using is_basic_string_view =
-  std::is_same<typename std::remove_cv<T>::type, std::basic_string_view<charT>>;
+  std::is_same<
+      typename std::remove_cv<T>::type,
+      std::basic_string_view<charT>>;
 
 /// Meta-function to test if the type is of the form charT[]
 template <class T, class charT>
 using is_char_array =
   std::conjunction<
     std::is_array<T>,
-    std::is_same<typename std::remove_cv<typename std::remove_extent<T>::type>::type, charT>>;
+    std::is_same<
+        typename std::remove_cv<typename std::remove_extent<T>::type>::type,
+        charT>>;
 
 /// Meta-function to test if the type is of the form charT*
 template <class T, class charT>
 using is_char_pointer =
   std::conjunction<
     std::is_pointer<T>,
-    std::is_same<typename std::remove_pointer<T>::type, charT>>;
+    std::is_same<
+        typename std::remove_pointer<T>::type,
+        charT>>;
 
 /// Meta-function to test if the type can be converted to a
 /// basic_string<charT>
