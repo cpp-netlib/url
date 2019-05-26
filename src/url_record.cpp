@@ -30,9 +30,6 @@ void url_record::swap(url_record &other) noexcept {
   swap(query, other.query);
   swap(fragment, other.fragment);
   swap(cannot_be_a_base_url, other.cannot_be_a_base_url);
-}
-
-void swap(url_record &lhs, url_record &rhs) noexcept {
-  lhs.swap(rhs);
+  swap(validation_error, other.validation_error);
 }
 }  // namespace skyr

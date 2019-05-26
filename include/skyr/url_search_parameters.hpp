@@ -21,6 +21,8 @@ namespace skyr {
 /// [WhatWG IDL specification](https://url.spec.whatwg.org/#interface-urlsearchparams)
 class url_search_parameters {
 
+  friend class url;
+
  public:
 
   /// ASCII string type
@@ -97,13 +99,19 @@ class url_search_parameters {
 
   /// \returns `true` if the URL search string is empty, `false`
   ///          otherwise
-  bool empty() const noexcept;
+  bool empty() const noexcept {
+    return parameters_.empty();
+  }
 
   /// \returns An iterator to the first element in the search parameters
-  const_iterator begin() const noexcept;
+  const_iterator begin() const noexcept {
+    return parameters_.begin();
+  }
 
   /// \returns An iterator to the last element in the search parameters
-  const_iterator end() const noexcept;
+  const_iterator end() const noexcept {
+    return parameters_.end();
+  }
 
   /// \returns The serialized URL search parameters
   string_type to_string() const;

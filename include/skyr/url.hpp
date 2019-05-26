@@ -412,22 +412,33 @@ class url {
   expected<void, std::error_code> set_hash(string_type &&hash);
   /// @}
 
-  /// \returns A copy of the underlying `url_record` implementation.
-  url_record record() const;
+  /// \returns The underlying `url_record` implementation.
+  const url_record &record() const & noexcept {
+    return url_;
+  }
+
+  /// \returns The underlying `url_record` implementation.
+  url_record &&record() && noexcept {
+    return std::move(url_);
+  }
 
   /// Tests whether the URL uses a
   /// [special scheme](https://url.spec.whatwg.org/#special-scheme)
   ///
   /// \returns `true` if the URL scheme is special, `false`
   ///          otherwise
-  bool is_special() const noexcept;
+  bool is_special() const noexcept {
+    return url_.is_special();
+  }
 
   /// A [validation error](https://url.spec.whatwg.org/#validation-error)
   /// indicates a mismatch between input and valid input
   ///
   /// \returns `true` if there was a validation error during
   ///          parsing, `false` otherwise
-  bool validation_error() const noexcept;
+  bool validation_error() const noexcept {
+    return url_.validation_error;
+  }
 
   /// \returns An iterator to the beginning of the URL string
   const_iterator begin() const noexcept {
@@ -472,12 +483,16 @@ class url {
   /// Returns the underyling byte buffer
   ///
   /// \returns `href_.c_str()`
-  const char *c_str() const noexcept;
+  const char *c_str() const noexcept {
+    return href_.c_str();
+  }
 
   /// Returns the underlying string
   ///
   /// \returns `href_`
-  explicit operator string_type() const;
+  explicit operator string_type() const {
+    return href_;
+  }
 
  private:
 

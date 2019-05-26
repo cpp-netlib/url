@@ -34,6 +34,9 @@ void url::swap(url &other) noexcept {
   swap(href_, other.href_);
   view_ = string_view(href_);
   other.view_ = string_view(other.href_);
+  parameters_.parameters_.swap(other.parameters_.parameters_);
+  parameters_.url_ = std::ref(url_);
+  other.parameters_.url_ = std::ref(other.url_);
 }
 
 void url::initialize(string_type &&input, optional<url_record> base) {
@@ -325,28 +328,12 @@ expected<void, std::error_code> url::set_hash(string_type &&hash) {
   return {};
 }
 
-url_record url::record() const {
-  return url_;
-}
-
-bool url::is_special() const noexcept { return url_.is_special(); }
-
-bool url::validation_error() const noexcept { return url_.validation_error; }
-
 optional<std::uint16_t> url::default_port(const url::string_type &scheme) noexcept {
   return details::default_port(string_view(scheme));
 }
 
 void url::clear() {
   update_record(url_record{});
-}
-
-const char *url::c_str() const noexcept {
-  return href_.c_str();
-}
-
-url::operator url::string_type() const {
-  return href_;
 }
 
 void swap(url &lhs, url &rhs) noexcept {

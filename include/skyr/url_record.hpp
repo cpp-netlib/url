@@ -80,7 +80,9 @@ class url_record {
 ///
 /// \param lhs A `url_record` object
 /// \param rhs A `url_record` object
-void swap(url_record &lhs, url_record &rhs) noexcept;
+inline void swap(url_record &lhs, url_record &rhs) noexcept {
+  lhs.swap(rhs);
+}
 }  // namespace skyr
 
 #endif // SKYR_URL_RECORD_INC

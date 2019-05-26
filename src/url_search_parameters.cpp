@@ -12,7 +12,6 @@ url_search_parameters::url_search_parameters() {}
 url_search_parameters::url_search_parameters(
     std::string_view query) {
   initialize(query);
-  update();
 }
 
 url_search_parameters::url_search_parameters(
@@ -116,18 +115,6 @@ void url_search_parameters::sort() {
         return lhs.first < rhs.first;
       });
   update();
-}
-
-bool url_search_parameters::empty() const noexcept {
-  return parameters_.empty();
-}
-
-url_search_parameters::const_iterator url_search_parameters::begin() const noexcept {
-  return parameters_.begin();
-}
-
-url_search_parameters::const_iterator url_search_parameters::end() const noexcept {
-  return parameters_.end();
 }
 
 url_search_parameters::string_type url_search_parameters::to_string() const {

@@ -229,3 +229,20 @@ TEST(url_search_parameters_test, url_search_parameters) {
   url.search_parameters().sort();
   EXPECT_EQ("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88", url.search());
 }
+
+TEST(url_search_parameters_test, url_swap) {
+  auto url = skyr::url("https://example.com/?a=b&c=d");
+  auto instance = skyr::url();
+  url.swap(instance);
+
+  ASSERT_EQ("?a=b&c=d", instance.search());
+  ASSERT_EQ("", url.search());
+  
+  auto parameters = instance.search_parameters();
+  EXPECT_EQ("a=b&c=d", parameters.to_string());
+  parameters.remove("a");
+  EXPECT_EQ("c=d", parameters.to_string());
+  EXPECT_EQ("?c=d", instance.search());
+  EXPECT_EQ("c=d", instance.record().query.value());
+  EXPECT_EQ("", url.search());
+}

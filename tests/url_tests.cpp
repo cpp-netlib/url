@@ -683,3 +683,24 @@ TEST(url_test, search_parameters_test_7) {
   EXPECT_EQ("", search.to_string());
   EXPECT_EQ("", instance.search());
 }
+
+TEST(url_test, url_record_accessor_1) {
+  auto instance = skyr::url("https://example.com/?c=b&a=d");
+  auto record = instance.record();
+}
+
+TEST(url_test, url_record_accessor_2) {
+  auto record = skyr::url("https://example.com/?c=b&a=d").record();
+}
+
+TEST(url_test, url_swap) {
+  auto url = skyr::url("https://example.com/?a=b&c=d");
+  EXPECT_EQ("https:", url.protocol());
+  EXPECT_EQ("example.com", url.host());
+  EXPECT_EQ("?a=b&c=d", url.search());
+  auto instance = skyr::url();
+  url.swap(instance);
+  EXPECT_EQ("https:", instance.protocol());
+  EXPECT_EQ("example.com", instance.host());
+  EXPECT_EQ("?a=b&c=d", instance.search());
+}
