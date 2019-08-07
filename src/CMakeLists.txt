@@ -57,6 +57,13 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     endif()
 endif()
 
+target_include_directories(skyr-url
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${Skyr_SOURCE_DIR}/include>
+    PRIVATE
+        ${Skyr_SOURCE_DIR}/src)
+
 if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
 	if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)
 	    target_link_libraries(skyr-url "stdc++fs")

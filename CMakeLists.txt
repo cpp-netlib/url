@@ -70,8 +70,6 @@ if (MSVC)
     add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
 endif(MSVC)
 
-include_directories(${Skyr_SOURCE_DIR}/src ${Skyr_SOURCE_DIR}/include)
-
 add_subdirectory(src)
 
 # Testing
