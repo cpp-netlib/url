@@ -57,6 +57,8 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     endif()
 endif()
 
+add_library(Skyr::skyr-url ALIAS skyr-url)
+
 target_include_directories(skyr-url
     PUBLIC
         $<INSTALL_INTERFACE:include>
