@@ -57,6 +57,9 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     endif()
 endif()
 
+set_target_properties(skyr-url PROPERTIES
+        POSITION_INDEPENDENT_CODE ON)
+
 add_library(Skyr::skyr-url ALIAS skyr-url)
 
 target_include_directories(skyr-url
