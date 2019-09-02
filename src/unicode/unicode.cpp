@@ -39,7 +39,7 @@ std::error_code make_error_code(unicode_errc error) {
 tl::expected<std::wstring, std::error_code> wstring_from_bytes(
     std::string_view input) {
   std::wstring result;
-  auto expected = utf8::utf8to16(
+  auto expected = utf8to16(
       begin(input), end(input), std::back_inserter(result));
   if (!expected) {
     return tl::make_unexpected(std::error_code(expected.error()));
@@ -50,7 +50,7 @@ tl::expected<std::wstring, std::error_code> wstring_from_bytes(
 tl::expected<std::string, std::error_code> wstring_to_bytes(
     std::wstring_view input) {
   std::string result;
-  auto expected = utf8::utf16to8(
+  auto expected = utf16to8(
       begin(input), end(input), std::back_inserter(result));
   if (!expected) {
     return tl::make_unexpected(std::error_code(expected.error()));
@@ -61,7 +61,7 @@ tl::expected<std::string, std::error_code> wstring_to_bytes(
 tl::expected<std::u16string, std::error_code> utf16_from_bytes(
     std::string_view input) {
   std::u16string result;
-  auto expected = utf8::utf8to16(
+  auto expected = utf8to16(
       begin(input), end(input), std::back_inserter(result));
   if (!expected) {
     return tl::make_unexpected(std::error_code(expected.error()));
@@ -72,7 +72,7 @@ tl::expected<std::u16string, std::error_code> utf16_from_bytes(
 tl::expected<std::string, std::error_code> utf16_to_bytes(
     std::u16string_view input) {
   std::string result;
-  auto expected = utf8::utf16to8(
+  auto expected = utf16to8(
       begin(input), end(input), std::back_inserter(result));
   if (!expected) {
     return tl::make_unexpected(std::error_code(expected.error()));
@@ -83,7 +83,7 @@ tl::expected<std::string, std::error_code> utf16_to_bytes(
 tl::expected<std::u32string, std::error_code> utf32_from_bytes(
     std::string_view input) {
   std::u32string result;
-  auto expected = utf8::utf8to32(
+  auto expected = utf8to32(
       begin(input), end(input), std::back_inserter(result));
   if (!expected) {
     return tl::make_unexpected(std::error_code(expected.error()));
@@ -94,7 +94,7 @@ tl::expected<std::u32string, std::error_code> utf32_from_bytes(
 tl::expected<std::string, std::error_code> utf32_to_bytes(
     std::u32string_view input) {
   std::string result;
-  auto expected = utf8::utf32to8(
+  auto expected = utf32to8(
       begin(input), end(input), std::back_inserter(result));
   if (!expected) {
     return tl::make_unexpected(std::error_code(expected.error()));
