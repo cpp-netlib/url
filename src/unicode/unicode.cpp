@@ -1,10 +1,10 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-19 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 
-#include "skyr/unicode/unicode.hpp"
+#include <skyr/unicode/unicode.hpp>
 #include "unicode/unicode_impl.hpp"
 
 namespace skyr::unicode {
@@ -59,10 +59,10 @@ tl::expected<std::string, std::error_code> wstring_to_bytes(
 }
 
 tl::expected<std::u16string, std::error_code> utf16_from_bytes(
-    std::string_view input) {
+    std::string_view bytes) {
   std::u16string result;
   auto expected = utf8to16(
-      begin(input), end(input), std::back_inserter(result));
+      begin(bytes), end(bytes), std::back_inserter(result));
   if (!expected) {
     return tl::make_unexpected(std::error_code(expected.error()));
   }
@@ -81,10 +81,10 @@ tl::expected<std::string, std::error_code> utf16_to_bytes(
 }
 
 tl::expected<std::u32string, std::error_code> utf32_from_bytes(
-    std::string_view input) {
+    std::string_view bytes) {
   std::u32string result;
   auto expected = utf8to32(
-      begin(input), end(input), std::back_inserter(result));
+      begin(bytes), end(bytes), std::back_inserter(result));
   if (!expected) {
     return tl::make_unexpected(std::error_code(expected.error()));
   }

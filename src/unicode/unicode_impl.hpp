@@ -4,7 +4,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-
 /*
 Permission is hereby granted, free of charge, to any person or organization
 obtaining a copy of the software and accompanying documentation covered by
@@ -37,25 +36,6 @@ DEALINGS IN THE SOFTWARE.
 
 namespace skyr {
 namespace unicode {
-namespace constants {
-// Unicode constants
-// Leading (high) surrogates: 0xd800 - 0xdbff
-// Trailing (low) surrogates: 0xdc00 - 0xdfff
-namespace surrogates {
-constexpr char16_t lead_min = 0xd800u;
-constexpr char16_t lead_max = 0xdbffu;
-constexpr char16_t trail_min = 0xdc00u;
-constexpr char16_t trail_max = 0xdfffu;
-constexpr char16_t lead_offset = lead_min - (0x10000u >> 10u);
-constexpr char32_t offset = 0x10000u - (lead_min << 10) - trail_min;
-}  // namespace surrogates
-
-namespace code_points {
-// Maximum valid value for a Unicode code point
-constexpr char32_t max = 0x0010ffffu;
-}  // namespace code_points
-}  // namespace constants
-
 template <typename OctetType>
 constexpr uint8_t mask8(OctetType octet) {
   return static_cast<uint8_t>(0xff & octet);
@@ -95,10 +75,9 @@ constexpr bool is_valid_code_point(char32_t code_point) {
   !is_surrogate(static_cast<char16_t>(code_point));
 }
 
-template <typename OctetIterator>
-constexpr std::size_t sequence_length(
-    OctetIterator lead_it) {
-  auto lead = mask8(*lead_it);
+template <typename OctetType>
+constexpr std::size_t sequence_length(OctetType lead_value) {
+  auto lead = mask8(lead_value);
   if (lead < 0x80) {
     return 1;
   } else if ((lead >> 5) == 0x6) {
@@ -127,208 +106,200 @@ class sequence_state {
  public:
 
   sequence_state(
-      char32_t code_point,
       OctetIterator it,
-      OctetIterator last)
-      : code_point(code_point)
-      , it(it)
-      , last(last) {}
+      char32_t value)
+  : it(it)
+  , value(value) {}
 
-  char32_t code_point;
   OctetIterator it;
-  OctetIterator last;
+  char32_t value;
 };
 
+template <class OctetIterator>
+tl::expected<sequence_state<OctetIterator>, unicode_errc>
+    make_state(OctetIterator it) {
+  return sequence_state<OctetIterator>(it, 0);
+}
+
+template <class OctetIterator>
+inline sequence_state<OctetIterator> update_value(
+    sequence_state<OctetIterator> state,
+    char32_t value) {
+  return sequence_state<OctetIterator>(
+      state.it, value);
+}
+
 template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>
+inline tl::expected<sequence_state<OctetIterator>, unicode_errc>
 increment(sequence_state<OctetIterator> state) {
   ++state.it;
-
-  if (state.it == state.last) {
-    return tl::make_unexpected(unicode::unicode_errc::overflow);
-  }
-
   if (!is_trail(*state.it)) {
-    return tl::make_unexpected(unicode::unicode_errc::illegal_byte_sequence);
+    return tl::make_unexpected(unicode_errc::illegal_byte_sequence);
   }
-
   return state;
 }
 
 template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>
-from_sequence_1(
-    OctetIterator it,
-    OctetIterator last) {
-  if (it == last) {
-    return tl::make_unexpected(unicode::unicode_errc::overflow);
+tl::expected<sequence_state<OctetIterator>, unicode_errc>
+check_code_point(sequence_state<OctetIterator> state) {
+  if (!is_valid_code_point(state.value)) {
+    return tl::make_unexpected(unicode_errc::invalid_code_point);
+  } else if (is_overlong_sequence(state.value, sequence_length(*state.it))) {
+    return tl::make_unexpected(unicode_errc::illegal_byte_sequence);
   }
-  return sequence_state<OctetIterator>{mask8(*it), it, last};
+
+  ++state.it;
+  return state;
 }
 
 template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>
-from_sequence_2(OctetIterator first, OctetIterator last) {
-  using result_type = tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>;
-
-  return
-      from_sequence_1(first, last)
-          .and_then([] (auto state) {
-            return increment(state);
-          })
-          .and_then([] (auto state) -> result_type {
-            return sequence_state<OctetIterator>{
-                ((state.code_point << 6) & 0x7ff) + (*state.it & 0x3f),
-                state.it,
-                state.last};
-          });
+tl::expected<sequence_state<OctetIterator>, unicode_errc>
+inline mask_byte(sequence_state<OctetIterator> state) {
+  return update_value(state, mask8(*state.it));
 }
 
 template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>
-from_sequence_3(OctetIterator first, OctetIterator last) {
-  using result_type = tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>;
+tl::expected<sequence_state<OctetIterator>, unicode_errc>
+from_two_byte_sequence(OctetIterator first) {
+  using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
+
+  auto set_code_point = [] (auto state) -> result_type {
+    return update_value(
+        state,
+        ((state.value << 6) & 0x7ff) + (*state.it & 0x3f));
+  };
 
   return
-      from_sequence_1(first, last)
-          .and_then([] (auto state) -> result_type {
-            return increment(state);
-          })
-          .and_then([] (auto state) -> result_type {
-            return sequence_state<OctetIterator>{
-                ((state.code_point << 12) & 0xffff) +
-                ((mask8(*state.it) << 6) & 0xfff),
-                state.it,
-                state.last};
-          })
-          .and_then([] (auto state) -> result_type {
-            return increment(state);
-          })
-          .and_then([] (auto state) -> result_type {
-            return sequence_state<OctetIterator>{
-                state.code_point + (*state.it & 0x3f),
-                state.it,
-                state.last};
-          });
+      make_state(first)
+      .and_then(mask_byte<OctetIterator>)
+      .and_then(increment<OctetIterator>)
+      .and_then(set_code_point);
 }
 
 template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>
-from_sequence_4(OctetIterator first, OctetIterator last) {
-  using result_type = tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>;
+tl::expected<sequence_state<OctetIterator>, unicode_errc>
+from_three_byte_sequence(OctetIterator first) {
+  using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
+
+  auto update_code_point_from_second_byte = [] (auto state) -> result_type {
+    return update_value(
+        state,
+        ((state.value << 12) & 0xffff) +
+        ((mask8(*state.it) << 6) & 0xfff));
+  };
+
+  auto set_code_point = [] (auto state) -> result_type {
+    return update_value(
+        state,
+        state.value + (*state.it & 0x3f));
+  };
 
   return
-      from_sequence_1(first, last)
-          .and_then([] (auto state) -> result_type {
-            return increment(state);
-          })
-          .and_then([] (auto state) -> result_type {
-            return sequence_state<OctetIterator>{
-                ((state.code_point << 18) & 0x1fffff) +
-                ((mask8(*state.it) << 12) & 0x3ffff),
-                state.it,
-                state.last};
-          })
-          .and_then([] (auto state) -> result_type {
-            return increment(state);
-          })
-          .and_then([] (auto state) -> result_type {
-            return sequence_state<OctetIterator>{
-                state.code_point + ((mask8(*state.it) << 6) & 0xfff),
-                state.it,
-                state.last};
-          })
-          .and_then([] (auto state) -> result_type {
-            return increment(state);
-          })
-          .and_then([] (auto state) -> result_type {
-            return sequence_state<OctetIterator>{
-                state.code_point + (*state.it & 0x3f),
-                state.it,
-                state.last};
-          })
-          ;
+      make_state(first)
+      .and_then(mask_byte<OctetIterator>)
+      .and_then(increment<OctetIterator>)
+      .and_then(update_code_point_from_second_byte)
+      .and_then(increment<OctetIterator>)
+      .and_then(set_code_point);
 }
 
 template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc> find_code_point(
-    OctetIterator it,
-    OctetIterator last) {
-  const auto length = sequence_length(it);
+tl::expected<sequence_state<OctetIterator>, unicode_errc>
+from_four_byte_sequence(OctetIterator first) {
+  using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
+
+  auto update_code_point_from_second_byte = [] (auto state) -> result_type {
+    return update_value(
+        state,
+        ((state.value << 18) & 0x1fffff) +
+        ((mask8(*state.it) << 12) & 0x3ffff));
+  };
+
+  auto update_code_point_from_third_byte = [] (auto state) -> result_type {
+    return update_value(
+        state,
+        state.value + ((mask8(*state.it) << 6) & 0xfff));
+  };
+
+  auto set_code_point = [] (auto state) -> result_type {
+    return update_value(
+        state,
+        state.value + (*state.it & 0x3f));
+  };
+
   return
-      (length == 1) ? from_sequence_1(it, last) :
-      (length == 2) ? from_sequence_2(it, last) :
-      (length == 3) ? from_sequence_3(it, last) :
-      (length == 4) ? from_sequence_4(it, last) :
-      tl::make_unexpected(unicode::unicode_errc::overflow)
+      make_state(first)
+      .and_then(mask_byte<OctetIterator>)
+      .and_then(increment<OctetIterator>)
+      .and_then(update_code_point_from_second_byte)
+      .and_then(increment<OctetIterator>)
+      .and_then(update_code_point_from_third_byte)
+      .and_then(increment<OctetIterator>)
+      .and_then(set_code_point);
+}
+
+template <typename OctetIterator>
+tl::expected<sequence_state<OctetIterator>, unicode_errc> find_code_point(
+    OctetIterator first) {
+  const auto length = sequence_length(*first);
+  return
+  (length == 1) ? make_state(first).and_then(mask_byte<OctetIterator>) :
+  (length == 2) ? from_two_byte_sequence(first) :
+  (length == 3) ? from_three_byte_sequence(first) :
+  (length == 4) ? from_four_byte_sequence(first) :
+  tl::make_unexpected(unicode_errc::overflow)
   ;
 }
 
 template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc> validate_next(
+tl::expected<sequence_state<OctetIterator>, unicode_errc> next(
+    OctetIterator it) {
+  return
+  find_code_point(it)
+  .and_then(check_code_point<OctetIterator>);
+}
+
+template <typename OctetIterator>
+tl::expected<sequence_state<OctetIterator>, unicode_errc> peek_next(
+    OctetIterator it) {
+  auto state = next(it);
+  if (state) {
+    state.value().it = it;
+  }
+  return state;
+}
+
+template <typename OctetIterator>
+tl::expected<sequence_state<OctetIterator>, unicode_errc> prior(
     OctetIterator it,
-    OctetIterator last) {
-  using result_type = tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>;
-
-  if (it == last) {
-    return tl::make_unexpected(unicode::unicode_errc::overflow);
+    OctetIterator first) {
+  if (it == first) {
+    return tl::make_unexpected(unicode_errc::overflow);
   }
 
-  return find_code_point(it, last)
-  .and_then([] (auto state) -> result_type {
-    if (!is_valid_code_point(state.code_point)) {
-      return tl::make_unexpected(unicode::unicode_errc::invalid_code_point);
-    } else if (is_overlong_sequence(state.code_point, sequence_length(state.it))) {
-      return tl::make_unexpected(unicode::unicode_errc::illegal_byte_sequence);
+  auto last = it;
+  // Go back until we hit either a lead octet or start
+  --it;
+  while (is_trail(*it)) {
+    if (it == first) {
+      return tl::make_unexpected(unicode_errc::invalid_code_point);
     }
-
-    ++state.it;
-    return state;
-  });
-}
-
-template <typename OctetIterator>
-OctetIterator find_invalid(
-    OctetIterator first,
-    OctetIterator last) {
-  using result_type = tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc>;
-
-  auto it = first;
-  while (it != last) {
-    auto result = validate_next(it, last)
-        .and_then([] (auto state) -> result_type {
-          return increment(state);
-        }
-        .and_then([&it] (auto state) -> result_type {
-          it = state.it;
-          return state;
-        }));
-    if (!result) {
-      break;
-    }
+    --it;
   }
-  return it;
+  return peek_next(it);
 }
 
 template <typename OctetIterator>
-constexpr bool is_valid(
-    OctetIterator first,
-    OctetIterator last) {
-  return find_invalid(first, last) == last;
-}
-
-template <typename OctetIterator>
-tl::expected<OctetIterator, unicode::unicode_errc> append(
+tl::expected<OctetIterator, unicode_errc> append(
     char32_t code_point,
     OctetIterator result) {
   if (!is_valid_code_point(code_point)) {
-    return tl::make_unexpected(unicode::unicode_errc::invalid_code_point);
+    return tl::make_unexpected(unicode_errc::invalid_code_point);
   }
 
   if (code_point < 0x80) { // one octet
     *(result++) = static_cast<uint8_t>(code_point);
-  }
-  else if (code_point < 0x800) {  // two octets
+  } else if (code_point < 0x800) {  // two octets
     *(result++) = static_cast<uint8_t>((code_point >> 6) | 0xc0);
     *(result++) = static_cast<uint8_t>((code_point & 0x3f) | 0x80);
   } else if (code_point < 0x10000) {  // three octets
@@ -345,78 +316,50 @@ tl::expected<OctetIterator, unicode::unicode_errc> append(
 }
 
 template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc> next(
-    OctetIterator it,
-    OctetIterator last) {
-  return validate_next(it, last);
-}
-
-template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc> peek_next(
-    OctetIterator it,
-    OctetIterator last) {
-  return next(it, last)
-  .and_then([&it] (auto state) {
-    state.it = it;
-    return state;
-  });
-}
-
-template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode::unicode_errc> prior(
-    OctetIterator it,
-    OctetIterator first) {
-  if (it == first) {
-    return tl::make_unexpected(unicode::unicode_errc::overflow);
-  }
-
-  auto last = it;
-  // Go back until we hit either a lead octet or start
-  --it;
-  while (is_trail(*it)) {
-    if (it == first) {
-      return tl::make_unexpected(unicode::unicode_errc::invalid_code_point);
-    }
-    --it;
-  }
-  return peek_next(it, last);
-}
-
-template <typename OctetIterator>
-tl::expected<void, unicode::unicode_errc> advance(
+tl::expected<void, unicode_errc> advance(
     OctetIterator& it,
     std::size_t n,
-    OctetIterator end) {
+    OctetIterator last) {
   while (n != 0) {
-    auto state = next(it, end)
-        .and_then([&it, &n] (auto state) {
-          it = state.it;
-          --n;
-        });
+    if (std::distance(it, last) < sequence_length(*it)) {
+      return tl::make_unexpected(unicode_errc::overflow);
+    }
+
+    auto state = unicode::next(it);
+    if (!state) {
+      return tl::make_unexpected(std::move(state.error()));
+    }
+    it = state.value().it;
+    --n;
   }
+
+  return {};
 }
 
 template <typename OctetIterator>
-tl::expected<std::size_t, unicode::unicode_errc> distance(
+tl::expected<std::size_t, unicode_errc> count(
     OctetIterator first,
     OctetIterator last) {
-  std::size_t distance = 0;
+  std::size_t count = 0;
   auto it = first;
+
   while (it != last) {
-    auto state = next(it, last)
-        .and_then([&distance, &it] (auto state) {
-          ++distance;
-          it = state.it;
-        });
-    if (!state) {
-      return tl::make_unexpected(state.error());
+    if (std::distance(it, last) < sequence_length(*it)) {
+      return tl::make_unexpected(unicode_errc::overflow);
     }
+
+    auto state = unicode::next(it);
+    if (!state) {
+      return tl::make_unexpected(std::move(state.error()));
+    }
+    it = state.value().it;
+    ++count;
   }
-  return distance;
+  return count;
 }
 
 template <typename U16BitIterator, typename OctetIterator>
-tl::expected<OctetIterator, unicode::unicode_errc> utf16to8(
+tl::expected<OctetIterator, unicode_errc> utf16to8(
     U16BitIterator first,
     U16BitIterator last,
     OctetIterator result) {
@@ -427,21 +370,19 @@ tl::expected<OctetIterator, unicode::unicode_errc> utf16to8(
 
     // Take care of surrogate pairs first
     if (is_lead_surrogate(code_point)) {
-      if (it != last) {
-        auto trail_surrogate = mask16(*it);
-        ++it;
-        if (is_trail_surrogate(trail_surrogate)) {
-          code_point = (code_point << 10) + trail_surrogate + constants::surrogates::offset;
-        }
-        else {
-          return tl::make_unexpected(unicode::unicode_errc::invalid_code_point);
-        }
-      } else {
-        return tl::make_unexpected(unicode::unicode_errc::invalid_code_point);
+      if (it == last) {
+        return tl::make_unexpected(unicode_errc::invalid_code_point);
       }
+
+      auto trail_surrogate = mask16(*it);
+      ++it;
+      if (!is_trail_surrogate(trail_surrogate)) {
+        return tl::make_unexpected(unicode_errc::invalid_code_point);
+      }
+      code_point = (code_point << 10) + trail_surrogate + constants::surrogates::offset;
     }
     else if (is_trail_surrogate(code_point)) {
-      return tl::make_unexpected(unicode::unicode_errc::invalid_code_point);
+      return tl::make_unexpected(unicode_errc::invalid_code_point);
     }
 
     auto result_it = append(code_point, result);
@@ -453,72 +394,70 @@ tl::expected<OctetIterator, unicode::unicode_errc> utf16to8(
 }
 
 template <typename U16BitIterator, typename OctetIterator>
-tl::expected<U16BitIterator, unicode::unicode_errc> utf8to16(
+tl::expected<U16BitIterator, unicode_errc> utf8to16(
     OctetIterator first,
     OctetIterator last,
     U16BitIterator result) {
   auto it = first;
   while (it != last) {
-    auto state = next(it, last)
-        .and_then([&it, &result] (auto state) -> tl::expected<void, unicode::unicode_errc> {
-          it = state.it;
+    if (std::distance(it, last) < sequence_length(*it)) {
+      return tl::make_unexpected(unicode_errc::overflow);
+    }
 
-          if (state.code_point > 0xffff) {  // make a surrogate pair
-            *result++ =
-                static_cast<char16_t>((state.code_point >> 10) +
-                    constants::surrogates::lead_offset);
-            *result++ =
-                static_cast<char16_t>((state.code_point & 0x3ff) +
-                    constants::surrogates::trail_min);
-          } else {
-            *result++ = static_cast<char16_t>(state.code_point);
-          }
-
-          return {};
-        });
+    auto state = next(it);
     if (!state) {
       return tl::make_unexpected(std::move(state.error()));
+    }
+
+    it = state.value().it;
+    if (state.value().value > 0xffff) {  // make a surrogate pair
+      *result++ =
+          static_cast<char16_t>((state.value().value >> 10) +
+              constants::surrogates::lead_offset);
+      *result++ =
+          static_cast<char16_t>((state.value().value & 0x3ff) +
+              constants::surrogates::trail_min);
+    } else {
+      *result++ = static_cast<char16_t>(state.value().value);
     }
   }
   return result;
 }
 
 template <typename OctetIterator, typename U32BitIterator>
-tl::expected<OctetIterator, unicode::unicode_errc> utf32to8(
+tl::expected<OctetIterator, unicode_errc> utf32to8(
     U32BitIterator first,
     U32BitIterator last,
     OctetIterator result) {
   auto it = first;
   while (it != last) {
-    auto result_it = append(*it, result)
-        .and_then([&result, &it] (auto octet_it) -> tl::expected<void, unicode::unicode_errc> {
-          result = octet_it;
-          ++it;
-          return {};
-        });
+    auto result_it = append(*it, result);
     if (!result_it) {
       return tl::make_unexpected(std::move(result_it.error()));
     }
+    result = result_it.value();
+    ++it;
   }
   return result;
 }
 
 template <typename OctetIterator, typename U32BitIterator>
-tl::expected<U32BitIterator, unicode::unicode_errc> utf8to32(
+tl::expected<U32BitIterator, unicode_errc> utf8to32(
     OctetIterator first,
     OctetIterator last,
     U32BitIterator result) {
   auto it = first;
   while (it != last) {
-    auto state = next(it, last)
-        .and_then([&it, &result] (auto state) -> tl::expected<void, unicode::unicode_errc> {
-          it = state.it;
-          (*result++) = state.code_point;
-          return {};
-        });
+    if (std::distance(it, last) < sequence_length(*it)) {
+      return tl::make_unexpected(unicode_errc::overflow);
+    }
+
+    auto state = next(it);
     if (!state) {
       return tl::make_unexpected(std::move(state.error()));
     }
+    it = state.value().it;
+    (*result)++ = state.value().value;
   }
   return result;
 }

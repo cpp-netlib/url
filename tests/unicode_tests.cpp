@@ -7,6 +7,7 @@
 #include <catch.hpp>
 #include <string>
 #include "skyr/unicode/unicode.hpp"
+#include "../src/unicode/unicode_impl.hpp"
 
 
 TEST_CASE("unicode_tests", "[unicode]") {
@@ -29,5 +30,30 @@ TEST_CASE("unicode_tests", "[unicode]") {
     auto bytes = skyr::unicode::utf32_to_bytes(input);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
+  }
+
+  SECTION("count_utf8_chars_01") {
+    auto bytes = std::string("\xf0\x9f\x92\xa9");
+    auto first = begin(bytes), last = end(bytes);
+    auto count = skyr::unicode::count(first, last);
+    REQUIRE(count);
+    CHECK(1 == count.value());
+  }
+
+  SECTION("count_utf8_chars_02") {
+    auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    auto first = begin(bytes), last = end(bytes);
+    auto count = skyr::unicode::count(first, last);
+    REQUIRE(count);
+    CHECK(4 == count.value());
+  }
+
+  SECTION("advance_utf8_chars") {
+    auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    auto first = begin(bytes), last = end(bytes);
+    skyr::unicode::advance(first, 2, last);
+    auto count = skyr::unicode::count(first, last);
+    REQUIRE(count);
+    CHECK(2 == count.value());
   }
 }
