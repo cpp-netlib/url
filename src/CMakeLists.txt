@@ -4,7 +4,6 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 set(Skyr_SRCS
-		unicode/unicode_impl.hpp
 		unicode/unicode.cpp
 		url/url_parser_context.hpp
 		url/url_parser_context.cpp

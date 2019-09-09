@@ -7,7 +7,6 @@
 #include <catch.hpp>
 #include <string>
 #include "skyr/unicode/unicode.hpp"
-#include "../src/unicode/unicode_impl.hpp"
 
 
 TEST_CASE("unicode_tests", "[unicode]") {
@@ -23,6 +22,34 @@ TEST_CASE("unicode_tests", "[unicode]") {
     auto utf32 = skyr::unicode::utf32_from_bytes(input);
     REQUIRE(utf32);
     CHECK(U"\x1F4A9" == utf32.value());
+  }
+
+  SECTION("utf16_to_bytes_poo_emoji_test") {
+    auto input = std::u16string(u"\xd83d\xdca9");
+    auto bytes = skyr::unicode::utf16_to_bytes(input);
+    REQUIRE(bytes);
+    CHECK("\xf0\x9f\x92\xa9" == bytes.value());
+  }
+
+  SECTION("bytes_to_utf16_poo_emoji_test") {
+    auto input = std::string("\xf0\x9f\x92\xa9");
+    auto utf16 = skyr::unicode::utf16_from_bytes(input);
+    REQUIRE(utf16);
+    CHECK(u"\xd83d\xdca9" == utf16.value());
+  }
+
+  SECTION("wstring_to_bytes_poo_emoji_test") {
+    auto input = std::wstring(L"\xd83d\xdca9");
+    auto bytes = skyr::unicode::wstring_to_bytes(input);
+    REQUIRE(bytes);
+    CHECK("\xf0\x9f\x92\xa9" == bytes.value());
+  }
+
+  SECTION("bytes_to_wstring_poo_emoji_test") {
+    auto input = std::string("\xf0\x9f\x92\xa9");
+    auto utf16 = skyr::unicode::wstring_from_bytes(input);
+    REQUIRE(utf16);
+    CHECK(L"\xd83d\xdca9" == utf16.value());
   }
 
   SECTION("utf32_rainbow_flag_test") {
@@ -52,8 +79,25 @@ TEST_CASE("unicode_tests", "[unicode]") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
     auto first = begin(bytes), last = end(bytes);
     skyr::unicode::advance(first, 2, last);
+    CHECK("\xe2\x80\x8d\xf0\x9f\x8c\x88" == std::string(first, last));
+  }
+
+  SECTION("advance_and_count_utf8_chars") {
+    auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    auto first = begin(bytes), last = end(bytes);
+    skyr::unicode::advance(first, 2, last);
     auto count = skyr::unicode::count(first, last);
     REQUIRE(count);
     CHECK(2 == count.value());
+  }
+
+  SECTION("append") {
+    auto input = std::u32string(U"\x1F3F3\xFE0F\x200D\x1F308");
+    auto bytes = std::string();
+    for (auto value : input) {
+      auto result = skyr::unicode::append(value, std::back_inserter(bytes));
+      REQUIRE(result);
+    }
+    CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes);
   }
 }

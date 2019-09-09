@@ -6,15 +6,12 @@
 #ifndef SKYR_CONSTANTS_HPP
 #define SKYR_CONSTANTS_HPP
 
-namespace skyr {
-namespace unicode {
-namespace constants {
-// Unicode constants
-// Leading (high) surrogates: 0xd800 - 0xdbff
-// Trailing (low) surrogates: 0xdc00 - 0xdfff
+namespace skyr::unicode::constants {
 namespace surrogates {
+// Leading (high) surrogates: 0xd800 - 0xdbff
 constexpr char16_t lead_min = 0xd800u;
 constexpr char16_t lead_max = 0xdbffu;
+// Trailing (low) surrogates: 0xdc00 - 0xdfff
 constexpr char16_t trail_min = 0xdc00u;
 constexpr char16_t trail_max = 0xdfffu;
 constexpr char16_t lead_offset = lead_min - (0x10000u >> 10u);
@@ -25,8 +22,6 @@ namespace code_points {
 // Maximum valid value for a Unicode code point
 constexpr char32_t max = 0x0010ffffu;
 }  // namespace code_points
-}  // namespace constants
-}  // namespace unicode
-}  // namespace skyr
+}  // namespace skyr::unicode::constants
 
 #endif //SKYR_CONSTANTS_HPP
