@@ -91,11 +91,11 @@ TEST_CASE("unicode_tests", "[unicode]") {
     CHECK(2 == count.value());
   }
 
-  SECTION("append") {
+  SECTION("append_bytes") {
     auto input = std::u32string(U"\x1F3F3\xFE0F\x200D\x1F308");
     auto bytes = std::string();
     for (auto value : input) {
-      auto result = skyr::unicode::append(value, std::back_inserter(bytes));
+      auto result = skyr::unicode::append_bytes(value, std::back_inserter(bytes));
       REQUIRE(result);
     }
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes);

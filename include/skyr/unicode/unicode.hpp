@@ -289,7 +289,7 @@ tl::expected<sequence_state<OctetIterator>, unicode_errc> prior(
 }
 
 template <typename OctetIterator>
-tl::expected<OctetIterator, unicode_errc> append(
+tl::expected<OctetIterator, unicode_errc> append_bytes(
     char32_t code_point,
     OctetIterator result) {
   if (!is_valid_code_point(code_point)) {
@@ -386,7 +386,7 @@ tl::expected<OctetIterator, unicode_errc> copy_u16u8(
       return tl::make_unexpected(unicode_errc::invalid_code_point);
     }
 
-    auto result_it = append(code_point, result);
+    auto result_it = append_bytes(code_point, result);
     if (!result_it) {
       return tl::make_unexpected(std::move(result_it.error()));
     }
@@ -432,7 +432,7 @@ tl::expected<OctetIterator, unicode_errc> copy_u32u8(
     OctetIterator result) {
   auto it = first;
   while (it != last) {
-    auto result_it = append(*it, result);
+    auto result_it = append_bytes(*it, result);
     if (!result_it) {
       return tl::make_unexpected(std::move(result_it.error()));
     }

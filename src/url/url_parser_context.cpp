@@ -455,13 +455,13 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_authori
     }
     at_flag = true;
 
-    for (auto byte : buffer) {
-      if (byte == ':' && !password_token_seen_flag) {
+    for (auto c : buffer) {
+      if (c == ':' && !password_token_seen_flag) {
         password_token_seen_flag = true;
         continue;
       }
 
-      auto pct_encoded = percent_encode_byte(byte, encode_set::userinfo);
+      auto pct_encoded = percent_encode_byte(c, encode_set::userinfo);
       if (password_token_seen_flag) {
         url.password += pct_encoded;
       } else {
