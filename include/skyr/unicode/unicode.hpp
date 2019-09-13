@@ -42,42 +42,66 @@ namespace skyr::unicode {
 /// \returns A `std::error_code` object
 std::error_code make_error_code(unicode_errc error);
 
+///
+/// \param octet
+/// \return
 constexpr uint8_t mask8(char octet) {
-  return 0xff & octet;
+  return 0xffu & static_cast<uint8_t>(octet);
 }
 
+///
+/// \param octet
+/// \return
 constexpr char16_t mask16(char16_t octet) {
-  return 0xffff & octet;
+  return 0xffffu & octet;
 }
 
+///
+/// \param octet
+/// \return
 constexpr bool is_trail(char octet) {
-  return ((mask8(octet) >> 6) == 0x2);
+  return ((mask8(octet) >> 6u) == 0x2u);
 }
 
+///
+/// \param code_point
+/// \return
 constexpr bool is_lead_surrogate(char16_t code_point) {
   return
       (code_point >= constants::surrogates::lead_min) &&
           (code_point <= constants::surrogates::lead_max);
 }
 
+///
+/// \param code_point
+/// \return
 constexpr bool is_trail_surrogate(char16_t code_point) {
   return
       (code_point >= constants::surrogates::trail_min) &&
           (code_point <= constants::surrogates::trail_max);
 }
 
+///
+/// \param code_point
+/// \return
 constexpr bool is_surrogate(char16_t code_point) {
   return
       (code_point >= constants::surrogates::lead_min) &&
           (code_point <= constants::surrogates::trail_max);
 }
 
+/// Tests if the code point is a valid value.
+/// \param code_point
+/// \return \c true if it has a valid value, \c false otherwise
 constexpr bool is_valid_code_point(char32_t code_point) {
   return
       (code_point <= constants::code_points::max) &&
           !is_surrogate(static_cast<char16_t>(code_point));
 }
 
+/// Returns the size of the sequnce given the lead octet value.
+/// \param lead_value
+/// \return 1, 2, 3 or 4
 constexpr std::size_t sequence_length(char lead_value) {
   auto lead = mask8(lead_value);
   if (lead < 0x80) {
@@ -92,6 +116,10 @@ constexpr std::size_t sequence_length(char lead_value) {
   return 0;
 }
 
+///
+/// \param code_point
+/// \param length
+/// \return
 constexpr bool is_overlong_sequence(
     char32_t code_point,
     std::size_t length) {
@@ -102,33 +130,54 @@ constexpr bool is_overlong_sequence(
   return result;
 }
 
-template <typename OctetIterator>
+/// A type used to extract a code point value from an octet sequence
+/// \tparam OctetIterator
+template<typename OctetIterator>
 struct sequence_state {
   sequence_state(
       OctetIterator it,
       char32_t value)
-      : it(it)
-      , value(value) {}
+      : it(it), value(value) {}
 
+  /// The current iterator
   OctetIterator it;
+  /// The (intermediate) value of the code point
   char32_t value;
 };
 
-template <class OctetIterator>
+/// Creates an expected state, so that can be chained
+/// functional-style.
+///
+/// \tparam OctetIterator
+/// \param it The lead value of the next code point in the octet
+///           sequence
+/// \return A sequence_state with a value of 0, and the iterator
+///         pointing to the lead value
+template<class OctetIterator>
 tl::expected<sequence_state<OctetIterator>, unicode_errc>
 make_state(OctetIterator it) {
   return sequence_state<OctetIterator>(it, 0);
 }
 
-template <class OctetIterator>
+/// Updates the value in the sequence state
+///
+/// \tparam OctetIterator
+/// \param state The input state
+/// \param value The updated value
+/// \return A new state with an updateds value
+template<class OctetIterator>
 inline sequence_state<OctetIterator> update_value(
     sequence_state<OctetIterator> state,
     char32_t value) {
-  return sequence_state<OctetIterator>(
-      state.it, value);
+  return {state.it, value};
 }
 
-template <typename OctetIterator>
+/// Moves the octet iterator one character ahead
+/// \tparam OctetIterator
+/// \param state The input state
+/// \return The new state with the updated iterator, on an error if
+///         the sequence isn't valid
+template<typename OctetIterator>
 inline tl::expected<sequence_state<OctetIterator>, unicode_errc>
 increment(sequence_state<OctetIterator> state) {
   ++state.it;
@@ -138,7 +187,12 @@ increment(sequence_state<OctetIterator> state) {
   return state;
 }
 
-template <typename OctetIterator>
+/// Checks if the code point value is valid
+///
+/// \tparam OctetIterator
+/// \param state The input state
+/// \return The new state
+template<typename OctetIterator>
 tl::expected<sequence_state<OctetIterator>, unicode_errc>
 check_code_point(sequence_state<OctetIterator> state) {
   if (!is_valid_code_point(state.value)) {
@@ -147,22 +201,31 @@ check_code_point(sequence_state<OctetIterator> state) {
     return tl::make_unexpected(unicode_errc::illegal_byte_sequence);
   }
 
-  ++state.it;
   return state;
 }
 
-template <typename OctetIterator>
+namespace details {
+///
+/// \tparam OctetIterator
+/// \param state
+/// \return
+template<typename OctetIterator>
 tl::expected<sequence_state<OctetIterator>, unicode_errc>
 inline mask_byte(sequence_state<OctetIterator> state) {
   return update_value(state, mask8(*state.it));
 }
 
-template <typename OctetIterator>
+/// Converts a two byte code octet sequence to a code point value.
+///
+/// \tparam OctetIterator
+/// \param first
+/// \return
+template<typename OctetIterator>
 tl::expected<sequence_state<OctetIterator>, unicode_errc>
 from_two_byte_sequence(OctetIterator first) {
   using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
 
-  auto set_code_point = [] (auto state) -> result_type {
+  auto set_code_point = [](auto state) -> result_type {
     return update_value(
         state,
         ((state.value << 6) & 0x7ff) + (*state.it & 0x3f));
@@ -175,19 +238,24 @@ from_two_byte_sequence(OctetIterator first) {
           .and_then(set_code_point);
 }
 
-template <typename OctetIterator>
+/// Converts a three byte code octet sequence to a code point value.
+///
+/// \tparam OctetIterator
+/// \param first
+/// \return
+template<typename OctetIterator>
 tl::expected<sequence_state<OctetIterator>, unicode_errc>
 from_three_byte_sequence(OctetIterator first) {
   using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
 
-  auto update_code_point_from_second_byte = [] (auto state) -> result_type {
+  auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
         state,
         ((state.value << 12) & 0xffff) +
             ((mask8(*state.it) << 6) & 0xfff));
   };
 
-  auto set_code_point = [] (auto state) -> result_type {
+  auto set_code_point = [](auto state) -> result_type {
     return update_value(
         state,
         state.value + (*state.it & 0x3f));
@@ -201,25 +269,30 @@ from_three_byte_sequence(OctetIterator first) {
       .and_then(set_code_point);
 }
 
-template <typename OctetIterator>
+/// Converts a four byte code octet sequence to a code point value.
+///
+/// \tparam OctetIterator
+/// \param first
+/// \return
+template<typename OctetIterator>
 tl::expected<sequence_state<OctetIterator>, unicode_errc>
 from_four_byte_sequence(OctetIterator first) {
   using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
 
-  auto update_code_point_from_second_byte = [] (auto state) -> result_type {
+  auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
         state,
         ((state.value << 18) & 0x1fffff) +
             ((mask8(*state.it) << 12) & 0x3ffff));
   };
 
-  auto update_code_point_from_third_byte = [] (auto state) -> result_type {
+  auto update_code_point_from_third_byte = [](auto state) -> result_type {
     return update_value(
         state,
         state.value + ((mask8(*state.it) << 6) & 0xfff));
   };
 
-  auto set_code_point = [] (auto state) -> result_type {
+  auto set_code_point = [](auto state) -> result_type {
     return update_value(
         state,
         state.value + (*state.it & 0x3f));
@@ -235,87 +308,89 @@ from_four_byte_sequence(OctetIterator first) {
           .and_then(increment<OctetIterator>)
           .and_then(set_code_point);
 }
+}  // namespace details
 
+/// Finds and computes the next code point value in the octet
+/// sequence.
+///
+/// \tparam OctetIterator
+/// \param first
+/// \return
 template <typename OctetIterator>
 tl::expected<sequence_state<OctetIterator>, unicode_errc> find_code_point(
     OctetIterator first) {
   const auto length = sequence_length(*first);
   return
-      (length == 1) ? make_state(first).and_then(mask_byte<OctetIterator>) :
-      (length == 2) ? from_two_byte_sequence(first) :
-      (length == 3) ? from_three_byte_sequence(first) :
-      (length == 4) ? from_four_byte_sequence(first) :
+      (length == 1) ? make_state(first).and_then(details::mask_byte<OctetIterator>) :
+      (length == 2) ? details::from_two_byte_sequence(first) :
+      (length == 3) ? details::from_three_byte_sequence(first) :
+      (length == 4) ? details::from_four_byte_sequence(first) :
       tl::make_unexpected(unicode_errc::overflow)
       ;
 }
 
+/// Updates the state to next code point
+///
+/// \tparam OctetIterator
+/// \param it An octer iterator
+/// \return A sequence state with the computed code point value
 template <typename OctetIterator>
 tl::expected<sequence_state<OctetIterator>, unicode_errc> next(
     OctetIterator it) {
+  using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
+
+  auto increment = [] (auto state) -> result_type {
+    ++state.it;
+    return state;
+  };
+
   return
       find_code_point(it)
-          .and_then(check_code_point<OctetIterator>);
+          .and_then(check_code_point<OctetIterator>)
+          .and_then(increment);
 }
 
-template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode_errc> peek_next(
-    OctetIterator it) {
-  auto state = next(it);
-  if (state) {
-    state.value().it = it;
-    state.value().value = 0;
-  }
-  return state;
-}
-
-template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, unicode_errc> prior(
-    OctetIterator it,
-    OctetIterator first) {
-  if (it == first) {
-    return tl::make_unexpected(unicode_errc::overflow);
-  }
-
-  auto last = it;
-  // Go back until we hit either a lead octet or start
-  --it;
-  while (is_trail(*it)) {
-    if (it == first) {
-      return tl::make_unexpected(unicode_errc::invalid_code_point);
-    }
-    --it;
-  }
-  return peek_next(it);
-}
-
+/// Appends values to a  octet sequence given a code point value
+///
+/// \tparam OctetIterator
+/// \param code_point
+/// \param octet_it
+/// \return
 template <typename OctetIterator>
 tl::expected<OctetIterator, unicode_errc> append_bytes(
     char32_t code_point,
-    OctetIterator result) {
+    OctetIterator octet_it) {
   if (!is_valid_code_point(code_point)) {
     return tl::make_unexpected(unicode_errc::invalid_code_point);
   }
 
   auto value = static_cast<std::uint32_t>(code_point);
 
-  if (value < 0x80) { // one octet
-    *(result++) = static_cast<char>(value);
-  } else if (value < 0x800) {  // two octets
-    *(result++) = static_cast<char>((value >> 6) | 0xc0);
-    *(result++) = static_cast<char>((value & 0x3f) | 0x80);
-  } else if (value < 0x10000) {  // three octets
-    *(result++) = static_cast<char>((value >> 12) | 0xe0);
-    *(result++) = static_cast<char>(((value >> 6) & 0x3f) | 0x80);
-    *(result++) = static_cast<char>((value & 0x3f) | 0x80);
+  if (value < 0x80u) { // one octet
+    *(octet_it++) = static_cast<char>(value);
+  } else if (value < 0x800u) {  // two octets
+    *(octet_it++) = static_cast<char>((value >> 6u) | 0xc0u);
+    *(octet_it++) = static_cast<char>((value & 0x3fu) | 0x80u);
+  } else if (value < 0x10000u) {  // three octets
+    *(octet_it++) = static_cast<char>((value >> 12u) | 0xe0u);
+    *(octet_it++) = static_cast<char>(((value >> 6u) & 0x3fu) | 0x80u);
+    *(octet_it++) = static_cast<char>((value & 0x3fu) | 0x80u);
   } else {  // four octets
-    *(result++) = static_cast<char>((value >> 18) | 0xf0);
-    *(result++) = static_cast<char>(((value >> 12) & 0x3f) | 0x80);
-    *(result++) = static_cast<char>(((value >> 6) & 0x3f) | 0x80);
-    *(result++) = static_cast<char>((value & 0x3f) | 0x80);
+    *(octet_it++) = static_cast<char>((value >> 18u) | 0xf0u);
+    *(octet_it++) = static_cast<char>(((value >> 12u) & 0x3fu) | 0x80u);
+    *(octet_it++) = static_cast<char>(((value >> 6u) & 0x3fu) | 0x80u);
+    *(octet_it++) = static_cast<char>((value & 0x3fu) | 0x80u);
   }
-  return result;
+  return octet_it;
 }
 
+/// Advances `n` code oints through the octet sequence
+/// \tparam OctetIterator
+/// \param it An iterator to a lead octet in the octet sequence
+/// \param n The number of code points to advance
+/// \param last The last iterator in the octet sequence
+/// \return The updated iterator or an error if the sequence is
+///         invalid
 template <typename OctetIterator>
 tl::expected<void, unicode_errc> advance(
     OctetIterator& it,
@@ -337,6 +412,13 @@ tl::expected<void, unicode_errc> advance(
   return {};
 }
 
+/// Counts the number of code points in the octet sequence.
+///
+/// \tparam OctetIterator
+/// \param first The first element in the octet sequence
+/// \param last The last element in the sequence
+/// \return The number of code points or an error if it's not a
+///         valid sequence.
 template <typename OctetIterator>
 tl::expected<std::size_t, unicode_errc> count(
     OctetIterator first,
@@ -359,6 +441,15 @@ tl::expected<std::size_t, unicode_errc> count(
   return count;
 }
 
+/// Copies characters from a UTF-16 encoded string to a UTF-8
+/// encoded string.
+///
+/// \tparam U16BitIterator
+/// \tparam OctetIterator
+/// \param first The first iterator in the UTF-16 encoded sequence
+/// \param last The last iterator in the UTF-16 encoded sequence
+/// \param u8_it The output iterator
+/// \return The last output iterator or an error if the sequence was invalid
 template <typename U16BitIterator, typename OctetIterator>
 tl::expected<OctetIterator, unicode_errc> copy_u16u8(
     U16BitIterator first,
@@ -394,12 +485,24 @@ tl::expected<OctetIterator, unicode_errc> copy_u16u8(
   return result;
 }
 
+/// Copies characters from a UTF-8 encoded string to a UTF-16
+/// encoded string.
+///
+/// \tparam U16BitIterator
+/// \tparam OctetIterator
+/// \param first The first iterator in the octet sequence
+/// \param last The last iterator in the octet sequence
+/// \param u16_first The first iterator in the UTf-16 encoded
+///        sequence
+/// \return An expected iterator to the last eleent in the new
+///         UTF-16 sequence, or an error.
 template <typename U16BitIterator, typename OctetIterator>
 tl::expected<U16BitIterator, unicode_errc> copy_u8u16(
     OctetIterator first,
     OctetIterator last,
-    U16BitIterator result) {
+    U16BitIterator u16_first) {
   auto it = first;
+  auto u16_it = u16_first;
   while (it != last) {
     if (std::distance(it, last) < sequence_length(*it)) {
       return tl::make_unexpected(unicode_errc::overflow);
@@ -412,42 +515,63 @@ tl::expected<U16BitIterator, unicode_errc> copy_u8u16(
 
     it = state.value().it;
     if (state.value().value > 0xffff) {  // make a surrogate pair
-      *result++ =
+      *u16_it++ =
           static_cast<char16_t>((state.value().value >> 10) +
               constants::surrogates::lead_offset);
-      *result++ =
+      *u16_it++ =
           static_cast<char16_t>((state.value().value & 0x3ff) +
               constants::surrogates::trail_min);
     } else {
-      *result++ = static_cast<char16_t>(state.value().value);
+      *u16_it++ = static_cast<char16_t>(state.value().value);
     }
   }
-  return result;
+  return u16_it;
 }
 
+/// Copies characters from a UTF-32 encoded string to a UTF-8
+/// encoded string.
+///
+/// \tparam OctetIterator
+/// \tparam U32BitIterator
+/// \param first The first iterator in the UTF-32 encoded sequence
+/// \param last The last iterator in the UTF-32 encoded sequence
+/// \param u8_it The output iterator
+/// \return The last output iterator or an error if the sequence was invalid
 template <typename OctetIterator, typename U32BitIterator>
 tl::expected<OctetIterator, unicode_errc> copy_u32u8(
     U32BitIterator first,
     U32BitIterator last,
-    OctetIterator result) {
+    OctetIterator u8_it) {
   auto it = first;
   while (it != last) {
-    auto result_it = append_bytes(*it, result);
+    auto result_it = append_bytes(*it, u8_it);
     if (!result_it) {
       return tl::make_unexpected(std::move(result_it.error()));
     }
-    result = result_it.value();
+    u8_it = result_it.value();
     ++it;
   }
-  return result;
+  return u8_it;
 }
 
+/// Copies characters from a UTF-8 encoded string to a UTF-32
+/// encoded string.
+///
+/// \tparam OctetIterator
+/// \tparam U32BitIterator
+/// \param first The first iterator in the octet sequence
+/// \param last The last iterator in the octet sequence
+/// \param u32_first The first iterator in the UTf-32 encoded
+///        sequence
+/// \return An expected iterator to the last eleent in the new
+///         UTF-32 sequence, or an error.
 template <typename OctetIterator, typename U32BitIterator>
 tl::expected<U32BitIterator, unicode_errc> copy_u8u32(
     OctetIterator first,
     OctetIterator last,
-    U32BitIterator result) {
+    U32BitIterator u32_first) {
   auto it = first;
+  auto u32_it = u32_first;
   while (it != last) {
     if (std::distance(it, last) < sequence_length(*it)) {
       return tl::make_unexpected(unicode_errc::overflow);
@@ -458,9 +582,9 @@ tl::expected<U32BitIterator, unicode_errc> copy_u8u32(
       return tl::make_unexpected(std::move(state.error()));
     }
     it = state.value().it;
-    (*result)++ = state.value().value;
+    (*u32_it)++ = state.value().value;
   }
-  return result;
+  return u32_it;
 }
 
 /// Converts a `std::string` (assuming UTF-8) string to UTF-16
