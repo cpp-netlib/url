@@ -102,7 +102,7 @@ constexpr bool is_valid_code_point(char32_t code_point) {
 /// Returns the size of the sequnce given the lead octet value.
 /// \param lead_value
 /// \return 1, 2, 3 or 4
-constexpr std::size_t sequence_length(char lead_value) {
+constexpr long sequence_length(char lead_value) {
   auto lead = mask8(lead_value);
   if (lead < 0x80) {
     return 1;
@@ -122,7 +122,7 @@ constexpr std::size_t sequence_length(char lead_value) {
 /// \return
 constexpr bool is_overlong_sequence(
     char32_t code_point,
-    std::size_t length) {
+    long length) {
   bool result = false;
   result &= (code_point < 0x80) && (length != 1);
   result &= (code_point < 0x800) && (length != 2);
@@ -508,7 +508,7 @@ tl::expected<U16BitIterator, unicode_errc> copy_u8u16(
       return tl::make_unexpected(unicode_errc::overflow);
     }
 
-    auto state = next(it);
+    auto state = unicode::next(it);
     if (!state) {
       return tl::make_unexpected(std::move(state.error()));
     }
@@ -577,7 +577,7 @@ tl::expected<U32BitIterator, unicode_errc> copy_u8u32(
       return tl::make_unexpected(unicode_errc::overflow);
     }
 
-    auto state = next(it);
+    auto state = unicode::next(it);
     if (!state) {
       return tl::make_unexpected(std::move(state.error()));
     }
