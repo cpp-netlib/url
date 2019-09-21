@@ -23,6 +23,7 @@ set(
         punycode_tests
         domain_tests
         unicode_tests
+        unicode_range_tests
     )
 
 if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)

@@ -11,6 +11,9 @@
 #include <string_view>
 #include <system_error>
 #include <tl/expected.hpp>
+#include <range/v3/distance.hpp>
+#include <range/v3/view_facade.hpp>
+//#include <range/v3/view_interface.hpp>
 #include <skyr/unicode/constants.hpp>
 
 namespace skyr {
@@ -115,6 +118,10 @@ constexpr long sequence_length(char lead_value) {
   }
   return 0;
 }
+
+//constexpr long sequence_length(char16_t lead_value) {
+//  return lead_value > 0xffff? 2 : 1;
+//}
 
 ///
 /// \param code_point
@@ -392,12 +399,12 @@ tl::expected<OctetIterator, unicode_errc> append_bytes(
 /// \return The updated iterator or an error if the sequence is
 ///         invalid
 template <typename OctetIterator>
-tl::expected<void, unicode_errc> advance(
+tl::expected<OctetIterator, unicode_errc> advance(
     OctetIterator& it,
     std::size_t n,
     OctetIterator last) {
   while (n != 0) {
-    if (std::distance(it, last) < sequence_length(*it)) {
+    if (ranges::distance(it, last) < sequence_length(*it)) {
       return tl::make_unexpected(unicode_errc::overflow);
     }
 
@@ -409,7 +416,7 @@ tl::expected<void, unicode_errc> advance(
     --n;
   }
 
-  return {};
+  return it;
 }
 
 /// Counts the number of code points in the octet sequence.

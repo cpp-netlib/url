@@ -30,6 +30,9 @@ set(Skyr_SRCS
         ${Skyr_SOURCE_DIR}/include/skyr/config.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/unicode.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/octet_range.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/u16_range.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/u32_range.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encode.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/domain.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/url_record.hpp
@@ -45,7 +48,7 @@ if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)
 endif()
 
 add_library(skyr-url ${Skyr_SRCS})
-target_link_libraries(skyr-url tl::expected)
+target_link_libraries(skyr-url tl::expected meta range-v3)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     if (NOT Skyr_DISABLE_LIBCXX)
         target_link_libraries(skyr-url "c++")

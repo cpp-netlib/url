@@ -3,7 +3,7 @@ AccessModifierOffset: -1
 ConstructorInitializerIndentWidth: 4
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortIfStatementsOnASingleLine: WithoutElse
+#AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakTemplateDeclarations: Yes
 AlwaysBreakBeforeMultilineStrings: true
@@ -31,4 +31,3 @@ BreakBeforeBraces: Attach
 SpacesInParentheses: false
 SpaceInEmptyParentheses: false
 SpacesInCStyleCastParentheses: false
-
