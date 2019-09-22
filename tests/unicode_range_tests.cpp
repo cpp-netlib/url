@@ -23,8 +23,9 @@ TEST_CASE("code point tests") {
     REQUIRE(cp);
     CHECK(std::string("\xf0\x9f\x92\xa9") == std::string(begin(cp.value()), end(cp.value())));
     CHECK(U'\x1f4a9' == u32(cp.value()));
-//    CHECK(u'\xd83d' == std::get<0>(u16(cp.value())));
-//    CHECK(u'\xdca9' == std::get<1>(u16(cp.value())));
+    CHECK(u16(cp.value()).is_surrogate_pair());
+    CHECK(u'\xd83d' == u16(cp.value()).lead_value());
+    CHECK(u'\xdca9' == u16(cp.value()).trail_value());
   }
 
   SECTION("u8 code point 02") {
@@ -177,12 +178,12 @@ TEST_CASE("u8 range") {
     CHECK(!ranges::empty(view));
   }
 
-//  SECTION("pipe syntax with u16 string") {
-//    auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-//    auto view = bytes | skyr::unicode::view::u16;
-//    auto u16 = std::u16string(begin(view), end(view));
-//    CHECK(u"\xD83C\xDFF3\xFE0F\x200D\xD83C\xDF08" == u16);
-//  }
+  SECTION("pipe syntax with u16 string") {
+    auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    auto u16 = skyr::unicode::u16string(bytes | skyr::unicode::view::u16);
+    REQUIRE(u16);
+    CHECK(u"\xD83C\xDFF3\xFE0F\x200D\xD83C\xDF08" == u16.value());
+  }
 
   SECTION("pipe syntax with u32 string") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");

@@ -63,17 +63,24 @@ inline u16_code_point_t u16_code_point(char32_t code_point) {
 }
 
 ///
+/// \tparam OctetIterator
+/// \param code_point
+/// \return
+template <typename OctetIterator>
+inline u16_code_point_t u16(code_point_octet_t<OctetIterator> code_point) {
+  return u16_code_point(u32(code_point));
+}
+
+///
 template <typename OctetIterator>
 class u16_range_iterator {
-
-  using iterator_type = u32_range_iterator<OctetIterator>;
 
  public:
 
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = u16_code_point_t;
+  using value_type = tl::expected<u16_code_point_t, unicode_errc>;
   ///
   using reference = value_type;
   ///
@@ -86,8 +93,8 @@ class u16_range_iterator {
   ///
   /// \param it
   explicit constexpr u16_range_iterator(
-      octet_range_iterator<OctetIterator> it,
-      octet_range_iterator<OctetIterator> last)
+      u32_range_iterator<OctetIterator> it,
+      u32_range_iterator<OctetIterator> last)
       : it_(it)
       , last_(last) {}
   ///
@@ -104,24 +111,27 @@ class u16_range_iterator {
   ///
   /// \return
   u16_range_iterator operator ++ (int) {
-    assert(it_);
     auto result = *this;
-    ++it_.value();
+    ++it_;
     return result;
   }
 
   ///
   /// \return
   u16_range_iterator &operator ++ () {
-    assert(it_);
-    ++it_.value();
+    ++it_;
     return *this;
   }
 
   ///
   /// \return
   reference operator * () const noexcept {
-    return u16_code_point(*it_.value());
+    auto code_point = *it_;
+    return
+    code_point
+    .and_then([] (auto value) -> value_type {
+      return u16_code_point(value);
+    });
   }
 
   ///
@@ -140,7 +150,7 @@ class u16_range_iterator {
 
  private:
 
-  std::optional<octet_range_iterator<OctetIterator>> it_, last_;
+  u32_range_iterator<OctetIterator> it_, last_;
 
 };
 
@@ -156,7 +166,7 @@ class view_u16_range
  public:
 
   ///
-  using value_type = char16_t;
+  using value_type = tl::expected<u16_code_point_t, unicode_errc>;
   ///
   using const_reference = value_type;
   ///
@@ -214,7 +224,7 @@ class view_u16_range
 
  private:
 
-  view_octet_range<OctetRange> range_;
+  view_u32_range<OctetRange> range_;
 
 };
 
@@ -244,6 +254,23 @@ namespace view {
 ///
 static constexpr u16_range_fn u16;
 }  // namespace view
+
+
+template <typename U16Range>
+tl::expected<std::u16string, unicode_errc> u16string(U16Range &&range) {
+  auto result = std::u16string();
+  result.reserve(ranges::size(range));
+  for (auto &&code_point : range) {
+    if (!code_point) {
+      return tl::make_unexpected(code_point.error());
+    }
+    result.push_back(code_point.value().lead_value());
+    if (code_point.value().is_surrogate_pair()) {
+      result.push_back(code_point.value().trail_value());
+    }
+  }
+  return result;
+}
 }  // namespace skyr::unicode
 
 #endif //SKYR_U16_RANGE_HPP

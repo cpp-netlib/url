@@ -273,15 +273,6 @@ class octet_range_iterator {
   /// \return
   constexpr reference operator * () const noexcept {
     return valid_code_point(*it_);
-//    using result_type = tl::expected<code_point_octet_t<OctetIterator>, unicode_errc>;
-//
-//    return
-//    valid_code_point(*it_)
-//    .or_else([=] (auto) -> result_type {
-//      auto first = std::begin(*it_);
-//      return code_point_octet(ranges::iterator_range(first, first));
-//    })
-//    .value();
   }
 
   ///

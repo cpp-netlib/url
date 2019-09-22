@@ -80,9 +80,6 @@ class u32_range_iterator {
     return (*it_)
     .and_then([] (auto code_point) -> value_type {
       return u32(code_point);
-    })
-    .or_else([] (auto &&error) -> value_type {
-      return tl::make_unexpected(error);
     });
   }
 
