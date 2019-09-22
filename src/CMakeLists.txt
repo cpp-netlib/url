@@ -4,6 +4,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 set(Skyr_SRCS
+		unicode/errors.cpp
 		unicode/unicode.cpp
 		url/url_parser_context.hpp
 		url/url_parser_context.cpp
@@ -29,8 +30,10 @@ set(Skyr_SRCS
         ${Skyr_SOURCE_DIR}/include/skyr/url/details/to_bytes.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/config.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/errors.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/core.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/unicode.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/octet_range.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/u8_range.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/u16_range.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/u32_range.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encode.hpp

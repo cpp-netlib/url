@@ -11,8 +11,9 @@
 #include <optional>
 #include <tl/expected.hpp>
 #include <range/v3/view.hpp>
-#include <skyr/unicode/unicode.hpp>
-#include <skyr/unicode/range/octet_range.hpp>
+#include <skyr/unicode/errors.hpp>
+#include <skyr/unicode/core.hpp>
+#include <skyr/unicode/range/u8_range.hpp>
 
 namespace skyr::unicode {
 ///
@@ -20,7 +21,7 @@ namespace skyr::unicode {
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-inline char32_t u32(code_point_octet_t<OctetIterator> code_point) {
+inline char32_t u32(u8_code_point_t<OctetIterator> code_point) {
   auto state = find_code_point(std::begin(code_point));
   return state ? state.value().value : U'\x0000';
 }
@@ -34,7 +35,7 @@ class u32_range_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = tl::expected<char32_t, unicode_errc>;
+  using value_type = tl::expected<char32_t, std::error_code>;
   ///
   using reference = value_type;
   ///
@@ -46,7 +47,7 @@ class u32_range_iterator {
   constexpr u32_range_iterator() = default;
   ///
   /// \param it
-  explicit constexpr u32_range_iterator(octet_range_iterator<OctetIterator> it)
+  explicit constexpr u32_range_iterator(u8_range_iterator<OctetIterator> it)
       : it_(it) {}
   ///
   constexpr u32_range_iterator(const u32_range_iterator&) = default;
@@ -99,7 +100,7 @@ class u32_range_iterator {
 
  private:
 
-  octet_range_iterator<OctetIterator> it_;
+  u8_range_iterator<OctetIterator> it_;
 
 };
 
@@ -173,7 +174,7 @@ class view_u32_range
 
  private:
 
-  view_octet_range<OctetRange> range_;
+  view_u8_range<OctetRange> range_;
 
 };
 
@@ -205,7 +206,7 @@ static constexpr u32_range_fn u32;
 }  // namespace view
 
 template <typename U32Range>
-tl::expected<std::u32string, unicode_errc> u32string(U32Range &&range) {
+tl::expected<std::u32string, std::error_code> u32string(U32Range &&range) {
   auto result = std::u32string();
   result.reserve(ranges::size(range));
   for (auto &&code_point : range) {

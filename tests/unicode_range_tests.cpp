@@ -8,7 +8,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include <range/v3/empty.hpp>
-#include <skyr/unicode/range/octet_range.hpp>
+#include <skyr/unicode/range/u8_range.hpp>
 #include <skyr/unicode/range/u16_range.hpp>
 #include <skyr/unicode/range/u32_range.hpp>
 
@@ -19,7 +19,7 @@ TEST_CASE("code point tests") {
 
   SECTION("u8 code point 01") {
     auto bytes = std::string("\xf0\x9f\x92\xa9");
-    auto cp = skyr::unicode::code_point_octets(bytes);
+    auto cp = skyr::unicode::u8_code_point(bytes);
     REQUIRE(cp);
     CHECK(std::string("\xf0\x9f\x92\xa9") == std::string(begin(cp.value()), end(cp.value())));
     CHECK(U'\x1f4a9' == u32(cp.value()));
@@ -30,13 +30,13 @@ TEST_CASE("code point tests") {
 
   SECTION("u8 code point 02") {
     auto bytes = std::string("\x9f\x92\xa9");
-    auto cp = skyr::unicode::code_point_octets(bytes);
+    auto cp = skyr::unicode::u8_code_point(bytes);
     REQUIRE(!cp);
   }
 }
 
 TEST_CASE("octet range iterator") {
-  using iterator_type = skyr::unicode::octet_range_iterator<std::string::const_iterator>;
+  using iterator_type = skyr::unicode::u8_range_iterator<std::string::const_iterator>;
 
   SECTION("construction") {
     auto bytes = std::string("\xf0\x9f\x92\xa9");
@@ -131,24 +131,24 @@ TEST_CASE("u8 range") {
 
   SECTION("construction") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto view = skyr::unicode::view_octet_range(bytes);
+    auto view = skyr::unicode::view_u8_range(bytes);
     CHECK(begin(view) != end(view));
   }
 
   SECTION("empty") {
-    auto view = skyr::unicode::view_octet_range<std::string>();
+    auto view = skyr::unicode::view_u8_range<std::string>();
     CHECK(begin(view) == end(view));
   }
 
   SECTION("count") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto view = skyr::unicode::view_octet_range(bytes);
+    auto view = skyr::unicode::view_u8_range(bytes);
     CHECK(4 == ranges::size(view));
     CHECK(!ranges::empty(view));
   }
 
   SECTION("empty count") {
-    auto view = skyr::unicode::view_octet_range<std::string>();
+    auto view = skyr::unicode::view_u8_range<std::string>();
     CHECK(0 == ranges::size(view));
     CHECK(ranges::empty(view));
   }
@@ -172,7 +172,7 @@ TEST_CASE("u8 range") {
     auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
     auto view = bytes | skyr::unicode::view::u8;
     auto it = std::begin(view), last = std::end(view);
-    *it++;
+    CHECK(!*it++);
     CHECK(it == last);
     CHECK(1 == ranges::size(view));
     CHECK(!ranges::empty(view));
@@ -190,6 +190,12 @@ TEST_CASE("u8 range") {
     auto u32 = skyr::unicode::u32string(bytes | skyr::unicode::view::u32);
     REQUIRE(u32);
     CHECK(U"\x1F3F3\xFE0F\x200D\x1F308" == u32.value());
+  }
+
+  SECTION("pipe syntax with u16 string invalid") {
+    auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    auto u16 = skyr::unicode::u16string(bytes | skyr::unicode::view::u16);
+    CHECK(!u16);
   }
 
   SECTION("pipe syntax with u32 string invalid") {

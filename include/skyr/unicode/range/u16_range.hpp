@@ -11,8 +11,9 @@
 #include <optional>
 #include <tl/expected.hpp>
 #include <range/v3/view.hpp>
-#include <skyr/unicode/unicode.hpp>
-#include <skyr/unicode/range/octet_range.hpp>
+#include <skyr/unicode/errors.hpp>
+#include <skyr/unicode/core.hpp>
+#include <skyr/unicode/range/u8_range.hpp>
 #include <skyr/unicode/range/u32_range.hpp>
 
 namespace skyr::unicode {
@@ -58,6 +59,9 @@ class u16_code_point_t {
 
 };
 
+///
+/// \param code_point
+/// \return
 inline u16_code_point_t u16_code_point(char32_t code_point) {
   return u16_code_point_t(code_point);
 }
@@ -67,11 +71,12 @@ inline u16_code_point_t u16_code_point(char32_t code_point) {
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-inline u16_code_point_t u16(code_point_octet_t<OctetIterator> code_point) {
+inline u16_code_point_t u16(u8_code_point_t<OctetIterator> code_point) {
   return u16_code_point(u32(code_point));
 }
 
 ///
+/// \tparam OctetIterator
 template <typename OctetIterator>
 class u16_range_iterator {
 
@@ -80,7 +85,7 @@ class u16_range_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = tl::expected<u16_code_point_t, unicode_errc>;
+  using value_type = tl::expected<u16_code_point_t, std::error_code>;
   ///
   using reference = value_type;
   ///
@@ -166,7 +171,7 @@ class view_u16_range
  public:
 
   ///
-  using value_type = tl::expected<u16_code_point_t, unicode_errc>;
+  using value_type = tl::expected<u16_code_point_t, std::error_code>;
   ///
   using const_reference = value_type;
   ///
@@ -255,10 +260,25 @@ namespace view {
 static constexpr u16_range_fn u16;
 }  // namespace view
 
+template <typename U16Range>
+tl::expected<std::u16string, std::error_code> u16string(U16Range &&range) {
+  auto result = std::u16string();
+  result.reserve(ranges::size(range));
+  for (auto &&code_point : range) {
+    if (!code_point) {
+      return tl::make_unexpected(code_point.error());
+    }
+    result.push_back(code_point.value().lead_value());
+    if (code_point.value().is_surrogate_pair()) {
+      result.push_back(code_point.value().trail_value());
+    }
+  }
+  return result;
+}
 
 template <typename U16Range>
-tl::expected<std::u16string, unicode_errc> u16string(U16Range &&range) {
-  auto result = std::u16string();
+tl::expected<std::wstring, std::error_code> wstring(U16Range &&range) {
+  auto result = std::wstring();
   result.reserve(ranges::size(range));
   for (auto &&code_point : range) {
     if (!code_point) {
