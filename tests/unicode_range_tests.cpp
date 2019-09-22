@@ -19,7 +19,7 @@ TEST_CASE("code point tests") {
 
   SECTION("u8 code point 01") {
     auto bytes = std::string("\xf0\x9f\x92\xa9");
-    auto cp = skyr::unicode::code_point_octet(bytes);
+    auto cp = skyr::unicode::code_point_octets(bytes);
     REQUIRE(cp);
     CHECK(std::string("\xf0\x9f\x92\xa9") == std::string(begin(cp.value()), end(cp.value())));
     CHECK(U'\x1f4a9' == u32(cp.value()));
@@ -29,7 +29,7 @@ TEST_CASE("code point tests") {
 
   SECTION("u8 code point 02") {
     auto bytes = std::string("\x9f\x92\xa9");
-    auto cp = skyr::unicode::code_point_octet(bytes);
+    auto cp = skyr::unicode::code_point_octets(bytes);
     REQUIRE(!cp);
   }
 }
@@ -39,45 +39,49 @@ TEST_CASE("octet range iterator") {
 
   SECTION("construction") {
     auto bytes = std::string("\xf0\x9f\x92\xa9");
-    auto it = iterator_type(std::begin(bytes));
-    CHECK(U'\x1F4A9' == u32(*it));
+    auto it = iterator_type(std::begin(bytes), std::end(bytes));
+    auto code_point = *it;
+    REQUIRE(code_point);
+    CHECK(U'\x1F4A9' == u32(code_point.value()));
   }
 
   SECTION("increment") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto it = iterator_type(std::begin(bytes));
-    CHECK(U'\x1F3F3' == u32(*it));
+    auto it = iterator_type(std::begin(bytes), std::end(bytes));
+    auto code_point = *it;
+    REQUIRE(code_point);
+    CHECK(U'\x1F3F3' == u32(code_point.value()));
     ++it;
-    CHECK(U'\xFE0F' == u32(*it));
+    code_point = *it;
+    REQUIRE(code_point);
+    CHECK(U'\xFE0F' == u32(code_point.value()));
   }
 
   SECTION("increment invalid") {
     auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto it = iterator_type(std::begin(bytes));
-    CHECK(!is_valid(*it));
-    ++it;
-    CHECK(iterator_type() == it);
+    auto it = iterator_type(std::begin(bytes), std::end(bytes));
+    CHECK(!*it);
   }
 
   SECTION("equality") {
     auto bytes = std::string("\xf0\x9f\x92\xa9");
-    auto it = iterator_type(std::begin(bytes));
-    auto last = iterator_type(std::end(bytes));
+    auto it = iterator_type(std::begin(bytes), std::end(bytes));
+    auto last = iterator_type();
     ++it;
     CHECK(last == it);
   }
 
   SECTION("inequality") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto it = iterator_type(std::begin(bytes));
-    auto last = iterator_type(std::end(bytes));
+    auto it = iterator_type(std::begin(bytes), std::end(bytes));
+    auto last = iterator_type();
     CHECK(last != it);
   }
 
   SECTION("end of sequence") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto it = iterator_type(std::begin(bytes));
-    auto last = iterator_type(std::end(bytes));
+    auto it = iterator_type(std::begin(bytes), std::end(bytes));
+    auto last = iterator_type();
     std::advance(it, 4);
     CHECK(last == it);
   }
@@ -85,18 +89,38 @@ TEST_CASE("octet range iterator") {
   SECTION("two characters")
   {
     auto bytes = std::string("\xe6\x97\xa5\xd1\x88");
-    auto it = iterator_type(std::begin(bytes));
-    CHECK(U'\x65e5' == u32(*it++));
-    CHECK(U'\x448' == u32(*it++));
+    auto it = iterator_type(std::begin(bytes), std::end(bytes));
+    {
+      auto code_point = *it++;
+      REQUIRE(code_point);
+      CHECK(U'\x65e5' == u32(code_point.value()));
+    }
+    {
+      auto code_point = *it++;
+      REQUIRE(code_point);
+      CHECK(U'\x448' == u32(code_point.value()));
+    }
   }
 
   SECTION("three characters")
   {
     auto bytes = std::string("\xf0\x90\x8d\x86\xe6\x97\xa5\xd1\x88");
-    auto it = iterator_type(std::begin(bytes));
-    CHECK(U'\x10346' == u32(*it++));
-    CHECK(U'\x65e5' == u32(*it++));
-    CHECK(U'\x448' == u32(*it++));
+    auto it = iterator_type(std::begin(bytes), std::end(bytes));
+    {
+      auto code_point = *it++;
+      REQUIRE(code_point);
+      CHECK(U'\x10346' == u32(code_point.value()));
+    }
+    {
+      auto code_point = *it++;
+      REQUIRE(code_point);
+      CHECK(U'\x65e5' == u32(code_point.value()));
+    }
+    {
+      auto code_point = *it++;
+      REQUIRE(code_point);
+      CHECK(U'\x448' == u32(code_point.value()));
+    }
   }
 }
 
@@ -143,7 +167,15 @@ TEST_CASE("u8 range") {
     CHECK(!ranges::empty(view));
   }
 
-//  0xD83C 0xDFF3, 0xFE0F, 0x200D, 0xD83C 0xDF08
+  SECTION("pipe syntax invalid") {
+    auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    auto view = bytes | skyr::unicode::view::u8;
+    auto it = std::begin(view), last = std::end(view);
+    *it++;
+    CHECK(it == last);
+    CHECK(1 == ranges::size(view));
+    CHECK(!ranges::empty(view));
+  }
 
 //  SECTION("pipe syntax with u16 string") {
 //    auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
@@ -154,15 +186,14 @@ TEST_CASE("u8 range") {
 
   SECTION("pipe syntax with u32 string") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto view = bytes | skyr::unicode::view::u32;
-    auto u32 = std::u32string(begin(view), end(view));
-    CHECK(U"\x1F3F3\xFE0F\x200D\x1F308" == u32);
+    auto u32 = skyr::unicode::u32string(bytes | skyr::unicode::view::u32);
+    REQUIRE(u32);
+    CHECK(U"\x1F3F3\xFE0F\x200D\x1F308" == u32.value());
   }
-//
-//  SECTION("pipe syntax with u32 string invalid") {
-//    auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-//    auto view = bytes | skyr::unicode::view::u32;
-//    auto u32 = std::u32string(begin(view), end(view));
-//    CHECK(U"\x1F3F3\xFE0F\x200D\x1F308" == u32);
-//  }
+
+  SECTION("pipe syntax with u32 string invalid") {
+    auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    auto u32 = skyr::unicode::u32string(bytes | skyr::unicode::view::u32);
+    CHECK(!u32);
+  }
 }

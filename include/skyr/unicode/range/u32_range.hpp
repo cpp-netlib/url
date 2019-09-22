@@ -21,9 +21,8 @@ namespace skyr::unicode {
 /// \return
 template <typename OctetIterator>
 inline char32_t u32(code_point_octet_t<OctetIterator> code_point) {
-  using std::begin;
-  auto state = find_code_point(begin(code_point));
-  return state.value().value;
+  auto state = find_code_point(std::begin(code_point));
+  return state ? state.value().value : U'\x0000';
 }
 
 ///
@@ -35,7 +34,7 @@ class u32_range_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = char32_t;
+  using value_type = tl::expected<char32_t, unicode_errc>;
   ///
   using reference = value_type;
   ///
@@ -47,7 +46,7 @@ class u32_range_iterator {
   constexpr u32_range_iterator() = default;
   ///
   /// \param it
-  explicit constexpr u32_range_iterator(unchecked_octet_range_iterator<OctetIterator> it)
+  explicit constexpr u32_range_iterator(octet_range_iterator<OctetIterator> it)
       : it_(it) {}
   ///
   constexpr u32_range_iterator(const u32_range_iterator&) = default;
@@ -78,7 +77,13 @@ class u32_range_iterator {
   ///
   /// \return
   reference operator * () const noexcept {
-    return u32(*it_);
+    return (*it_)
+    .and_then([] (auto code_point) -> value_type {
+      return u32(code_point);
+    })
+    .or_else([] (auto &&error) -> value_type {
+      return tl::make_unexpected(error);
+    });
   }
 
   ///
@@ -97,7 +102,7 @@ class u32_range_iterator {
 
  private:
 
-  unchecked_octet_range_iterator<OctetIterator> it_;
+  octet_range_iterator<OctetIterator> it_;
 
 };
 
@@ -171,7 +176,7 @@ class view_u32_range
 
  private:
 
-  view_unchecked_octet_range<OctetRange> range_;
+  view_octet_range<OctetRange> range_;
 
 };
 
@@ -201,6 +206,19 @@ namespace view {
 ///
 static constexpr u32_range_fn u32;
 }  // namespace view
+
+template <typename U32Range>
+tl::expected<std::u32string, unicode_errc> u32string(U32Range &&range) {
+  auto result = std::u32string();
+  result.reserve(ranges::size(range));
+  for (auto &&code_point : range) {
+    if (!code_point) {
+      return tl::make_unexpected(code_point.error());
+    }
+    result.push_back(code_point.value());
+  }
+  return result;
+}
 }  // namespace skyr::unicode
 
 #endif //SKYR_U32_RANGE_HPP

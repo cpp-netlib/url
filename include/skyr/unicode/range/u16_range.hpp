@@ -16,102 +16,64 @@
 #include <skyr/unicode/range/u32_range.hpp>
 
 namespace skyr::unicode {
-template <typename U16Iterator>
 class u16_code_point_t {
 
  public:
 
   ///
-  using const_iterator = U16Iterator;
-  ///
-  using iterator = const_iterator;
-  ///
-  using value_type = char16_t;
-  ///
-  using const_reference = value_type;
-  ///
-  using reference = const_reference;
-  ///
-  using size_type = std::size_t;
-
-  ///
   /// \param first
-  explicit constexpr u16_code_point_t(U16Iterator first)
-  : first(first)
-  , last(first + (*first > 0xffff? 2 : 1)) {}
+  explicit constexpr u16_code_point_t(char32_t code_point)
+  : code_point_(code_point) {}
 
   ///
   constexpr u16_code_point_t(const u16_code_point_t &) = default;
   ///
   constexpr u16_code_point_t(u16_code_point_t &&) noexcept = default;
   ///
-  constexpr u16_code_point_t &operator=(const u16_code_point_t &) = default;
+  u16_code_point_t &operator=(const u16_code_point_t &) = default;
   ///
-  constexpr u16_code_point_t &operator=(u16_code_point_t &&) noexcept = default;
+  u16_code_point_t &operator=(u16_code_point_t &&) noexcept = default;
   ///
   ~u16_code_point_t() = default;
 
-  ///
-  /// \return
-  [[nodiscard]] constexpr const_iterator begin() const noexcept {
-    return first;
+  [[nodiscard]] uint16_t lead_value() const {
+    return is_surrogate_pair()?
+    static_cast<char16_t>((code_point_ >> 10U) + constants::surrogates::lead_offset) :
+    static_cast<char16_t>(code_point_);
   }
 
-  ///
-  /// \return
-  [[nodiscard]] constexpr const_iterator end() const noexcept {
-    return last;
+  [[nodiscard]] uint16_t trail_value() const {
+    return is_surrogate_pair()?
+    static_cast<char16_t>((code_point_ & 0x3ffU) + constants::surrogates::trail_min) :
+    0;
   }
 
-  ///
-  /// \return
-  [[nodiscard]] constexpr auto cbegin() const noexcept {
-    return begin();
-  }
-
-  ///
-  /// \return
-  [[nodiscard]] constexpr auto cend() const noexcept {
-    return end();
-  }
-
-  [[nodiscard]] constexpr auto size() const noexcept -> size_type {
-    return *first > 0xffff? 2 : 1;
+  [[nodiscard]] constexpr bool is_surrogate_pair() const noexcept {
+    return code_point_ > 0xffffU;
   }
 
  private:
 
-  U16Iterator first, last;
+  char32_t code_point_;
 
 };
 
-//template <typename OctetIterator>
-//inline std::tuple<char16_t, char16_t> u16(u16_code_point_t<OctetIterator> code_point) {
-//  auto state = find_code_point(begin(code_point));
-//  if (state.value().value > 0xffff) {  // make a surrogate pair
-//    return {
-//      static_cast<char16_t>((state.value().value >> 10) +
-//      constants::surrogates::lead_offset),
-//      static_cast<char16_t>((state.value().value & 0x3ff) +
-//      constants::surrogates::trail_min)
-//    };
-//  } else {
-//    return {
-//      static_cast<char16_t>(state.value().value),
-//      0
-//    };
-//  }
-//}
+inline u16_code_point_t u16_code_point(char32_t code_point) {
+  return u16_code_point_t(code_point);
+}
 
 ///
 template <typename OctetIterator>
 class u16_range_iterator {
+
+  using iterator_type = u32_range_iterator<OctetIterator>;
+
  public:
 
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = char16_t;
+  using value_type = u16_code_point_t;
   ///
   using reference = value_type;
   ///
@@ -123,8 +85,11 @@ class u16_range_iterator {
   u16_range_iterator() = default;
   ///
   /// \param it
-  explicit constexpr u16_range_iterator(unchecked_octet_range_iterator<OctetIterator> it)
-      : it_(it) {}
+  explicit constexpr u16_range_iterator(
+      octet_range_iterator<OctetIterator> it,
+      octet_range_iterator<OctetIterator> last)
+      : it_(it)
+      , last_(last) {}
   ///
   constexpr u16_range_iterator(const u16_range_iterator&) = default;
   ///
@@ -139,29 +104,24 @@ class u16_range_iterator {
   ///
   /// \return
   u16_range_iterator operator ++ (int) {
+    assert(it_);
     auto result = *this;
-    ++it_;
-//    if (u32(*it_) > 0xffff) {
-//      ++it_;
-//    }
+    ++it_.value();
     return result;
   }
 
   ///
   /// \return
   u16_range_iterator &operator ++ () {
-    ++it_;
-//    if (u32(*it_) > 0xffff) {
-//      ++it_;
-//    }
+    assert(it_);
+    ++it_.value();
     return *this;
   }
 
   ///
   /// \return
   reference operator * () const noexcept {
-//    return u16(*it_);
-    return 0;
+    return u16_code_point(*it_.value());
   }
 
   ///
@@ -180,7 +140,7 @@ class u16_range_iterator {
 
  private:
 
-  unchecked_octet_range_iterator<OctetIterator> it_;
+  std::optional<octet_range_iterator<OctetIterator>> it_, last_;
 
 };
 
@@ -219,13 +179,13 @@ class view_u16_range
   ///
   /// \return
   [[nodiscard]] constexpr const_iterator begin() const noexcept {
-    return u16_range_iterator(range_.begin());
+    return iterator_type(std::begin(range_), std::end(range_));
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr const_iterator end() const noexcept {
-    return u16_range_iterator(range_.end());
+    return iterator_type();
   }
 
   ///
@@ -254,7 +214,7 @@ class view_u16_range
 
  private:
 
-  view_unchecked_octet_range<OctetRange> range_;
+  view_octet_range<OctetRange> range_;
 
 };
 

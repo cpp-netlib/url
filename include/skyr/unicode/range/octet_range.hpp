@@ -98,7 +98,7 @@ class code_point_octet_t {
 /// \param range
 /// \return
 template <typename OctetRange>
-inline tl::expected<code_point_octet_t<typename OctetRange::const_iterator>, unicode_errc> code_point_octet(
+inline tl::expected<code_point_octet_t<typename OctetRange::const_iterator>, unicode_errc> code_point_octets(
     const OctetRange &range) {
   auto first = std::begin(range), last = std::end(range);
   if (std::distance(first, last) > sequence_length(*first)) {
@@ -134,7 +134,7 @@ inline tl::expected<code_point_octet_t<typename OctetRange::const_iterator>, uni
   };
 
   return
-  code_point_octet(range)
+      code_point_octets(range)
   .and_then(check_code_point);
 }
 
@@ -228,11 +228,11 @@ class octet_range_iterator {
   ///
   using iterator_category = typename iterator_type::iterator_category;
   ///
-  using value_type = typename iterator_type::value_type;
+  using value_type = tl::expected<typename iterator_type::value_type, unicode_errc>;
   ///
-  using reference = typename iterator_type::reference;
+  using reference = value_type;
   ///
-  using pointer = typename iterator_type::pointer;
+  using pointer = typename std::add_pointer<value_type>::type;
   ///
   using difference_type = typename iterator_type::difference_type;
 
@@ -240,8 +240,9 @@ class octet_range_iterator {
   constexpr octet_range_iterator() = default;
   ///
   /// \param it
-  explicit constexpr octet_range_iterator(OctetIterator it)
-      : it_(it) {}
+  explicit constexpr octet_range_iterator(OctetIterator it, OctetIterator last)
+      : it_(it)
+      , last_(last) {}
   ///
   constexpr octet_range_iterator(const octet_range_iterator&) = default;
   ///
@@ -271,15 +272,16 @@ class octet_range_iterator {
   ///
   /// \return
   constexpr reference operator * () const noexcept {
-    using result_type = tl::expected<code_point_octet_t<OctetIterator>, unicode_errc>;
-
-    return
-    valid_code_point(*it_)
-    .or_else([=] (auto) -> result_type {
-      auto first = std::begin(*it_);
-      return code_point_octet(ranges::iterator_range(first, first));
-    })
-    .value();
+    return valid_code_point(*it_);
+//    using result_type = tl::expected<code_point_octet_t<OctetIterator>, unicode_errc>;
+//
+//    return
+//    valid_code_point(*it_)
+//    .or_else([=] (auto) -> result_type {
+//      auto first = std::begin(*it_);
+//      return code_point_octet(ranges::iterator_range(first, first));
+//    })
+//    .value();
   }
 
   ///
@@ -299,14 +301,17 @@ class octet_range_iterator {
  private:
 
   void increment() {
-    if (valid_code_point(*it_)) {
+    if (**this) {
       ++it_;
+      if (it_ == last_) {
+        it_ = iterator_type();
+      }
     } else {
       it_ = iterator_type();
     }
   }
 
-  iterator_type it_;
+  iterator_type it_, last_;
 
 };
 
@@ -436,7 +441,7 @@ class view_octet_range
   ///
   /// \return
   [[nodiscard]] constexpr const_iterator end() const noexcept {
-    return impl_? impl_.value().last : iterator_type();
+    return iterator_type();
   }
 
   ///
@@ -469,8 +474,8 @@ class view_octet_range
     constexpr impl(
         octet_iterator_type first,
         octet_iterator_type last)
-        : first(first)
-        , last(last) {}
+        : first(first, last)
+        , last(last, last) {}
     iterator_type first, last;
   };
 

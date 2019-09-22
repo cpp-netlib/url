@@ -13,7 +13,6 @@
 #include <tl/expected.hpp>
 #include <range/v3/distance.hpp>
 #include <range/v3/view_facade.hpp>
-//#include <range/v3/view_interface.hpp>
 #include <skyr/unicode/constants.hpp>
 
 namespace skyr {
@@ -118,10 +117,6 @@ constexpr long sequence_length(char lead_value) {
   }
   return 0;
 }
-
-//constexpr long sequence_length(char16_t lead_value) {
-//  return lead_value > 0xffff? 2 : 1;
-//}
 
 ///
 /// \param code_point
