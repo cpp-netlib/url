@@ -337,22 +337,20 @@ tl::expected<OctetIterator, std::error_code> append_bytes(
     return tl::make_unexpected(make_error_code(unicode_errc::invalid_code_point));
   }
 
-  auto value = static_cast<std::uint32_t>(code_point);
-
-  if (value < 0x80u) { // one octet
-    *(octet_it++) = static_cast<char>(value);
-  } else if (value < 0x800u) {  // two octets
-    *(octet_it++) = static_cast<char>((value >> 6u) | 0xc0u);
-    *(octet_it++) = static_cast<char>((value & 0x3fu) | 0x80u);
-  } else if (value < 0x10000u) {  // three octets
-    *(octet_it++) = static_cast<char>((value >> 12u) | 0xe0u);
-    *(octet_it++) = static_cast<char>(((value >> 6u) & 0x3fu) | 0x80u);
-    *(octet_it++) = static_cast<char>((value & 0x3fu) | 0x80u);
+  if (code_point < 0x80u) { // one octet
+    *(octet_it++) = static_cast<char>(code_point);
+  } else if (code_point < 0x800u) {  // two octets
+    *(octet_it++) = static_cast<char>((code_point >> 6u) | 0xc0u);
+    *(octet_it++) = static_cast<char>((code_point & 0x3fu) | 0x80u);
+  } else if (code_point < 0x10000u) {  // three octets
+    *(octet_it++) = static_cast<char>((code_point >> 12u) | 0xe0u);
+    *(octet_it++) = static_cast<char>(((code_point >> 6u) & 0x3fu) | 0x80u);
+    *(octet_it++) = static_cast<char>((code_point & 0x3fu) | 0x80u);
   } else {  // four octets
-    *(octet_it++) = static_cast<char>((value >> 18u) | 0xf0u);
-    *(octet_it++) = static_cast<char>(((value >> 12u) & 0x3fu) | 0x80u);
-    *(octet_it++) = static_cast<char>(((value >> 6u) & 0x3fu) | 0x80u);
-    *(octet_it++) = static_cast<char>((value & 0x3fu) | 0x80u);
+    *(octet_it++) = static_cast<char>((code_point >> 18u) | 0xf0u);
+    *(octet_it++) = static_cast<char>(((code_point >> 12u) & 0x3fu) | 0x80u);
+    *(octet_it++) = static_cast<char>(((code_point >> 6u) & 0x3fu) | 0x80u);
+    *(octet_it++) = static_cast<char>((code_point & 0x3fu) | 0x80u);
   }
   return octet_it;
 }

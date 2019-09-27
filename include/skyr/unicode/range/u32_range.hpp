@@ -16,15 +16,17 @@
 #include <skyr/unicode/range/u8_range.hpp>
 
 namespace skyr::unicode {
+namespace details {
 ///
 /// \tparam OctetIterator
 /// \param code_point
 /// \return
-template <typename OctetIterator>
+template<typename OctetIterator>
 inline char32_t u32(u8_code_point_t<OctetIterator> code_point) {
   auto state = find_code_point(std::begin(code_point));
   return state ? state.value().value : U'\x0000';
 }
+}  // namespace details
 
 ///
 /// \tparam OctetIterator
@@ -80,7 +82,7 @@ class u32_range_iterator {
   reference operator * () const noexcept {
     return (*it_)
     .and_then([] (auto code_point) -> value_type {
-      return u32(code_point);
+      return details::u32(code_point);
     });
   }
 
@@ -200,9 +202,187 @@ struct u32_range_fn {
 
 };
 
+namespace u32 {
+template<class U32Iterator>
+class byte_iterator {
+
+ public:
+
+  using value_type = tl::expected<char, std::error_code>;
+  using reference = value_type;
+  using difference_type = std::ptrdiff_t;
+
+  byte_iterator() = default;
+
+  byte_iterator(U32Iterator first, U32Iterator last)
+      : it_(first), last_(last) {}
+
+  byte_iterator(const byte_iterator &) = default;
+  byte_iterator(byte_iterator &&) noexcept = default;
+  byte_iterator &operator=(const byte_iterator &) = default;
+  byte_iterator &operator=(byte_iterator &&) noexcept = default;
+  ~byte_iterator() = default;
+
+  byte_iterator &operator++() {
+    increment();
+    return *this;
+  }
+
+  byte_iterator operator++(int) {
+    auto result = *this;
+    increment();
+    return result;
+  }
+
+  reference operator*() {
+    auto code_point = *it_;
+
+    if (!is_valid_code_point(code_point)) {
+      return tl::make_unexpected(make_error_code(unicode_errc::invalid_code_point));
+    }
+
+    if (code_point < 0x80u) {
+      return static_cast<char>(code_point);
+    } else if (code_point < 0x800u) {
+      if (octet_index_ == 0) {
+        return static_cast<char>((code_point >> 6u) | 0xc0u);
+      } else if (octet_index_ == 1) {
+        return static_cast<char>((code_point & 0x3fu) | 0x80u);
+      }
+    } else if (code_point < 0x10000u) {
+      if (octet_index_ == 0) {
+        return static_cast<char>((code_point >> 12u) | 0xe0u);
+      } else if (octet_index_ == 1) {
+        return static_cast<char>(((code_point >> 6u) & 0x3fu) | 0x80u);
+      } else if (octet_index_ == 2) {
+        return static_cast<char>((code_point & 0x3fu) | 0x80u);
+      }
+    } else {
+      if (octet_index_ == 0) {
+        return static_cast<char>((code_point >> 18u) | 0xf0u);
+      } else if (octet_index_ == 1) {
+        return static_cast<char>(((code_point >> 12u) & 0x3fu) | 0x80u);
+      } else if (octet_index_ == 2) {
+        return static_cast<char>(((code_point >> 6u) & 0x3fu) | 0x80u);
+      } else if (octet_index_ == 3) {
+        return static_cast<char>((code_point & 0x3fu) | 0x80u);
+      }
+    }
+    return tl::make_unexpected(make_error_code(unicode_errc::invalid_code_point));
+  }
+
+  constexpr bool operator == (const byte_iterator &other) const noexcept {
+    return (it_ == other.it_) && (octet_index_ == other.octet_index_);
+  }
+
+  constexpr bool operator != (const byte_iterator &other) const noexcept {
+    return !(*this == other);
+  }
+
+ private:
+
+  constexpr auto octet_count(char32_t code_point) {
+    if (code_point < 0x80u) {
+      return 1;
+    } else if (code_point < 0x800u) {
+      return 2;
+    } else if (code_point < 0x10000u) {
+      return 3;
+    } else {
+      return 4;
+    };
+  }
+
+  void increment() {
+    if (**this) {
+      ++octet_index_;
+      if (octet_index_ == octet_count(*it_)) {
+        octet_index_ = 0;
+        ++it_;
+      }
+    }
+    else {
+      it_ = last_;
+    }
+  }
+
+  U32Iterator it_, last_;
+  int octet_index_ = 0;
+
+};
+
+template <class U32Range>
+class view_byte_range {
+
+  using iterator_type = byte_iterator<typename U32Range::const_iterator>;
+
+ public:
+
+  ///
+  using value_type = tl::expected<char, std::error_code>;
+  ///
+  using const_reference = value_type;
+  ///
+  using reference = const_reference;
+  ///
+  using const_iterator = iterator_type;
+  ///
+  using iterator = const_iterator;
+  ///
+  using size_type = std::size_t;
+
+  view_byte_range() = default;
+
+  explicit view_byte_range(
+      const U32Range &range)
+      : first(iterator_type{std::begin(range), std::end(range)})
+      , last(iterator_type{std::end(range), std::end(range)}) {}
+
+  const_iterator begin() const {
+    return first? first.value() : iterator_type();
+  }
+
+  const_iterator end() const {
+    return last? last.value() : iterator_type();
+  }
+
+  bool empty() const noexcept {
+    return begin() == end();
+  }
+
+ private:
+
+  std::optional<iterator_type> first, last;
+
+};
+
+///
+struct byte_range_fn {
+  ///
+  /// \tparam U32Range
+  /// \param range
+  /// \return
+  template <typename U32Range>
+  constexpr auto operator()(U32Range &&range) const {
+    return view_byte_range{std::forward<U32Range>(range)};
+  }
+
+  ///
+  /// \tparam U32Range
+  /// \param range
+  /// \return
+  template <typename U32Range>
+  friend constexpr auto operator|(U32Range &&range, const byte_range_fn&) {
+    return view_byte_range{std::forward<U32Range>(range)};
+  }
+
+};
+}  // namespace u32
+
 namespace view {
 ///
 static constexpr u32_range_fn u32;
+static constexpr u32::byte_range_fn bytes;
 }  // namespace view
 
 template <typename U32Range>
@@ -214,6 +394,18 @@ tl::expected<std::u32string, std::error_code> u32string(U32Range &&range) {
       return tl::make_unexpected(code_point.error());
     }
     result.push_back(code_point.value());
+  }
+  return result;
+}
+
+template <typename OctetRange>
+tl::expected<std::string, std::error_code> bytes(OctetRange &&range) {
+  auto result = std::string();
+  for (auto &&octet : range) {
+    if (!octet) {
+      return tl::make_unexpected(octet.error());
+    }
+    result.push_back(octet.value());
   }
   return result;
 }

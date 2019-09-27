@@ -72,7 +72,7 @@ inline u16_code_point_t u16_code_point(char32_t code_point) {
 /// \return
 template <typename OctetIterator>
 inline u16_code_point_t u16(u8_code_point_t<OctetIterator> code_point) {
-  return u16_code_point(u32(code_point));
+  return u16_code_point(details::u32(code_point));
 }
 
 ///

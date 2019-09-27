@@ -9,6 +9,11 @@
 
 
 namespace skyr::unicode {
+tl::expected<std::wstring, std::error_code> wstring_from_bytes(
+    std::string_view bytes) {
+  return wstring(bytes | view::u16);
+}
+
 tl::expected<std::string, std::error_code> wstring_to_bytes(
     std::wstring_view input) {
   std::string result;

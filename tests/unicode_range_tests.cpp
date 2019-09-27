@@ -22,7 +22,7 @@ TEST_CASE("code point tests") {
     auto cp = skyr::unicode::u8_code_point(bytes);
     REQUIRE(cp);
     CHECK(std::string("\xf0\x9f\x92\xa9") == std::string(begin(cp.value()), end(cp.value())));
-    CHECK(U'\x1f4a9' == u32(cp.value()));
+    CHECK(U'\x1f4a9' == skyr::unicode::details::u32(cp.value()));
     CHECK(u16(cp.value()).is_surrogate_pair());
     CHECK(u'\xd83d' == u16(cp.value()).lead_value());
     CHECK(u'\xdca9' == u16(cp.value()).trail_value());
@@ -43,7 +43,7 @@ TEST_CASE("octet range iterator") {
     auto it = iterator_type(std::begin(bytes), std::end(bytes));
     auto code_point = *it;
     REQUIRE(code_point);
-    CHECK(U'\x1F4A9' == u32(code_point.value()));
+    CHECK(U'\x1F4A9' == skyr::unicode::details::u32(code_point.value()));
   }
 
   SECTION("increment") {
@@ -51,11 +51,11 @@ TEST_CASE("octet range iterator") {
     auto it = iterator_type(std::begin(bytes), std::end(bytes));
     auto code_point = *it;
     REQUIRE(code_point);
-    CHECK(U'\x1F3F3' == u32(code_point.value()));
+    CHECK(U'\x1F3F3' == skyr::unicode::details::u32(code_point.value()));
     ++it;
     code_point = *it;
     REQUIRE(code_point);
-    CHECK(U'\xFE0F' == u32(code_point.value()));
+    CHECK(U'\xFE0F' == skyr::unicode::details::u32(code_point.value()));
   }
 
   SECTION("increment invalid") {
@@ -94,12 +94,12 @@ TEST_CASE("octet range iterator") {
     {
       auto code_point = *it++;
       REQUIRE(code_point);
-      CHECK(U'\x65e5' == u32(code_point.value()));
+      CHECK(U'\x65e5' == skyr::unicode::details::u32(code_point.value()));
     }
     {
       auto code_point = *it++;
       REQUIRE(code_point);
-      CHECK(U'\x448' == u32(code_point.value()));
+      CHECK(U'\x448' == skyr::unicode::details::u32(code_point.value()));
     }
   }
 
@@ -110,17 +110,17 @@ TEST_CASE("octet range iterator") {
     {
       auto code_point = *it++;
       REQUIRE(code_point);
-      CHECK(U'\x10346' == u32(code_point.value()));
+      CHECK(U'\x10346' == skyr::unicode::details::u32(code_point.value()));
     }
     {
       auto code_point = *it++;
       REQUIRE(code_point);
-      CHECK(U'\x65e5' == u32(code_point.value()));
+      CHECK(U'\x65e5' == skyr::unicode::details::u32(code_point.value()));
     }
     {
       auto code_point = *it++;
       REQUIRE(code_point);
-      CHECK(U'\x448' == u32(code_point.value()));
+      CHECK(U'\x448' == skyr::unicode::details::u32(code_point.value()));
     }
   }
 }
@@ -202,5 +202,14 @@ TEST_CASE("u8 range") {
     auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
     auto u32 = skyr::unicode::u32string(bytes | skyr::unicode::view::u32);
     CHECK(!u32);
+  }
+}
+
+TEST_CASE("write bytes") {
+  SECTION("append_bytes") {
+    auto input = std::u32string(U"\x1F3F3\xFE0F\x200D\x1F308");
+    auto bytes = skyr::unicode::bytes(input | skyr::unicode::view::bytes);
+    REQUIRE(bytes);
+    CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }
 }
