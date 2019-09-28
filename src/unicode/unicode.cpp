@@ -43,7 +43,7 @@ tl::expected<std::string, std::error_code> utf16_to_bytes(
 
 tl::expected<std::u32string, std::error_code> utf32_from_bytes(
     std::string_view bytes) {
-  return u32string(bytes | view::u32);
+  return as<std::u32string>(bytes | view::u32);
 }
 
 tl::expected<std::string, std::error_code> utf32_to_bytes(

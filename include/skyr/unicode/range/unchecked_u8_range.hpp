@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_UNICODE_U8_RANGE_HPP
-#define SKYR_UNICODE_U8_RANGE_HPP
+#ifndef SKYR_UNICODE_UNCHECKED_U8_RANGE_HPP
+#define SKYR_UNICODE_UNCHECKED_U8_RANGE_HPP
 
 #include <iterator>
 #include <type_traits>
@@ -15,111 +15,95 @@
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/code_point.hpp>
-#include <skyr/unicode/range/unchecked_u8_range.hpp>
 
 namespace skyr::unicode {
 ///
 /// \tparam OctetIterator
 template <typename OctetIterator>
-class u8_range_iterator {
-
-  using iterator_type = unchecked_u8_range_iterator<OctetIterator>;
-
+class unchecked_u8_range_iterator {
  public:
 
   ///
-  using iterator_category = typename iterator_type::iterator_category;
+  using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = tl::expected<typename iterator_type::value_type, std::error_code>;
+  using value_type = u8_code_point_t<OctetIterator>;
   ///
   using reference = value_type;
   ///
   using pointer = typename std::add_pointer<value_type>::type;
   ///
-  using difference_type = typename iterator_type::difference_type;
+  using difference_type = std::ptrdiff_t;
 
   ///
-  constexpr u8_range_iterator() = default;
+  constexpr unchecked_u8_range_iterator() = default;
   ///
   /// \param it
-  explicit constexpr u8_range_iterator(OctetIterator it, OctetIterator last)
-      : it_(it)
-      , last_(last) {}
+  explicit constexpr unchecked_u8_range_iterator(OctetIterator it)
+      : it_(it) {}
   ///
-  constexpr u8_range_iterator(const u8_range_iterator&) = default;
+  constexpr unchecked_u8_range_iterator(const unchecked_u8_range_iterator&) = default;
   ///
-  constexpr u8_range_iterator(u8_range_iterator&&) noexcept = default;
+  constexpr unchecked_u8_range_iterator(unchecked_u8_range_iterator&&) noexcept = default;
   ///
-  constexpr u8_range_iterator &operator=(const u8_range_iterator&) = default;
+  constexpr unchecked_u8_range_iterator &operator=(const unchecked_u8_range_iterator&) = default;
   ///
-  constexpr u8_range_iterator &operator=(u8_range_iterator&&) noexcept = default;
+  constexpr unchecked_u8_range_iterator &operator=(unchecked_u8_range_iterator&&) noexcept = default;
   ///
-  ~u8_range_iterator() = default;
+  ~unchecked_u8_range_iterator() = default;
 
   ///
   /// \return
-  u8_range_iterator operator ++ (int) {
+  unchecked_u8_range_iterator operator ++ (int) {
     auto result = *this;
-    increment();
+    std::advance(it_, sequence_length(*it_));
     return result;
   }
 
   ///
   /// \return
-  u8_range_iterator &operator ++ () {
-    increment();
+  unchecked_u8_range_iterator &operator ++ () {
+    std::advance(it_, sequence_length(*it_));
     return *this;
   }
 
   ///
   /// \return
   constexpr reference operator * () const noexcept {
-    return valid_u8_code_point(*it_);
+    return u8_code_point_t<OctetIterator>(
+        it_,
+        it_ + sequence_length(*it_));
   }
 
   ///
   /// \param other
   /// \return
-  constexpr bool operator == (const u8_range_iterator &other) const noexcept {
+  constexpr bool operator == (const unchecked_u8_range_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
   ///
   /// \param other
   /// \return
-  constexpr bool operator != (const u8_range_iterator &other) const noexcept {
+  constexpr bool operator != (const unchecked_u8_range_iterator &other) const noexcept {
     return !(*this == other);
   }
 
  private:
 
-  void increment() {
-    if (**this) {
-      ++it_;
-      if (it_ == last_) {
-        it_ = iterator_type();
-      }
-    } else {
-      it_ = iterator_type();
-    }
-  }
-
-  iterator_type it_, last_;
+  OctetIterator it_;
 
 };
 
 ///
 /// \tparam OctetRange
 template <class OctetRange>
-class view_u8_range
+class view_unchecked_u8_range
     : public ranges::view_base {
 
   using octet_iterator_type = typename OctetRange::const_iterator;
-  using iterator_type = u8_range_iterator<octet_iterator_type>;
+  using iterator_type = unchecked_u8_range_iterator<octet_iterator_type>;
 
  public:
-
-//  using iterator_tag = std::forward_iterator_tag;
 
   ///
   using value_type = u8_code_point_t<octet_iterator_type>;
@@ -134,12 +118,12 @@ class view_u8_range
   ///
   using size_type = std::size_t;
 
-  ///
-  constexpr view_u8_range() = default;
+  /// Default constructor
+  constexpr view_unchecked_u8_range() = default;
 
   ///
   /// \param range
-  explicit constexpr view_u8_range(const OctetRange &range)
+  explicit constexpr view_unchecked_u8_range(const OctetRange &range)
       : impl_(
       impl(std::begin(range),
            std::end(range))) {}
@@ -153,7 +137,7 @@ class view_u8_range
   ///
   /// \return
   [[nodiscard]] constexpr const_iterator end() const noexcept {
-    return iterator_type();
+    return impl_? impl_.value().last : iterator_type();
   }
 
   ///
@@ -186,8 +170,8 @@ class view_u8_range
     constexpr impl(
         octet_iterator_type first,
         octet_iterator_type last)
-        : first(first, last)
-        , last(last, last) {}
+        : first(first)
+        , last(last) {}
     iterator_type first, last;
   };
 
@@ -196,14 +180,14 @@ class view_u8_range
 };
 
 ///
-struct u8_range_fn {
+struct unchecked_u8_range_fn {
   ///
   /// \tparam OctetRange
   /// \param range
   /// \return
   template <typename OctetRange>
   constexpr auto operator()(OctetRange &&range) const {
-    return view_u8_range{std::forward<OctetRange>(range)};
+    return view_unchecked_u8_range{std::forward<OctetRange>(range)};
   }
 
   ///
@@ -211,15 +195,15 @@ struct u8_range_fn {
   /// \param range
   /// \return
   template <typename OctetRange>
-  friend constexpr auto operator|(OctetRange &&range, const u8_range_fn&) {
-    return view_u8_range{std::forward<OctetRange>(range)};
+  friend constexpr auto operator|(OctetRange &&range, const unchecked_u8_range_fn&) {
+    return view_unchecked_u8_range{std::forward<OctetRange>(range)};
   }
 };
 
 namespace view {
 ///
-static constexpr u8_range_fn u8;
+static constexpr unchecked_u8_range_fn unchecked_u8;
 }  // namespace view
 }  // namespace skyr::unicode
 
-#endif // SKYR_UNICODE_U8_RANGE_HPP
+#endif //SKYR_UNICODE_UNCHECKED_U8_RANGE_HPP

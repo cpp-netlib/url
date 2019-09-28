@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_U32_RANGE_HPP
-#define SKYR_U32_RANGE_HPP
+#ifndef SKYR_UNICODE_U32_RANGE_HPP
+#define SKYR_UNICODE_U32_RANGE_HPP
 
 #include <iterator>
 #include <type_traits>
@@ -16,18 +16,6 @@
 #include <skyr/unicode/range/u8_range.hpp>
 
 namespace skyr::unicode {
-namespace details {
-///
-/// \tparam OctetIterator
-/// \param code_point
-/// \return
-template<typename OctetIterator>
-inline char32_t u32(u8_code_point_t<OctetIterator> code_point) {
-  auto state = find_code_point(std::begin(code_point));
-  return state ? state.value().value : U'\x0000';
-}
-}  // namespace details
-
 ///
 /// \tparam OctetIterator
 template <typename OctetIterator>
@@ -281,7 +269,7 @@ class byte_iterator {
 
  private:
 
-  constexpr auto octet_count(char32_t code_point) {
+  static constexpr auto octet_count(char32_t code_point) {
     if (code_point < 0x80u) {
       return 1;
     } else if (code_point < 0x800u) {
@@ -311,6 +299,7 @@ class byte_iterator {
 
 };
 
+///
 template <class U32Range>
 class view_byte_range {
 
@@ -331,21 +320,30 @@ class view_byte_range {
   ///
   using size_type = std::size_t;
 
+  ///
   view_byte_range() = default;
 
+  ///
+  /// \param range
   explicit view_byte_range(
       const U32Range &range)
       : first(iterator_type{std::begin(range), std::end(range)})
       , last(iterator_type{std::end(range), std::end(range)}) {}
 
+  ///
+  /// \return
   const_iterator begin() const {
     return first? first.value() : iterator_type();
   }
 
+  ///
+  /// \return
   const_iterator end() const {
     return last? last.value() : iterator_type();
   }
 
+  ///
+  /// \return
   bool empty() const noexcept {
     return begin() == end();
   }
@@ -385,10 +383,10 @@ static constexpr u32_range_fn u32;
 static constexpr u32::byte_range_fn bytes;
 }  // namespace view
 
-template <typename U32Range>
-tl::expected<std::u32string, std::error_code> u32string(U32Range &&range) {
-  auto result = std::u32string();
-  result.reserve(ranges::size(range));
+template <class Output, class InputRange>
+tl::expected<Output, std::error_code> as(InputRange &&range) {
+  auto result = Output{};
+//  result.reserve(ranges::size(range));
   for (auto &&code_point : range) {
     if (!code_point) {
       return tl::make_unexpected(code_point.error());
@@ -397,18 +395,6 @@ tl::expected<std::u32string, std::error_code> u32string(U32Range &&range) {
   }
   return result;
 }
-
-template <typename OctetRange>
-tl::expected<std::string, std::error_code> bytes(OctetRange &&range) {
-  auto result = std::string();
-  for (auto &&octet : range) {
-    if (!octet) {
-      return tl::make_unexpected(octet.error());
-    }
-    result.push_back(octet.value());
-  }
-  return result;
-}
 }  // namespace skyr::unicode
 
-#endif //SKYR_U32_RANGE_HPP
+#endif //SKYR_UNICODE_U32_RANGE_HPP

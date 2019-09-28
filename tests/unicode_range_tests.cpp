@@ -13,28 +13,6 @@
 #include <skyr/unicode/range/u32_range.hpp>
 
 
-TEST_CASE("code point tests") {
-  using std::begin;
-  using std::end;
-
-  SECTION("u8 code point 01") {
-    auto bytes = std::string("\xf0\x9f\x92\xa9");
-    auto cp = skyr::unicode::u8_code_point(bytes);
-    REQUIRE(cp);
-    CHECK(std::string("\xf0\x9f\x92\xa9") == std::string(begin(cp.value()), end(cp.value())));
-    CHECK(U'\x1f4a9' == skyr::unicode::details::u32(cp.value()));
-    CHECK(u16(cp.value()).is_surrogate_pair());
-    CHECK(u'\xd83d' == u16(cp.value()).lead_value());
-    CHECK(u'\xdca9' == u16(cp.value()).trail_value());
-  }
-
-  SECTION("u8 code point 02") {
-    auto bytes = std::string("\x9f\x92\xa9");
-    auto cp = skyr::unicode::u8_code_point(bytes);
-    REQUIRE(!cp);
-  }
-}
-
 TEST_CASE("octet range iterator") {
   using iterator_type = skyr::unicode::u8_range_iterator<std::string::const_iterator>;
 
@@ -162,8 +140,7 @@ TEST_CASE("u8 range") {
 
   SECTION("pipe syntax with string_view") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto bytes_view = std::string_view(bytes);
-    auto view = bytes_view | skyr::unicode::view::u8;
+    auto view = std::string_view(bytes) | skyr::unicode::view::u8;
     CHECK(4 == ranges::size(view));
     CHECK(!ranges::empty(view));
   }
@@ -187,7 +164,7 @@ TEST_CASE("u8 range") {
 
   SECTION("pipe syntax with u32 string") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto u32 = skyr::unicode::u32string(bytes | skyr::unicode::view::u32);
+    auto u32 = skyr::unicode::as<std::u32string>(bytes | skyr::unicode::view::u32);
     REQUIRE(u32);
     CHECK(U"\x1F3F3\xFE0F\x200D\x1F308" == u32.value());
   }
@@ -200,7 +177,7 @@ TEST_CASE("u8 range") {
 
   SECTION("pipe syntax with u32 string invalid") {
     auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto u32 = skyr::unicode::u32string(bytes | skyr::unicode::view::u32);
+    auto u32 = skyr::unicode::as<std::u32string>(bytes | skyr::unicode::view::u32);
     CHECK(!u32);
   }
 }
@@ -208,7 +185,7 @@ TEST_CASE("u8 range") {
 TEST_CASE("write bytes") {
   SECTION("append_bytes") {
     auto input = std::u32string(U"\x1F3F3\xFE0F\x200D\x1F308");
-    auto bytes = skyr::unicode::bytes(input | skyr::unicode::view::bytes);
+    auto bytes = skyr::unicode::as<std::string>(input | skyr::unicode::view::bytes);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }

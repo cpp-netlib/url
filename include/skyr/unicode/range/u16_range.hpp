@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_U16_RANGE_HPP
-#define SKYR_U16_RANGE_HPP
+#ifndef SKYR_UNICODE_U16_RANGE_HPP
+#define SKYR_UNICODE_U16_RANGE_HPP
 
 #include <iterator>
 #include <type_traits>
@@ -17,64 +17,6 @@
 #include <skyr/unicode/range/u32_range.hpp>
 
 namespace skyr::unicode {
-class u16_code_point_t {
-
- public:
-
-  ///
-  /// \param first
-  explicit constexpr u16_code_point_t(char32_t code_point)
-  : code_point_(code_point) {}
-
-  ///
-  constexpr u16_code_point_t(const u16_code_point_t &) = default;
-  ///
-  constexpr u16_code_point_t(u16_code_point_t &&) noexcept = default;
-  ///
-  u16_code_point_t &operator=(const u16_code_point_t &) = default;
-  ///
-  u16_code_point_t &operator=(u16_code_point_t &&) noexcept = default;
-  ///
-  ~u16_code_point_t() = default;
-
-  [[nodiscard]] uint16_t lead_value() const {
-    return is_surrogate_pair()?
-    static_cast<char16_t>((code_point_ >> 10U) + constants::surrogates::lead_offset) :
-    static_cast<char16_t>(code_point_);
-  }
-
-  [[nodiscard]] uint16_t trail_value() const {
-    return is_surrogate_pair()?
-    static_cast<char16_t>((code_point_ & 0x3ffU) + constants::surrogates::trail_min) :
-    0;
-  }
-
-  [[nodiscard]] constexpr bool is_surrogate_pair() const noexcept {
-    return code_point_ > 0xffffU;
-  }
-
- private:
-
-  char32_t code_point_;
-
-};
-
-///
-/// \param code_point
-/// \return
-inline u16_code_point_t u16_code_point(char32_t code_point) {
-  return u16_code_point_t(code_point);
-}
-
-///
-/// \tparam OctetIterator
-/// \param code_point
-/// \return
-template <typename OctetIterator>
-inline u16_code_point_t u16(u8_code_point_t<OctetIterator> code_point) {
-  return u16_code_point(details::u32(code_point));
-}
-
 ///
 /// \tparam OctetIterator
 template <typename OctetIterator>
@@ -293,4 +235,4 @@ tl::expected<std::wstring, std::error_code> wstring(U16Range &&range) {
 }
 }  // namespace skyr::unicode
 
-#endif //SKYR_U16_RANGE_HPP
+#endif //SKYR_UNICODE_U16_RANGE_HPP
