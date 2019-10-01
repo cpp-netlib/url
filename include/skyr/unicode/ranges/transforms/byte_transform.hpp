@@ -66,7 +66,7 @@ class transform_byte_iterator {
 
   /// Dereference operator
   /// \return An expected value
-  reference operator*() {
+  reference operator*() const noexcept {
     auto code_point = u32_value(*it_).value();
 
     if (!is_valid_code_point(code_point)) {

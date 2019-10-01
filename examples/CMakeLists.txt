@@ -1,4 +1,4 @@
-# Copyright (c) Glyn Matthews 2018.
+# Copyright (c) Glyn Matthews 2018-19.
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
@@ -10,6 +10,7 @@ set(
         example_02
         example_03
         example_04
+        example_05
     )
 
 if (NOT Skyr_BUILD_WITHOUT_EXCEPTIONS)
