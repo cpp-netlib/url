@@ -10,6 +10,7 @@
 #include <sstream>
 #include <algorithm>
 #include <optional>
+#include <charconv>
 #include "ipv4_address.hpp"
 
 namespace skyr {
@@ -66,19 +67,13 @@ tl::expected<std::uint64_t, std::error_code> parse_ipv4_number(
     return 0ULL;
   }
 
-  try {
-    auto pos = static_cast<std::size_t>(0);
-    auto number = std::stoull(std::string(input), &pos, base);
-    if (pos != input.length()) {
-      return tl::make_unexpected(
-          make_error_code(ipv4_address_errc::invalid_segment_number));
-    }
-    return number;
-  }
-  catch (std::exception &) {
+  auto number = 0ULL;
+  if (auto [pos, ec] = std::from_chars(input.data(), input.data() + input.size(), number, base);
+      ec != std::errc() || pos != input.data() + input.size()) {
     return tl::make_unexpected(
         make_error_code(ipv4_address_errc::invalid_segment_number));
   }
+  return number;
 }
 }  // namespace
 
