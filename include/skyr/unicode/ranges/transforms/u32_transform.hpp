@@ -169,7 +169,7 @@ class transform_u32_range
 };
 
 ///
-struct u32_range_fn {
+struct transform_u32_range_fn {
   ///
   /// \tparam OctetRange
   /// \param range
@@ -184,7 +184,7 @@ struct u32_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  friend constexpr auto operator|(CodePointRange &&range, const u32_range_fn&) {
+  friend constexpr auto operator|(CodePointRange &&range, const transform_u32_range_fn&) {
     return transform_u32_range{std::forward<CodePointRange>(range)};
   }
 
@@ -192,7 +192,7 @@ struct u32_range_fn {
 
 namespace transform {
 ///
-static constexpr u32_range_fn to_u32;
+static constexpr transform_u32_range_fn to_u32;
 }  // namespace transform
 
 ///

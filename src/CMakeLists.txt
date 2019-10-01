@@ -31,12 +31,13 @@ set(Skyr_SRCS
         ${Skyr_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/errors.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/core.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/views/u8_view.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/views/unchecked_u8_view.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/views/u16_view.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/transforms/byte_transform.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/transforms/u16_transform.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/transforms/u32_transform.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/u8_view.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/unchecked_u8_view.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/u16_view.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/u32_view.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/byte_transform.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u16_transform.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encode.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/domain.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/url_record.hpp

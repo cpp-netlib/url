@@ -10,6 +10,7 @@
 #include <range/v3/empty.hpp>
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 #include <skyr/unicode/ranges/views/u16_view.hpp>
+#include <skyr/unicode/ranges/views/u32_view.hpp>
 #include <skyr/unicode/ranges/transforms/u16_transform.hpp>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/unicode/ranges/transforms/byte_transform.hpp>
@@ -199,7 +200,7 @@ TEST_CASE("write bytes") {
   SECTION("bytes from u32") {
     auto input = std::u32string(U"\x1F3F3\xFE0F\x200D\x1F308");
     auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::transform::to_bytes);
+        input | skyr::unicode::view::as_u32 | skyr::unicode::transform::to_bytes);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }
