@@ -7,7 +7,6 @@
 #define SKYR_UNICODE_CODE_POINT_HPP
 
 #include <tl/expected.hpp>
-#include <range/v3/distance.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/constants.hpp>
 #include <skyr/unicode/core.hpp>
@@ -101,8 +100,8 @@ class u8_code_point_t {
 template<typename OctetRange>
 inline tl::expected<u8_code_point_t<typename OctetRange::const_iterator>, std::error_code> u8_code_point(
     const OctetRange &range) {
-  auto first = std::begin(range);
-  if (ranges::distance(range) > sequence_length(*first)) {
+  auto first = std::begin(range), last = std::end(range);
+  if (std::distance(first, last) > sequence_length(*first)) {
     return tl::make_unexpected(make_error_code(unicode_errc::overflow));
   }
   return u8_code_point_t<typename OctetRange::const_iterator>(

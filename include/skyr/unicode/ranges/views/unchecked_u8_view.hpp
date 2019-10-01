@@ -10,8 +10,6 @@
 #include <type_traits>
 #include <optional>
 #include <tl/expected.hpp>
-#include <range/v3/view.hpp>
-#include <range/v3/distance.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/code_point.hpp>
@@ -96,8 +94,7 @@ class unchecked_u8_range_iterator {
 ///
 /// \tparam OctetRange
 template <class OctetRange>
-class view_unchecked_u8_range
-    : public ranges::view_base {
+class view_unchecked_u8_range {
 
   using octet_iterator_type = typename traits::iterator<OctetRange>::type ;
   using iterator_type = unchecked_u8_range_iterator<octet_iterator_type>;

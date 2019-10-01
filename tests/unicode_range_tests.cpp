@@ -7,7 +7,6 @@
 #include <string_view>
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <range/v3/empty.hpp>
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 #include <skyr/unicode/ranges/views/u16_view.hpp>
 #include <skyr/unicode/ranges/views/u32_view.hpp>
@@ -135,28 +134,27 @@ TEST_CASE("u8 range") {
   SECTION("count") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
     auto view = skyr::unicode::view_u8_range(bytes);
-    CHECK(4 == ranges::size(view));
-    CHECK(!ranges::empty(view));
+    CHECK(4 == view.size());
+    CHECK(!view.empty());
   }
 
   SECTION("empty count") {
     auto view = skyr::unicode::view_u8_range<std::string>();
-    CHECK(0 == ranges::size(view));
-    CHECK(ranges::empty(view));
+    CHECK(view.empty());
   }
 
   SECTION("pipe syntax") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
     auto view = bytes | skyr::unicode::view::as_u8;
-    CHECK(4 == ranges::size(view));
-    CHECK(!ranges::empty(view));
+    CHECK(4 == view.size());
+    CHECK(!view.empty());
   }
 
   SECTION("pipe syntax with string_view") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
     auto view = std::string_view(bytes) | skyr::unicode::view::as_u8;
-    CHECK(4 == ranges::size(view));
-    CHECK(!ranges::empty(view));
+    CHECK(4 == view.size());
+    CHECK(!view.empty());
   }
 
   SECTION("pipe syntax invalid") {
@@ -165,8 +163,8 @@ TEST_CASE("u8 range") {
     auto it = std::begin(view), last = std::end(view);
     CHECK(!*it++);
     CHECK(it == last);
-    CHECK(1 == ranges::size(view));
-    CHECK(!ranges::empty(view));
+    CHECK(1 == view.size());
+    CHECK(!view.empty());
   }
 
   SECTION("pipe syntax with u16 string") {

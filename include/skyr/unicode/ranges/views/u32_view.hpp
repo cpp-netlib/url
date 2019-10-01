@@ -9,8 +9,8 @@
 #include <iterator>
 #include <type_traits>
 #include <optional>
+#include <cassert>
 #include <tl/expected.hpp>
-#include <range/v3/view.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 
@@ -72,7 +72,7 @@ class u32_range_iterator {
   /// \return
   reference operator * () const noexcept {
     assert(it_);
-    return *it_.value();
+    return u32_value(*it_.value());
   }
 
   ///
@@ -94,6 +94,9 @@ class u32_range_iterator {
   void increment() {
     assert(it_);
     ++it_.value();
+    if (it_ == last_) {
+      it_ = std::nullopt;
+    }
   }
 
   std::optional<U32Iterator> it_, last_;
@@ -103,8 +106,7 @@ class u32_range_iterator {
 ///
 /// \tparam U32Range
 template <class U32Range>
-class view_u32_range
-    : public ranges::view_base {
+class view_u32_range {
 
   using iterator_type = u32_range_iterator<typename traits::iterator<U32Range>::type>;
 

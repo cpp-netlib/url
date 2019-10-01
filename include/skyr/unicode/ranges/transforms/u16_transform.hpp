@@ -10,7 +10,6 @@
 #include <type_traits>
 #include <optional>
 #include <tl/expected.hpp>
-#include <range/v3/view.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/ranges/traits.hpp>
@@ -105,8 +104,7 @@ class transform_u16_iterator {
 ///
 /// \tparam CodePointRange
 template <class CodePointRange>
-class transform_u16_range
-    : public ranges::view_base {
+class transform_u16_range {
 
   using iterator_type = transform_u16_iterator<typename traits::iterator<CodePointRange>::type>;
 

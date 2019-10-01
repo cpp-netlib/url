@@ -53,7 +53,7 @@ if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)
 endif()
 
 add_library(skyr-url ${Skyr_SRCS})
-target_link_libraries(skyr-url tl::expected meta range-v3)
+target_link_libraries(skyr-url tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     if (NOT Skyr_DISABLE_LIBCXX)
         target_link_libraries(skyr-url "c++")

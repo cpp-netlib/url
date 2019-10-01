@@ -57,7 +57,8 @@ inline bool starts_with(
     std::string_view::const_iterator first,
     std::string_view::const_iterator last,
     const char *chars) noexcept {
-  auto chars_first = chars, chars_last = chars + std::strlen(chars);
+  auto chars_view = std::string_view(chars);
+  auto chars_first = std::begin(chars_view), chars_last = std::end(chars_view);
   auto chars_it = chars_first;
   auto it = first;
   if (it == last) {

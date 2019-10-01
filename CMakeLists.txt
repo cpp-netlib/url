@@ -21,7 +21,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(Threads REQUIRED)
 find_package(tl-expected CONFIG REQUIRED)
-find_package(range-v3 CONFIG REQUIRED)
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
     if (Skyr_FULL_WARNINGS)

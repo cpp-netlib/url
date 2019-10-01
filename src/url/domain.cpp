@@ -4,6 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
+#include <cassert>
 #include <skyr/url/domain.hpp>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/unicode/ranges/transforms/byte_transform.hpp>

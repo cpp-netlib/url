@@ -10,7 +10,6 @@
 #include <type_traits>
 #include <optional>
 #include <tl/expected.hpp>
-#include <range/v3/view.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/ranges/traits.hpp>
@@ -98,8 +97,7 @@ class transform_u32_iterator {
 ///
 /// \tparam OctetRange
 template <class CodePointRange>
-class transform_u32_range
-    : public ranges::view_base {
+class transform_u32_range {
 
   using iterator_type = typename traits::iterator<CodePointRange>::type;
 

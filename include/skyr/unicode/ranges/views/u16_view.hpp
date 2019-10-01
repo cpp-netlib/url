@@ -9,8 +9,8 @@
 #include <iterator>
 #include <type_traits>
 #include <optional>
+#include <cassert>
 #include <tl/expected.hpp>
-#include <range/v3/view.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/ranges/traits.hpp>
@@ -126,8 +126,7 @@ class u16_range_iterator {
 ///
 /// \tparam U16Range
 template <class U16Range>
-class view_u16_range
-    : public ranges::view_base {
+class view_u16_range {
 
   using iterator_type = u16_range_iterator<typename traits::iterator<U16Range>::type>;
 

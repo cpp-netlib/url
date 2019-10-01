@@ -7,7 +7,6 @@
 #include <string_view>
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <range/v3/empty.hpp>
 #include <skyr/unicode/code_point.hpp>
 
 
