@@ -11,24 +11,38 @@
 #include <skyr/unicode/code_point.hpp>
 
 
-TEST_CASE("code point tests") {
+TEST_CASE("u8 code point tests") {
   using std::begin;
   using std::end;
 
-  SECTION("u8 code point 01") {
+  SECTION("code point 01") {
     auto bytes = std::string("\xf0\x9f\x92\xa9");
     auto cp = skyr::unicode::u8_code_point(bytes);
     REQUIRE(cp);
     CHECK(std::string("\xf0\x9f\x92\xa9") == std::string(begin(cp.value()), end(cp.value())));
-    CHECK(U'\x1f4a9' == skyr::unicode::details::u32(cp.value()));
-    CHECK(u16(cp.value()).is_surrogate_pair());
-    CHECK(u'\xd83d' == u16(cp.value()).lead_value());
-    CHECK(u'\xdca9' == u16(cp.value()).trail_value());
+    CHECK(U'\x1f4a9' == u32_value(cp));
+    CHECK(u16_value(cp).value().is_surrogate_pair());
+    CHECK(u'\xd83d' == u16_value(cp).value().lead_value());
+    CHECK(u'\xdca9' == u16_value(cp).value().trail_value());
   }
 
-  SECTION("u8 code point 02") {
+  SECTION("code point fail") {
     auto bytes = std::string("\x9f\x92\xa9");
     auto cp = skyr::unicode::u8_code_point(bytes);
     REQUIRE(!cp);
+  }
+}
+
+TEST_CASE("u16 code point tests") {
+  using std::begin;
+  using std::end;
+
+  SECTION("code point 01") {
+    auto lead = u'\xD83C', trail = u'\xDFF3';
+    auto cp = skyr::unicode::u16_code_point(lead, trail);
+    CHECK(U'\x1F3F3' == u32_value(cp));
+    CHECK(cp.is_surrogate_pair());
+    CHECK(lead == cp.lead_value());
+    CHECK(trail == cp.trail_value());
   }
 }

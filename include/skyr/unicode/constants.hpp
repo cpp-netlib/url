@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_CONSTANTS_HPP
-#define SKYR_CONSTANTS_HPP
+#ifndef SKYR_UNICODE_CONSTANTS_HPP
+#define SKYR_UNICODE_CONSTANTS_HPP
 
 namespace skyr::unicode::constants {
 namespace surrogates {
@@ -22,6 +22,8 @@ namespace code_points {
 // Maximum valid value for a Unicode code point
 constexpr char32_t max = 0x0010ffffu;
 }  // namespace code_points
+
+constexpr char bom[] = {'\xef', '\xbb', '\xbf'};
 }  // namespace skyr::unicode::constants
 
-#endif //SKYR_CONSTANTS_HPP
+#endif //SKYR_UNICODE_CONSTANTS_HPP

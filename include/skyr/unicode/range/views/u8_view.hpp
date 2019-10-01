@@ -11,11 +11,11 @@
 #include <optional>
 #include <tl/expected.hpp>
 #include <range/v3/view.hpp>
-#include <range/v3/distance.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/code_point.hpp>
-#include <skyr/unicode/range/unchecked_u8_range.hpp>
+#include <skyr/unicode/range/traits.hpp>
+#include <skyr/unicode/range/views/unchecked_u8_view.hpp>
 
 namespace skyr::unicode {
 ///
@@ -114,12 +114,10 @@ template <class OctetRange>
 class view_u8_range
     : public ranges::view_base {
 
-  using octet_iterator_type = typename OctetRange::const_iterator;
+  using octet_iterator_type = typename traits::iterator<OctetRange>::type;
   using iterator_type = u8_range_iterator<octet_iterator_type>;
 
  public:
-
-//  using iterator_tag = std::forward_iterator_tag;
 
   ///
   using value_type = u8_code_point_t<octet_iterator_type>;
@@ -218,7 +216,7 @@ struct u8_range_fn {
 
 namespace view {
 ///
-static constexpr u8_range_fn u8;
+static constexpr u8_range_fn as_u8;
 }  // namespace view
 }  // namespace skyr::unicode
 

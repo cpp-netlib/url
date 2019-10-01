@@ -107,65 +107,6 @@ tl::expected<U16BitIterator, std::error_code> copy_u8u16(
   return u16_it;
 }
 
-/// Copies characters from a UTF-32 encoded string to a UTF-8
-/// encoded string.
-///
-/// \tparam OctetIterator
-/// \tparam U32BitIterator
-/// \param first The first iterator in the UTF-32 encoded sequence
-/// \param last The last iterator in the UTF-32 encoded sequence
-/// \param u8_it The output iterator
-/// \return The last output iterator or an error if the sequence was invalid
-template <typename OctetIterator, typename U32BitIterator>
-tl::expected<OctetIterator, std::error_code> copy_u32u8(
-    U32BitIterator first,
-    U32BitIterator last,
-    OctetIterator u8_it) {
-  auto it = first;
-  while (it != last) {
-    auto result_it = append_bytes(*it, u8_it);
-    if (!result_it) {
-      return tl::make_unexpected(std::move(result_it.error()));
-    }
-    u8_it = result_it.value();
-    ++it;
-  }
-  return u8_it;
-}
-
-/// Copies characters from a UTF-8 encoded string to a UTF-32
-/// encoded string.
-///
-/// \tparam OctetIterator
-/// \tparam U32BitIterator
-/// \param first The first iterator in the octet sequence
-/// \param last The last iterator in the octet sequence
-/// \param u32_first The first iterator in the UTf-32 encoded
-///        sequence
-/// \return An expected iterator to the last eleent in the new
-///         UTF-32 sequence, or an error.
-template <typename OctetIterator, typename U32BitIterator>
-tl::expected<U32BitIterator, std::error_code> copy_u8u32(
-    OctetIterator first,
-    OctetIterator last,
-    U32BitIterator u32_first) {
-  auto it = first;
-  auto u32_it = u32_first;
-  while (it != last) {
-    if (std::distance(it, last) < sequence_length(*it)) {
-      return tl::make_unexpected(make_error_code(unicode_errc::overflow));
-    }
-
-    auto state = unicode::next(it);
-    if (!state) {
-      return tl::make_unexpected(std::move(state.error()));
-    }
-    it = state.value().it;
-    (*u32_it)++ = state.value().value;
-  }
-  return u32_it;
-}
-
 /// Converts a `std::string` (assuming UTF-8) string to UTF-16
 /// \param input A UTF-8 string
 /// \returns A UTF-16 `std::wstring` or an error on failure

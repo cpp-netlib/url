@@ -323,7 +323,7 @@ tl::expected<sequence_state<OctetIterator>, std::error_code> next(
           .and_then(increment);
 }
 
-/// Appends values to a  octet sequence given a code point value
+/// Appends values to an octet sequence given a code point value
 ///
 /// \tparam OctetIterator
 /// \param code_point
@@ -354,65 +354,6 @@ tl::expected<OctetIterator, std::error_code> append_bytes(
   }
   return octet_it;
 }
-
-/// Advances `n` code oints through the octet sequence
-/// \tparam OctetIterator
-/// \param it An iterator to a lead octet in the octet sequence
-/// \param n The number of code points to advance
-/// \param last The last iterator in the octet sequence
-/// \return The updated iterator or an error if the sequence is
-///         invalid
-template <typename OctetIterator>
-tl::expected<OctetIterator, std::error_code> advance(
-    OctetIterator& it,
-    std::size_t n,
-    OctetIterator last) {
-  while (n != 0) {
-    if (ranges::distance(it, last) < sequence_length(*it)) {
-      return tl::make_unexpected(make_error_code(unicode_errc::overflow));
-    }
-
-    auto state = unicode::next(it);
-    if (!state) {
-      return tl::make_unexpected(std::move(state.error()));
-    }
-    it = state.value().it;
-    --n;
-  }
-
-  return it;
-}
-
-/// Counts the number of code points in the octet sequence.
-///
-/// \tparam OctetIterator
-/// \param first The first element in the octet sequence
-/// \param last The last element in the sequence
-/// \return The number of code points or an error if it's not a
-///         valid sequence.
-template <typename OctetIterator>
-tl::expected<std::size_t, std::error_code> count(
-    OctetIterator first,
-    OctetIterator last) {
-  std::size_t count = 0;
-  auto it = first;
-
-  while (it != last) {
-    if (std::distance(it, last) < sequence_length(*it)) {
-      return tl::make_unexpected(
-          make_error_code(unicode_errc::overflow));
-    }
-
-    auto state = unicode::next(it);
-    if (!state) {
-      return tl::make_unexpected(std::move(state.error()));
-    }
-    it = state.value().it;
-    ++count;
-  }
-  return count;
-}
-
 }  // namespace skyr::unicode
 
 #endif //SKYR_UNICODE_CORE_HPP

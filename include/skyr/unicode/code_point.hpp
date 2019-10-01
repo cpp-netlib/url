@@ -6,6 +6,11 @@
 #ifndef SKYR_UNICODE_CODE_POINT_HPP
 #define SKYR_UNICODE_CODE_POINT_HPP
 
+#include <tl/expected.hpp>
+#include <range/v3/distance.hpp>
+#include <skyr/unicode/errors.hpp>
+#include <skyr/unicode/constants.hpp>
+#include <skyr/unicode/core.hpp>
 
 namespace skyr::unicode {
 /// This class defines a range over a code point in raw bytes,
@@ -83,6 +88,13 @@ class u8_code_point_t {
     return sequence_length(*first);
   }
 
+  [[nodiscard]] tl::expected<char32_t, std::error_code> u32_value() const noexcept {
+    return find_code_point(first)
+    .and_then([] (auto state) -> tl::expected<char32_t, std::error_code> {
+      return state.value;
+    });
+  }
+
  private:
 
   OctetIterator first, last;
@@ -134,17 +146,17 @@ inline tl::expected<u8_code_point_t<typename OctetRange::const_iterator>, std::e
           .and_then(check_code_point);
 }
 
-namespace details {
-///
-/// \tparam OctetIterator
-/// \param code_point
-/// \return
-template<typename OctetIterator>
-inline char32_t u32(u8_code_point_t<OctetIterator> code_point) {
-  auto state = find_code_point(std::begin(code_point));
-  return state ? state.value().value : U'\x0000';
-}
-}  // namespace details
+//namespace details {
+/////
+///// \tparam OctetIterator
+///// \param code_point
+///// \return
+//template<typename OctetIterator>
+//inline char32_t u32(u8_code_point_t<OctetIterator> code_point) {
+//  auto state = find_code_point(std::begin(code_point));
+//  return state ? state.value().value : U'\x0000';
+//}
+//}  // namespace details
 
 ///
 class u16_code_point_t {
@@ -152,9 +164,17 @@ class u16_code_point_t {
  public:
 
   ///
-  /// \param first
+  /// \param code_point
   explicit constexpr u16_code_point_t(char32_t code_point)
-      : code_point_(code_point) {}
+  : code_point_(code_point) {}
+
+  ///
+  /// \param code_point
+  explicit constexpr u16_code_point_t(char16_t code_point)
+  : code_point_(code_point) {}
+
+  constexpr u16_code_point_t(char16_t lead_value, char16_t trail_value)
+  : code_point_((lead_value << 10) + trail_value + constants::surrogates::offset) {}
 
   ///
   constexpr u16_code_point_t(const u16_code_point_t &) = default;
@@ -189,6 +209,10 @@ class u16_code_point_t {
     return code_point_ > 0xffffU;
   }
 
+  tl::expected<char32_t, std::error_code> u32_value() const noexcept {
+    return code_point_;
+  }
+
  private:
 
   char32_t code_point_;
@@ -203,12 +227,99 @@ inline u16_code_point_t u16_code_point(char32_t code_point) {
 }
 
 ///
+/// \param code_point
+/// \return
+inline u16_code_point_t u16_code_point(char16_t code_point) {
+  return u16_code_point_t(code_point);
+}
+
+///
+/// \param lead
+/// \param value
+/// \return
+inline u16_code_point_t u16_code_point(char16_t lead, char16_t value) {
+  return u16_code_point_t(lead, value);
+}
+
+///
 /// \tparam OctetIterator
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-inline u16_code_point_t u16(u8_code_point_t<OctetIterator> code_point) {
-  return u16_code_point(details::u32(code_point));
+inline tl::expected<char32_t, std::error_code> u32_value(
+    u8_code_point_t<OctetIterator> code_point) noexcept {
+  return code_point.u32_value();
+}
+
+///
+/// \tparam OctetIterator
+/// \param code_point
+/// \return
+template <typename OctetIterator>
+inline tl::expected<char32_t, std::error_code> u32_value(
+    tl::expected<u8_code_point_t<OctetIterator>, std::error_code> code_point) noexcept {
+  return code_point
+  .and_then([] (auto code_point) -> tl::expected<char32_t , std::error_code> {
+    return code_point.u32_value();
+  });
+}
+
+///
+/// \param code_point
+/// \return
+inline tl::expected<char32_t, std::error_code> u32_value(
+    u16_code_point_t code_point) noexcept {
+  return code_point.u32_value();
+}
+
+///
+/// \param code_point
+/// \return
+inline tl::expected<char32_t, std::error_code> u32_value(
+    tl::expected<u16_code_point_t, std::error_code> code_point) noexcept {
+  return code_point
+  .and_then([] (auto code_point) -> tl::expected<char32_t, std::error_code> {
+    return code_point.u32_value();
+  });
+}
+
+///
+/// \param code_point
+/// \return
+inline tl::expected<char32_t, std::error_code> u32_value(
+    char32_t code_point) noexcept {
+  return code_point;
+}
+
+///
+/// \param code_point
+/// \return
+inline tl::expected<char32_t, std::error_code> u32_value(
+    tl::expected<char32_t, std::error_code> code_point) noexcept {
+  return code_point;
+}
+
+///
+/// \tparam OctetIterator
+/// \param code_point
+/// \return
+template <typename OctetIterator>
+inline tl::expected<u16_code_point_t, std::error_code> u16_value(
+    u8_code_point_t<OctetIterator> code_point) {
+  return u16_code_point(u32_value(code_point));
+}
+
+///
+/// \tparam OctetIterator
+/// \param code_point
+/// \return
+template <typename OctetIterator>
+inline tl::expected<u16_code_point_t, std::error_code> u16_value(
+    tl::expected<u8_code_point_t<OctetIterator>, std::error_code> code_point) {
+  return u32_value(code_point)
+  .and_then([] (auto code_point) -> tl::expected<u16_code_point_t, std::error_code> {
+    return u16_code_point(code_point);
+  });
 }
 }  // namespace skyr::unicode
 

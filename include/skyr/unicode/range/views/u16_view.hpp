@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_UNICODE_U16_RANGE_HPP
-#define SKYR_UNICODE_U16_RANGE_HPP
+#ifndef SKYR_UNICODE_U16_VIEW_HPP
+#define SKYR_UNICODE_U16_VIEW_HPP
 
 #include <iterator>
 #include <type_traits>
@@ -13,13 +13,14 @@
 #include <range/v3/view.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
-#include <skyr/unicode/range/u8_range.hpp>
-#include <skyr/unicode/range/u32_range.hpp>
+#include <skyr/unicode/range/traits.hpp>
+#include <skyr/unicode/range/views/u8_view.hpp>
+#include <skyr/unicode/range/transforms/u32_transform.hpp>
 
 namespace skyr::unicode {
 ///
-/// \tparam OctetIterator
-template <typename OctetIterator>
+/// \tparam U16Iterator
+template <class U16Iterator>
 class u16_range_iterator {
 
  public:
@@ -40,8 +41,8 @@ class u16_range_iterator {
   ///
   /// \param it
   explicit constexpr u16_range_iterator(
-      u32_range_iterator<OctetIterator> it,
-      u32_range_iterator<OctetIterator> last)
+      U16Iterator it,
+      U16Iterator last)
       : it_(it)
       , last_(last) {}
   ///
@@ -59,26 +60,38 @@ class u16_range_iterator {
   /// \return
   u16_range_iterator operator ++ (int) {
     auto result = *this;
-    ++it_;
+    increment();
     return result;
   }
 
   ///
   /// \return
   u16_range_iterator &operator ++ () {
-    ++it_;
+    increment();
     return *this;
   }
 
   ///
   /// \return
   reference operator * () const noexcept {
-    auto code_point = *it_;
-    return
-    code_point
-    .and_then([] (auto value) -> value_type {
+    assert(it_);
+    auto value = mask16(*it_.value());
+    if (is_lead_surrogate(value)) {
+      auto next_it = it_.value();
+      ++next_it;
+      auto trail_value = mask16(*next_it);
+      if (!is_trail_surrogate(trail_value)) {
+        return tl::make_unexpected(
+            make_error_code(unicode_errc::invalid_code_point));
+      }
+
+      return u16_code_point(value, trail_value);
+    } else if (is_trail_surrogate(value)) {
+      return tl::make_unexpected(
+          make_error_code(unicode_errc::invalid_code_point));
+    } else {
       return u16_code_point(value);
-    });
+    }
   }
 
   ///
@@ -97,18 +110,26 @@ class u16_range_iterator {
 
  private:
 
-  u32_range_iterator<OctetIterator> it_, last_;
+  void increment() {
+    assert(it_);
+    auto value = mask16(*it_.value());
+    std::advance(it_.value(), is_lead_surrogate(value)? 2 : 1);
+    if (it_ == last_) {
+      it_ = std::nullopt;
+    }
+  }
+
+  std::optional<U16Iterator> it_, last_;
 
 };
 
 ///
-/// \tparam OctetRange
-template <typename OctetRange>
+/// \tparam U16Range
+template <class U16Range>
 class view_u16_range
     : public ranges::view_base {
 
-  using octet_iterator_type = typename OctetRange::const_iterator;
-  using iterator_type = u16_range_iterator<octet_iterator_type>;
+  using iterator_type = u16_range_iterator<typename traits::iterator<U16Range>::type>;
 
  public:
 
@@ -130,7 +151,7 @@ class view_u16_range
 
   ///
   /// \param range
-  explicit constexpr view_u16_range(const OctetRange &range)
+  explicit constexpr view_u16_range(const U16Range &range)
       : range_{range} {}
 
   ///
@@ -160,18 +181,18 @@ class view_u16_range
   ///
   /// \return
   [[nodiscard]] constexpr bool empty() const noexcept {
-    return range_.empty();
+    return begin() == end();
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr size_type size() const noexcept {
-    return range_.size();
+    return std::distance(begin(), end());
   }
 
  private:
 
-  view_u32_range<OctetRange> range_;
+  U16Range range_;
 
 };
 
@@ -181,58 +202,26 @@ struct u16_range_fn {
   /// \tparam OctetRange
   /// \param range
   /// \return
-  template <typename OctetRange>
-  constexpr auto operator()(OctetRange &&range) const {
-    return view_u16_range{std::forward<OctetRange>(range)};
+  template <typename U16Range>
+  constexpr auto operator()(U16Range &&range) const {
+    return view_u16_range{std::forward<U16Range>(range)};
   }
 
   ///
   /// \tparam OctetRange
   /// \param range
   /// \return
-  template <typename OctetRange>
-  friend constexpr auto operator|(OctetRange &&range, const u16_range_fn&) {
-    return view_u16_range{std::forward<OctetRange>(range)};
+  template <typename U16Range>
+  friend constexpr auto operator|(U16Range &&range, const u16_range_fn&) {
+    return view_u16_range{std::forward<U16Range>(range)};
   }
 
 };
 
 namespace view {
 ///
-static constexpr u16_range_fn u16;
+static constexpr u16_range_fn as_u16;
 }  // namespace view
-
-template <typename U16Range>
-tl::expected<std::u16string, std::error_code> u16string(U16Range &&range) {
-  auto result = std::u16string();
-  result.reserve(ranges::size(range));
-  for (auto &&code_point : range) {
-    if (!code_point) {
-      return tl::make_unexpected(code_point.error());
-    }
-    result.push_back(code_point.value().lead_value());
-    if (code_point.value().is_surrogate_pair()) {
-      result.push_back(code_point.value().trail_value());
-    }
-  }
-  return result;
-}
-
-template <typename U16Range>
-tl::expected<std::wstring, std::error_code> wstring(U16Range &&range) {
-  auto result = std::wstring();
-  result.reserve(ranges::size(range));
-  for (auto &&code_point : range) {
-    if (!code_point) {
-      return tl::make_unexpected(code_point.error());
-    }
-    result.push_back(code_point.value().lead_value());
-    if (code_point.value().is_surrogate_pair()) {
-      result.push_back(code_point.value().trail_value());
-    }
-  }
-  return result;
-}
 }  // namespace skyr::unicode
 
-#endif //SKYR_UNICODE_U16_RANGE_HPP
+#endif //SKYR_UNICODE_U16_VIEW_HPP

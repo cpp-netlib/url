@@ -1,4 +1,4 @@
-# Copyright (c) Glyn Matthews 2012-2018.
+# Copyright (c) Glyn Matthews 2012-2019.
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
@@ -33,9 +33,12 @@ set(Skyr_SRCS
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/errors.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/core.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/unicode.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/u8_range.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/u16_range.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/u32_range.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/views/u8_view.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/views/unchecked_u8_view.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/views/u16_view.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/transforms/byte_transform.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/transforms/u16_transform.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/transforms/u32_transform.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encode.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/domain.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/url_record.hpp
