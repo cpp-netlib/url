@@ -81,6 +81,7 @@ class url {
   /// \post `empty() == true`
   url();
 
+#if __cpp_exceptions
   /// Parses a URL from the input string. The input string can be
   /// any unicode encoded string (UTF-8, UTF-16 or UTF-32).
   ///
@@ -121,6 +122,7 @@ class url {
     }
     initialize(std::move(bytes.value()), base.record());
   }
+#endif // __cpp_exceptions
 
   /// Constructs a URL from an existing record
   ///

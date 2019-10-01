@@ -12,64 +12,79 @@
 #include <skyr/url.hpp>
 
 TEST_CASE("url_tests", "[url]") {
+#if __cpp_exceptions
   SECTION("construct_invalid_url") {
     REQUIRE_THROWS_AS(skyr::url("I am not a valid url."), skyr::url_parse_error);
   }
+#endif // __cpp_exceptions
 
   SECTION("construct_invalid_url_make") {
     CHECK_FALSE(skyr::make_url("I am not a valid url."));
   }
 
+#if __cpp_exceptions
   SECTION("construct_url_from_char_array") {
     REQUIRE_NOTHROW(skyr::url("http://www.example.com/"));
   }
+#endif // __cpp_exceptions
 
   SECTION("construct_url_from_char_array_make") {
     CHECK(skyr::make_url("http://www.example.com/"));
   }
 
+#if __cpp_exceptions
   SECTION("construct_url_starting_with_ipv4_like)") {
     REQUIRE_NOTHROW(skyr::url("http://198.51.100.0.example.com/"));
   }
+#endif // __cpp_exceptions
 
   SECTION("construct_url_starting_with_ipv4_like_make") {
     CHECK(skyr::make_url("http://198.51.100.0.example.com/"));
   }
 
+#if __cpp_exceptions
   SECTION("construct_url_starting_with_ipv4_like_glued") {
     REQUIRE_NOTHROW(skyr::url("http://198.51.100.0example.com/"));
   }
+#endif // __cpp_exceptions
 
   SECTION("construct_url_starting_with_ipv4_like_glued_make") {
     REQUIRE(skyr::make_url("http://198.51.100.0example.com/"));
   }
 
+#if __cpp_exceptions
   SECTION("construct_url_like_short_ipv4") {
     REQUIRE_NOTHROW(skyr::url("http://198.51.100/"));
   }
+#endif // __cpp_exceptions
 
   SECTION("construct_url_like_short_ipv4_make") {
     CHECK(skyr::make_url("http://198.51.100/"));
   }
 
+#if __cpp_exceptions
   SECTION("construct_url_like_long_ipv4") {
     REQUIRE_NOTHROW(skyr::url("http://198.51.100.0.255/"));
   }
+#endif // __cpp_exceptions
 
   SECTION("construct_url_like_long_ipv4_make)") {
     CHECK(skyr::make_url("http://198.51.100.0.255/"));
   }
 
+#if __cpp_exceptions
   SECTION("construct_url_from_string") {
     auto input = std::string("http://www.example.com/");
     REQUIRE_NOTHROW((skyr::url(input)));
   }
+#endif // __cpp_exceptions
 
   SECTION("construct_url_from_string_make") {
     auto input = std::string("http://www.example.com/");
     CHECK(skyr::make_url(input));
   }
 
+#if __cpp_exceptions
   SECTION("basic_url_protocol_test") {
     auto instance = skyr::url("http://www.example.com/");
     CHECK("http:" == instance.protocol());
@@ -703,4 +718,5 @@ TEST_CASE("url_tests", "[url]") {
     CHECK("example.com" == instance.host());
     CHECK("?a=b&c=d" == instance.search());
   }
+#endif // __cpp_exceptions
 }

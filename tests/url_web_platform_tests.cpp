@@ -105,6 +105,7 @@ Catch::Generators::GeneratorWrapper<test_case> test_case_(
 TEST_CASE("test_parse_urls_using_base_urls", "[web_platorm]") {
   auto test_case_data = GENERATE(test_case_("urltestdata.json", false));
 
+#if __cpp_exceptions
   SECTION("parse_using_constructor") {
     auto instance = skyr::url(
         test_case_data.input,
@@ -120,11 +121,12 @@ TEST_CASE("test_parse_urls_using_base_urls", "[web_platorm]") {
     CHECK(test_case_data.search == instance.search());
     CHECK(test_case_data.hash == instance.hash());
   }
+#endif // __cpp_exceptions
 
   SECTION("parse_using_make") {
     auto instance = skyr::make_url(
         test_case_data.input,
-        skyr::url(test_case_data.base));
+        skyr::make_url(test_case_data.base).value());
     REQUIRE(instance);
     CHECK(test_case_data.protocol == instance.value().protocol());
     CHECK(test_case_data.username == instance.value().username());
@@ -141,13 +143,15 @@ TEST_CASE("test_parse_urls_using_base_urls", "[web_platorm]") {
 TEST_CASE("test_parse_urls_using_base_urls_failures", "[web_platform]") {
   auto test_case_data = GENERATE(test_case_("urltestdata.json", true));
 
+#if __cpp_exceptions
   SECTION("parse_using_constructor") {
     auto base = skyr::url(test_case_data.base);
     REQUIRE_THROWS_AS(skyr::url(test_case_data.input, base), skyr::url_parse_error);
   }
+#endif // __cpp_exceptions
 
   SECTION("parse_using_make") {
-    auto base = skyr::url(test_case_data.base);
+    auto base = skyr::make_url(test_case_data.base).value();
     REQUIRE_FALSE(skyr::make_url(test_case_data.input, base));
   }
 }

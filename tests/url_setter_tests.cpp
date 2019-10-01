@@ -8,6 +8,7 @@
 #include <skyr/url.hpp>
 
 TEST_CASE("url_setter_tests", "[url]") {
+#if __cpp_exceptions
   SECTION("test_href_1") {
     auto instance = skyr::url{};
   
@@ -17,7 +18,7 @@ TEST_CASE("url_setter_tests", "[url]") {
     CHECK("example.com" == instance.host());
     CHECK("/" == instance.pathname());
   }
-  
+
   SECTION("test_href_2") {
     auto instance = skyr::url{"http://example.com/"};
   
@@ -357,4 +358,5 @@ TEST_CASE("url_setter_tests", "[url]") {
     REQUIRE(result);
     CHECK("http://example.com/#fragment" == instance.href());
   }
+#endif // __cpp_exceptions
 }

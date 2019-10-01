@@ -35,6 +35,7 @@ void url::swap(url &other) noexcept {
   other.parameters_.url_ = std::ref(other.url_);
 }
 
+#if __cpp_exceptions
 void url::initialize(string_type &&input, std::optional<url_record> &&base) {
   auto parsed_url = parse(input, base);
   if (!parsed_url) {
@@ -42,7 +43,7 @@ void url::initialize(string_type &&input, std::optional<url_record> &&base) {
   }
   update_record(std::move(parsed_url.value()));
 }
-
+#endif // __cpp_exceptions
 
 void url::update_record(url_record &&record) {
   url_ = record;

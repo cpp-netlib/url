@@ -10,8 +10,11 @@ set(
         example_02
         example_03
         example_04
-        example_05
     )
+
+#if (not Skyr_BUILD_WITHOUT_EXCEPTIONS)
+#    LIST(APPEND EXAMPLES example_05)
+#endif()
 
 foreach(example ${EXAMPLES})
         add_executable(${example} ${example}.cpp)
