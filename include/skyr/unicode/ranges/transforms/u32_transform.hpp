@@ -13,12 +13,12 @@
 #include <range/v3/view.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
-#include <skyr/unicode/range/traits.hpp>
-#include <skyr/unicode/range/views/u8_view.hpp>
+#include <skyr/unicode/ranges/traits.hpp>
+#include <skyr/unicode/ranges/views/u8_view.hpp>
 
 namespace skyr::unicode {
 ///
-/// \tparam OctetIterator
+/// \tparam CodePointIterator
 template <class CodePointIterator>
 class transform_u32_iterator {
  public:
@@ -48,7 +48,7 @@ class transform_u32_iterator {
   constexpr transform_u32_iterator &operator=(const transform_u32_iterator&) = default;
   ///
   constexpr transform_u32_iterator &operator=(transform_u32_iterator&&) noexcept = default;
-  ///
+  /// Destructor
   ~transform_u32_iterator() = default;
 
   ///

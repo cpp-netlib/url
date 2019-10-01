@@ -11,41 +11,62 @@
 #include <range/v3/range_traits.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/constants.hpp>
-#include <skyr/unicode/range/traits.hpp>
-#include <skyr/unicode/range/views/u16_view.hpp>
+#include <skyr/unicode/ranges/traits.hpp>
+#include <skyr/unicode/ranges/views/u16_view.hpp>
 
 namespace skyr::unicode {
+/// An iterator that converts a code point to bytes when dereferenced
+/// \tparam CodePointIterator
 template<class CodePointIterator>
 class transform_byte_iterator {
 
  public:
 
+  ///
+  using iterator_category = std::forward_iterator_tag;
+  ///
   using value_type = tl::expected<char, std::error_code>;
+  ///
   using reference = value_type;
+  /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
 
+  /// Constructor
   transform_byte_iterator() = default;
-
-  transform_byte_iterator(CodePointIterator first, CodePointIterator last)
-      : it_(first), last_(last) {}
-
+  /// Constructs an iterator from an iterator that iterates over
+  /// code points
+  /// \param it
+  /// \param last
+  transform_byte_iterator(CodePointIterator it, CodePointIterator last)
+      : it_(it), last_(last) {}
+  /// Copy constructor
   transform_byte_iterator(const transform_byte_iterator &) = default;
+  /// Move constructor
   transform_byte_iterator(transform_byte_iterator &&) noexcept = default;
+  /// Copy assignment operator
   transform_byte_iterator &operator=(const transform_byte_iterator &) = default;
+  /// Move assignment operator
   transform_byte_iterator &operator=(transform_byte_iterator &&) noexcept = default;
+  /// Destructor
   ~transform_byte_iterator() = default;
 
+  /// Pre-increment operator
+  /// \return A reference to this iterator
   transform_byte_iterator &operator++() {
     increment();
     return *this;
   }
 
+  /// Post-increment operator
+  /// \return A copy of the previous iterator
   transform_byte_iterator operator++(int) {
     auto result = *this;
     increment();
     return result;
   }
 
+  /// Dereference operator
+  /// \return An expected value
   reference operator*() {
     auto code_point = u32_value(*it_).value();
 
@@ -83,10 +104,16 @@ class transform_byte_iterator {
     return tl::make_unexpected(make_error_code(unicode_errc::invalid_code_point));
   }
 
+  /// Equality operator
+  /// \param other The other iterator
+  /// \return \c true if the iterators are the same, \c false otherwise
   constexpr bool operator==(const transform_byte_iterator &other) const noexcept {
     return (it_ == other.it_) && (octet_index_ == other.octet_index_);
   }
 
+  /// Inequality operator
+  /// \param other The other iterator
+  /// \return \c true if the iterators are not the same, \c false otherwise
   constexpr bool operator!=(const transform_byte_iterator &other) const noexcept {
     return !(*this == other);
   }
@@ -123,7 +150,8 @@ class transform_byte_iterator {
 };
 
 
-///
+/// A range that transforms code point values to bytes.
+/// \tparam CodePointRange
 template<class CodePointRange>
 class transform_byte_range {
 
@@ -131,43 +159,58 @@ class transform_byte_range {
 
  public:
 
-  ///
+  /// An expected byte value
   using value_type = tl::expected<char, std::error_code>;
-  ///
+  /// \c value_type
   using const_reference = value_type;
-  ///
+  /// \c const_reference
   using reference = const_reference;
-  ///
+  /// \c value_type*
+  using pointer = typename std::add_pointer<value_type>::type;
+  /// \c transform_byte_iterator
   using const_iterator = iterator_type;
-  ///
+  /// \c const_iterator
   using iterator = const_iterator;
-  ///
+  /// \c std::size_t
   using size_type = std::size_t;
 
-  ///
+  /// Default constructor
+  /// \post empty()
   transform_byte_range() = default;
 
   ///
   /// \param range
   explicit transform_byte_range(
-      const CodePointRange &range)
+      const CodePointRange &range) noexcept
       : first(iterator_type{std::begin(range), std::end(range)}),
         last(iterator_type{std::end(range), std::end(range)}) {}
 
-  ///
-  /// \return
-  const_iterator begin() const {
+  /// Returns an iterator to the beginning
+  /// \return \c const_iterator
+  const_iterator begin() const noexcept {
     return first ? first.value() : iterator_type();
   }
 
-  ///
-  /// \return
-  const_iterator end() const {
+  /// Returns an iterator to the end
+  /// \return \c const_iterator
+  const_iterator end() const noexcept {
     return last ? last.value() : iterator_type();
   }
 
-  ///
-  /// \return
+  /// Returns an iterator to the beginning
+  /// \return \c const_iterator
+  const_iterator cbegin() const noexcept {
+    return begin();
+  }
+
+  /// Returns an iterator to the end
+  /// \return \c const_iterator
+  const_iterator cend() const noexcept {
+    return end();
+  }
+
+  /// Tests if the byte range is empty
+  /// \return \c true if the range is empty, \c false otherwise
   bool empty() const noexcept {
     return begin() == end();
   }
@@ -204,6 +247,11 @@ namespace transform {
 static constexpr byte_range_fn to_bytes;
 }  // namespace transform
 
+///
+/// \tparam Output
+/// \tparam CodePointRange
+/// \param range
+/// \return
 template <class Output, typename CodePointRange>
 tl::expected<Output, std::error_code> as(transform_byte_range<CodePointRange> &&range) {
   auto result = Output{};

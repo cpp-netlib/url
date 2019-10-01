@@ -301,59 +301,6 @@ tl::expected<sequence_state<OctetIterator>, std::error_code> find_code_point(
       tl::make_unexpected(make_error_code(unicode_errc::overflow))
       ;
 }
-
-/// Updates the state to next code point
-///
-/// \tparam OctetIterator
-/// \param it An octer iterator
-/// \return A sequence state with the computed code point value
-template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, std::error_code> next(
-    OctetIterator it) {
-  using result_type = tl::expected<sequence_state<OctetIterator>, std::error_code>;
-
-  auto increment = [] (auto state) -> result_type {
-    ++state.it;
-    return state;
-  };
-
-  return
-      find_code_point(it)
-          .and_then(check_code_point<OctetIterator>)
-          .and_then(increment);
-}
-
-/// Appends values to an octet sequence given a code point value
-///
-/// \tparam OctetIterator
-/// \param code_point
-/// \param octet_it
-/// \return
-template <typename OctetIterator>
-tl::expected<OctetIterator, std::error_code> append_bytes(
-    char32_t code_point,
-    OctetIterator octet_it) {
-  if (!is_valid_code_point(code_point)) {
-    return tl::make_unexpected(make_error_code(unicode_errc::invalid_code_point));
-  }
-
-  if (code_point < 0x80u) { // one octet
-    *(octet_it++) = static_cast<char>(code_point);
-  } else if (code_point < 0x800u) {  // two octets
-    *(octet_it++) = static_cast<char>((code_point >> 6u) | 0xc0u);
-    *(octet_it++) = static_cast<char>((code_point & 0x3fu) | 0x80u);
-  } else if (code_point < 0x10000u) {  // three octets
-    *(octet_it++) = static_cast<char>((code_point >> 12u) | 0xe0u);
-    *(octet_it++) = static_cast<char>(((code_point >> 6u) & 0x3fu) | 0x80u);
-    *(octet_it++) = static_cast<char>((code_point & 0x3fu) | 0x80u);
-  } else {  // four octets
-    *(octet_it++) = static_cast<char>((code_point >> 18u) | 0xf0u);
-    *(octet_it++) = static_cast<char>(((code_point >> 12u) & 0x3fu) | 0x80u);
-    *(octet_it++) = static_cast<char>(((code_point >> 6u) & 0x3fu) | 0x80u);
-    *(octet_it++) = static_cast<char>((code_point & 0x3fu) | 0x80u);
-  }
-  return octet_it;
-}
 }  // namespace skyr::unicode
 
 #endif //SKYR_UNICODE_CORE_HPP

@@ -3,10 +3,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <cstring>
 #include <algorithm>
-#include "skyr/unicode/unicode.hpp"
-#include "skyr/url/domain.hpp"
+#include <skyr/url/domain.hpp>
+#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
+#include <skyr/unicode/ranges/transforms/byte_transform.hpp>
 #include "algorithms.hpp"
 #include "idna_table.hpp"
 
@@ -86,7 +86,7 @@ inline bool delim(char32_t c) {
 }  // namespace
 
 tl::expected<std::string, std::error_code> punycode_encode(std::string_view input) {
-  auto utf32 = unicode::utf32_from_bytes(input);
+  auto utf32 = unicode::as<std::u32string>(input | unicode::view::as_u8 | unicode::transform::to_u32);
   if (!utf32) {
     return tl::make_unexpected(make_error_code(domain_errc::bad_input));
   }
@@ -229,7 +229,7 @@ tl::expected<std::string, std::error_code> punycode_decode(std::string_view inpu
     result.insert(i++, 1, n);
   }
 
-  auto bytes = unicode::utf32_to_bytes(result);
+  auto bytes = unicode::as<std::string>(result | unicode::transform::to_bytes);
   if (!bytes) {
     return tl::make_unexpected(make_error_code(domain_errc::bad_input));
   }
@@ -347,7 +347,7 @@ tl::expected<std::string, std::error_code> unicode_to_ascii(
   }
 
   auto utf32_domain = join(labels, U'.');
-  auto ascii_domain = unicode::utf32_to_bytes(utf32_domain);
+  auto ascii_domain = unicode::as<std::string>(utf32_domain | unicode::transform::to_bytes);
   if (!ascii_domain) {
     return tl::make_unexpected(
         make_error_code(domain_errc::encoding_error));
@@ -359,7 +359,7 @@ tl::expected<std::string, std::error_code> unicode_to_ascii(
 tl::expected<std::string, std::error_code> domain_to_ascii(
     std::string_view domain,
     bool be_strict) {
-  auto utf32 = unicode::utf32_from_bytes(domain);
+  auto utf32 = unicode::as<std::u32string>(domain | unicode::view::as_u8 | unicode::transform::to_u32);
   if (!utf32) {
     return tl::make_unexpected(
         make_error_code(domain_errc::encoding_error));

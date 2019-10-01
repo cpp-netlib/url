@@ -8,7 +8,7 @@
 
 #include <string>
 #include <skyr/traits/string_traits.hpp>
-#include <skyr/unicode/unicode.hpp>
+#include <skyr/unicode/ranges/transforms/byte_transform.hpp>
 
 namespace skyr::details {
 template <class Source, class Enable = void>
@@ -26,7 +26,7 @@ template <class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, wchar_t>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
-    return unicode::wstring_to_bytes(source);
+  return unicode::as<std::string>(source | unicode::view::as_u16 | unicode::transform::to_bytes);
   }
 };
 
@@ -34,7 +34,7 @@ template <class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char16_t>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
-    return unicode::utf16_to_bytes(source);
+    return unicode::as<std::string>(source | unicode::view::as_u16 | unicode::transform::to_bytes);
   }
 };
 
@@ -42,7 +42,7 @@ template <class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char32_t>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
-    return unicode::utf32_to_bytes(source);
+    return unicode::as<std::string>(source | unicode::transform::to_bytes);
   }
 };
 

@@ -5,7 +5,6 @@
 
 set(Skyr_SRCS
 		unicode/errors.cpp
-		unicode/unicode.cpp
 		url/url_parser_context.hpp
 		url/url_parser_context.cpp
 		url/url_record.cpp
@@ -32,7 +31,6 @@ set(Skyr_SRCS
         ${Skyr_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/errors.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/core.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/unicode.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/views/u8_view.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/views/unchecked_u8_view.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/range/views/u16_view.hpp

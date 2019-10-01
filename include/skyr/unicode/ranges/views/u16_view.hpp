@@ -13,9 +13,9 @@
 #include <range/v3/view.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
-#include <skyr/unicode/range/traits.hpp>
-#include <skyr/unicode/range/views/u8_view.hpp>
-#include <skyr/unicode/range/transforms/u32_transform.hpp>
+#include <skyr/unicode/ranges/traits.hpp>
+#include <skyr/unicode/ranges/views/u8_view.hpp>
+#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 
 namespace skyr::unicode {
 ///

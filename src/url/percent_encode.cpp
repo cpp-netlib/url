@@ -4,11 +4,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <iterator>
-#include <cstring>
-#include <cassert>
-#include <algorithm>
-#include "skyr/url/percent_encode.hpp"
-#include "skyr/unicode/unicode.hpp"
+#include <skyr/url/percent_encode.hpp>
+#include <skyr/unicode/ranges/transforms/byte_transform.hpp>
+
 
 namespace skyr {
 namespace {
@@ -141,7 +139,7 @@ tl::expected<std::string, std::error_code> percent_encode(
 
 tl::expected<std::string, std::error_code> percent_encode(
     std::u32string_view input, encode_set excludes) {
-  auto bytes = unicode::utf32_to_bytes(input);
+  auto bytes = unicode::as<std::string>(input | unicode::transform::to_bytes);
   if (!bytes) {
     return tl::make_unexpected(make_error_code(
         percent_encode_errc::overflow));

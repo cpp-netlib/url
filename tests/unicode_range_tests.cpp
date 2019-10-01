@@ -8,11 +8,11 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include <range/v3/empty.hpp>
-#include <skyr/unicode/range/views/u8_view.hpp>
-#include <skyr/unicode/range/views/u16_view.hpp>
-#include <skyr/unicode/range/transforms/u16_transform.hpp>
-#include <skyr/unicode/range/transforms/u32_transform.hpp>
-#include <skyr/unicode/range/transforms/byte_transform.hpp>
+#include <skyr/unicode/ranges/views/u8_view.hpp>
+#include <skyr/unicode/ranges/views/u16_view.hpp>
+#include <skyr/unicode/ranges/transforms/u16_transform.hpp>
+#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
+#include <skyr/unicode/ranges/transforms/byte_transform.hpp>
 
 
 TEST_CASE("octet range iterator") {

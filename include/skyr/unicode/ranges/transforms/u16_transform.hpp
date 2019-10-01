@@ -13,13 +13,13 @@
 #include <range/v3/view.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
-#include <skyr/unicode/range/traits.hpp>
-#include <skyr/unicode/range/views/u8_view.hpp>
-#include <skyr/unicode/range/transforms/u32_transform.hpp>
+#include <skyr/unicode/ranges/traits.hpp>
+#include <skyr/unicode/ranges/views/u8_view.hpp>
+#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 
 namespace skyr::unicode {
 ///
-/// \tparam OctetIterator
+/// \tparam CodePointIterator
 template <class CodePointIterator>
 class transform_u16_iterator {
 
@@ -33,10 +33,10 @@ class transform_u16_iterator {
   using reference = value_type;
   ///
   using pointer = typename std::add_pointer<value_type>::type;
-  ///
+  /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
 
-  ///
+  /// Default constructor
   transform_u16_iterator() = default;
   ///
   /// \param it
@@ -53,26 +53,26 @@ class transform_u16_iterator {
   constexpr transform_u16_iterator &operator=(const transform_u16_iterator&) = default;
   ///
   constexpr transform_u16_iterator &operator=(transform_u16_iterator&&) noexcept = default;
-  ///
+  /// Destructor
   ~transform_u16_iterator() = default;
 
-  ///
-  /// \return
+  /// Pre-increment operator
+  /// \return A reference to this iterator
+  transform_u16_iterator &operator ++ () {
+    ++it_;
+    return *this;
+  }
+
+  /// Post-increment operator
+  /// \return A copy of the previous iterator
   transform_u16_iterator operator ++ (int) {
     auto result = *this;
     ++it_;
     return result;
   }
 
-  ///
-  /// \return
-  transform_u16_iterator &operator ++ () {
-    ++it_;
-    return *this;
-  }
-
-  ///
-  /// \return
+  /// Dereference operator
+  /// \return An expected value
   reference operator * () const noexcept {
     auto code_point = *it_;
     return
@@ -82,16 +82,16 @@ class transform_u16_iterator {
     });
   }
 
-  ///
-  /// \param other
-  /// \return
+  /// Equality operator
+  /// \param other The other iterator
+  /// \return \c true if the iterators are the same, \c false otherwise
   bool operator == (const transform_u16_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
-  ///
-  /// \param other
-  /// \return
+  /// Inequality operator
+  /// \param other The other iterator
+  /// \return \c true if the iterators are not the same, \c false otherwise
   bool operator != (const transform_u16_iterator &other) const noexcept {
     return !(*this == other);
   }
@@ -103,7 +103,7 @@ class transform_u16_iterator {
 };
 
 ///
-/// \tparam OctetRange
+/// \tparam CodePointRange
 template <class CodePointRange>
 class transform_u16_range
     : public ranges::view_base {
@@ -125,7 +125,7 @@ class transform_u16_range
   ///
   using size_type = std::size_t;
 
-  ///
+  /// Default constructor
   constexpr transform_u16_range() = default;
 
   ///
@@ -133,41 +133,41 @@ class transform_u16_range
   explicit constexpr transform_u16_range(CodePointRange &&range)
       : range_{std::forward<CodePointRange>(range)} {}
 
-  ///
-  /// \return
-  [[nodiscard]] constexpr const_iterator begin() const noexcept {
+  /// Returns an iterator to the beginning
+  /// \return \c const_iterator
+  [[nodiscard]] const_iterator begin() const noexcept {
     return iterator_type(std::begin(range_), std::end(range_));
   }
 
-  ///
-  /// \return
-  [[nodiscard]] constexpr const_iterator end() const noexcept {
+  /// Returns an iterator to the end
+  /// \return \c const_iterator
+  [[nodiscard]] const_iterator end() const noexcept {
     return iterator_type();
   }
 
-  ///
-  /// \return
+  /// Returns an iterator to the beginning
+  /// \return \c const_iterator
   [[nodiscard]] constexpr auto cbegin() const noexcept {
     return begin();
   }
 
-  ///
-  /// \return
+  /// Returns an iterator to the end
+  /// \return \c const_iterator
   [[nodiscard]] constexpr auto cend() const noexcept {
     return end();
   }
 
-  ///
-  /// \return
+  /// Tests if the byte range is empty
+  /// \return \c true if the range is empty, \c false otherwise
   [[nodiscard]] constexpr bool empty() const noexcept {
     return range_.empty();
   }
-
-  ///
-  /// \return
-  [[nodiscard]] constexpr size_type size() const noexcept {
-    return range_.size();
-  }
+//
+//  ///
+//  /// \return
+//  [[nodiscard]] constexpr size_type size() const noexcept {
+//    return range_.size();
+//  }
 
  private:
 
@@ -202,7 +202,7 @@ namespace transform {
 static constexpr transform_u16_range_fn to_u16;
 }  // namespace transform
 
-///
+/// A sink that converts a U16 range to  string.
 /// \tparam Output
 /// \tparam OctetRange
 /// \param range
