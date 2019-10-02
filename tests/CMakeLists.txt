@@ -28,7 +28,14 @@ set(
     )
 
 if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)
-		LIST(APPEND TESTS filesystem_path_tests)
+    LIST(APPEND TESTS
+            filesystem_path_tests)
+endif()
+
+if (NOT Skyr_BUILD_WITHOUT_EXCEPTIONS)
+    LIST(APPEND TESTS
+            url_tests_with_exceptions
+            url_web_platform_tests_with_exceptions)
 endif()
 
 if (MSVC)
