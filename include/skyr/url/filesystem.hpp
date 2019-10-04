@@ -8,7 +8,7 @@
 
 #include <system_error>
 #include <filesystem>
-#include <skyr/expected.hpp>
+#include <tl/expected.hpp>
 #include <skyr/url.hpp>
 
 namespace skyr {
@@ -30,12 +30,12 @@ std::error_code make_error_code(path_errc error);
 /// some processing, including percent encoding
 /// \param path A filesystem path
 /// \returns a url object or an error on failure
-expected<url, std::error_code> from_path(const std::filesystem::path &path);
+tl::expected<url, std::error_code> from_path(const std::filesystem::path &path);
 
 /// Converts a URL pathname to a filesystem path
 /// \param input A url object
 /// \returns a path object or an error on failure
-expected<std::filesystem::path, std::error_code> to_path(const url &input);
+tl::expected<std::filesystem::path, std::error_code> to_path(const url &input);
 }  // namespace filesystem
 }  // namespace skyr
 

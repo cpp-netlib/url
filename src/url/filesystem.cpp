@@ -36,22 +36,22 @@ std::error_code make_error_code(path_errc error) {
   return std::error_code(static_cast<int>(error), category);
 }
 
-expected<url, std::error_code> from_path(const std::filesystem::path &path) {
+tl::expected<url, std::error_code> from_path(const std::filesystem::path &path) {
   url result;
   if (!result.set_protocol("file")) {
-    return make_unexpected(make_error_code(path_errc::invalid_path));
+    return tl::make_unexpected(make_error_code(path_errc::invalid_path));
   }
   if (!result.set_pathname(path.string())) {
-    return make_unexpected(make_error_code(path_errc::invalid_path));
+    return tl::make_unexpected(make_error_code(path_errc::invalid_path));
   }
   return result;
 }
 
-expected<std::filesystem::path, std::error_code> to_path(const url &input) {
+tl::expected<std::filesystem::path, std::error_code> to_path(const url &input) {
   auto pathname = input.pathname();
   auto decoded = skyr::percent_encoding::as<std::string>(pathname | skyr::percent_encoding::view::decode);
   if (!decoded) {
-    return make_unexpected(make_error_code(path_errc::percent_decoding_error));
+    return tl::make_unexpected(make_error_code(path_errc::percent_decoding_error));
   }
   return std::filesystem::u8path(decoded.value());
 }
