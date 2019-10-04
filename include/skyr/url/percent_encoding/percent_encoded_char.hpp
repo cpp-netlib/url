@@ -8,6 +8,7 @@
 
 #include <string>
 #include <set>
+#include <locale>
 
 namespace skyr::percent_encoding {
 namespace details {
@@ -200,10 +201,10 @@ inline bool is_percent_encoded(std::string_view input) {
     if (*it == '%') {
       ++it;
       if (it != last) {
-        if (std::isxdigit(*it)) {
+        if (std::isxdigit(*it, std::locale::classic())) {
           ++it;
           if (it != last) {
-            if (std::isxdigit(*it)) {
+            if (std::isxdigit(*it, std::locale::classic())) {
               return true;
             }
           }
