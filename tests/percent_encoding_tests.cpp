@@ -5,15 +5,15 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include <skyr/url/percent_encode.hpp>
+#include <skyr/url/percent_encoding/percent_encode_range.hpp>
 
 TEST_CASE("encode fragment", "[percent_encoding]") {
   auto c = GENERATE(
       ' ', '\"', '<', '>', '`');
 
   SECTION("encode_fragment_set") {
-    auto encoded = skyr::percent_encode_byte(c, skyr::encode_set::fragment);
-    CHECK(skyr::is_percent_encoded(encoded));
+    auto encoded = skyr::percent_encoding::percent_encode_byte(c, skyr::percent_encoding::encode_set::fragment);
+    CHECK(encoded.is_encoded());
   }
 }
 
@@ -22,8 +22,8 @@ TEST_CASE("encode path", "[percent_encoding]") {
       ' ', '\"', '<', '>', '`', '#', '?', '{', '}');
 
   SECTION("encode_path_set") {
-    auto encoded = skyr::percent_encode_byte(c, skyr::encode_set::path);
-    REQUIRE(skyr::is_percent_encoded(encoded));
+    auto encoded = skyr::percent_encoding::percent_encode_byte(c, skyr::percent_encoding::encode_set::path);
+    CHECK(encoded.is_encoded());
   }
 }
 
@@ -33,42 +33,42 @@ TEST_CASE("encode userinfo", "[percent_encoding]") {
       ':', ';', '=', '@', '[', '\\', ']', '^', '|');
 
   SECTION("encode_userinfo_set") {
-    auto encoded = skyr::percent_encode_byte(c, skyr::encode_set::userinfo);
-    CHECK(skyr::is_percent_encoded(encoded));
+    auto encoded = skyr::percent_encoding::percent_encode_byte(c, skyr::percent_encoding::encode_set::userinfo);
+    CHECK(encoded.is_encoded());
   }
 }
 
 TEST_CASE("encode_tests", "[percent_encoding]") {
   SECTION("encode_codepoints_before_0x20_set") {
-    for (auto i = 0; i < 0x20; ++i) {
-      auto encoded = skyr::percent_encode_byte(i, skyr::encode_set::c0_control);
+    for (auto i = 0u; i < 0x20u; ++i) {
+      auto encoded = skyr::percent_encoding::percent_encode_byte(i, skyr::percent_encoding::encode_set::c0_control);
       char buffer[8];
       std::snprintf(buffer, sizeof(buffer), "%02X", i);
       auto output = std::string("%") + buffer;
-      CHECK(output == encoded);
+      CHECK(output == encoded.to_string());
     }
   }
 
   SECTION("encode_codepoints_before_0x7e_set") {
-    for (auto i = 0x7f; i <= 0xff; ++i) {
-      auto encoded = skyr::percent_encode_byte(i, skyr::encode_set::c0_control);
+    for (auto i = 0x7fu; i <= 0xffu; ++i) {
+      auto encoded = skyr::percent_encoding::percent_encode_byte(i, skyr::percent_encoding::encode_set::c0_control);
       char buffer[8];
       std::snprintf(buffer, sizeof(buffer), "%02X", i);
       auto output = std::string("%") + buffer;
-      CHECK(output == encoded);
+      CHECK(output == encoded.to_string());
     }
   }
 
   SECTION("u8_test_1") {
     auto input = std::string("\xf0\x9f\x92\xa9");
-    auto encoded = skyr::percent_encode(input, skyr::encode_set::c0_control);
+    auto encoded = skyr::percent_encoding::as<std::string>(input | skyr::percent_encoding::view::encode);
     REQUIRE(encoded);
     CHECK("%F0%9F%92%A9" == encoded.value());
   }
 
   SECTION("u8_test_2") {
     auto input = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto encoded = skyr::percent_encode(input, skyr::encode_set::c0_control);
+    auto encoded = skyr::percent_encoding::as<std::string>(input | skyr::percent_encoding::view::encode);
     REQUIRE(encoded);
     CHECK("%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == encoded.value());
   }

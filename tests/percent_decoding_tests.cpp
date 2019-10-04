@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include <skyr/url/percent_encode.hpp>
+#include <skyr/url/percent_encoding/percent_decode_range.hpp>
 
 
 TEST_CASE("percent_decode", "[percent_decode]") {
@@ -14,15 +14,22 @@ TEST_CASE("percent_decode", "[percent_decode]") {
       char buffer[8];
       std::snprintf(buffer, sizeof(buffer), "%02X", i);
       auto input = std::string("%") + buffer;
-      auto decoded = skyr::percent_decode_byte(input);
+      auto decoded = skyr::percent_encoding::as<std::string>(input | skyr::percent_encoding::view::decode);
       REQUIRE(decoded);
-      CHECK(static_cast<char>(i) == decoded.value());
+      CHECK(std::string{static_cast<char>(i)} == decoded.value());
     }
   }
 
   SECTION("u8_test") {
+//    auto input = std::string("%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88");
+//    auto decoded = skyr::percent_decode(input);
+//    REQUIRE(decoded);
+//    CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == decoded);
+//  }
+//
+//  SECTION("u8_test range") {
     auto input = std::string("%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88");
-    auto decoded = skyr::percent_decode(input);
+    auto decoded = skyr::percent_encoding::as<std::string>(input | skyr::percent_encoding::view::decode);
     REQUIRE(decoded);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == decoded);
   }

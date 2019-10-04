@@ -7,6 +7,7 @@
 #define SKYR_UNICODE_BYTE_RANGE_HPP
 
 #include <iterator>
+#include <optional>
 #include <tl/expected.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/constants.hpp>

@@ -8,7 +8,7 @@
 #include "skyr/url.hpp"
 #include "skyr/url/url_parse.hpp"
 #include "skyr/url/url_serialize.hpp"
-#include "skyr/url/percent_encode.hpp"
+#include "skyr/url/percent_encoding/percent_encode_range.hpp"
 #include "url_parse_impl.hpp"
 #include "url_schemes.hpp"
 
@@ -112,8 +112,8 @@ tl::expected<void, std::error_code> url::set_username(string_type &&username) {
 
   new_url.username.clear();
   for (auto c : username) {
-    auto pct_encoded = percent_encode_byte(c, encode_set::userinfo);
-    new_url.username += pct_encoded;
+    auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::userinfo);
+    new_url.username += pct_encoded.to_string();
   }
 
   update_record(std::move(new_url));
@@ -132,8 +132,8 @@ tl::expected<void, std::error_code> url::set_password(string_type &&password) {
 
   new_url.password.clear();
   for (auto c : password) {
-    auto pct_encoded = percent_encode_byte(c, encode_set::userinfo);
-    new_url.password += pct_encoded;
+    auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::userinfo);
+    new_url.password += pct_encoded.to_string();
   }
 
   update_record(std::move(new_url));

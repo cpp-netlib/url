@@ -23,14 +23,7 @@ class iterator<T[N]> {
  public:
   using type = const T *;
 };
-
-//template <class Iterator>
-//class category {
-// public:
-//  using type = typename Iterator::iterator_category;
-//};
-
-}   // namespace skyr::unicode::traits
+}  // namespace skyr::unicode::traits
 
 
 #endif //SKYR_UNICODE_RANGE_TRAITS_HPP

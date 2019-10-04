@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include "skyr/url/filesystem.hpp"
-#include "skyr/url/percent_encode.hpp"
+#include "skyr/url/percent_encoding/percent_decode_range.hpp"
 
 namespace skyr::filesystem {
 namespace {
@@ -49,7 +49,7 @@ expected<url, std::error_code> from_path(const std::filesystem::path &path) {
 
 expected<std::filesystem::path, std::error_code> to_path(const url &input) {
   auto pathname = input.pathname();
-  auto decoded = percent_decode(pathname);
+  auto decoded = skyr::percent_encoding::as<std::string>(pathname | skyr::percent_encoding::view::decode);
   if (!decoded) {
     return make_unexpected(make_error_code(path_errc::percent_decoding_error));
   }

@@ -1,4 +1,4 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-19 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -12,10 +12,11 @@
 #include <array>
 #include <locale>
 #include <cstring>
+#include <skyr/url/percent_encoding/percent_decode_range.hpp>
+#include "skyr/url/percent_encoding/percent_encode_range.hpp"
 #include "url_parser_context.hpp"
 #include "skyr/url/domain.hpp"
 #include "url_schemes.hpp"
-#include "skyr/url/percent_encode.hpp"
 #include "ipv4_address.hpp"
 #include "ipv6_address.hpp"
 #include "algorithms.hpp"
@@ -59,7 +60,8 @@ tl::expected<std::string, url_parse_errc> parse_opaque_host(std::string_view inp
 
   auto output = std::string();
   for (auto c : input) {
-    output += percent_encode_byte(c, encode_set::c0_control);
+    auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::c0_control);
+    output += pct_encoded.to_string();
   }
   return output;
 }
@@ -88,7 +90,8 @@ tl::expected<std::string, url_parse_errc> parse_host(
     return parse_opaque_host(input);
   }
 
-  auto domain = percent_decode(input);
+  auto domain = percent_encoding::as<std::string>(
+      input | percent_encoding::view::decode);
   if (!domain) {
     return tl::make_unexpected(url_parse_errc::cannot_decode_host_point);
   }
@@ -461,11 +464,11 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_authori
         continue;
       }
 
-      auto pct_encoded = percent_encode_byte(c, encode_set::userinfo);
+      auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::userinfo);
       if (password_token_seen_flag) {
-        url.password += pct_encoded;
+        url.password += pct_encoded.to_string();
       } else {
-        url.username += pct_encoded;
+        url.username += pct_encoded.to_string();
       }
     }
     buffer.clear();
@@ -798,7 +801,8 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_path(ch
       url.validation_error = true;
     }
 
-    buffer += percent_encode_byte(byte, encode_set::path);
+    auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::path);
+    buffer += pct_encoded.to_string();
   }
 
   return url_parse_action::increment;
@@ -815,12 +819,13 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_cannot_
     if (!is_eof() && !is_url_code_point(byte) && (byte != '%')) {
       url.validation_error = true;
     }
-    else if ((byte == '%') && !is_percent_encoded(
+    else if ((byte == '%') && !percent_encoding::is_percent_encoded(
         std::string_view(std::addressof(*it), std::distance(it, end(view))))) {
       url.validation_error = true;
     }
     if (!is_eof()) {
-      url.path[0] += percent_encode_byte(byte, encode_set::c0_control);
+      auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::c0_control);
+      url.path[0] += pct_encoded.to_string();
     }
   }
   return url_parse_action::increment;
@@ -835,7 +840,8 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_query(c
         (byte > '~') ||
         (is_in(byte, "\"#<>")) ||
         ((byte == '\'') && url.is_special())) {
-      url.query.value() += percent_encode_byte(byte, encode_set::query);
+      auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::query);
+      url.query.value() += pct_encoded.to_string();
     } else {
       url.query.value().push_back(byte);
     }
@@ -847,7 +853,8 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_fragmen
   if (byte == '\0') {
     url.validation_error = true;
   } else {
-    url.fragment.value() += percent_encode_byte(byte, encode_set::fragment);
+    auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::fragment);
+    url.fragment.value() += pct_encoded.to_string();
   }
   return url_parse_action::increment;
 }

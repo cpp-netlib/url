@@ -4,6 +4,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 set(Skyr_SRCS
+		percent_encoding/errors.cpp
 		unicode/errors.cpp
 		url/url_parser_context.hpp
 		url/url_parser_context.cpp
@@ -12,7 +13,6 @@ set(Skyr_SRCS
 		url/ipv4_address.hpp
 		url/ipv6_address.cpp
 		url/ipv6_address.hpp
-		url/percent_encode.cpp
 		url/idna_table.cpp
 		url/idna_table.hpp
 		url/algorithms.hpp
@@ -38,7 +38,11 @@ set(Skyr_SRCS
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/byte_transform.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u16_transform.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encode.hpp
+        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/errors.hpp
+        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_decode_range.hpp
+        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encode.hpp
+        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encode_range.hpp
+        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encoded_char.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/domain.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/url_record.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/url_parse.hpp

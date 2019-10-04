@@ -197,6 +197,7 @@ class view_u8_range {
 
 ///
 struct u8_range_fn {
+
   ///
   /// \tparam OctetRange
   /// \param range
