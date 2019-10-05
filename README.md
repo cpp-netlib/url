@@ -182,16 +182,16 @@ Linux:
 * GCC 7
 * GCC 8
 * GCC 9
-* Clang 6
+* Clang 7
+* Clang 8
 
 MacOS:
 
-* Clang 6
+* Clang 7
 
 Windows:
 
 * Microsoft Visual C++ 2017
-* Microsoft Visual C++ 2019
 
 ## License
 

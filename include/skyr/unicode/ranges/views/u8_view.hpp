@@ -28,7 +28,7 @@ class u8_range_iterator {
  public:
 
   ///
-  using iterator_category = typename iterator_type::iterator_category;
+  using iterator_category = std::forward_iterator_tag;
   ///
   using value_type = tl::expected<typename iterator_type::value_type, std::error_code>;
   ///
@@ -36,7 +36,7 @@ class u8_range_iterator {
   ///
   using pointer = typename std::add_pointer<value_type>::type;
   ///
-  using difference_type = typename iterator_type::difference_type;
+  using difference_type = std::ptrdiff_t;
 
   ///
   constexpr u8_range_iterator() = default;

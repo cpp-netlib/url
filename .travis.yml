@@ -1,10 +1,8 @@
 sudo: false
 
-language:
-    - cpp
+language: c++
 
-dist:
-    - xenial
+dist: xenial
 
 env:
   global: DEPS_DIR="${TRAVIS_BUILD_DIR}/deps_"
@@ -12,7 +10,7 @@ env:
 matrix:
   include:
     - os: linux
-      compiler: gcc-8
+      compiler: gcc
       addons: &gcc8
         apt:
           sources: ['ubuntu-toolchain-r-test']
@@ -20,12 +18,28 @@ matrix:
       env: [COMPILER='g++-8', VCPKG_TRIPLET='x64-linux']
 
     - os: linux
-      compiler: gcc-9
+      compiler: gcc
       addons: &gcc9
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-9']
       env: [COMPILER='g++-9', VCPKG_TRIPLET='x64-linux']
+
+    - os: linux
+      compiler: clang
+      addons: &clang7
+        apt:
+          sources: ['llvm-toolchain-xenial-7']
+          packages: ['clang++-7', 'libc++-7-dev', 'libc++abi-7-dev']
+      env: [COMPILER='clang++-7', VCPKG_TRIPLET='x64-linux']
+
+    - os: linux
+      compiler: clang
+      addons: &clang8
+        apt:
+          sources: ['llvm-toolchain-xenial-8']
+          packages: ['clang++-8', 'libc++-8-dev', 'libc++abi-8-dev']
+      env: [COMPILER='clang++-8', VCPKG_TRIPLET='x64-linux']
 
 #    # 3/ OSX Clang Builds
 #    - os: osx

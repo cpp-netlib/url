@@ -41,11 +41,17 @@ class percent_decode_iterator {
  public:
 
   ///
+  using iterator_category = std::forward_iterator_tag;
+  ///
   using value_type = tl::expected<char, std::error_code>;
   ///
   using const_reference = value_type;
   ///
   using reference = const_reference;
+  ///
+  using const_pointer = const typename std::add_pointer<value_type>::type;
+  ///
+  using pointer = const_pointer;
   ///
   using difference_type = std::ptrdiff_t;
 

@@ -56,9 +56,9 @@ class unchecked_u8_range_iterator {
   ///
   /// \return
   constexpr reference operator * () const noexcept {
-    return u8_code_point_t<OctetIterator>(
-        it_,
-        it_ + sequence_length(*it_));
+    auto last = it_;
+    std::advance(last, sequence_length(*it_));
+    return u8_code_point_t<OctetIterator>(it_, last);
   }
 
   ///

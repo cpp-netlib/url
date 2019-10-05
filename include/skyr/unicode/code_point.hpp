@@ -46,17 +46,6 @@ class u8_code_point_t {
   explicit constexpr u8_code_point_t(OctetIterator first)
       : u8_code_point_t(first, first + sequence_length(*first)) {}
 
-  /// \brief Copy constructor.
-  constexpr u8_code_point_t(const u8_code_point_t &) = default;
-  /// \brief Move constructor.
-  constexpr u8_code_point_t(u8_code_point_t &&) noexcept = default;
-  /// \brief Copy assignment operator.
-  constexpr u8_code_point_t &operator=(const u8_code_point_t &) = default;
-  /// \brief Move assignment operator.
-  constexpr u8_code_point_t &operator=(u8_code_point_t &&) noexcept = default;
-  /// \brief Destructor.
-  ~u8_code_point_t() = default;
-
   /// Returns an iterator to the beginning
   /// \return \c const_iterator
   [[nodiscard]] constexpr const_iterator begin() const noexcept {
@@ -101,21 +90,22 @@ template<typename OctetRange>
 inline tl::expected<u8_code_point_t<typename OctetRange::const_iterator>, std::error_code> u8_code_point(
     const OctetRange &range) {
   auto first = std::begin(range), last = std::end(range);
-  if (std::distance(first, last) > sequence_length(*first)) {
+  auto length = sequence_length(*first);
+  if (std::distance(first, last) > length) {
     return tl::make_unexpected(make_error_code(unicode_errc::overflow));
   }
-  return u8_code_point_t<typename OctetRange::const_iterator>(
-      first,
-      first + sequence_length(*first));
+  last = first;
+  std::advance(last, length);
+  return u8_code_point_t<typename OctetRange::const_iterator>(first, last);
 }
 
-
-/// Tests if the code point value is valid.
-/// \returns \c true if the value is a valid code point, \c false otherwise
-template <typename OctetIterator>
-inline bool is_valid(const u8_code_point_t<OctetIterator> &code_point) {
-  return static_cast<bool>(find_code_point(std::begin(code_point)));
-}
+//
+///// Tests if the code point value is valid.
+///// \returns \c true if the value is a valid code point, \c false otherwise
+//template <typename OctetIterator>
+//inline bool is_valid(const u8_code_point_t<OctetIterator> &code_point) {
+//  return static_cast<bool>(find_code_point(std::begin(code_point)));
+//}
 
 ///
 /// \tparam OctetRange
@@ -307,6 +297,5 @@ inline tl::expected<u16_code_point_t, std::error_code> u16_value(
   });
 }
 }  // namespace skyr::unicode
-
 
 #endif //SKYR_UNICODE_CODE_POINT_HPP

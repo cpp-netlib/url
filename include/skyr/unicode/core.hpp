@@ -74,13 +74,13 @@ constexpr bool is_valid_code_point(char32_t code_point) {
 /// \return 1, 2, 3 or 4
 constexpr long sequence_length(char lead_value) {
   auto lead = mask8(lead_value);
-  if (lead < 0x80) {
+  if (lead < 0x80u) {
     return 1;
-  } else if ((lead >> 5) == 0x6) {
+  } else if ((lead >> 5u) == 0x6u) {
     return 2;
-  } else if ((lead >> 4) == 0xe) {
+  } else if ((lead >> 4u) == 0xeu) {
     return 3;
-  } else if ((lead >> 3) == 0x1e) {
+  } else if ((lead >> 3u) == 0x1eu) {
     return 4;
   }
   return 0;
