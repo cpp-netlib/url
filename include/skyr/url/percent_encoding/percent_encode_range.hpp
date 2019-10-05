@@ -42,16 +42,16 @@ class percent_encode_iterator {
   percent_encode_iterator(
       OctetIterator it,
       OctetIterator last,
-      encode_set excludes = encode_set::none)
+      encode_set excludes = encode_set::none) noexcept
   : it_(it)
   , last_(last)
   , excludes_(excludes) {}
   ///
-  percent_encode_iterator(const percent_encode_iterator &) = default;
+  percent_encode_iterator(const percent_encode_iterator &) noexcept = default;
   ///
   percent_encode_iterator(percent_encode_iterator &&) noexcept = default;
   ///
-  percent_encode_iterator &operator=(const percent_encode_iterator &) = default;
+  percent_encode_iterator &operator=(const percent_encode_iterator &) noexcept = default;
   ///
   percent_encode_iterator &operator=(percent_encode_iterator &&) noexcept = default;
   ///
@@ -59,7 +59,7 @@ class percent_encode_iterator {
 
   ///
   /// \return
-  percent_encode_iterator &operator++() {
+  percent_encode_iterator &operator++() noexcept {
     assert(it_);
     increment();
     return *this;
@@ -67,7 +67,7 @@ class percent_encode_iterator {
 
   ///
   /// \return
-  percent_encode_iterator operator++(int) {
+  percent_encode_iterator operator++(int) noexcept {
     assert(it_);
     auto result = *this;
     increment();
@@ -126,7 +126,8 @@ class percent_encode_range {
   /// \param range
   /// \param excludes
   explicit percent_encode_range(
-      const OctetRange &range, encode_set excludes = encode_set::none) noexcept
+      const OctetRange &range,
+      encode_set excludes = encode_set::none) noexcept
       : impl_(impl(std::begin(range), std::end(range), excludes)) {}
 
   ///
@@ -187,7 +188,8 @@ struct percent_encode_fn {
   /// \param range
   /// \return
   template <typename OctetRange>
-  constexpr auto operator()(const OctetRange &range) const {
+  constexpr auto operator()(
+      const OctetRange &range) const noexcept {
     return percent_encode_range{range};
   }
 
@@ -196,7 +198,9 @@ struct percent_encode_fn {
   /// \param range
   /// \return
   template <typename OctetRange>
-  friend constexpr auto operator|(const OctetRange &range, const percent_encode_fn&) {
+  friend constexpr auto operator|(
+      const OctetRange &range,
+      const percent_encode_fn&) noexcept {
     return percent_encode_range{range};
   }
 };
@@ -211,13 +215,17 @@ static constexpr percent_encode_fn encode;
 /// \param range
 /// \return
 template <class Output, class OctetRange>
-tl::expected<Output, std::error_code> as(percent_encode_range<OctetRange> &&range) {
+tl::expected<Output, std::error_code> as(
+    percent_encode_range<OctetRange> &&range) {
   auto result = Output();
   for (auto &&byte : range) {
     if (!byte) {
       return tl::make_unexpected(byte.error());
     }
-    std::copy(std::begin(byte.value()), std::end(byte.value()), std::back_inserter(result));
+    std::copy(
+        std::begin(byte.value()),
+        std::end(byte.value()),
+        std::back_inserter(result));
   }
   return result;
 }

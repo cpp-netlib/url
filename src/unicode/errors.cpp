@@ -30,7 +30,7 @@ std::string unicode_error_category::message(int error) const noexcept {
 const unicode_error_category category{};
 }  // namespace
 
-std::error_code make_error_code(unicode_errc error) {
+std::error_code make_error_code(unicode_errc error) noexcept {
   return std::error_code(static_cast<int>(error), category);
 }
 }  // namespace skyr::unicode

@@ -189,7 +189,7 @@ class u16_code_point_t {
     return code_point_ > 0xffffU;
   }
 
-  tl::expected<char32_t, std::error_code> u32_value() const noexcept {
+  [[nodiscard]] tl::expected<char32_t, std::error_code> u32_value() const noexcept {
     return code_point_;
   }
 
@@ -214,11 +214,13 @@ inline u16_code_point_t u16_code_point(char16_t code_point) {
 }
 
 ///
-/// \param lead
-/// \param value
+/// \param lead_code_unit
+/// \param trail_code_unit
 /// \return
-inline u16_code_point_t u16_code_point(char16_t lead, char16_t value) {
-  return u16_code_point_t(lead, value);
+inline u16_code_point_t u16_code_point(
+    char16_t lead_code_unit,
+    char16_t trail_code_unit) {
+  return u16_code_point_t(lead_code_unit, trail_code_unit);
 }
 
 ///

@@ -40,7 +40,6 @@ set(Skyr_SRCS
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/errors.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_decode_range.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encode.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encode_range.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encoded_char.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/domain.hpp

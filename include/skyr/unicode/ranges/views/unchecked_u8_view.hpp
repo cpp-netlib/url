@@ -37,20 +37,10 @@ class unchecked_u8_range_iterator {
   /// \param it
   explicit constexpr unchecked_u8_range_iterator(OctetIterator it)
       : it_(it) {}
-  ///
-  constexpr unchecked_u8_range_iterator(const unchecked_u8_range_iterator&) = default;
-  ///
-  constexpr unchecked_u8_range_iterator(unchecked_u8_range_iterator&&) noexcept = default;
-  ///
-  constexpr unchecked_u8_range_iterator &operator=(const unchecked_u8_range_iterator&) = default;
-  ///
-  constexpr unchecked_u8_range_iterator &operator=(unchecked_u8_range_iterator&&) noexcept = default;
-  ///
-  ~unchecked_u8_range_iterator() = default;
 
   ///
   /// \return
-  unchecked_u8_range_iterator operator ++ (int) {
+  unchecked_u8_range_iterator operator ++ (int) noexcept {
     auto result = *this;
     std::advance(it_, sequence_length(*it_));
     return result;
@@ -58,7 +48,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  unchecked_u8_range_iterator &operator ++ () {
+  unchecked_u8_range_iterator &operator ++ () noexcept {
     std::advance(it_, sequence_length(*it_));
     return *this;
   }
@@ -115,11 +105,12 @@ class view_unchecked_u8_range {
   using size_type = std::size_t;
 
   /// Default constructor
-  constexpr view_unchecked_u8_range() = default;
+  constexpr view_unchecked_u8_range() noexcept = default;
 
   ///
   /// \param range
-  explicit constexpr view_unchecked_u8_range(const OctetRange &range)
+  explicit constexpr view_unchecked_u8_range(
+      const OctetRange &range) noexcept
       : impl_(
       impl(std::begin(range),
            std::end(range))) {}
@@ -182,7 +173,8 @@ struct unchecked_u8_range_fn {
   /// \param range
   /// \return
   template <typename OctetRange>
-  constexpr auto operator()(OctetRange &&range) const {
+  constexpr auto operator()(
+      OctetRange &&range) const noexcept {
     return view_unchecked_u8_range{std::forward<OctetRange>(range)};
   }
 
@@ -191,7 +183,9 @@ struct unchecked_u8_range_fn {
   /// \param range
   /// \return
   template <typename OctetRange>
-  friend constexpr auto operator|(OctetRange &&range, const unchecked_u8_range_fn&) {
+  friend constexpr auto operator|(
+      OctetRange &&range,
+      const unchecked_u8_range_fn&) noexcept {
     return view_unchecked_u8_range{std::forward<OctetRange>(range)};
   }
 };

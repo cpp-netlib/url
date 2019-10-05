@@ -39,20 +39,10 @@ class transform_u32_iterator {
   /// \param it
   explicit constexpr transform_u32_iterator(CodePointIterator it)
       : it_(it) {}
-  ///
-  constexpr transform_u32_iterator(const transform_u32_iterator&) = default;
-  ///
-  constexpr transform_u32_iterator(transform_u32_iterator&&) noexcept = default;
-  ///
-  constexpr transform_u32_iterator &operator=(const transform_u32_iterator&) = default;
-  ///
-  constexpr transform_u32_iterator &operator=(transform_u32_iterator&&) noexcept = default;
-  /// Destructor
-  ~transform_u32_iterator() = default;
 
   ///
   /// \return
-  transform_u32_iterator operator ++ (int) {
+  transform_u32_iterator operator ++ (int) noexcept {
     auto result = *this;
     ++it_;
     return result;
@@ -60,14 +50,14 @@ class transform_u32_iterator {
 
   ///
   /// \return
-  transform_u32_iterator &operator ++ () {
+  transform_u32_iterator &operator ++ () noexcept {
     ++it_;
     return *this;
   }
 
   ///
   /// \return
-  reference operator * () const noexcept {
+  [[nodiscard]] reference operator * () const noexcept {
     return (*it_)
     .and_then([] (auto code_point) -> value_type {
       return u32_value(code_point);
@@ -117,7 +107,7 @@ class transform_u32_range {
   using size_type = std::size_t;
 
   ///
-  constexpr transform_u32_range() = default;
+  constexpr transform_u32_range() noexcept = default;
 
   ///
   /// \param range
@@ -173,7 +163,8 @@ struct transform_u32_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  constexpr auto operator()(CodePointRange &&range) const {
+  constexpr auto operator()(
+      CodePointRange &&range) const noexcept {
     return transform_u32_range{std::forward<CodePointRange>(range)};
   }
 
@@ -182,7 +173,9 @@ struct transform_u32_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  friend constexpr auto operator|(CodePointRange &&range, const transform_u32_range_fn&) {
+  friend constexpr auto operator|(
+      CodePointRange &&range,
+      const transform_u32_range_fn&) noexcept {
     return transform_u32_range{std::forward<CodePointRange>(range)};
   }
 

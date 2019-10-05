@@ -42,20 +42,10 @@ class u32_range_iterator {
       U32Iterator last)
       : it_(it)
       , last_(last) {}
-  ///
-  constexpr u32_range_iterator(const u32_range_iterator&) = default;
-  ///
-  constexpr u32_range_iterator(u32_range_iterator&&) noexcept = default;
-  ///
-  constexpr u32_range_iterator &operator=(const u32_range_iterator&) = default;
-  ///
-  constexpr u32_range_iterator &operator=(u32_range_iterator&&) noexcept = default;
-  ///
-  ~u32_range_iterator() = default;
 
   ///
   /// \return
-  u32_range_iterator operator ++ (int) {
+  u32_range_iterator operator ++ (int) noexcept {
     auto result = *this;
     increment();
     return result;
@@ -63,7 +53,7 @@ class u32_range_iterator {
 
   ///
   /// \return
-  u32_range_iterator &operator ++ () {
+  u32_range_iterator &operator ++ () noexcept {
     increment();
     return *this;
   }
@@ -126,11 +116,11 @@ class view_u32_range {
   using size_type = std::size_t;
 
   ///
-  constexpr view_u32_range() = default;
+  constexpr view_u32_range() noexcept = default;
 
   ///
   /// \param range
-  explicit constexpr view_u32_range(const U32Range &range)
+  explicit constexpr view_u32_range(const U32Range &range) noexcept
       : range_{range} {}
 
   ///
@@ -171,7 +161,7 @@ class view_u32_range {
 
  private:
 
-  U32Range range_;
+  const U32Range &range_;
 
 };
 
@@ -182,7 +172,8 @@ struct u32_range_fn {
   /// \param range
   /// \return
   template <typename U32Range>
-  constexpr auto operator()(U32Range &&range) const {
+  constexpr auto operator()(
+      U32Range &&range) const noexcept {
     return view_u32_range{std::forward<U32Range>(range)};
   }
 
@@ -191,7 +182,9 @@ struct u32_range_fn {
   /// \param range
   /// \return
   template <typename U32Range>
-  friend constexpr auto operator|(U32Range &&range, const u32_range_fn&) {
+  friend constexpr auto operator|(
+      U32Range &&range,
+      const u32_range_fn&) noexcept {
     return view_u32_range{std::forward<U32Range>(range)};
   }
 

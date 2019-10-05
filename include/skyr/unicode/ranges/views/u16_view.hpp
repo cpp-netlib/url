@@ -45,20 +45,10 @@ class u16_range_iterator {
       U16Iterator last)
       : it_(it)
       , last_(last) {}
-  ///
-  constexpr u16_range_iterator(const u16_range_iterator&) = default;
-  ///
-  constexpr u16_range_iterator(u16_range_iterator&&) noexcept = default;
-  ///
-  constexpr u16_range_iterator &operator=(const u16_range_iterator&) = default;
-  ///
-  constexpr u16_range_iterator &operator=(u16_range_iterator&&) noexcept = default;
-  ///
-  ~u16_range_iterator() = default;
 
   ///
   /// \return
-  u16_range_iterator operator ++ (int) {
+  u16_range_iterator operator ++ (int) noexcept {
     auto result = *this;
     increment();
     return result;
@@ -66,7 +56,7 @@ class u16_range_iterator {
 
   ///
   /// \return
-  u16_range_iterator &operator ++ () {
+  u16_range_iterator &operator ++ () noexcept {
     increment();
     return *this;
   }
@@ -146,11 +136,11 @@ class view_u16_range {
   using size_type = std::size_t;
 
   ///
-  constexpr view_u16_range() = default;
+  constexpr view_u16_range() noexcept = default;
 
   ///
   /// \param range
-  explicit constexpr view_u16_range(const U16Range &range)
+  explicit constexpr view_u16_range(const U16Range &range) noexcept
       : range_{range} {}
 
   ///
@@ -202,7 +192,7 @@ struct u16_range_fn {
   /// \param range
   /// \return
   template <typename U16Range>
-  constexpr auto operator()(U16Range &&range) const {
+  constexpr auto operator()(U16Range &&range) const noexcept {
     return view_u16_range{std::forward<U16Range>(range)};
   }
 
@@ -211,7 +201,7 @@ struct u16_range_fn {
   /// \param range
   /// \return
   template <typename U16Range>
-  friend constexpr auto operator|(U16Range &&range, const u16_range_fn&) {
+  friend constexpr auto operator|(U16Range &&range, const u16_range_fn&) noexcept {
     return view_u16_range{std::forward<U16Range>(range)};
   }
 

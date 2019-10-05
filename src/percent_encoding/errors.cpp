@@ -30,7 +30,7 @@ std::string percent_encode_error_category::message(int error) const noexcept {
 const percent_encode_error_category category{};
 }  // namespace
 
-std::error_code make_error_code(percent_encode_errc error) {
+std::error_code make_error_code(percent_encode_errc error) noexcept {
   return std::error_code(static_cast<int>(error), category);
 }
 }  // namespace skyr::percent_encoding

@@ -50,7 +50,7 @@ std::string url_parse_error_category::message(int error) const noexcept {
 const url_parse_error_category category{};
 }  // namespace
 
-std::error_code make_error_code(url_parse_errc error) {
+std::error_code make_error_code(url_parse_errc error) noexcept {
   return std::error_code(static_cast<int>(error), category);
 }
 }  // namespace skyr

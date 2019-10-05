@@ -42,7 +42,7 @@ enum class url_parse_errc {
 /// Creates a `std::error_code` given a `skyr::url_parse_errc` value
 /// \param error A URL parse error
 /// \returns A `std::error_code` object
-std::error_code make_error_code(url_parse_errc error);
+std::error_code make_error_code(url_parse_errc error) noexcept;
 }  // namespace skyr
 
 namespace std {

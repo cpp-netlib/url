@@ -15,7 +15,7 @@
 
 namespace skyr::percent_encoding {
 namespace details {
-inline tl::expected<char, std::error_code> letter_to_hex(char byte) {
+inline tl::expected<char, std::error_code> letter_to_hex(char byte) noexcept {
   if ((byte >= '0') && (byte <= '9')) {
     return byte - '0';
   }
@@ -50,23 +50,25 @@ class percent_decode_iterator {
   using difference_type = std::ptrdiff_t;
 
   ///
-  percent_decode_iterator() = default;
+  percent_decode_iterator() noexcept = default;
   ///
-  percent_decode_iterator(OctetIterator it, OctetIterator last)
+  percent_decode_iterator(OctetIterator it, OctetIterator last) noexcept
   : it_(it)
   , last_(last) {}
   ///
-  percent_decode_iterator(const percent_decode_iterator&) = default;
+  percent_decode_iterator(const percent_decode_iterator&) noexcept = default;
   ///
   percent_decode_iterator(percent_decode_iterator&&) noexcept = default;
   ///
-  percent_decode_iterator &operator=(const percent_decode_iterator&) = default;
+  percent_decode_iterator &operator=(const percent_decode_iterator&)  noexcept = default;
   ///
   percent_decode_iterator &operator=(percent_decode_iterator&&) noexcept = default;
+  ///
+  ~percent_decode_iterator() = default;
 
   ///
   /// \return
-  percent_decode_iterator operator++(int) {
+  percent_decode_iterator operator++(int) noexcept {
     assert(it_);
     auto result = *this;
     increment();
@@ -75,7 +77,7 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  percent_decode_iterator &operator++() {
+  percent_decode_iterator &operator++() noexcept {
     assert(it_);
     increment();
     return *this;
@@ -83,7 +85,7 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  const_reference operator * () const noexcept {
+  [[nodiscard]] const_reference operator * () const noexcept {
     assert(it_);
     if (*it_.value() == '%') {
       if (std::distance(it_.value(), last_.value()) < 3) {
@@ -151,33 +153,33 @@ class percent_decode_range {
   using size_type = std::size_t;
 
   ///
-  percent_decode_range() = default;
+  percent_decode_range() noexcept = default;
   ///
   /// \param range
-  percent_decode_range(const OctetRange &range)
+  percent_decode_range(const OctetRange &range) noexcept
       : impl_(impl(std::begin(range), std::end(range))) {}
 
   ///
   /// \return
-  const_iterator begin() const noexcept {
+  [[nodiscard]] const_iterator begin() const noexcept {
     return impl_? impl_.value().first : iterator_type();
   }
 
   ///
   /// \return
-  const_iterator end() const noexcept {
+  [[nodiscard]] const_iterator end() const noexcept {
     return iterator_type();
   }
 
   ///
   /// \return
-  const_iterator cbegin() const noexcept {
+  [[nodiscard]] const_iterator cbegin() const noexcept {
     return begin();
   }
 
   ///
   /// \return
-  const_iterator cend() const noexcept {
+  [[nodiscard]] const_iterator cend() const noexcept {
     return end();
   }
 
@@ -214,7 +216,8 @@ struct percent_decode_fn {
   /// \param range
   /// \return
   template <typename OctetRange>
-  constexpr auto operator()(const OctetRange &range) const {
+  constexpr auto operator()(
+      const OctetRange &range) const noexcept {
     return percent_decode_range{range};
   }
 
@@ -223,7 +226,9 @@ struct percent_decode_fn {
   /// \param range
   /// \return
   template <typename OctetRange>
-  friend constexpr auto operator|(const OctetRange &range, const percent_decode_fn&) {
+  friend constexpr auto operator|(
+      const OctetRange &range,
+      const percent_decode_fn&) noexcept {
     return percent_decode_range{range};
   }
 
@@ -239,7 +244,8 @@ static constexpr percent_decode_fn decode;
 /// \param range
 /// \return
 template <class Output, class OctetRange>
-tl::expected<Output, std::error_code> as(percent_decode_range<OctetRange> &&range) {
+tl::expected<Output, std::error_code> as(
+    percent_decode_range<OctetRange> &&range) {
   auto result = Output();
   for (auto &&byte : range) {
     if (!byte) {

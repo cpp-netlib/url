@@ -42,23 +42,15 @@ class u8_range_iterator {
   constexpr u8_range_iterator() = default;
   ///
   /// \param it
-  explicit constexpr u8_range_iterator(OctetIterator it, OctetIterator last)
+  explicit constexpr u8_range_iterator(
+      OctetIterator it,
+      OctetIterator last)
       : it_(it)
       , last_(last) {}
-  ///
-  constexpr u8_range_iterator(const u8_range_iterator&) = default;
-  ///
-  constexpr u8_range_iterator(u8_range_iterator&&) noexcept = default;
-  ///
-  constexpr u8_range_iterator &operator=(const u8_range_iterator&) = default;
-  ///
-  constexpr u8_range_iterator &operator=(u8_range_iterator&&) noexcept = default;
-  ///
-  ~u8_range_iterator() = default;
 
   ///
   /// \return
-  u8_range_iterator operator ++ (int) {
+  u8_range_iterator operator ++ (int) noexcept {
     assert(it_);
     auto result = *this;
     increment();
@@ -67,7 +59,7 @@ class u8_range_iterator {
 
   ///
   /// \return
-  u8_range_iterator &operator ++ () {
+  u8_range_iterator &operator ++ () noexcept {
     assert(it_);
     increment();
     return *this;
@@ -135,11 +127,11 @@ class view_u8_range {
   using size_type = std::size_t;
 
   ///
-  constexpr view_u8_range() = default;
+  constexpr view_u8_range() noexcept = default;
 
   ///
   /// \param range
-  explicit constexpr view_u8_range(const OctetRange &range)
+  explicit constexpr view_u8_range(const OctetRange &range) noexcept
       : impl_(
       impl(std::begin(range),
            std::end(range))) {}
@@ -203,7 +195,8 @@ struct u8_range_fn {
   /// \param range
   /// \return
   template <typename OctetRange>
-  constexpr auto operator()(OctetRange &&range) const {
+  constexpr auto operator()(
+      OctetRange &&range) const noexcept {
     return view_u8_range{std::forward<OctetRange>(range)};
   }
 
@@ -212,7 +205,9 @@ struct u8_range_fn {
   /// \param range
   /// \return
   template <typename OctetRange>
-  friend constexpr auto operator|(OctetRange &&range, const u8_range_fn&) {
+  friend constexpr auto operator|(
+      OctetRange &&range,
+      const u8_range_fn&) noexcept {
     return view_u8_range{std::forward<OctetRange>(range)};
   }
 };

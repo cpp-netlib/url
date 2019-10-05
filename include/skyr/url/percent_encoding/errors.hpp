@@ -22,7 +22,7 @@ enum class percent_encode_errc {
 /// value
 /// \param error A percent encoding error
 /// \returns A `std::error_code` object
-std::error_code make_error_code(percent_encode_errc error);
+std::error_code make_error_code(percent_encode_errc error) noexcept;
 }  // namespace skyr::percent_encoding
 
 namespace std {

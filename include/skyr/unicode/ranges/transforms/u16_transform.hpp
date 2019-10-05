@@ -44,27 +44,17 @@ class transform_u16_iterator {
       CodePointIterator last)
       : it_(it)
       , last_(last) {}
-  ///
-  constexpr transform_u16_iterator(const transform_u16_iterator&) = default;
-  ///
-  constexpr transform_u16_iterator(transform_u16_iterator&&) noexcept = default;
-  ///
-  constexpr transform_u16_iterator &operator=(const transform_u16_iterator&) = default;
-  ///
-  constexpr transform_u16_iterator &operator=(transform_u16_iterator&&) noexcept = default;
-  /// Destructor
-  ~transform_u16_iterator() = default;
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  transform_u16_iterator &operator ++ () {
+  transform_u16_iterator &operator ++ () noexcept {
     ++it_;
     return *this;
   }
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  transform_u16_iterator operator ++ (int) {
+  transform_u16_iterator operator ++ (int) noexcept {
     auto result = *this;
     ++it_;
     return result;
@@ -72,7 +62,7 @@ class transform_u16_iterator {
 
   /// Dereference operator
   /// \return An expected value
-  reference operator * () const noexcept {
+  [[nodiscard]] reference operator * () const noexcept {
     auto code_point = *it_;
     return
     code_point
@@ -124,11 +114,12 @@ class transform_u16_range {
   using size_type = std::size_t;
 
   /// Default constructor
-  constexpr transform_u16_range() = default;
+  constexpr transform_u16_range() noexcept = default;
 
   ///
   /// \param range
-  explicit constexpr transform_u16_range(CodePointRange &&range)
+  explicit constexpr transform_u16_range(
+      CodePointRange &&range) noexcept
       : range_{std::forward<CodePointRange>(range)} {}
 
   /// Returns an iterator to the beginning
@@ -180,7 +171,8 @@ struct transform_u16_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  constexpr auto operator()(CodePointRange &&range) const {
+  constexpr auto operator()(
+      CodePointRange &&range) const noexcept {
     return transform_u16_range{std::forward<CodePointRange>(range)};
   }
 
@@ -189,7 +181,9 @@ struct transform_u16_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  friend constexpr auto operator|(CodePointRange &&range, const transform_u16_range_fn&) {
+  friend constexpr auto operator|(
+      CodePointRange &&range,
+      const transform_u16_range_fn&) noexcept {
     return transform_u16_range{std::forward<CodePointRange>(range)};
   }
 

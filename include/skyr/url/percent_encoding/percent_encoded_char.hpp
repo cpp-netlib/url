@@ -12,7 +12,7 @@
 
 namespace skyr::percent_encoding {
 namespace details {
-inline char hex_to_letter(char byte) {
+inline constexpr char hex_to_letter(char byte) noexcept {
   if ((byte >= 0x00) && (byte < 0x0a)) {
     return byte + '0';
   }
@@ -24,7 +24,7 @@ inline char hex_to_letter(char byte) {
   return byte;
 }
 
-inline bool is_c0_control_byte(char byte) {
+inline constexpr bool is_c0_control_byte(char byte) noexcept {
   return (byte <= 0x1f) || (byte > 0x7e);
 }
 
@@ -85,14 +85,14 @@ struct percent_encoded_char {
   struct no_encode {};
 
   ///
-  percent_encoded_char() = default;
+  percent_encoded_char() noexcept = default;
   ///
   /// \param byte
-  percent_encoded_char(char byte, no_encode)
+  percent_encoded_char(char byte, no_encode) noexcept
       : impl_{byte} {}
   ///
   /// \param byte
-  explicit percent_encoded_char(char byte)
+  explicit percent_encoded_char(char byte) noexcept
       : impl_{
       '%',
       details::hex_to_letter(static_cast<char>((static_cast<unsigned>(byte) >> 4u) & 0x0fu)),
@@ -110,13 +110,13 @@ struct percent_encoded_char {
 
   ///
   /// \return
-  [[nodiscard]] const_iterator begin() const {
+  [[nodiscard]] const_iterator begin() const noexcept {
     return impl_.begin();
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator end() const {
+  [[nodiscard]] const_iterator end() const noexcept {
     return impl_.end();
   }
 
@@ -156,7 +156,7 @@ struct percent_encoded_char {
 /// \param pred
 /// \return
 template <class Pred>
-inline percent_encoded_char percent_encode_byte(char byte, Pred pred) {
+inline percent_encoded_char percent_encode_byte(char byte, Pred pred) noexcept {
   if (pred(byte)) {
     return percent_encoding::percent_encoded_char(byte);
   }
@@ -168,7 +168,7 @@ inline percent_encoded_char percent_encode_byte(char byte, Pred pred) {
 /// \param byte
 /// \param excludes
 /// \return
-inline percent_encoded_char percent_encode_byte(char byte, encode_set excludes) {
+inline percent_encoded_char percent_encode_byte(char byte, encode_set excludes) noexcept {
   switch (excludes) {
     case encode_set::none:
       return percent_encoding::percent_encoded_char(byte);
@@ -190,7 +190,7 @@ inline percent_encoded_char percent_encode_byte(char byte, encode_set excludes) 
 /// \param input An ASCII string
 /// \returns `true` if the input string contains percent encoded
 ///          values, `false` otherwise
-inline bool is_percent_encoded(std::string_view input) {
+inline bool is_percent_encoded(std::string_view input) noexcept {
     auto first = begin(input), last = end(input);
     auto it = first;
 

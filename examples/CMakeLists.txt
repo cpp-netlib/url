@@ -10,7 +10,7 @@ set(
         example_02
         example_03
         example_04
-        example_05
+        example_06
     )
 
 if (NOT Skyr_BUILD_WITHOUT_EXCEPTIONS)
