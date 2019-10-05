@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
           .value();
 
   url.search_parameters().sort();
-  for (auto [key, value] : url.search_parameters()) {
+  for (auto [name, value] : url.search_parameters()) {
     value = as<std::string>(value | view::decode).value();
-    std::cout << key << ": " << value << std::endl;
+    std::cout << name << ": " << value << std::endl;
   }
 }

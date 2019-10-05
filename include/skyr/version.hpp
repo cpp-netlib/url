@@ -20,10 +20,7 @@
 namespace skyr {
 /// \returns The major, minor and patch version as a tuple
 static constexpr std::tuple<int, int, int> version() noexcept {
-  return std::make_tuple(
-      SKYR_VERSION_MAJOR,
-      SKYR_VERSION_MINOR,
-      SKYR_VERSION_PATCH);
+  return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR, SKYR_VERSION_PATCH};
 }
 
 /// \returns The version as a string in the form MAJOR.MINOR

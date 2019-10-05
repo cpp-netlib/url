@@ -5,9 +5,9 @@
 
 #include <algorithm>
 #include <cassert>
-#include <skyr/url/domain.hpp>
-#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/unicode/ranges/transforms/byte_transform.hpp>
+#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
+#include <skyr/url/domain.hpp>
 #include "algorithms.hpp"
 #include "idna_table.hpp"
 
@@ -19,9 +19,7 @@ class domain_error_category : public std::error_category {
   [[nodiscard]] std::string message(int error) const noexcept override;
 };
 
-const char *domain_error_category::name() const noexcept {
-  return "domain";
-}
+const char *domain_error_category::name() const noexcept { return "domain"; }
 
 std::string domain_error_category::message(int error) const noexcept {
   switch (static_cast<domain_errc>(error)) {
@@ -41,7 +39,7 @@ std::string domain_error_category::message(int error) const noexcept {
 const domain_error_category category{};
 }  // namespace
 
-std::error_code make_error_code(domain_errc error) {
+std::error_code make_error_code(domain_errc error) noexcept {
   return std::error_code(static_cast<int>(error), category);
 }
 
@@ -56,16 +54,15 @@ const char32_t initial_n = 0x80;
 const char32_t delimiter = 0x2D;
 
 char32_t decode_digit(char32_t cp) {
-  return cp - 48 < 10 ? cp - 22 : cp - 65 < 26 ? cp - 65 :
-                                  cp - 97 < 26 ? cp - 97 : base;
+  return cp - 48 < 10 ? cp - 22
+                      : cp - 65 < 26 ? cp - 65 : cp - 97 < 26 ? cp - 97 : base;
 }
 
 char encode_digit(char32_t d, int flag) {
   return static_cast<char>(d + 22 + 75 * (d < 26) - ((flag != 0) << 5));
 }
 
-char32_t adapt(
-    char32_t delta, char32_t numpoints, bool firsttime) {
+char32_t adapt(char32_t delta, char32_t numpoints, bool firsttime) {
   delta = firsttime ? delta / damp : delta >> 1;
   delta += delta / numpoints;
 
@@ -77,24 +74,23 @@ char32_t adapt(
   return k + (base - tmin + 1) * delta / (delta + skew);
 }
 
-std::string to_ascii(const std::string &input) {
-  return "xn--" + input;
-}
+std::string to_ascii(const std::string &input) { return "xn--" + input; }
 
-inline bool delim(char32_t c) {
-  return c == delimiter;
-}
+inline bool delim(char32_t c) { return c == delimiter; }
 }  // namespace
 
-tl::expected<std::string, std::error_code> punycode_encode(std::string_view input) {
-  auto utf32 = unicode::as<std::u32string>(input | unicode::view::as_u8 | unicode::transform::to_u32);
+tl::expected<std::string, std::error_code> punycode_encode(
+    std::string_view input) {
+  auto utf32 = unicode::as<std::u32string>(input | unicode::view::as_u8 |
+                                           unicode::transform::to_u32);
   if (!utf32) {
     return tl::make_unexpected(make_error_code(domain_errc::bad_input));
   }
   return punycode_encode(utf32.value());
 }
 
-tl::expected<std::string, std::error_code> punycode_encode(std::u32string_view input) {
+tl::expected<std::string, std::error_code> punycode_encode(
+    std::u32string_view input) {
   auto result = std::string{};
   result.reserve(256);
 
@@ -140,8 +136,7 @@ tl::expected<std::string, std::error_code> punycode_encode(std::u32string_view i
         auto q = delta;
         auto k = uint32_t(base);
         while (true) {
-          auto t = k <= bias ? tmin :
-                   k >= bias + tmax ? tmax : k - bias;
+          auto t = k <= bias ? tmin : k >= bias + tmax ? tmax : k - bias;
           if (q < t) {
             break;
           }
@@ -163,7 +158,8 @@ tl::expected<std::string, std::error_code> punycode_encode(std::u32string_view i
   return to_ascii(result);
 }
 
-tl::expected<std::string, std::error_code> punycode_decode(std::string_view input) {
+tl::expected<std::string, std::error_code> punycode_decode(
+    std::string_view input) {
   auto result = std::u32string();
   result.reserve(256);
 
@@ -206,8 +202,7 @@ tl::expected<std::string, std::error_code> punycode_decode(std::string_view inpu
         return tl::make_unexpected(make_error_code(domain_errc::overflow));
       }
       i += digit * w;
-      auto t = (k <= bias) ? tmin :
-               ((k >= (bias + tmax)) ? tmax : (k - bias));
+      auto t = (k <= bias) ? tmin : ((k >= (bias + tmax)) ? tmax : (k - bias));
       if (digit < t) {
         break;
       }
@@ -230,20 +225,16 @@ tl::expected<std::string, std::error_code> punycode_decode(std::string_view inpu
     result.insert(i++, 1, n);
   }
 
-  auto bytes = unicode::as<std::string>(result | unicode::transform::to_bytes);
-  if (!bytes) {
-    return tl::make_unexpected(make_error_code(domain_errc::bad_input));
-  }
-  return bytes.value();
+  return unicode::as<std::string>(result | unicode::transform::to_bytes)
+      .or_else([](auto) -> tl::expected<std::string, std::error_code> {
+        return tl::make_unexpected(make_error_code(domain_errc::bad_input));
+      });
 }
 
 namespace {
 tl::expected<std::u32string, std::error_code> process(
-    std::u32string_view domain_name,
-    bool use_std3_ascii_rules,
-    bool check_hyphens,
-    bool check_bidi,
-    bool check_joiners,
+    std::u32string_view domain_name, bool use_std3_ascii_rules,
+    bool check_hyphens, bool check_bidi, bool check_joiners,
     bool transitional_processing) {
   auto result = std::u32string();
   auto error = false;
@@ -259,16 +250,14 @@ tl::expected<std::u32string, std::error_code> process(
       case idna_status::disallowed_std3_valid:
         if (use_std3_ascii_rules) {
           error = true;
-        }
-        else {
+        } else {
           result += *it;
         }
         break;
       case idna_status::disallowed_std3_mapped:
         if (use_std3_ascii_rules) {
           error = true;
-        }
-        else {
+        } else {
           result += map_idna_code_point(*it);
         }
         break;
@@ -280,8 +269,7 @@ tl::expected<std::u32string, std::error_code> process(
       case idna_status::deviation:
         if (transitional_processing) {
           result += map_idna_code_point(*it);
-        }
-        else {
+        } else {
           result += *it;
         }
         break;
@@ -302,23 +290,14 @@ tl::expected<std::u32string, std::error_code> process(
 }
 
 tl::expected<std::string, std::error_code> unicode_to_ascii(
-    std::u32string_view domain_name,
-    bool check_hyphens,
-    bool check_bidi,
-    bool check_joiners,
-    bool use_std3_ascii_rules,
-    bool transitional_processing,
+    std::u32string_view domain_name, bool check_hyphens, bool check_bidi,
+    bool check_joiners, bool use_std3_ascii_rules, bool transitional_processing,
     bool verify_dns_length) {
-  auto domain = process(
-      domain_name,
-      use_std3_ascii_rules,
-      check_hyphens,
-      check_bidi,
-      check_joiners,
-      transitional_processing);
+  auto domain = process(domain_name, use_std3_ascii_rules, check_hyphens,
+                        check_bidi, check_joiners, transitional_processing);
 
   if (!domain) {
-    return tl::make_unexpected(std::move(domain.error()));
+    return tl::make_unexpected(domain.error());
   }
 
   auto labels = split(domain.value(), U'.');
@@ -327,52 +306,48 @@ tl::expected<std::string, std::error_code> unicode_to_ascii(
     if (!is_ascii(label)) {
       auto encoded = punycode_encode(label);
       if (!encoded) {
-        return tl::make_unexpected(std::move(encoded.error()));
+        return tl::make_unexpected(encoded.error());
       }
       label.assign(begin(encoded.value()), end(encoded.value()));
     }
   }
 
   if (verify_dns_length) {
-//    auto length = domain.value().size();
-//    if ((length < 1) || (length > 253)) {
-//      return make_unexpected(domain_errc::invalid_length);
-//    }
-//
-//    for (const auto &label : labels) {
-//      auto label_length = label.size();
-//      if ((label_length < 1) || (label_length > 63)) {
-//        return make_unexpected(domain_errc::invalid_length);
-//      }
-//    }
+    //    auto length = domain.value().size();
+    //    if ((length < 1) || (length > 253)) {
+    //      return make_unexpected(domain_errc::invalid_length);
+    //    }
+    //
+    //    for (const auto &label : labels) {
+    //      auto label_length = label.size();
+    //      if ((label_length < 1) || (label_length > 63)) {
+    //        return make_unexpected(domain_errc::invalid_length);
+    //      }
+    //    }
   }
 
   auto utf32_domain = join(labels, U'.');
-  auto ascii_domain = unicode::as<std::string>(utf32_domain | unicode::transform::to_bytes);
-  if (!ascii_domain) {
-    return tl::make_unexpected(
-        make_error_code(domain_errc::encoding_error));
-  }
-  return ascii_domain.value();
+  return unicode::as<std::string>(utf32_domain | unicode::transform::to_bytes)
+      .or_else([] (auto) -> tl::expected<std::string, std::error_code> {
+        return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
+      });
 }
 }  // namespace
 
 tl::expected<std::string, std::error_code> domain_to_ascii(
-    std::string_view domain,
-    bool be_strict) {
-  auto utf32 = unicode::as<std::u32string>(domain | unicode::view::as_u8 | unicode::transform::to_u32);
+    std::string_view domain, bool be_strict) {
+  auto utf32 = unicode::as<std::u32string>(domain | unicode::view::as_u8 |
+                                           unicode::transform::to_u32);
   if (!utf32) {
-    return tl::make_unexpected(
-        make_error_code(domain_errc::encoding_error));
+    return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
   }
   return domain_to_ascii(utf32.value(), be_strict);
 }
 
 tl::expected<std::string, std::error_code> domain_to_ascii(
-    std::u32string_view domain,
-    bool be_strict) {
-  auto result = unicode_to_ascii(
-      domain, false, true, true, be_strict, false, be_strict);
+    std::u32string_view domain, bool be_strict) {
+  auto result =
+      unicode_to_ascii(domain, false, true, true, be_strict, false, be_strict);
   if (!result) {
     // validation error
     return tl::make_unexpected(std::move(result.error()));

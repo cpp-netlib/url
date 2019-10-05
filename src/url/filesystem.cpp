@@ -32,18 +32,14 @@ std::string path_error_category::message(int error) const noexcept {
 const path_error_category category{};
 }  // namespace
 
-std::error_code make_error_code(path_errc error) {
+std::error_code make_error_code(path_errc error) noexcept {
   return std::error_code(static_cast<int>(error), category);
 }
 
 tl::expected<url, std::error_code> from_path(const std::filesystem::path &path) {
   url result;
-  if (!result.set_protocol("file")) {
-    return tl::make_unexpected(make_error_code(path_errc::invalid_path));
-  }
-  if (!result.set_pathname(path.string())) {
-    return tl::make_unexpected(make_error_code(path_errc::invalid_path));
-  }
+  result.set_protocol("file");
+  result.set_pathname(path.generic_u8string());
   return result;
 }
 
@@ -53,6 +49,6 @@ tl::expected<std::filesystem::path, std::error_code> to_path(const url &input) {
   if (!decoded) {
     return tl::make_unexpected(make_error_code(path_errc::percent_decoding_error));
   }
-  return std::filesystem::u8path(decoded.value());
+  return std::filesystem::path(decoded.value());
 }
 }  // namespace skyr::filesystem

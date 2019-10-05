@@ -27,7 +27,7 @@ enum class domain_errc {
 /// Creates a `std::error_code` given a `skyr::domain_errc` value
 /// \param error A domain error
 /// \returns A `std::error_code` object
-std::error_code make_error_code(domain_errc error);
+std::error_code make_error_code(domain_errc error) noexcept;
 
 /// Performs punycode encoding based on a reference implementation
 /// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
