@@ -34,13 +34,12 @@ std::error_code make_error_code(ipv4_address_errc error);
 /// Represents an IPv4 address
 class ipv4_address {
 
-  unsigned int address_;
+  unsigned int address_ = 0;
 
  public:
 
   /// Constructor
-  ipv4_address()
-      : address_(0) {}
+  ipv4_address() = default;
 
    /// Constructor
    /// \param address Sets the IPv4 address to `address`

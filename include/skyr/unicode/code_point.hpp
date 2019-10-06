@@ -117,15 +117,10 @@ inline tl::expected<u8_code_point_t<typename OctetRange::const_iterator>, std::e
   using result_type = tl::expected<u8_code_point_t<typename OctetRange::const_iterator>, std::error_code>;
 
   auto check_code_point = [] (auto &&code_point) -> result_type {
-    return find_code_point(std::begin(code_point))
-        .and_then([=] (auto) -> result_type {
-          return code_point;
-        });
+    return find_code_point(std::begin(code_point)).map([=] (auto) { return code_point; });
   };
 
-  return
-      u8_code_point(range)
-          .and_then(check_code_point);
+  return u8_code_point(range).and_then(check_code_point);
 }
 
 ///
@@ -220,10 +215,7 @@ inline u16_code_point_t u16_code_point(
 template <typename OctetIterator>
 inline tl::expected<char32_t, std::error_code> u32_value(
     u8_code_point_t<OctetIterator> code_point) noexcept {
-  return find_code_point(code_point.begin())
-      .and_then([] (auto state) -> tl::expected<char32_t, std::error_code> {
-        return state.value;
-      });
+  return find_code_point(code_point.begin()).map([] (auto &&state) { return state.value; });
 }
 
 ///
@@ -233,10 +225,7 @@ inline tl::expected<char32_t, std::error_code> u32_value(
 template <typename OctetIterator>
 inline tl::expected<char32_t, std::error_code> u32_value(
     tl::expected<u8_code_point_t<OctetIterator>, std::error_code> code_point) noexcept {
-  return code_point
-  .and_then([] (auto code_point) -> tl::expected<char32_t , std::error_code> {
-    return u32_value(code_point);
-  });
+  return code_point.and_then([] (auto &&code_point) { return u32_value(code_point); });
 }
 
 ///
@@ -252,10 +241,7 @@ inline tl::expected<char32_t, std::error_code> u32_value(
 /// \return
 inline tl::expected<char32_t, std::error_code> u32_value(
     tl::expected<u16_code_point_t, std::error_code> code_point) noexcept {
-  return code_point
-  .and_then([] (auto code_point) -> tl::expected<char32_t, std::error_code> {
-    return code_point.u32_value();
-  });
+  return code_point.and_then([] (auto code_point) { return code_point.u32_value(); });
 }
 
 ///
@@ -291,10 +277,7 @@ inline tl::expected<u16_code_point_t, std::error_code> u16_value(
 template <typename OctetIterator>
 inline tl::expected<u16_code_point_t, std::error_code> u16_value(
     tl::expected<u8_code_point_t<OctetIterator>, std::error_code> code_point) {
-  return u32_value(code_point)
-  .and_then([] (auto code_point) -> tl::expected<u16_code_point_t, std::error_code> {
-    return u16_code_point(code_point);
-  });
+  return u32_value(code_point).map([] (auto code_point) { return u16_code_point(code_point); });
 }
 }  // namespace skyr::unicode
 

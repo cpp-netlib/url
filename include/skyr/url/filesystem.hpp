@@ -16,8 +16,11 @@ namespace skyr {
 /// Contains functions to convert from filesystem path to URLs and
 /// vice versa
 namespace filesystem {
+///
 enum class path_errc {
+  ///
   invalid_path=1,
+  ///
   percent_decoding_error,
 };
 

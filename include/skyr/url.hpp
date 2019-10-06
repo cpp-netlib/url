@@ -75,6 +75,8 @@ class url {
   using const_reference = string_view::const_reference;
   /// An alias to `const_reference`
   using reference = const_reference;
+  /// \c std::size_t
+  using size_type = std::size_t;
 
   /// Constructs an empty `url` object
   ///
@@ -139,7 +141,6 @@ class url {
   /// \returns The underlying URL string
   [[nodiscard]] string_type href() const;
 
-  /// @{
   /// \tparam Source The input string type
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
@@ -157,8 +158,9 @@ class url {
     return set_href(std::move(bytes.value()));
   }
 
+  /// \param href The input string
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_href(string_type &&href);
-  /// @}
 
   /// The URL string
   ///
@@ -176,9 +178,9 @@ class url {
   /// \returns The [URL protocol](https://url.spec.whatwg.org/#dom-url-protocol)
   [[nodiscard]] string_type protocol() const;
 
-  /// @{
   /// Sets the [URL protocol](https://url.spec.whatwg.org/#dom-url-protocol)
   ///
+  /// \tparam Source The input string type
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
   template <class Source>
@@ -195,15 +197,18 @@ class url {
     return set_protocol(std::move(bytes.value()));
   }
 
+  /// Sets the [URL protocol](https://url.spec.whatwg.org/#dom-url-protocol)
+  ///
+  /// \param protocol The new URL protocol
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_protocol(string_type &&protocol);
-  /// @}
 
   /// \returns The [URL username](https://url.spec.whatwg.org/#dom-url-username)
   [[nodiscard]] string_type username() const;
 
-  /// @{
   /// Sets the [URL username](https://url.spec.whatwg.org/#dom-url-username)
   ///
+  /// \tparam Source The input string type
   /// \param username The new username
   /// \returns An error on failure to parse the new URL
   template <class Source>
@@ -220,8 +225,11 @@ class url {
     return set_username(std::move(bytes.value()));
   }
 
+  /// Sets the [URL username](https://url.spec.whatwg.org/#dom-url-username)
+  ///
+  /// \param username The new username
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_username(string_type &&username);
-  /// @}
 
   /// The [URL password](https://url.spec.whatwg.org/#dom-url-password)
   ///
@@ -230,9 +238,9 @@ class url {
   /// \returns The URL password
   [[nodiscard]] string_type password() const;
 
-  /// @{
   /// Sets the [URL password](https://url.spec.whatwg.org/#dom-url-password)
   ///
+  /// \tparam Source The input string type
   /// \param password The new password
   /// \returns An error on failure to parse the new URL
   template <class Source>
@@ -248,16 +256,19 @@ class url {
     }
     return set_password(std::move(bytes.value()));
   }
-  
+
+  /// Sets the [URL password](https://url.spec.whatwg.org/#dom-url-password)
+  ///
+  /// \param password The new password
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_password(string_type &&password);
-  /// @}
 
   /// \returns The [URL host](https://url.spec.whatwg.org/#dom-url-host)
   [[nodiscard]] string_type host() const;
 
-  /// @{
   /// Sets the [URL host](https://url.spec.whatwg.org/#dom-url-host)
   ///
+  /// \tparam Source The input string type
   /// \param host The new URL host
   /// \returns An error on failure to parse the new URL
   template <class Source>
@@ -274,15 +285,18 @@ class url {
     return set_host(std::move(bytes.value()));
   }
 
+  /// Sets the [URL host](https://url.spec.whatwg.org/#dom-url-host)
+  ///
+  /// \param host The new URL host
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_host(string_type &&host);
-  /// @}
 
   /// \returns The [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
   [[nodiscard]] string_type hostname() const;
 
-  /// @{
   /// Sets the [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
   ///
+  /// \tparam Source The input string type
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
   template <class Source>
@@ -299,8 +313,11 @@ class url {
     return set_hostname(std::move(bytes.value()));
   }
 
+  /// Sets the [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
+  ///
+  /// \param hostname The new URL host name
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_hostname(string_type &&hostname);
-  /// @}
 
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
   [[nodiscard]] string_type port() const;
@@ -316,9 +333,9 @@ class url {
         std::strtoul(port_first, &port_last, 10));
   }
 
-  /// @{
   /// Sets the [URL port](https://url.spec.whatwg.org/#dom-url-port)
   ///
+  /// \tparam Source The input string type
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
   template <class Source>
@@ -326,17 +343,20 @@ class url {
     return set_port_impl(port);
   }
 
+  /// Sets the [URL port](https://url.spec.whatwg.org/#dom-url-port)
+  ///
+  /// \param port The new port
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_port(string_type &&port);
-  /// @}
 
   /// Returns the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
   ///
   /// \returns The URL pathname
   [[nodiscard]] string_type pathname() const;
 
-  /// @{
   /// Sets the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
   ///
+  /// \tparam Source The input string type
   /// \param pathname The new pathname
   /// \returns An error on failure to parse the new URL
   template <class Source>
@@ -353,17 +373,20 @@ class url {
     return set_pathname(std::move(bytes.value()));
   }
 
+  /// Sets the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
+  ///
+  /// \param pathname The new pathname
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_pathname(string_type &&pathname);
-  /// @}
 
   /// Returns the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
   /// \returns The URL search string
   [[nodiscard]] string_type search() const;
 
-  /// @{
   /// Sets the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
+  /// \tparam Source The input string type
   /// \param search The new search string
   /// \returns An error on failure to parse the new URL
   template <class Source>
@@ -380,8 +403,11 @@ class url {
     return set_search(std::move(bytes.value()));
   }
 
+  /// Sets the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
+  ///
+  /// \param search The new search string
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_search(string_type &&search);
-  /// @}
 
   /// \returns A reference to the search parameters
   [[nodiscard]] url_search_parameters &search_parameters();
@@ -391,9 +417,9 @@ class url {
   /// \returns The URL hash string
   [[nodiscard]] string_type hash() const;
 
-  /// @{
   /// Sets the [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
   ///
+  /// \tparam Source The input string type
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
   template <class Source>
@@ -410,8 +436,11 @@ class url {
     return set_hash(std::move(bytes.value()));
   }
 
+  /// Sets the [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
+  ///
+  /// \param hash The new hash string
+  /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_hash(string_type &&hash);
-  /// @}
 
   /// \returns The underlying `url_record` implementation.
   [[nodiscard]] const url_record &record() const & noexcept {
@@ -459,6 +488,12 @@ class url {
     return view_.empty();
   }
 
+  /// Gets the size of the URL buffer
+  /// \return The size of the URL buffer
+  [[nodiscard]] size_type size() const noexcept {
+    return view_.size();
+  }
+
   /// Compares this `url` object lexicographically with another
   ///
   /// \param other The other `url` object
@@ -486,6 +521,13 @@ class url {
   /// \returns `href_.c_str()`
   [[nodiscard]] const char *c_str() const noexcept {
     return href_.c_str();
+  }
+
+  /// Returns the underyling byte buffer
+  ///
+  /// \returns `href_.data()`
+  [[nodiscard]] const char *data() const noexcept {
+    return href_.data();
   }
 
   /// Returns the underlying string

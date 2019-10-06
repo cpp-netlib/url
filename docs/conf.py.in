@@ -23,7 +23,7 @@ import os
 # -- Project information -----------------------------------------------------
 
 project = 'Skyr URL'
-copyright = '2018, Glyn Matthews'
+copyright = '2018-19, Glyn Matthews'
 author = 'Glyn Matthews'
 
 def parse_version_header(version_header):
@@ -53,24 +53,26 @@ release = '{}.{}'.format(major, minor)
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
+needs_sphinx = '2.2'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['breathe']
+extensions = [
+    'breathe',
+    'recommonmark'
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-source_parsers = {
-   '.md': 'recommonmark.parser.CommonMarkParser',
-}
-
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-source_suffix = ['.rst', '.md']
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
 
 # The master toctree document.
 master_doc = 'index'

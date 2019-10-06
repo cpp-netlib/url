@@ -64,11 +64,7 @@ class transform_u16_iterator {
   /// \return An expected value
   [[nodiscard]] reference operator * () const noexcept {
     auto code_point = *it_;
-    return
-    code_point
-    .and_then([] (auto value) -> value_type {
-      return u16_code_point(value);
-    });
+    return code_point.map([](auto value) { return u16_code_point(value); });
   }
 
   /// Equality operator

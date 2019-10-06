@@ -57,11 +57,8 @@ class transform_u32_iterator {
 
   ///
   /// \return
-  [[nodiscard]] reference operator * () const noexcept {
-    return (*it_)
-    .and_then([] (auto code_point) -> value_type {
-      return u32_value(code_point);
-    });
+  [[nodiscard]] reference operator*() const noexcept {
+    return (*it_).and_then([](auto code_point) { return u32_value(code_point); });
   }
 
   ///

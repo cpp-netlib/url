@@ -792,20 +792,13 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = @CMAKE_SOURCE_DIR@/include/skyr/config.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/domain.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/expected.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/filesystem.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/ipv4_address.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/ipv6_address.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/optional.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/percent_encode.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/unicode.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/version.hpp \
                          @CMAKE_SOURCE_DIR@/include/skyr/url.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/url_error.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/url_parse.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/url_record.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/url_search_parameters.hpp \
-                         @CMAKE_SOURCE_DIR@/include/skyr/url_serialize.hpp
+                         @CMAKE_SOURCE_DIR@/include/skyr/url/url_error.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/url/url_parse.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/url/url_record.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/url/url_search_parameters.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/url/url_serialize.hpp
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

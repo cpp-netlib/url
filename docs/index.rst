@@ -6,17 +6,14 @@
 .. include:: readme.rst
 
 API
----
+===
 
 .. toctree::
     :maxdepth: 2
 
     url
+    url_record
     url_search_parameters
-    optional
-    expected
-    percent_encode
-    domain
-    filesystem
-    unicode
-    changelog
+    error_codes
+
+.. include:: changelog.rst

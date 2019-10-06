@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-pandoc "@CMAKE_SOURCE_DIR@/README.md" -f markdown -t rst -s -o "@CMAKE_CURRENT_BINARY_DIR@/readme.rst"
-pandoc "@CMAKE_SOURCE_DIR@/CHANGELOG.md" -f markdown -t rst -s -o "@CMAKE_CURRENT_BINARY_DIR@/changelog.rst"
-doxygen
-sphinx-build -M html "@CMAKE_CURRENT_BINARY_DIR@" "@CMAKE_CURRENT_BINARY_DIR@"

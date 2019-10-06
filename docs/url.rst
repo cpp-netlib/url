@@ -1,11 +1,14 @@
 `skyr::url`
 ===========
 
+`skyr::url` class
+-----------------
+
 .. doxygenclass:: skyr::url
     :members:
 
-.. doxygenclass:: skyr::url_parse_error
-    :members:
+`skyr::url` functions
+---------------------
 
 .. doxygenfunction:: skyr::swap(url&, url&)
 

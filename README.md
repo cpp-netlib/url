@@ -179,7 +179,6 @@ compilers:
 
 Linux:
 
-* GCC 7
 * GCC 8
 * GCC 9
 * Clang 7

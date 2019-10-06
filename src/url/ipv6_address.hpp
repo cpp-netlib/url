@@ -39,15 +39,14 @@ std::error_code make_error_code(ipv6_address_errc error);
 /// Represents an IPv6 address
 class ipv6_address {
 
-  std::array<unsigned short, 8> address_;
+  std::array<unsigned short, 8> address_ = {0, 0, 0, 0, 0, 0, 0, 0};
 
   using repr_type = decltype(address_);
 
  public:
 
   /// Constructor
-  ipv6_address()
-      : address_{{0, 0, 0, 0, 0, 0, 0, 0}} {}
+  ipv6_address() = default;
 
   /// Constructor
   /// \param address Sets the IPv6 address to `address`

@@ -17,7 +17,7 @@ class url_record {
 
  public:
 
-  /// ASCII string type
+  /// string type
   /// \sa url::string_type
   using string_type = std::string;
 
@@ -42,16 +42,14 @@ class url_record {
 
   /// A Boolean value indicating whether this URL can be used as a
   /// base URL
-  bool cannot_be_a_base_url;
+  bool cannot_be_a_base_url = false;
 
   /// A Boolean value indicating whether a non-fatal validation
   /// error occurred during parsing
-  bool validation_error;
+  bool validation_error = false;
 
-  /// Constructor
-  url_record()
-    : cannot_be_a_base_url{false}
-    , validation_error{false} {}
+  /// Default onstructor
+  url_record() = default;
 
   /// Tests if the URL is a special scheme
   /// \returns `true` if the URL scheme is a special scheme, `false`
