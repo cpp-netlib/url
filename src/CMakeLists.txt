@@ -56,6 +56,7 @@ if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)
 endif()
 
 add_library(skyr-url ${Skyr_SRCS})
+
 target_link_libraries(skyr-url tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     if (NOT Skyr_DISABLE_LIBCXX)
@@ -68,7 +69,9 @@ elseif(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
 endif()
 
 set_target_properties(skyr-url PROPERTIES
-        POSITION_INDEPENDENT_CODE ON)
+		VERSION ${PROJECT_VERSION}
+		SOVERSION 1
+		POSITION_INDEPENDENT_CODE ON)
 
 add_library(Skyr::skyr-url ALIAS skyr-url)
 
@@ -78,11 +81,6 @@ target_include_directories(skyr-url
         $<BUILD_INTERFACE:${Skyr_SOURCE_DIR}/include>
     PRIVATE
         ${Skyr_SOURCE_DIR}/src)
-
-if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR
-    ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wmissing-declarations")
-endif()
 
 #propagate sources to parent scope for one-lib-build
 set(Skyr_SRCS ${Skyr_SRCS} PARENT_SCOPE)

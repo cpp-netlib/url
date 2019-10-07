@@ -5,7 +5,7 @@
 
 
 cmake_minimum_required(VERSION 3.8)
-project(Skyr)
+project(Skyr VERSION 1.2.0 DESCRIPTION "A C++ library that implements the WhatWG URL specification")
 
 option(Skyr_BUILD_TESTS "Build the URL tests." ON)
 option(Skyr_BUILD_DOCS "Build the URL documentation." OFF)
@@ -22,7 +22,8 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(Threads REQUIRED)
 find_package(tl-expected CONFIG REQUIRED)
 
-if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
+if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR
+    ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     if (Skyr_FULL_WARNINGS)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
     endif()
@@ -35,29 +36,8 @@ if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
     endif()
 
-    message("C++ Flags: ${CMAKE_CXX_FLAGS} link flags: ${CMAKE_CXX_LINK_FLAGS}")
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (NOT Skyr_DISABLE_LIBCXX)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-    endif()
-
-    if (Skyr_FULL_WARNINGS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-    endif()
-
-    if (Skyr_WARNINGS_AS_ERRORS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-    endif()
-
-    if (Skyr_BUILD_WITHOUT_EXCEPTIONS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
-    endif()
-
-    message("C++ Flags: ${CMAKE_CXX_FLAGS} link flags: ${CMAKE_CXX_LINK_FLAGS}")
-endif()
-
-
-if (MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wmissing-declarations")
+elseif(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
     if(DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1900)
         message(FATAL_ERROR "Requires VS 2017 or later")
     endif()
@@ -65,18 +45,22 @@ if (MSVC)
     if (Skyr_USE_STATIC_CRT)
         # Replace dynamic MSVCRT linker flags with static version.
         foreach(flag_var
-            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+                CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+                CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
             if(${flag_var} MATCHES "/MD")
                 string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
             endif(${flag_var} MATCHES "/MD")
         endforeach(flag_var)
     endif(Skyr_USE_STATIC_CRT)
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
-
     add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
-endif(MSVC)
+endif()
+
+if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+    if (NOT Skyr_DISABLE_LIBCXX)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    endif()
+endif()
 
 add_subdirectory(src)
 
