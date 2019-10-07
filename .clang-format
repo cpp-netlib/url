@@ -4,6 +4,7 @@ ConstructorInitializerIndentWidth: 4
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
 #AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortFunctionsOnASingleLine: None
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakTemplateDeclarations: Yes
 AlwaysBreakBeforeMultilineStrings: true

@@ -15,26 +15,18 @@
 namespace skyr {
 inline bool is_ascii(std::u32string_view input) noexcept {
   auto first = begin(input), last = end(input);
-  auto it = std::find_if(
-      first, last,
-      [] (auto c) -> bool {
-        return c > 0x007e;
-      });
-  return it == last;
+  return last == std::find_if(first, last, [](auto c) { return c > 0x7eu; });
 }
 
 inline std::vector<std::u32string> split(
     std::u32string_view input, char32_t separator) noexcept {
   auto elements = std::vector<std::u32string>{};
   if (!input.empty()) {
-    auto first = begin(input), last = end(input);
-    auto it = first;
-    auto prev = it;
+    auto it = begin(input), prev = begin(input), last = end(input);
     while (it != last) {
       if (*it == separator) {
         elements.emplace_back(prev, it);
-        ++it;
-        prev = it;
+        prev = ++it;
       } else {
         ++it;
       }
@@ -88,10 +80,8 @@ inline bool is_in(
   return last != std::find(first, last, byte);
 }
 
-inline bool is_c0_control_or_whitespace(
-    char byte,
-    const std::locale &locale = std::locale::classic()) noexcept {
-  return std::iscntrl(byte, locale) || std::isspace(byte, locale);
+inline bool is_c0_control_or_whitespace(char byte) noexcept {
+  return std::iscntrl(byte, std::locale::classic()) || std::isspace(byte, std::locale::classic());
 }
 
 inline bool remove_leading_whitespace(std::string &input) {
@@ -105,7 +95,6 @@ inline bool remove_leading_whitespace(std::string &input) {
   if (it != first) {
     input.assign(it, last);
   }
-
   return it == first;
 }
 

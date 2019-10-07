@@ -41,11 +41,9 @@ class percent_encode_iterator {
   /// \param excludes
   percent_encode_iterator(
       OctetIterator it,
-      OctetIterator last,
-      encode_set excludes = encode_set::none) noexcept
+      OctetIterator last) noexcept
   : it_(it)
-  , last_(last)
-  , excludes_(excludes) {}
+  , last_(last) {}
   ///
   percent_encode_iterator(const percent_encode_iterator &) noexcept = default;
   ///
@@ -78,7 +76,16 @@ class percent_encode_iterator {
   /// \return
   [[nodiscard]] reference operator*() const noexcept {
     assert(it_);
-    return percent_encode_byte(*it_.value(), excludes_);
+    auto byte = *it_.value();
+    if (byte == 0x20u) {
+      percent_encoded_char('+', percent_encoded_char::no_encode());
+    } else if ((byte == 0x2au) || (byte == 0x2du) || (byte == 0x2eu) ||
+               ((byte >= 0x30u) && (byte <= 0x39u)) ||
+               ((byte >= 0x41u) && (byte <= 0x5au)) || (byte == 0x5fu) ||
+               ((byte >= 0x61u) && (byte <= 0x7au))) {
+      return percent_encoded_char(byte, percent_encoded_char::no_encode());
+    }
+    return percent_encoded_char(byte);
   }
 
   [[nodiscard]] bool operator==(const percent_encode_iterator &other) const noexcept {
@@ -99,7 +106,6 @@ class percent_encode_iterator {
   }
 
   std::optional<OctetIterator> it_, last_;
-  encode_set excludes_ = encode_set::none;
 
 };
 
@@ -126,9 +132,8 @@ class percent_encode_range {
   /// \param range
   /// \param excludes
   explicit percent_encode_range(
-      const OctetRange &range,
-      encode_set excludes = encode_set::none) noexcept
-      : impl_(impl(std::begin(range), std::end(range), excludes)) {}
+      const OctetRange &range) noexcept
+      : impl_(impl(std::begin(range), std::end(range))) {}
 
   ///
   /// \return
@@ -171,10 +176,9 @@ class percent_encode_range {
   struct impl {
     constexpr impl(
         octet_iterator_type first,
-        octet_iterator_type last,
-        encode_set excludes)
-        : first(first, last, excludes)
-        , last(last, last, excludes) {}
+        octet_iterator_type last)
+        : first(first, last)
+        , last(last, last) {}
     iterator_type first, last;
   };
 

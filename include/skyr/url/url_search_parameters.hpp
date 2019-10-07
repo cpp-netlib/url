@@ -1,4 +1,4 @@
-// Copyright 2017-18 Glyn Matthews.
+// Copyright 2017-19 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -14,6 +14,240 @@
 #include <skyr/url/url_record.hpp>
 
 namespace skyr {
+///
+class search_element_iterator {
+ public:
+
+  ///
+  using iterator_category = std::forward_iterator_tag;
+  ///
+  using value_type = std::string_view;
+  ///
+  using const_reference = value_type;
+  ///
+  using reference = const_reference;
+  ///
+  using const_pointer = std::add_pointer<const value_type>::type;
+  ///
+  using pointer = const_pointer;
+  ///
+  using difference_type = std::ptrdiff_t;
+
+  ///
+  search_element_iterator() = default;
+
+  ///
+  /// \param query
+  explicit search_element_iterator(std::string_view query)
+      : it_(!query.empty()? std::make_optional(std::begin(query)) : std::nullopt)
+      , last_(std::end(query)) {}
+
+  ///
+  /// \return
+  search_element_iterator &operator++() {
+    increment();
+    return *this;
+  }
+
+  ///
+  /// \return
+  search_element_iterator operator++(int) {
+    auto result = *this;
+    increment();
+    return result;
+  }
+
+  ///
+  /// \return
+  const_reference operator*() const noexcept {
+    assert(it_);
+    auto next = std::find_if(
+        it_.value(), last_.value(), [] (auto c) { return (c == '&') || (c == ';'); });
+    return std::string_view(
+        std::addressof(*it_.value()),
+        std::distance(it_.value(), next));
+  }
+
+  ///
+  /// \param other
+  /// \return
+  bool operator==(const search_element_iterator &other) const noexcept {
+    return it_ == other.it_;
+  }
+
+  ///
+  /// \param other
+  /// \return
+  bool operator!=(const search_element_iterator &other) const noexcept {
+    return !(*this == other);
+  }
+
+ private:
+
+  void increment() {
+    assert(it_);
+    it_ = std::find_if(
+        it_.value(), last_.value(), [] (auto c) { return (c == '&') || (c == ';'); });
+    if (it_ == last_) {
+      it_ = std::nullopt;
+    }
+    else {
+      ++it_.value();
+    }
+  }
+
+  std::optional<std::string_view::const_iterator> it_, last_;
+
+};
+
+///
+class search_parameter_iterator {
+ public:
+
+  ///
+  using iterator_category = std::forward_iterator_tag;
+  ///
+  using value_type = std::pair<std::string_view, std::string_view>;
+  ///
+  using const_reference = value_type;
+  ///
+  using reference = const_reference;
+  ///
+  using const_pointer = std::add_pointer<const value_type>::type;
+  ///
+  using pointer = const_pointer;
+  ///
+  using difference_type = std::ptrdiff_t;
+
+  ///
+  search_parameter_iterator() = default;
+
+  ///
+  /// \param query
+  explicit search_parameter_iterator(std::string_view query)
+      : it_(query) {}
+
+  ///
+  /// \return
+  search_parameter_iterator &operator++() {
+    increment();
+    return *this;
+  }
+
+  ///
+  /// \return
+  search_parameter_iterator operator++(int) {
+    auto result = *this;
+    increment();
+    return result;
+  }
+
+  ///
+  /// \return
+  const_reference operator*() const noexcept {
+    auto first = std::begin(*it_), last = std::end(*it_);
+
+    auto equal = std::find_if(first, last, [](auto c) { return (c == '='); });
+
+    auto name =
+        std::string_view(std::addressof(*first), std::distance(first, equal));
+    if (equal != last) {
+      ++equal;
+    }
+    auto value =
+        std::string_view(std::addressof(*equal), std::distance(equal, last));
+
+    return {name, value};
+  }
+
+  ///
+  /// \param other
+  /// \return
+  bool operator==(const search_parameter_iterator &other) const noexcept {
+    return it_ == other.it_;
+  }
+
+  ///
+  /// \param other
+  /// \return
+  bool operator!=(const search_parameter_iterator &other) const noexcept {
+    return !(*this == other);
+  }
+
+ private:
+
+  void increment() {
+    ++it_;
+  }
+
+  search_element_iterator it_;
+
+};
+
+///
+class search_parameter_range {
+ public:
+
+  ///
+  using const_iterator = search_parameter_iterator;
+  ///
+  using iterator = const_iterator;
+  ///
+  using size_type = std::size_t;
+
+  ///
+  search_parameter_range() = default;
+
+  ///
+  /// \param query
+  explicit search_parameter_range(std::string_view query)
+      : first_(query)
+      , last_() {}
+
+  ///
+  /// \return
+  [[nodiscard]] const_iterator begin() const noexcept {
+    return first_;
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] const_iterator end() const noexcept {
+    return last_;
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] const_iterator cbegin() const noexcept {
+    return begin();
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] const_iterator cend() const noexcept {
+    return end();
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] bool empty() const noexcept {
+    return first_ == last_;
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] size_type size() const noexcept {
+    return static_cast<size_type>(std::distance(first_, last_));
+  }
+
+ private:
+
+  search_parameter_iterator first_, last_;
+
+};
+
+class url;
+
 /// Supports iterating through
 /// [URL search parameters](https://url.spec.whatwg.org/#urlsearchparams)
 ///
@@ -45,14 +279,21 @@ class url_search_parameters {
   url_search_parameters() = default;
 
   /// Constructor
-  ///
   /// \param query The search string
   explicit url_search_parameters(std::string_view query);
 
   /// Constructor
+  /// \param url The URL
+  explicit url_search_parameters(url &url);
+
   ///
-  /// \param url The URL record
-  explicit url_search_parameters(url_record &url);
+  /// \param parameters
+  url_search_parameters(std::initializer_list<value_type> parameters);
+
+  url_search_parameters(const url_search_parameters&) = delete;
+  url_search_parameters &operator=(const url_search_parameters&) = delete;
+  url_search_parameters(url_search_parameters&&) = delete;
+  url_search_parameters &operator=(url_search_parameters&&) = delete;
 
   /// Appends a name-value pair to the search string
   ///
@@ -143,7 +384,8 @@ class url_search_parameters {
   void update();
 
   std::vector<value_type> parameters_;
-  std::optional<std::reference_wrapper<url_record>> url_;
+  url *url_ = nullptr;
+//  std::optional<std::reference_wrapper<url>> url_;
 };
 }  // namespace skyr
 

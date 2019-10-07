@@ -14,6 +14,7 @@ set(
         example_06
         example_07
         example_08
+        example_09
     )
 
 foreach(example ${EXAMPLES})

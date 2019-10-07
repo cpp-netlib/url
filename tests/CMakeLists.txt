@@ -17,6 +17,7 @@ set(
         url_parsing_example_tests
         url_setter_tests
         url_search_parameters_tests
+        url_search_parameter_range_tests
         ipv4_address_tests
         ipv6_address_tests
         idna_table_tests

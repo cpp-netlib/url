@@ -4,7 +4,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
-#include "skyr/url/url_search_parameters.hpp"
+#include <skyr/url/percent_encoding/percent_encode_range.hpp>
+#include <skyr/url/url_search_parameters.hpp>
+#include <skyr/url.hpp>
 
 namespace skyr {
 url_search_parameters::url_search_parameters(
@@ -13,12 +15,16 @@ url_search_parameters::url_search_parameters(
 }
 
 url_search_parameters::url_search_parameters(
-    url_record &url)
-  : url_(url) {
-  if (url_.value().get().query) {
-    initialize(url_.value().get().query.value());
+    url &url)
+    : url_(&url) {
+  if (url.record().query) {
+    initialize(url.record().query.value());
   }
 }
+
+url_search_parameters::url_search_parameters(
+    std::initializer_list<value_type> parameters)
+  : parameters_(parameters) {}
 
 void url_search_parameters::append(
     const string_type &name,
@@ -29,20 +35,14 @@ void url_search_parameters::append(
 
 namespace {
 template <class Iterator>
-inline auto remove_parameter(
-    Iterator first,
-    Iterator last,
-    const typename Iterator::value_type::first_type &name) {
+inline auto remove_parameter(Iterator first, Iterator last, std::string_view name) {
   return std::remove_if(
       first, last,
       [&name] (const auto &parameter) { return name == parameter.first; });
 }
 
 template <class Iterator>
-inline auto find_parameter(
-    Iterator first,
-    Iterator last,
-    const typename Iterator::value_type::first_type &name) {
+inline auto find_parameter(Iterator first, Iterator last, std::string_view name) {
   return std::find_if(
       first, last,
       [&name] (const auto &parameter) { return name == parameter.first; });
@@ -129,33 +129,20 @@ url_search_parameters::string_type url_search_parameters::to_string() const {
 }
 
 void url_search_parameters::initialize(std::string_view query) {
-  auto first = std::begin(query), last = std::end(query);
-  auto it = first;
-  while (it != last) {
-    auto sep_it = std::find_if(
-        it, last, [](auto byte) -> bool { return byte == '&' || byte == ';'; });
-    auto eq_it = std::find_if(
-        it, sep_it, [](auto byte) -> bool { return byte == '='; });
+  if (!query.empty() && (query.front() == '?')) {
+    query.remove_prefix(1);
+  }
 
-    auto name = string_type(it, eq_it);
-    if (eq_it != sep_it) {
-      ++eq_it;  // skip '=' symbol
-    }
-    auto value = string_type(eq_it, sep_it);
-
+  for (auto [name, value] : search_parameter_range(query)) {
     parameters_.emplace_back(name, value);
-
-    it = sep_it;
-    if ((it != last) && (*it == '&' || *it == ';')) {
-      ++it;
-    }
   }
 }
 
 void url_search_parameters::update() {
-  if (url_) {
-    auto query = to_string();
-    url_.value().get().query = !query.empty() ? std::make_optional(query) : std::nullopt;
-  }
+//  if (url_) {
+//    auto query = to_string();
+//    parameters_.clear();
+//    url_->set_search(query);
+//  }
 }
 }  // namespace skyr

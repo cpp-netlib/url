@@ -9,6 +9,7 @@
 #include <string>
 #include <string_view>
 #include <type_traits>
+#include <ostream>
 #include <tl/expected.hpp>
 #include <skyr/config.hpp>
 #include <skyr/version.hpp>
@@ -59,6 +60,7 @@ class url_parse_error : public std::runtime_error {
 /// assert("/" == url.value().pathname());
 /// ```
 class url {
+
  public:
 
   /// The internal ASCII string type, or `std::basic_string<value_type>`
@@ -588,7 +590,7 @@ class url {
   url_record url_;
   std::string href_;
   string_view view_;
-  url_search_parameters parameters_;
+  std::shared_ptr<url_search_parameters> parameters_;
 };
 
 /// Swaps two `url` objects
@@ -690,6 +692,14 @@ inline bool operator <= (const url &lhs, const url &rhs) noexcept {
 /// \returns !(lhs < rhs)
 inline bool operator >= (const url &lhs, const url &rhs) noexcept {
   return !(lhs < rhs);
+}
+
+///
+/// \param os
+/// \param url
+/// \returns
+inline std::ostream &operator << (std::ostream &os, const url &url) {
+  return os << url.href();
 }
 }  // namespace skyr
 

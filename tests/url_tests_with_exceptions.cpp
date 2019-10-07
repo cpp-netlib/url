@@ -580,6 +580,10 @@ TEST_CASE("url_tests", "[url]") {
   }
 
   SECTION("domain_error_test") {
+    auto t = std::u32string(U"\xfdD0");
+    auto byte = skyr::details::to_bytes(t);
+    CHECK(byte);
+
     auto instance = skyr::make_url(U"http://\xfdD0zyx.com");
     REQUIRE_FALSE(instance);
     CHECK(skyr::url_parse_errc::domain_error == instance.error());
@@ -598,60 +602,11 @@ TEST_CASE("url_tests", "[url]") {
     CHECK("/%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == instance.value().pathname());
   }
 
-  SECTION("search_parameters_test_1") {
-    auto instance = skyr::url("https://example.com/");
-    auto search = instance.search_parameters();
-    CHECK(search.empty());
-    CHECK("" == search.to_string());
-    CHECK("" == instance.search());
-  }
-
-  SECTION("search_parameters_test_2") {
-    auto instance = skyr::url("https://example.com/?");
-    auto search = instance.search_parameters();
-    CHECK(search.empty());
-    CHECK("" == search.to_string());
-    CHECK("" == instance.search());
-  }
-
-  SECTION("search_parameters_test_3") {
-    auto instance = skyr::url("https://example.com/?a=b&c=d");
-    auto search = instance.search_parameters();
-    CHECK("a=b&c=d" == search.to_string());
-    CHECK("?a=b&c=d" == instance.search());
-  }
-
-  SECTION("search_parameters_test_4") {
-    auto instance = skyr::url("https://example.com/?a=b&c=d");
-    auto search = instance.search_parameters();
-    search.set("e", "f");
-    CHECK("a=b&c=d&e=f" == search.to_string());
-    CHECK("?a=b&c=d&e=f" == instance.search());
-  }
-
-  SECTION("search_parameters_test_5") {
-    auto instance = skyr::url("https://example.com/?a=b&c=d");
-    auto search = instance.search_parameters();
-    search.set("a", "e");
-    CHECK("a=e&c=d" == search.to_string());
-    CHECK("?a=e&c=d" == instance.search());
-  }
-
-  SECTION("search_parameters_test_6") {
-    auto instance = skyr::url("https://example.com/?c=b&a=d");
-    auto search = instance.search_parameters();
-    search.sort();
-    CHECK("a=d&c=b" == search.to_string());
-    CHECK("?a=d&c=b" == instance.search());
-  }
-
-  SECTION("search_parameters_test_7") {
-    auto instance = skyr::url("https://example.com/?c=b&a=d");
-    auto search = instance.search_parameters();
-    search.clear();
-    CHECK(search.empty());
-    CHECK("" == search.to_string());
-    CHECK("" == instance.search());
+  SECTION("pride_flag_test_from_u32") {
+    auto base = skyr::url("https://pride.example/hello-world");
+    auto instance = skyr::make_url(U"\x1F3F3\xFE0F\x200D\x1F308", base);
+    REQUIRE(instance);
+    CHECK("/%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == instance.value().pathname());
   }
 
   SECTION("url_record_accessor_1") {

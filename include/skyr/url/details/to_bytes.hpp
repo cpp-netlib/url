@@ -8,6 +8,8 @@
 
 #include <string>
 #include <skyr/traits/string_traits.hpp>
+#include <skyr/unicode/ranges/views/u16_view.hpp>
+#include <skyr/unicode/ranges/views/u32_view.hpp>
 #include <skyr/unicode/ranges/transforms/byte_transform.hpp>
 
 namespace skyr::details {
