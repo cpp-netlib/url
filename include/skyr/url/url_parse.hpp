@@ -1,4 +1,4 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-19 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -18,7 +18,7 @@ namespace skyr {
 /// \param base An optional base URL
 /// \returns A `url_record` on success and an error code on failure
 tl::expected<url_record, std::error_code> parse(
-    url_record::string_type input,
+    std::string_view input,
     std::optional<url_record> base = std::nullopt);
 }  // namespace skyr
 

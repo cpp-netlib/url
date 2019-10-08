@@ -45,7 +45,7 @@ class url_parser_context {
   bool password_token_seen_flag;
 
   url_parser_context(
-      std::string input,
+      std::string_view input,
       std::optional<url_record> base,
       const std::optional<url_record> &url,
       std::optional<url_parse_state> state_override = std::nullopt);

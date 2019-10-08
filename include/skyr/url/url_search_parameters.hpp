@@ -284,7 +284,7 @@ class url_search_parameters {
 
   /// Constructor
   /// \param url The URL
-  explicit url_search_parameters(url &url);
+  explicit url_search_parameters(url *url);
 
   ///
   /// \param parameters
@@ -299,33 +299,33 @@ class url_search_parameters {
   ///
   /// \param name The parameter name
   /// \param value The parameter value
-  void append(const string_type &name, const string_type &value);
+  void append(std::string_view name, std::string_view value);
 
   /// Removes a parameter from the search string
   ///
   /// \param name The name of the parameter to remove
-  void remove(const string_type &name);
+  void remove(std::string_view name);
 
   /// \param name The search parameter name
   /// \returns The first search parameter value with the given name
-  [[nodiscard]] std::optional<string_type> get(const string_type &name) const;
+  [[nodiscard]] std::optional<string_type> get(std::string_view name) const;
 
   /// \param name The search parameter name
   /// \returns All search parameter values with the given name
-  [[nodiscard]] std::vector<string_type> get_all(const string_type &name) const;
+  [[nodiscard]] std::vector<string_type> get_all(std::string_view name) const;
 
   /// Tests if there is a parameter with the given name
   ///
   /// \param name The search parameter name
   /// \returns `true` if the value is in the search parameters,
   /// `false` otherwise.
-  [[nodiscard]] bool contains(const string_type &name) const noexcept;
+  [[nodiscard]] bool contains(std::string_view name) const noexcept;
 
   /// Sets a URL search parameter
   ///
   /// \param name The search parameter name
   /// \param value The search parameter value
-  void set(const string_type &name, const string_type &value);
+  void set(std::string_view name, std::string_view value);
 
   /// Clears the search parameters
   ///
@@ -385,7 +385,6 @@ class url_search_parameters {
 
   std::vector<value_type> parameters_;
   url *url_ = nullptr;
-//  std::optional<std::reference_wrapper<url>> url_;
 };
 }  // namespace skyr
 

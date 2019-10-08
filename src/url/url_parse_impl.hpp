@@ -1,4 +1,4 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-19 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -67,7 +67,7 @@ namespace details {
 /// \param state_override
 /// \returns A `url_record` on success and an error code on failure
 tl::expected<url_record, std::error_code> basic_parse(
-    url_record::string_type input,
+    std::string_view input,
     std::optional<url_record> base = std::nullopt,
     const std::optional<url_record> &url = std::nullopt,
     std::optional<url_parse_state> state_override = std::nullopt);

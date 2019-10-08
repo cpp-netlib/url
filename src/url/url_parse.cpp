@@ -1,4 +1,4 @@
-// Copyright 2016-2018 Glyn Matthews.
+// Copyright 2016-2019 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -14,7 +14,7 @@
 namespace skyr {
 namespace details {
 tl::expected<url_record, std::error_code> basic_parse(
-    url_record::string_type input,
+    std::string_view input,
     std::optional<url_record> base,
     const std::optional<url_record> &url,
     std::optional<url_parse_state> state_override) {
@@ -129,8 +129,8 @@ tl::expected<url_record, std::error_code> basic_parse(
          return context.parse_fragment(byte);
        }}};
 
-  auto context = url_parser_context
-      (std::move(input), std::move(base), url, state_override);
+  auto context = url_parser_context(
+      input, std::move(base), url, state_override);
 
   while (true) {
     auto func = parse_funcs[context.state];
@@ -160,9 +160,9 @@ tl::expected<url_record, std::error_code> basic_parse(
 }  // namespace details
 
 tl::expected<url_record, std::error_code> parse(
-    url_record::string_type input,
+    std::string_view input,
     std::optional<url_record> base) {
-  auto url = details::basic_parse(std::move(input), std::move(base));
+  auto url = details::basic_parse(input, std::move(base));
 
   if (!url) {
     return url;

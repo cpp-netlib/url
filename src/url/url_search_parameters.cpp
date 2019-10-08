@@ -15,10 +15,10 @@ url_search_parameters::url_search_parameters(
 }
 
 url_search_parameters::url_search_parameters(
-    url &url)
-    : url_(&url) {
-  if (url.record().query) {
-    initialize(url.record().query.value());
+    url *url)
+    : url_(url) {
+  if (url_->record().query) {
+    initialize(url_->record().query.value());
   }
 }
 
@@ -27,8 +27,8 @@ url_search_parameters::url_search_parameters(
   : parameters_(parameters) {}
 
 void url_search_parameters::append(
-    const string_type &name,
-    const string_type &value) {
+    std::string_view name,
+    std::string_view value) {
   parameters_.emplace_back(name, value);
   update();
 }
@@ -50,7 +50,7 @@ inline auto find_parameter(Iterator first, Iterator last, std::string_view name)
 }  // namespace
 
 void url_search_parameters::remove(
-    const string_type &name) {
+    std::string_view name) {
   auto first = std::begin(parameters_), last = std::end(parameters_);
   auto it = remove_parameter(first, last, name);
   parameters_.erase(it, last);
@@ -58,14 +58,14 @@ void url_search_parameters::remove(
 }
 
 std::optional<url_search_parameters::string_type> url_search_parameters::get(
-    const string_type &name) const {
+    std::string_view name) const {
   auto first = std::begin(parameters_), last = std::end(parameters_);
   auto it = find_parameter(first, last, name);
   return (it != last) ? std::make_optional(it->second) : std::nullopt;
 }
 
 std::vector<url_search_parameters::string_type> url_search_parameters::get_all(
-    const string_type &name) const {
+    std::string_view name) const {
   std::vector<string_type> result;
   result.reserve(parameters_.size());
   for (auto [parameter_name, value] : parameters_) {
@@ -76,14 +76,14 @@ std::vector<url_search_parameters::string_type> url_search_parameters::get_all(
   return result;
 }
 
-bool url_search_parameters::contains(const string_type &name) const noexcept {
+bool url_search_parameters::contains(std::string_view name) const noexcept {
   auto first = std::begin(parameters_), last = std::end(parameters_);
   return find_parameter(first, last, name) != last;
 }
 
 void url_search_parameters::set(
-    const string_type &name,
-    const string_type &value) {
+    std::string_view name,
+    std::string_view value) {
   auto first = std::begin(parameters_), last = std::end(parameters_);
   auto it = find_parameter(first, last, name);
   if (it != last) {
@@ -139,10 +139,10 @@ void url_search_parameters::initialize(std::string_view query) {
 }
 
 void url_search_parameters::update() {
-//  if (url_) {
-//    auto query = to_string();
-//    parameters_.clear();
-//    url_->set_search(query);
-//  }
+  if (url_) {
+    auto query = to_string();
+    parameters_.clear();
+    url_->set_search(query);
+  }
 }
 }  // namespace skyr

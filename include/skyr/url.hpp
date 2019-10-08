@@ -92,7 +92,8 @@ class url {
   /// \param input The input string
   /// \throws url_parse_error on parse errors
   template<class Source>
-  explicit url(const Source &input) {
+  explicit url(const Source &input)
+    : parameters_(std::make_shared<url_search_parameters>(this)) {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -102,7 +103,7 @@ class url {
       SKYR_EXCEPTIONS_THROW(url_parse_error(
           make_error_code(url_parse_errc::invalid_unicode_character)));
     }
-    initialize(std::move(bytes.value()));
+    initialize(std::string_view(bytes.value()));
   }
 
   /// Parses a URL from the input string. The input string can be
@@ -113,7 +114,8 @@ class url {
   /// \param base A base URL
   /// \throws url_parse_error on parse errors
   template<class Source>
-  url(const Source &input, const url &base) {
+  url(const Source &input, const url &base)
+      : parameters_(std::make_shared<url_search_parameters>(this)) {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -123,7 +125,7 @@ class url {
       SKYR_EXCEPTIONS_THROW(url_parse_error(
           make_error_code(url_parse_errc::invalid_unicode_character)));
     }
-    initialize(std::move(bytes.value()), base.record());
+    initialize(std::string_view(bytes.value()), base.record());
   }
 
   /// Constructs a URL from an existing record
@@ -157,12 +159,12 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-    return set_href(std::move(bytes.value()));
+    return set_href(std::string_view(bytes.value()));
   }
 
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_href(string_type &&href);
+  tl::expected<void, std::error_code> set_href(string_view href);
 
   /// The URL string
   ///
@@ -196,14 +198,15 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-    return set_protocol(std::move(bytes.value()));
+
+    return set_protocol(std::string_view(bytes.value()));
   }
 
   /// Sets the [URL protocol](https://url.spec.whatwg.org/#dom-url-protocol)
   ///
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_protocol(string_type &&protocol);
+  tl::expected<void, std::error_code> set_protocol(string_view protocol);
 
   /// \returns The [URL username](https://url.spec.whatwg.org/#dom-url-username)
   [[nodiscard]] string_type username() const;
@@ -224,14 +227,14 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-    return set_username(std::move(bytes.value()));
+    return set_username(std::string_view(bytes.value()));
   }
 
   /// Sets the [URL username](https://url.spec.whatwg.org/#dom-url-username)
   ///
   /// \param username The new username
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_username(string_type &&username);
+  tl::expected<void, std::error_code> set_username(string_view username);
 
   /// The [URL password](https://url.spec.whatwg.org/#dom-url-password)
   ///
@@ -256,14 +259,14 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-    return set_password(std::move(bytes.value()));
+    return set_password(std::string_view(bytes.value()));
   }
 
   /// Sets the [URL password](https://url.spec.whatwg.org/#dom-url-password)
   ///
   /// \param password The new password
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_password(string_type &&password);
+  tl::expected<void, std::error_code> set_password(string_view password);
 
   /// \returns The [URL host](https://url.spec.whatwg.org/#dom-url-host)
   [[nodiscard]] string_type host() const;
@@ -284,14 +287,14 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-    return set_host(std::move(bytes.value()));
+    return set_host(std::string_view(bytes.value()));
   }
 
   /// Sets the [URL host](https://url.spec.whatwg.org/#dom-url-host)
   ///
   /// \param host The new URL host
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_host(string_type &&host);
+  tl::expected<void, std::error_code> set_host(string_view host);
 
   /// \returns The [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
   [[nodiscard]] string_type hostname() const;
@@ -312,14 +315,14 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-    return set_hostname(std::move(bytes.value()));
+    return set_hostname(std::string_view(bytes.value()));
   }
 
   /// Sets the [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
   ///
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_hostname(string_type &&hostname);
+  tl::expected<void, std::error_code> set_hostname(string_view hostname);
 
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
   [[nodiscard]] string_type port() const;
@@ -349,7 +352,7 @@ class url {
   ///
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_port(string_type &&port);
+  tl::expected<void, std::error_code> set_port(string_view port);
 
   /// Returns the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
   ///
@@ -372,14 +375,14 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-    return set_pathname(std::move(bytes.value()));
+    return set_pathname(std::string_view(bytes.value()));
   }
 
   /// Sets the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
   ///
   /// \param pathname The new pathname
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_pathname(string_type &&pathname);
+  tl::expected<void, std::error_code> set_pathname(string_view pathname);
 
   /// Returns the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
@@ -402,14 +405,14 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-    return set_search(std::move(bytes.value()));
+    return set_search(std::string_view(bytes.value()));
   }
 
   /// Sets the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
   /// \param search The new search string
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_search(string_type &&search);
+  tl::expected<void, std::error_code> set_search(string_view search);
 
   /// \returns A reference to the search parameters
   [[nodiscard]] url_search_parameters &search_parameters();
@@ -435,14 +438,14 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-    return set_hash(std::move(bytes.value()));
+    return set_hash(std::string_view(bytes.value()));
   }
 
   /// Sets the [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
   ///
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_hash(string_type &&hash);
+  tl::expected<void, std::error_code> set_hash(string_view hash);
 
   /// \returns The underlying `url_record` implementation.
   [[nodiscard]] const url_record &record() const & noexcept {
@@ -511,7 +514,7 @@ class url {
   /// \returns The default port if the scheme is special, `nullopt`
   ///          otherwise
   [[nodiscard]] static std::optional<std::uint16_t> default_port(
-      const string_type &scheme) noexcept;
+      std::string_view scheme) noexcept;
 
   /// Clears the underlying URL string
   ///
@@ -542,7 +545,7 @@ class url {
  private:
 
   void initialize(
-      string_type &&input,
+      string_view input,
       std::optional<url_record> &&base = std::nullopt);
   void update_record(url_record &&record);
 
@@ -577,14 +580,14 @@ class url {
       }
     }
 
-    return set_port(std::move(bytes.value()));
+    return set_port(std::string_view(bytes.value()));
   }
 
   template <typename intT>
   tl::expected<void, std::error_code> set_port_impl(
       intT port,
       typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) {
-    return set_port(std::to_string(port));
+    return set_port(string_view(std::to_string(port)));
   }
 
   url_record url_;
@@ -603,7 +606,7 @@ void swap(url &lhs, url &rhs) noexcept;
 
 namespace details {
 tl::expected<url, std::error_code> make_url(
-    url::string_type &&input, const std::optional<url_record> &base);
+    url::string_view input, const std::optional<url_record> &base);
 }  // namespace details
 
 /// Parses a URL string and constructs a `url` object
@@ -619,7 +622,7 @@ inline tl::expected<url, std::error_code> make_url(
     return tl::make_unexpected(
         make_error_code(url_parse_errc::invalid_unicode_character));
   }
-  return details::make_url(std::move(bytes.value()), std::nullopt);
+  return details::make_url(std::string_view(bytes.value()), std::nullopt);
 }
 
 /// Parses a URL string and constructs a `url` object
@@ -636,7 +639,7 @@ inline tl::expected<url, std::error_code> make_url(
     return tl::make_unexpected(
         make_error_code(url_parse_errc::invalid_unicode_character));
   }
-  return details::make_url(std::move(bytes.value()), base.record());
+  return details::make_url(std::string_view(bytes.value()), base.record());
 }
 
 /// Tests two URLs for equality according to the

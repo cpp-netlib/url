@@ -15,10 +15,10 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     CHECK(parameters.empty());
     CHECK(parameters.begin() == parameters.end());
   }
-  
+
   SECTION("query_with_single_kvp") {
     skyr::url_search_parameters parameters{"a=b"};
-  
+
     CHECK("a=b" == parameters.to_string());
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
@@ -27,10 +27,10 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     ++it;
     CHECK(it == parameters.end());
   }
-  
+
   SECTION("query_with_single_kvp_in_initalizer_list") {
     skyr::url_search_parameters parameters{"a=b"};
-  
+
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
     CHECK("a" == it->first);
@@ -38,10 +38,10 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     ++it;
     CHECK(it == parameters.end());
   }
-  
+
   SECTION("query_with_two_kvps") {
     skyr::url_search_parameters parameters{"a=b&c=d"};
-  
+
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
     CHECK("a" == it->first);
@@ -53,10 +53,10 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     ++it;
     CHECK(it == parameters.end());
   }
-  
+
   SECTION("query_with_two_kvps_in_initializer_list") {
     skyr::url_search_parameters parameters{"a=b&c=d"};
-  
+
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
     CHECK("a" == it->first);
@@ -68,10 +68,10 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     ++it;
     CHECK(it == parameters.end());
   }
-  
+
   SECTION("query_with_two_kvps_using_semicolon_separator") {
     skyr::url_search_parameters parameters{"a=b;c=d"};
-  
+
     CHECK("a=b&c=d" == parameters.to_string());
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
@@ -84,11 +84,11 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     ++it;
     CHECK(it == parameters.end());
   }
-  
+
   SECTION("query_append_one_kvp") {
     skyr::url_search_parameters parameters{};
     parameters.append("a", "b");
-  
+
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
     CHECK("a" == it->first);
@@ -96,12 +96,12 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     ++it;
     CHECK(it == parameters.end());
   }
-  
+
   SECTION("query_append_two_kvps") {
     skyr::url_search_parameters parameters{};
     parameters.append("a", "b");
     parameters.append("c", "d");
-  
+
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
     CHECK("a" == it->first);
@@ -112,29 +112,29 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     ++it;
     CHECK(it == parameters.end());
   }
-  
+
   SECTION("query_append_one_kvp_to_string") {
     skyr::url_search_parameters parameters{};
     parameters.append("a", "b");
-  
+
     CHECK("a=b" == parameters.to_string());
   }
-  
+
   SECTION("query_append_two_kvps_to_string") {
     skyr::url_search_parameters parameters{};
     parameters.append("a", "b");
     parameters.append("c", "d");
-  
+
     CHECK("a=b&c=d" == parameters.to_string());
   }
-  
+
   SECTION("query_sort_test") {
     // https://url.spec.whatwg.org/#example-searchparams-sort
     skyr::url_search_parameters parameters{"c=d&a=b"};
     parameters.sort();
     CHECK("a=b&c=d" == parameters.to_string());
   }
-  
+
 //  SECTION("copy_test") {
 //    skyr::url_search_parameters parameters{"a=b&c=d"};
 //    skyr::url_search_parameters copy(parameters);
@@ -196,27 +196,34 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
 //    ++it;
 //    CHECK(it == copy.end());
 //  }
-  
+
+  SECTION("list of pairs") {
+    auto parameters = skyr::url_search_parameters{{"key", "730d67"}};
+    REQUIRE("key=730d67" == parameters.to_string());
+  }
+
   SECTION("to_string_test") {
     auto parameters = skyr::url_search_parameters{"key=730d67"};
     REQUIRE("key=730d67" == parameters.to_string());
   }
-  
+}
+
+TEST_CASE("url") {
   SECTION("url_with_no_query_test") {
     auto instance = skyr::url("https://example.com/");
-    auto parameters = skyr::url_search_parameters(instance);
+    auto &parameters = instance.search_parameters();
     CHECK(parameters.to_string().empty());
   }
-  
+
   SECTION("url_with_empty_query_test") {
     auto instance = skyr::url("https://example.com/?");
-    auto parameters = skyr::url_search_parameters(instance);
+    auto &parameters = instance.search_parameters();
     CHECK(parameters.to_string().empty());
   }
-  
+
   SECTION("url_test") {
     auto instance = skyr::url("https://example.com/?a=b&c=d");
-    auto parameters = skyr::url_search_parameters(instance);
+    auto &parameters = instance.search_parameters();
     CHECK("a=b&c=d" == parameters.to_string());
   }
 
@@ -225,6 +232,7 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     auto url = skyr::url(
         "https://example.org/?q=\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88&key=e1f7bc78");
     url.search_parameters().sort();
+    CHECK("key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search_parameters().to_string());
     CHECK("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search());
     CHECK("https://example.org/?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.href());
   }
@@ -277,7 +285,7 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     search.sort();
     CHECK("a=d&c=b" == search.to_string());
     CHECK("?a=d&c=b" == instance.search());
-    CHECK("a=e&c=d" == instance.record().query);
+    CHECK("a=d&c=b" == instance.record().query);
   }
 
   SECTION("search_parameters_test_7") {
@@ -327,15 +335,24 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     auto instance = skyr::url();
     url.swap(instance);
 
-    REQUIRE("?a=b&c=d" == instance.search());
-    REQUIRE(url.search().empty());
+    CHECK("?a=b&c=d" == instance.search());
+    CHECK("a=b&c=d" == instance.record().query.value());
+    CHECK("a=b&c=d" == instance.search_parameters().to_string());
+
+    CHECK(url.search().empty());
+    CHECK(!url.record().query);
+    CHECK(url.search_parameters().to_string().empty());
+  }
+
+  SECTION("url_swap_and_modify") {
+    auto url = skyr::url("https://example.com/?a=b&c=d");
+    auto instance = skyr::url();
+    url.swap(instance);
 
     auto &parameters = instance.search_parameters();
-    CHECK("a=b&c=d" == parameters.to_string());
     parameters.remove("a");
     CHECK("c=d" == parameters.to_string());
     CHECK("?c=d" == instance.search());
     CHECK("c=d" == instance.record().query.value());
-    CHECK(url.search().empty());
   }
 }

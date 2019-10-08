@@ -205,11 +205,11 @@ void shorten_path(std::string_view scheme, std::vector<std::string> &path) {
 } // namespace
 
 url_parser_context::url_parser_context(
-    std::string input,
+    std::string_view input,
     std::optional<url_record> base,
     const std::optional<url_record> &url,
     std::optional<url_parse_state> state_override)
-    : input(std::move(input))
+    : input(input)
     , base(std::move(base))
     , url(url? url.value() : url_record{})
     , state(state_override? state_override.value() : url_parse_state::scheme_start)
@@ -505,7 +505,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_hostnam
 
     auto host = parse_host(buffer, !url.is_special());
     if (!host) {
-      return tl::make_unexpected(std::move(host.error()));
+      return tl::make_unexpected(host.error());
     }
     url.host = host.value();
     buffer.clear();
@@ -536,7 +536,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_hostnam
 
     auto host = parse_host(buffer, !url.is_special());
     if (!host) {
-      return tl::make_unexpected(std::move(host.error()));
+      return tl::make_unexpected(host.error());
     }
     url.host = host.value();
     buffer.clear();
@@ -692,7 +692,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_file_ho
     } else {
       auto host = parse_host(buffer, !url.is_special());
       if (!host) {
-        return tl::make_unexpected(std::move(host.error()));
+        return tl::make_unexpected(host.error());
       }
 
       if (host.value() == "localhost") {
