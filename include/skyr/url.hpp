@@ -93,7 +93,7 @@ class url {
   /// \throws url_parse_error on parse errors
   template<class Source>
   explicit url(const Source &input)
-    : parameters_(std::make_shared<url_search_parameters>(this)) {
+    : parameters_(this) {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -115,7 +115,7 @@ class url {
   /// \throws url_parse_error on parse errors
   template<class Source>
   url(const Source &input, const url &base)
-      : parameters_(std::make_shared<url_search_parameters>(this)) {
+      : parameters_(this) {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -593,7 +593,8 @@ class url {
   url_record url_;
   std::string href_;
   string_view view_;
-  std::shared_ptr<url_search_parameters> parameters_;
+  url_search_parameters parameters_;
+
 };
 
 /// Swaps two `url` objects

@@ -17,13 +17,13 @@ url::url()
   : url_()
   , href_()
   , view_(href_)
-  , parameters_(std::make_shared<url_search_parameters>(this)) {}
+  , parameters_(this) {}
 
 url::url(url_record &&input) noexcept
   : url_(input)
   , href_(serialize(url_))
   , view_(href_)
-  , parameters_(std::make_shared<url_search_parameters>(this)) {}
+  , parameters_(this) {}
 
 void url::swap(url &other) noexcept {
   using std::swap;
@@ -31,7 +31,7 @@ void url::swap(url &other) noexcept {
   swap(href_, other.href_);
   view_ = string_view(href_);
   other.view_ = string_view(other.href_);
-  swap(parameters_->parameters_, other.parameters_->parameters_);
+  swap(parameters_, other.parameters_);
 }
 
 void url::initialize(string_view input, std::optional<url_record> &&base) {
@@ -52,7 +52,7 @@ void url::update_record(url_record &&record) {
   url_ = record;
   href_ = serialize(url_);
   view_ = string_view(href_);
-  parameters_->initialize(
+  parameters_.initialize(
       url_.query? string_view(url_.query.value()) : string_view(""));
 }
 
@@ -295,7 +295,7 @@ tl::expected<void, std::error_code> url::set_search(string_view search) {
 }
 
 url_search_parameters &url::search_parameters() {
-  return *parameters_;
+  return parameters_;
 }
 
 url::string_type url::hash() const {

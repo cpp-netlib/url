@@ -76,16 +76,18 @@ class percent_encode_iterator {
   /// \return
   [[nodiscard]] reference operator*() const noexcept {
     assert(it_);
-    auto byte = *it_.value();
+    auto byte = static_cast<unsigned char>(*it_.value());
     if (byte == 0x20u) {
       percent_encoded_char('+', percent_encoded_char::no_encode());
     } else if ((byte == 0x2au) || (byte == 0x2du) || (byte == 0x2eu) ||
                ((byte >= 0x30u) && (byte <= 0x39u)) ||
                ((byte >= 0x41u) && (byte <= 0x5au)) || (byte == 0x5fu) ||
                ((byte >= 0x61u) && (byte <= 0x7au))) {
-      return percent_encoded_char(byte, percent_encoded_char::no_encode());
+      return percent_encoded_char(
+          static_cast<char>(byte), percent_encoded_char::no_encode());
     }
-    return percent_encoded_char(byte);
+    return percent_encoded_char(
+        static_cast<char >(byte));
   }
 
   [[nodiscard]] bool operator==(const percent_encode_iterator &other) const noexcept {

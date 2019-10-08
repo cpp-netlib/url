@@ -11,7 +11,8 @@
 #include <vector>
 #include <functional>
 #include <optional>
-#include <skyr/url/url_record.hpp>
+#include <algorithm>
+#include <cassert>
 
 namespace skyr {
 ///
@@ -290,10 +291,9 @@ class url_search_parameters {
   /// \param parameters
   url_search_parameters(std::initializer_list<value_type> parameters);
 
-  url_search_parameters(const url_search_parameters&) = delete;
-  url_search_parameters &operator=(const url_search_parameters&) = delete;
-  url_search_parameters(url_search_parameters&&) = delete;
-  url_search_parameters &operator=(url_search_parameters&&) = delete;
+  ///
+  /// \param other
+  void swap(url_search_parameters &other) noexcept;
 
   /// Appends a name-value pair to the search string
   ///
@@ -386,6 +386,13 @@ class url_search_parameters {
   std::vector<value_type> parameters_;
   url *url_ = nullptr;
 };
+
+/// 
+/// \param lhs
+/// \param rhs
+inline void swap(url_search_parameters &lhs, url_search_parameters &rhs) noexcept {
+  lhs.swap(rhs);
+}
 }  // namespace skyr
 
 #endif  // SKYR_URL_SEARCH_PARAMETERS_INC

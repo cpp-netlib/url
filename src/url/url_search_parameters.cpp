@@ -3,8 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <algorithm>
-#include <skyr/url/percent_encoding/percent_encode_range.hpp>
 #include <skyr/url/url_search_parameters.hpp>
 #include <skyr/url.hpp>
 
@@ -25,6 +23,11 @@ url_search_parameters::url_search_parameters(
 url_search_parameters::url_search_parameters(
     std::initializer_list<value_type> parameters)
   : parameters_(parameters) {}
+
+
+void url_search_parameters::swap(url_search_parameters &other) noexcept {
+  std::swap(parameters_, other.parameters_);
+}
 
 void url_search_parameters::append(
     std::string_view name,
