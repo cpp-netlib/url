@@ -20,6 +20,7 @@ set(
 foreach(example ${EXAMPLES})
         add_executable(${example} ${example}.cpp)
         add_dependencies(${example} skyr-url)
-        target_link_libraries(${example} PRIVATE skyr-url)
+        target_link_libraries(
+                ${example} PRIVATE ${CMAKE_THREAD_LIBS_INIT} skyr-url)
         set_target_properties(${example} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${Skyr_BINARY_DIR}/examples)
 endforeach (example)

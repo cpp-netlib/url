@@ -8,13 +8,9 @@
 #include <skyr/url/percent_encoding/percent_decode_range.hpp>
 
 int main(int argc, char *argv[]) {
-  auto decode_pathname = [](const auto &url) {
-    return skyr::percent_encoding::as<std::string>(
-        url.record().path.back() | skyr::percent_encoding::view::decode);
-  };
+  using namespace skyr::percent_encoding;
 
-  auto value = skyr::make_url("http://example.org/\xf0\x9f\x92\xa9")
-                   .and_then(decode_pathname)
-                   .value();
+  auto url = skyr::url("http://example.org/\xf0\x9f\x92\xa9");
+  auto value = as<std::string>(url.record().path.back() | view::decode).value();
   std::cout << value << std::endl;
 }

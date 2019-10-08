@@ -93,7 +93,7 @@ class url {
   /// \throws url_parse_error on parse errors
   template<class Source>
   explicit url(const Source &input)
-    : parameters_(this) {
+    : url() {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -115,7 +115,7 @@ class url {
   /// \throws url_parse_error on parse errors
   template<class Source>
   url(const Source &input, const url &base)
-      : parameters_(this) {
+      : url() {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -131,7 +131,20 @@ class url {
   /// Constructs a URL from an existing record
   ///
   /// \param input A URL record
-  explicit url(url_record &&input) noexcept;
+  explicit url(url_record &&input);
+
+  ///
+  /// \param other
+  url(const url &other)
+  : url() {
+    auto other_url = other.url_;
+    update_record(std::move(other_url));
+  }
+
+  ///
+  /// \param other
+  url(url &&other)
+  : url(std::move(other.url_)) {}
 
   /// Swaps this `url` object with another
   ///
@@ -547,7 +560,7 @@ class url {
   void initialize(
       string_view input,
       std::optional<url_record> &&base = std::nullopt);
-  void update_record(url_record &&record);
+  void update_record(url_record &&url);
 
   template <class Source>
   tl::expected<void, std::error_code> set_port_impl(

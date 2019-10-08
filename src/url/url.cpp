@@ -19,11 +19,10 @@ url::url()
   , view_(href_)
   , parameters_(this) {}
 
-url::url(url_record &&input) noexcept
-  : url_(input)
-  , href_(serialize(url_))
-  , view_(href_)
-  , parameters_(this) {}
+url::url(url_record &&input)
+  : url() {
+  update_record(std::forward<url_record>(input));
+}
 
 void url::swap(url &other) noexcept {
   using std::swap;
@@ -48,8 +47,8 @@ void url::initialize(string_view input, std::optional<url_record> &&base) {
   });
 }
 
-void url::update_record(url_record &&record) {
-  url_ = record;
+void url::update_record(url_record &&url) {
+  url_ = url;
   href_ = serialize(url_);
   view_ = string_view(href_);
   parameters_.initialize(

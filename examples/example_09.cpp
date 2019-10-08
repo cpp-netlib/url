@@ -7,7 +7,7 @@
 #include <skyr/url.hpp>
 
 int main(int argc, char *argv[]) {
-  auto url = skyr::make_url("https://example.org/").value();
+  auto url = skyr::url("https://example.org/");
   url.search_parameters().append("q", "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
   std::cout << url << std::endl;
 }

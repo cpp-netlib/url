@@ -145,7 +145,7 @@ void url_search_parameters::update() {
   if (url_) {
     auto query = to_string();
     parameters_.clear();
-    url_->set_search(query);
+    url_->set_search(std::string_view(query));
   }
 }
 }  // namespace skyr

@@ -9,7 +9,7 @@
     https://travis-ci.org/cpp-netlib/url.svg?branch=master "Build Status")](
     https://travis-ci.org/cpp-netlib/url)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/1iblsi5apka29dmg?svg=true)](
-    https://ci.appveyor.com/project/glynos/url-33mfe)
+    https://ci.appveyor.com/project/glynos/url-3aeqd)
 
 
 ## Introduction

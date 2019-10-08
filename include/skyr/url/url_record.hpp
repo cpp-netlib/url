@@ -48,7 +48,7 @@ class url_record {
   /// error occurred during parsing
   bool validation_error = false;
 
-  /// Default onstructor
+  /// Default constructor
   url_record() = default;
 
   /// Tests if the URL is a special scheme

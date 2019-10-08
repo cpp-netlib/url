@@ -227,16 +227,6 @@ TEST_CASE("url") {
     CHECK("a=b&c=d" == parameters.to_string());
   }
 
-  SECTION("url_search_parameters") {
-    // https://url.spec.whatwg.org/#example-searchparams-sort
-    auto url = skyr::url(
-        "https://example.org/?q=\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88&key=e1f7bc78");
-    url.search_parameters().sort();
-    CHECK("key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search_parameters().to_string());
-    CHECK("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search());
-    CHECK("https://example.org/?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.href());
-  }
-
   SECTION("search_parameters_test_1") {
     auto instance = skyr::url("https://example.com/");
     auto &search = instance.search_parameters();
@@ -295,6 +285,48 @@ TEST_CASE("url") {
     CHECK(search.empty());
     CHECK(search.to_string().empty());
     CHECK(instance.search().empty());
+  }
+
+  SECTION("url_search_parameters") {
+    // https://url.spec.whatwg.org/#example-searchparams-sort
+    auto url = skyr::url(
+        "https://example.org/?q=\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88&key=e1f7bc78");
+    url.search_parameters().sort();
+    CHECK("key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search_parameters().to_string());
+    CHECK("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search());
+    CHECK("https://example.org/?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.href());
+  }
+
+  SECTION("url_search_parameters from factory") {
+    // https://url.spec.whatwg.org/#example-searchparams-sort
+    auto url = skyr::make_url(
+        "https://example.org/?q=\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88&key=e1f7bc78").value();
+    url.search_parameters().sort();
+    CHECK("key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search_parameters().to_string());
+    CHECK("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search());
+    CHECK("https://example.org/?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.href());
+  }
+
+  SECTION("url_search_parameters from move") {
+    // https://url.spec.whatwg.org/#example-searchparams-sort
+    auto url = skyr::url(
+        "https://example.org/?q=\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88&key=e1f7bc78");
+    auto new_url(std::move(url));
+    new_url.search_parameters().sort();
+    CHECK("key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == new_url.search_parameters().to_string());
+    CHECK("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == new_url.search());
+    CHECK("https://example.org/?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == new_url.href());
+  }
+
+  SECTION("url_search_parameters from copy") {
+    // https://url.spec.whatwg.org/#example-searchparams-sort
+    auto url = skyr::url(
+        "https://example.org/?q=\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88&key=e1f7bc78");
+    auto new_url(url);
+    new_url.search_parameters().sort();
+    CHECK("key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == new_url.search_parameters().to_string());
+    CHECK("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == new_url.search());
+    CHECK("https://example.org/?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == new_url.href());
   }
 
   SECTION("url_search_parameters_from_u32_string") {
