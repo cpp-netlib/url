@@ -27,7 +27,7 @@ class unchecked_u8_range_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = u8_code_point_t<OctetIterator>;
+  using value_type = u8_code_point_view<OctetIterator>;
   ///
   using reference = value_type;
   ///
@@ -60,7 +60,7 @@ class unchecked_u8_range_iterator {
   constexpr reference operator * () const noexcept {
     auto last = it_;
     std::advance(last, sequence_length(*it_));
-    return u8_code_point_t<OctetIterator>(it_, last);
+    return u8_code_point_view<OctetIterator>(it_, last);
   }
 
   ///
@@ -94,7 +94,7 @@ class view_unchecked_u8_range {
  public:
 
   ///
-  using value_type = u8_code_point_t<octet_iterator_type>;
+  using value_type = u8_code_point_view<octet_iterator_type>;
   ///
   using const_reference = value_type;
   ///

@@ -71,7 +71,7 @@ class u8_range_iterator {
   /// \return
   constexpr reference operator * () const noexcept {
     assert(it_);
-    return valid_u8_code_point(*it_.value());
+    return checked_u8_code_point(*it_.value());
   }
 
   ///
@@ -116,7 +116,7 @@ class view_u8_range {
  public:
 
   ///
-  using value_type = u8_code_point_t<octet_iterator_type>;
+  using value_type = u8_code_point_view<octet_iterator_type>;
   ///
   using const_reference = value_type;
   ///

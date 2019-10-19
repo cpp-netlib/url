@@ -17,7 +17,7 @@ constexpr char16_t lead_max = 0xdbffu;
 constexpr char16_t trail_min = 0xdc00u;
 constexpr char16_t trail_max = 0xdfffu;
 constexpr char16_t lead_offset = lead_min - (0x10000u >> 10u);
-constexpr char32_t offset = 0x10000u - (lead_min << 10) - trail_min;
+constexpr char32_t offset = 0x10000u - (lead_min << 10u) - trail_min;
 }  // namespace surrogates
 
 namespace code_points {
