@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
-#include <skyr/unicode/idna_table.hpp>
+#include <skyr/unicode/idna.hpp>
 
 namespace skyr {
 inline namespace v1 {

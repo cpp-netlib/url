@@ -41,7 +41,7 @@ constexpr bool is_trail(char octet) {
 constexpr bool is_lead_surrogate(char16_t code_point) {
   return
       (code_point >= constants::surrogates::lead_min) &&
-          (code_point <= constants::surrogates::lead_max);
+      (code_point <= constants::surrogates::lead_max);
 }
 
 ///
@@ -50,7 +50,7 @@ constexpr bool is_lead_surrogate(char16_t code_point) {
 constexpr bool is_trail_surrogate(char16_t value) {
   return
       (value >= constants::surrogates::trail_min) &&
-          (value <= constants::surrogates::trail_max);
+      (value <= constants::surrogates::trail_max);
 }
 
 ///
@@ -59,7 +59,7 @@ constexpr bool is_trail_surrogate(char16_t value) {
 constexpr bool is_surrogate(char16_t value) {
   return
       (value >= constants::surrogates::lead_min) &&
-          (value <= constants::surrogates::trail_max);
+      (value <= constants::surrogates::trail_max);
 }
 
 /// Tests if the code point is a valid value.
@@ -68,7 +68,7 @@ constexpr bool is_surrogate(char16_t value) {
 constexpr bool is_valid_code_point(char32_t code_point) {
   return
       (code_point <= constants::code_points::max) &&
-          !is_surrogate(static_cast<char16_t>(code_point));
+      !is_surrogate(static_cast<char16_t>(code_point));
 }
 
 /// Returns the size of the sequnce given the lead octet value.
@@ -86,20 +86,6 @@ constexpr long sequence_length(char lead_value) {
     return 4;
   }
   return 0;
-}
-
-///
-/// \param code_point
-/// \param length
-/// \return
-constexpr bool is_overlong_sequence(
-    char32_t code_point,
-    long length) {
-  bool result = false;
-  result &= (code_point < 0x80) && (length != 1);
-  result &= (code_point < 0x800) && (length != 2);
-  result &= (code_point < 0x10000) && (length != 3);
-  return result;
 }
 
 /// A type used to extract a code point value from an octet sequence
@@ -160,25 +146,6 @@ increment(sequence_state<OctetIterator> state) {
   return state;
 }
 
-/// Checks if the code point value is valid
-///
-/// \tparam OctetIterator
-/// \param state The input state
-/// \return The new state
-template<typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, std::error_code>
-check_code_point(sequence_state<OctetIterator> state) {
-  if (!is_valid_code_point(state.value)) {
-    return tl::make_unexpected(
-        make_error_code(unicode_errc::invalid_code_point));
-  } else if (is_overlong_sequence(state.value, sequence_length(*state.it))) {
-    return tl::make_unexpected(
-        make_error_code(unicode_errc::illegal_byte_sequence));
-  }
-
-  return state;
-}
-
 namespace details {
 ///
 /// \tparam OctetIterator
@@ -226,8 +193,7 @@ from_three_byte_sequence(OctetIterator first) {
   auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
         state,
-        ((state.value << 12) & 0xffff) +
-            ((mask8(*state.it) << 6) & 0xfff));
+        ((state.value << 12) & 0xffff) + ((mask8(*state.it) << 6) & 0xfff));
   };
 
   auto set_code_point = [](auto state) -> result_type {
@@ -257,8 +223,7 @@ from_four_byte_sequence(OctetIterator first) {
   auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
         state,
-        ((state.value << 18) & 0x1fffff) +
-            ((mask8(*state.it) << 12) & 0x3ffff));
+        ((state.value << 18) & 0x1fffff) + ((mask8(*state.it) << 12) & 0x3ffff));
   };
 
   auto update_code_point_from_third_byte = [](auto state) -> result_type {
@@ -295,13 +260,18 @@ template <typename OctetIterator>
 tl::expected<sequence_state<OctetIterator>, std::error_code> find_code_point(
     OctetIterator first) {
   const auto length = sequence_length(*first);
-  return
-      (length == 1) ? make_state(first).and_then(details::mask_byte<OctetIterator>) :
-      (length == 2) ? details::from_two_byte_sequence(first) :
-      (length == 3) ? details::from_three_byte_sequence(first) :
-      (length == 4) ? details::from_four_byte_sequence(first) :
-      tl::make_unexpected(make_error_code(unicode_errc::overflow))
-      ;
+  switch (length) {
+    case 1:
+      return make_state(first).and_then(details::mask_byte<OctetIterator>);
+    case 2:
+      return details::from_two_byte_sequence(first);
+    case 3:
+      return details::from_three_byte_sequence(first);
+    case 4:
+      return details::from_four_byte_sequence(first);
+    default:
+      return tl::make_unexpected(make_error_code(unicode_errc::overflow));
+  }
 }
 }  // namespace unicode
 }  // namespace v1

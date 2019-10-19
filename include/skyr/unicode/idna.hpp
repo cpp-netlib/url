@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_UNICODE_IDNA_TABLE_HPP
-#define SKYR_UNICODE_IDNA_TABLE_HPP
+#ifndef SKYR_UNICODE_IDNA_HPP
+#define SKYR_UNICODE_IDNA_HPP
 
 namespace skyr {
 inline namespace v1 {
@@ -48,4 +48,4 @@ char32_t map_idna_code_point(char32_t code_point);
 }  // namespace v1
 }  // namespace skyr
 
-#endif  // SKYR_UNICODE_IDNA_TABLE_HPP
+#endif  // SKYR_UNICODE_IDNA_HPP

@@ -8,7 +8,7 @@
 #include <skyr/unicode/ranges/transforms/byte_transform.hpp>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/unicode/domain.hpp>
-#include <skyr/unicode/idna_table.hpp>
+#include <skyr/unicode/idna.hpp>
 #include "url/algorithms.hpp"
 
 namespace skyr {

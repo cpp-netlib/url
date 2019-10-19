@@ -5,7 +5,7 @@
 
 set(Skyr_SRCS
 		unicode/errors.cpp
-		unicode/idna_table.cpp
+        unicode/idna.cpp
 		unicode/domain.cpp
 		url/url_parser_context.hpp
 		url/url_parser_context.cpp
@@ -37,7 +37,7 @@ set(Skyr_SRCS
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/byte_transform.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u16_transform.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
-		${Skyr_SOURCE_DIR}/include/skyr/unicode/idna_table.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/idna.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/domain.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/errors.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_decode_range.hpp

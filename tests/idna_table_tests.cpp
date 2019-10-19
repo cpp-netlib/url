@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include "skyr/unicode/idna_table.hpp"
+#include "skyr/unicode/idna.hpp"
 
 TEST_CASE("IDNA character values", "[idna]") {
   using param = std::pair<char32_t, skyr::unicode::idna_status>;
@@ -17,6 +17,7 @@ TEST_CASE("IDNA character values", "[idna]") {
           param{0x10ffff, skyr::unicode::idna_status::disallowed});
   
   SECTION("code_point_set") {
-    REQUIRE(code_point.second == skyr::unicode::map_idna_status(code_point.first));
+    const auto [value, mapped] = code_point;
+    REQUIRE(mapped == skyr::unicode::map_idna_status(value));
   }
 }
