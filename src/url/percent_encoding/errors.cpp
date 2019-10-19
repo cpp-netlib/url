@@ -11,21 +11,18 @@ namespace percent_encoding {
 namespace {
 class percent_encode_error_category : public std::error_category {
  public:
-  [[nodiscard]] const char *name() const noexcept override;
-  [[nodiscard]] std::string message(int error) const noexcept override;
-};
-
-const char *percent_encode_error_category::name() const noexcept {
-  return "percent encoding";
-}
-
-std::string percent_encode_error_category::message(int error) const noexcept {
-  switch (static_cast<percent_encode_errc>(error)) {
-    case percent_encode_errc::non_hex_input:return "Non hex input";
-    case percent_encode_errc::overflow:return "Overflow";
-    default:return "(Unknown error)";
+  [[nodiscard]] const char *name() const noexcept override {
+    return "percent encoding";
   }
-}
+
+  [[nodiscard]] std::string message(int error) const noexcept override {
+    switch (static_cast<percent_encode_errc>(error)) {
+      case percent_encode_errc::non_hex_input:return "Non hex input";
+      case percent_encode_errc::overflow:return "Overflow";
+      default:return "(Unknown error)";
+    }
+  }
+};
 
 const percent_encode_error_category category{};
 }  // namespace

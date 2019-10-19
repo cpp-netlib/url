@@ -12,24 +12,18 @@ namespace filesystem {
 namespace {
 class path_error_category : public std::error_category {
  public:
-  [[nodiscard]] const char *name() const noexcept override;
-  [[nodiscard]] std::string message(int error) const noexcept override;
-};
-
-const char *path_error_category::name() const noexcept {
-  return "filesystem path";
-}
-
-std::string path_error_category::message(int error) const noexcept {
-  switch (static_cast<path_errc>(error)) {
-    case path_errc::invalid_path:
-      return "Invalid path";
-    case path_errc::percent_decoding_error:
-      return "Percent decoding error";
-    default:
-      return "(Unknown error)";
+  [[nodiscard]] const char *name() const noexcept override {
+    return "url filesystem path";
   }
-}
+
+  [[nodiscard]] std::string message(int error) const noexcept override {
+    switch (static_cast<path_errc>(error)) {
+      case path_errc::invalid_path: return "Invalid path";
+      case path_errc::percent_decoding_error: return "Percent decoding error";
+      default: return "(Unknown error)";
+    }
+  }
+};
 
 const path_error_category category{};
 }  // namespace

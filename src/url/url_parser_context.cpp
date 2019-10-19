@@ -12,10 +12,10 @@
 #include <array>
 #include <locale>
 #include <cstring>
+#include <skyr/unicode/domain.hpp>
 #include <skyr/url/percent_encoding/percent_decode_range.hpp>
-#include "skyr/url/percent_encoding/percent_encode_range.hpp"
+#include <skyr/url/percent_encoding/percent_encode_range.hpp>
 #include "url_parser_context.hpp"
-#include "skyr/url/domain.hpp"
 #include "url_schemes.hpp"
 #include "ipv4_address.hpp"
 #include "ipv6_address.hpp"
@@ -97,7 +97,7 @@ tl::expected<std::string, url_parse_errc> parse_host(
     return tl::make_unexpected(url_parse_errc::cannot_decode_host_point);
   }
 
-  auto ascii_domain = domain_to_ascii(domain.value());
+  auto ascii_domain = unicode::domain_to_ascii(domain.value());
   if (!ascii_domain) {
     return tl::make_unexpected(url_parse_errc::domain_error);
   }

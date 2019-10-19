@@ -1,10 +1,10 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-19 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_DOMAIN_HPP
-#define SKYR_DOMAIN_HPP
+#ifndef SKYR_UNICODE_DOMAIN_HPP
+#define SKYR_UNICODE_DOMAIN_HPP
 
 #include <string>
 #include <string_view>
@@ -13,16 +13,17 @@
 
 namespace skyr {
 inline namespace v1 {
+namespace unicode {
 /// Enumerates domain processing errors
 enum class domain_errc {
   /// The domain code point is disallowed
-      disallowed_code_point = 1,
+  disallowed_code_point = 1,
   /// The encoder or decoder received bad input
-      bad_input,
+  bad_input,
   /// Overflow
-      overflow,
+  overflow,
   /// Unicode encoding error
-      encoding_error,
+  encoding_error,
 };
 
 /// Creates a `std::error_code` given a `skyr::domain_errc` value
@@ -73,12 +74,13 @@ tl::expected<std::string, std::error_code> domain_to_ascii(
 tl::expected<std::string, std::error_code> domain_to_ascii(
     std::u32string_view domain,
     bool be_strict = true);
+}  // namespace unicode
 }  // namespace v1
 }  // namespace skyr
 
 namespace std {
 template <>
-struct is_error_code_enum<skyr::v1::domain_errc> : true_type {};
+struct is_error_code_enum<skyr::v1::unicode::domain_errc> : true_type {};
 }  // namespace std
 
-#endif //SKYR_DOMAIN_HPP
+#endif // SKYR_UNICODE_DOMAIN_HPP

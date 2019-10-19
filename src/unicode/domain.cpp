@@ -1,4 +1,4 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-19 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -7,35 +7,30 @@
 #include <cassert>
 #include <skyr/unicode/ranges/transforms/byte_transform.hpp>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/url/domain.hpp>
-#include "algorithms.hpp"
-#include "idna_table.hpp"
+#include <skyr/unicode/domain.hpp>
+#include <skyr/unicode/idna_table.hpp>
+#include "url/algorithms.hpp"
 
 namespace skyr {
 inline namespace v1 {
+namespace unicode {
 namespace {
 class domain_error_category : public std::error_category {
  public:
-  [[nodiscard]] const char *name() const noexcept override;
-  [[nodiscard]] std::string message(int error) const noexcept override;
-};
-
-const char *domain_error_category::name() const noexcept { return "domain"; }
-
-std::string domain_error_category::message(int error) const noexcept {
-  switch (static_cast<domain_errc>(error)) {
-    case domain_errc::disallowed_code_point:
-      return "Disallowed code point";
-    case domain_errc::bad_input:
-      return "Bad input";
-    case domain_errc::overflow:
-      return "Overflow";
-    case domain_errc::encoding_error:
-      return "Encoding error";
-    default:
-      return "(Unknown error)";
+  [[nodiscard]] const char *name() const noexcept override {
+    return "domain";
   }
-}
+
+  [[nodiscard]] std::string message(int error) const noexcept override {
+    switch (static_cast<domain_errc>(error)) {
+      case domain_errc::disallowed_code_point:return "Disallowed code point";
+      case domain_errc::bad_input:return "Bad input";
+      case domain_errc::overflow:return "Overflow";
+      case domain_errc::encoding_error:return "Encoding error";
+      default:return "(Unknown error)";
+    }
+  }
+};
 
 const domain_error_category category{};
 }  // namespace
@@ -83,7 +78,7 @@ inline bool delim(char32_t c) { return c == delimiter; }
 tl::expected<std::string, std::error_code> punycode_encode(
     std::string_view input) {
   auto utf32 = unicode::as<std::u32string>(input | unicode::view::as_u8 |
-                                           unicode::transform::to_u32);
+      unicode::transform::to_u32);
   if (!utf32) {
     return tl::make_unexpected(make_error_code(domain_errc::bad_input));
   }
@@ -245,8 +240,7 @@ tl::expected<std::u32string, std::error_code> process(
 
   while (it != last) {
     switch (map_idna_status(*it)) {
-      case idna_status::disallowed:
-        error = true;
+      case idna_status::disallowed:error = true;
         break;
       case idna_status::disallowed_std3_valid:
         if (use_std3_ascii_rules) {
@@ -262,10 +256,8 @@ tl::expected<std::u32string, std::error_code> process(
           result += map_idna_code_point(*it);
         }
         break;
-      case idna_status::ignored:
-        break;
-      case idna_status::mapped:
-        result += map_idna_code_point(*it);
+      case idna_status::ignored:break;
+      case idna_status::mapped:result += map_idna_code_point(*it);
         break;
       case idna_status::deviation:
         if (transitional_processing) {
@@ -274,8 +266,7 @@ tl::expected<std::u32string, std::error_code> process(
           result += *it;
         }
         break;
-      case idna_status::valid:
-        result += *it;
+      case idna_status::valid:result += *it;
         break;
     }
 
@@ -329,7 +320,7 @@ tl::expected<std::string, std::error_code> unicode_to_ascii(
 
   auto utf32_domain = join(labels, U'.');
   return unicode::as<std::string>(utf32_domain | unicode::transform::to_bytes)
-      .or_else([] (auto) -> tl::expected<std::string, std::error_code> {
+      .or_else([](auto) -> tl::expected<std::string, std::error_code> {
         return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
       });
 }
@@ -338,7 +329,7 @@ tl::expected<std::string, std::error_code> unicode_to_ascii(
 tl::expected<std::string, std::error_code> domain_to_ascii(
     std::string_view domain, bool be_strict) {
   auto utf32 = unicode::as<std::u32string>(domain | unicode::view::as_u8 |
-                                           unicode::transform::to_u32);
+      unicode::transform::to_u32);
   if (!utf32) {
     return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
   }
@@ -355,5 +346,6 @@ tl::expected<std::string, std::error_code> domain_to_ascii(
   }
   return result;
 }
+}  // namespace unicode
 }  // namespace v1
 }  // namespace skyr

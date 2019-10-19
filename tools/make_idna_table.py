@@ -75,10 +75,11 @@ def main():
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
-#include "idna_table.hpp"
+#include <skyr/unicode/idna_table.hpp>
 
 namespace skyr {
 inline namespace v1 {
+namespace unicode {
 namespace {
 struct code_point_range {
   char32_t first;
@@ -126,6 +127,7 @@ char32_t map_idna_code_point(char32_t code_point) {
   }
   return code_point;
 }
+}  // namespace unicode
 }  // namespace v1
 }  // namespace skyr
 """)
