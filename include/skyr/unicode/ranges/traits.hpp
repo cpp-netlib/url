@@ -6,7 +6,9 @@
 #ifndef SKYR_UNICODE_RANGE_TRAITS_HPP
 #define SKYR_UNICODE_RANGE_TRAITS_HPP
 
-namespace skyr::unicode::traits {
+namespace skyr {
+inline namespace v1 {
+namespace unicode::traits {
 ///
 /// \tparam Range
 template <class Range>
@@ -23,7 +25,8 @@ class iterator<T[N]> {
  public:
   using type = const T *;
 };
-}  // namespace skyr::unicode::traits
-
+}  // namespace unicode::traits
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_UNICODE_RANGE_TRAITS_HPP

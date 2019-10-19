@@ -15,6 +15,7 @@
 #include <tl/expected.hpp>
 
 namespace skyr {
+inline namespace v1 {
 /// Enumerates IPv6 address parsing errors
 enum class ipv6_address_errc {
   /// IPv6 address does not start with a double colon
@@ -63,11 +64,12 @@ class ipv6_address {
 /// \returns An `ipv6_address` object or an error
 tl::expected<ipv6_address, std::error_code> parse_ipv6_address(
     std::string_view input);
+}  // namespace v1
 }  // namespace skyr
 
 namespace std {
 template <>
-struct is_error_code_enum<skyr::ipv6_address_errc> : true_type {};
+struct is_error_code_enum<skyr::v1::ipv6_address_errc> : true_type {};
 }  // namespace std
 
 #endif //SKYR_IPV6_ADDRESS_INC

@@ -8,6 +8,7 @@
 #define SKYR_IDNA_TABLE_HPP
 
 namespace skyr {
+inline namespace v1 {
 enum class idna_status {
   disallowed = 1,
   disallowed_std3_valid,
@@ -21,6 +22,7 @@ enum class idna_status {
 idna_status map_idna_status(char32_t code_point);
 
 char32_t map_idna_code_point(char32_t code_point);
+}  // namespace v1
 }  // namespace skyr
 
 #endif //SKYR_IDNA_TABLE_HPP

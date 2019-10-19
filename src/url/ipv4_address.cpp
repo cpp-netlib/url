@@ -14,6 +14,7 @@
 #include "ipv4_address.hpp"
 
 namespace skyr {
+inline namespace v1 {
 namespace {
 class ipv4_address_error_category : public std::error_category {
  public:
@@ -199,4 +200,5 @@ std::pair<tl::expected<ipv4_address, std::error_code>, bool> parse_ipv4_address(
 tl::expected<ipv4_address, std::error_code> parse_ipv4_address(std::string_view input) {
   return details::parse_ipv4_address(input).first;
 }
+}  // namespace v1
 }  // namespace skyr

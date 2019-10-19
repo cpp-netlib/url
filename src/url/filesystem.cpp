@@ -1,4 +1,4 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-19 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -6,7 +6,9 @@
 #include "skyr/url/filesystem.hpp"
 #include "skyr/url/percent_encoding/percent_decode_range.hpp"
 
-namespace skyr::filesystem {
+namespace skyr {
+inline namespace v1 {
+namespace filesystem {
 namespace {
 class path_error_category : public std::error_category {
  public:
@@ -51,4 +53,6 @@ tl::expected<std::filesystem::path, std::error_code> to_path(const url &input) {
   }
   return std::filesystem::path(decoded.value());
 }
-}  // namespace skyr::filesystem
+}  // namespace filesystem
+}  // namespace v1
+}  // namespace skyr

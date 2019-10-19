@@ -12,6 +12,7 @@
 #include "idna_table.hpp"
 
 namespace skyr {
+inline namespace v1 {
 namespace {
 class domain_error_category : public std::error_category {
  public:
@@ -354,4 +355,5 @@ tl::expected<std::string, std::error_code> domain_to_ascii(
   }
   return result;
 }
+}  // namespace v1
 }  // namespace skyr

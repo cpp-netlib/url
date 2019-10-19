@@ -9,25 +9,29 @@
 #include <system_error>
 #include <type_traits>
 
-namespace skyr::percent_encoding {
-/// Enumerates percent encoding errors
-enum class percent_encode_errc {
-  /// Input was not a hex value
-  non_hex_input,
-  /// Overflow
-  overflow,
-};
+namespace skyr {
+inline namespace v1 {
+namespace percent_encoding {
+  /// Enumerates percent encoding errors
+  enum class percent_encode_errc {
+    /// Input was not a hex value
+    non_hex_input,
+    /// Overflow
+    overflow,
+    };
 
-/// Creates a `std::error_code` given a `skyr::percent_encode_errc`
-/// value
-/// \param error A percent encoding error
-/// \returns A `std::error_code` object
-std::error_code make_error_code(percent_encode_errc error) noexcept;
-}  // namespace skyr::percent_encoding
+  /// Creates a `std::error_code` given a `skyr::percent_encode_errc`
+  /// value
+  /// \param error A percent encoding error
+  /// \returns A `std::error_code` object
+  std::error_code make_error_code(percent_encode_errc error) noexcept;
+}  // namespace percent_encoding
+}  // namespace v1
+}  // namespace skyr
 
 namespace std {
 template <>
-struct is_error_code_enum<skyr::percent_encoding::percent_encode_errc>
+struct is_error_code_enum<skyr::v1::percent_encoding::percent_encode_errc>
     : true_type {};
 }  // namespace std
 

@@ -7,6 +7,7 @@
 #include "url_schemes.hpp"
 
 namespace skyr {
+inline namespace v1 {
 bool url_record::is_special() const noexcept {
   return skyr::details::is_special(std::string_view(scheme));
 }
@@ -17,9 +18,9 @@ bool url_record::includes_credentials() const noexcept {
 
 bool url_record::cannot_have_a_username_password_or_port() const noexcept {
   return
-  (!host || host.value().empty()) ||
-  cannot_be_a_base_url ||
-  (scheme == "file");
+      (!host || host.value().empty()) ||
+          cannot_be_a_base_url ||
+          (scheme == "file");
 }
 
 void url_record::swap(url_record &other) noexcept {
@@ -35,4 +36,5 @@ void url_record::swap(url_record &other) noexcept {
   swap(cannot_be_a_base_url, other.cannot_be_a_base_url);
   swap(validation_error, other.validation_error);
 }
+}  // namespace v1
 }  // namespace skyr

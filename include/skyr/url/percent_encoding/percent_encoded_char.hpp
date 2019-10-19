@@ -10,7 +10,9 @@
 #include <set>
 #include <locale>
 
-namespace skyr::percent_encoding {
+namespace skyr {
+inline namespace v1 {
+namespace percent_encoding {
 namespace details {
 inline constexpr char hex_to_letter(char byte) noexcept {
   if ((byte >= 0x00) && (byte < 0x0a)) {
@@ -214,6 +216,8 @@ inline bool is_percent_encoded(std::string_view input) noexcept {
 
     return false;
 }
-}  // namespace skyr::percent_encoding
+}  // namespace percent_encoding
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_PERCENT_ENCODED_CHAR_HPP

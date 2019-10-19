@@ -13,6 +13,7 @@
 #include <tl/expected.hpp>
 
 namespace skyr {
+inline namespace v1 {
 /// Enumerates IPv4 address parsing errors
 enum class ipv4_address_errc {
   /// The input contains more than 4 segments
@@ -62,11 +63,12 @@ class ipv4_address {
 /// \returns An `ipv4_address` object or an error
 tl::expected<ipv4_address, std::error_code> parse_ipv4_address(
     std::string_view input);
+}  // namespace v1
 }  // namespace skyr
 
 namespace std {
 template <>
-struct is_error_code_enum<skyr::ipv4_address_errc> : true_type {};
+struct is_error_code_enum<skyr::v1::ipv4_address_errc> : true_type {};
 }  // namespace std
 
 #endif //SKYR_IPV4_ADDRESS_INC

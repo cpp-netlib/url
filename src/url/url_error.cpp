@@ -7,6 +7,7 @@
 #include "skyr/url/url_error.hpp"
 
 namespace skyr {
+inline namespace v1 {
 namespace {
 class url_parse_error_category : public std::error_category {
  public:
@@ -53,4 +54,5 @@ const url_parse_error_category category{};
 std::error_code make_error_code(url_parse_errc error) noexcept {
   return std::error_code(static_cast<int>(error), category);
 }
+}  // namespace v1
 }  // namespace skyr

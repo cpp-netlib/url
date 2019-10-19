@@ -13,6 +13,7 @@
 #include "url_schemes.hpp"
 
 namespace skyr {
+inline namespace v1 {
 void url::swap(url &other) noexcept {
   using std::swap;
   swap(url_, other.url_);
@@ -26,14 +27,14 @@ void url::initialize(string_view input, std::optional<url_record> &&base) {
   using result_type = tl::expected<void, std::error_code>;
 
   parse(input, base)
-  .and_then([=](auto &&url) -> result_type {
-    update_record(std::forward<url_record>(url));
-    return {};
-  })
-  .or_else([](auto &&error) -> result_type {
-    SKYR_EXCEPTIONS_THROW(url_parse_error(error));
-    return {};
-  });
+      .and_then([=](auto &&url) -> result_type {
+        update_record(std::forward<url_record>(url));
+        return {};
+      })
+      .or_else([](auto &&error) -> result_type {
+        SKYR_EXCEPTIONS_THROW(url_parse_error(error));
+        return {};
+      });
 }
 
 void url::update_record(url_record &&url) {
@@ -41,7 +42,7 @@ void url::update_record(url_record &&url) {
   href_ = serialize(url_);
   view_ = string_view(href_);
   parameters_.initialize(
-      url_.query? string_view(url_.query.value()) : string_view(""));
+      url_.query ? string_view(url_.query.value()) : string_view(""));
 }
 
 url::string_type url::href() const {
@@ -50,10 +51,10 @@ url::string_type url::href() const {
 
 tl::expected<void, std::error_code> url::set_href(string_view href) {
   return details::basic_parse(href)
-  .and_then([this] (auto &&new_url) -> tl::expected<void, std::error_code> {
-    update_record(std::forward<url_record>(new_url));
-    return {};
-  });
+      .and_then([this](auto &&new_url) -> tl::expected<void, std::error_code> {
+        update_record(std::forward<url_record>(new_url));
+        return {};
+      });
 }
 
 url::string_type url::to_json() const {
@@ -63,17 +64,15 @@ url::string_type url::to_json() const {
 url::string_type url::origin() const {
   if (url_.scheme == "blob") {
     auto url = details::make_url(pathname(), std::nullopt);
-    return url? url.value().origin() : "";
-  }
-  else if ((url_.scheme == "ftp") ||
+    return url ? url.value().origin() : "";
+  } else if ((url_.scheme == "ftp") ||
       (url_.scheme == "gopher") ||
       (url_.scheme == "http") ||
       (url_.scheme == "https") ||
       (url_.scheme == "ws") ||
       (url_.scheme == "wss")) {
     return protocol() + "//" + host();
-  }
-  else if (url_.scheme == "file") {
+  } else if (url_.scheme == "file") {
     return "";
   }
   return "null";
@@ -92,10 +91,10 @@ tl::expected<void, std::error_code> url::set_protocol(string_view protocol) {
 
   return details::basic_parse(
       protocol, std::nullopt, url_, url_parse_state::scheme_start)
-  .and_then([this] (auto &&new_url) -> tl::expected<void, std::error_code> {
-    update_record(std::forward<url_record>(new_url));
-    return {};
-  });
+      .and_then([this](auto &&new_url) -> tl::expected<void, std::error_code> {
+        update_record(std::forward<url_record>(new_url));
+        return {};
+      });
 }
 
 url::string_type url::username() const {
@@ -208,8 +207,7 @@ tl::expected<void, std::error_code> url::set_port(string_view port) {
     auto new_url = url_;
     new_url.port = std::nullopt;
     update_record(std::move(new_url));
-  }
-  else {
+  } else {
     return details::basic_parse(
         port, std::nullopt, url_, url_parse_state::port)
         .and_then([this](auto &&new_url) -> tl::expected<void, std::error_code> {
@@ -246,7 +244,7 @@ tl::expected<void, std::error_code> url::set_pathname(string_view pathname) {
 
   url_.path.clear();
   return details::basic_parse(
-      pathname,std:: nullopt, url_, url_parse_state::path_start)
+      pathname, std::nullopt, url_, url_parse_state::path_start)
       .and_then([this](auto &&new_url) -> tl::expected<void, std::error_code> {
         update_record(std::forward<url_record>(new_url));
         return {};
@@ -336,4 +334,5 @@ tl::expected<url, std::error_code> make_url(
       });
 }
 }  // namespace details
+}  // namespace v1
 }  // namespace skyr

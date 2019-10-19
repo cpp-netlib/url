@@ -4,7 +4,6 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 set(Skyr_SRCS
-		percent_encoding/errors.cpp
 		unicode/errors.cpp
 		url/url_parser_context.hpp
 		url/url_parser_context.cpp
@@ -25,6 +24,7 @@ set(Skyr_SRCS
 		url/url.cpp
 		url/url_error.cpp
 		url/url_search_parameters.cpp
+		url/percent_encoding/errors.cpp
 
         ${Skyr_SOURCE_DIR}/include/skyr/url/details/to_bytes.hpp
         ${Skyr_SOURCE_DIR}/include/skyr/config.hpp

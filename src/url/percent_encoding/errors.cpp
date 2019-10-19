@@ -3,11 +3,11 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-
 #include <skyr/url/percent_encoding/errors.hpp>
 
-
-namespace skyr::percent_encoding {
+namespace skyr {
+inline namespace v1 {
+namespace percent_encoding {
 namespace {
 class percent_encode_error_category : public std::error_category {
  public:
@@ -33,4 +33,6 @@ const percent_encode_error_category category{};
 std::error_code make_error_code(percent_encode_errc error) noexcept {
   return std::error_code(static_cast<int>(error), category);
 }
-}  // namespace skyr::percent_encoding
+}  // namespace percent_encoding
+}  // namespace v1
+}  // namespace skyr

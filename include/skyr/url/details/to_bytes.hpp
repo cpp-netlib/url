@@ -12,11 +12,13 @@
 #include <skyr/unicode/ranges/views/u32_view.hpp>
 #include <skyr/unicode/ranges/transforms/byte_transform.hpp>
 
-namespace skyr::details {
-template <class Source, class Enable = void>
+namespace skyr {
+inline namespace v1 {
+namespace details {
+template<class Source, class Enable = void>
 struct to_bytes_impl;
 
-template <class Source>
+template<class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
@@ -24,15 +26,15 @@ struct to_bytes_impl<
   }
 };
 
-template <class Source>
+template<class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, wchar_t>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
-  return unicode::as<std::string>(source | unicode::view::as_u16 | unicode::transform::to_bytes);
+    return unicode::as<std::string>(source | unicode::view::as_u16 | unicode::transform::to_bytes);
   }
 };
 
-template <class Source>
+template<class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char16_t>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
@@ -40,7 +42,7 @@ struct to_bytes_impl<
   }
 };
 
-template <class Source>
+template<class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char32_t>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
@@ -48,11 +50,13 @@ struct to_bytes_impl<
   }
 };
 
-template <typename Source>
+template<typename Source>
 inline tl::expected<std::string, std::error_code> to_bytes(const Source &source) {
   to_bytes_impl<Source> to_bytes;
   return to_bytes(source);
 }
-}  // namespace skyr::details
+}  // namespace details
+}  // namespace v1
+}  // namespace skyr
 
 #endif  // SKYR_URL_DETAILS_TRANSLATE_INC

@@ -6,6 +6,7 @@
 #include "skyr/url/url_serialize.hpp"
 
 namespace skyr {
+inline namespace v1 {
 url_record::string_type serialize(
     const url_record &url, bool exclude_fragment) {
   auto output = url.scheme + ":";
@@ -28,15 +29,13 @@ url_record::string_type serialize(
       output += ":";
       output += std::to_string(url.port.value());
     }
-  }
-  else if (!url.host && (url.scheme.compare("file") == 0)) {
+  } else if (!url.host && (url.scheme.compare("file") == 0)) {
     output += "//";
   }
 
   if (url.cannot_be_a_base_url) {
     output += url.path.front();
-  }
-  else {
+  } else {
     for (const auto &segment : url.path) {
       output += "/";
       output += segment;
@@ -55,4 +54,5 @@ url_record::string_type serialize(
 
   return output;
 }
+}  // namespace v1
 }  // namespace skyr

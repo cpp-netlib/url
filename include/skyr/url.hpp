@@ -27,6 +27,7 @@
 /// Top-level namespace for URL parsing, unicode encoding and domain
 /// name parsing.
 namespace skyr {
+inline namespace v1 {
 /// Thrown when there is an error parsing the URL
 class url_parse_error : public std::runtime_error {
  public:
@@ -93,7 +94,7 @@ class url {
   /// \throws url_parse_error on parse errors
   template<class Source>
   explicit url(const Source &input)
-    : url() {
+      : url() {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -132,19 +133,19 @@ class url {
   ///
   /// \param input A URL record
   explicit url(url_record &&input)
-  : url() {
+      : url() {
     update_record(std::forward<url_record>(input));
   }
 
   ///
   /// \param other
   url(const url &other)
-  : url(url_record(other.url_)) {}
+      : url(url_record(other.url_)) {}
 
   ///
   /// \param other
   url(url &&other) noexcept
-  : url(std::move(other.url_)) {}
+      : url(std::move(other.url_)) {}
 
   /// Swaps this `url` object with another
   ///
@@ -161,7 +162,7 @@ class url {
   /// \tparam Source The input string type
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_href(const Source &href) {
     static_assert(
         is_url_convertible<Source>::value,
@@ -200,7 +201,7 @@ class url {
   /// \tparam Source The input string type
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_protocol(const Source &protocol) {
     static_assert(
         is_url_convertible<Source>::value,
@@ -229,7 +230,7 @@ class url {
   /// \tparam Source The input string type
   /// \param username The new username
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_username(const Source &username) {
     static_assert(
         is_url_convertible<Source>::value,
@@ -261,7 +262,7 @@ class url {
   /// \tparam Source The input string type
   /// \param password The new password
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_password(const Source &password) {
     static_assert(
         is_url_convertible<Source>::value,
@@ -289,7 +290,7 @@ class url {
   /// \tparam Source The input string type
   /// \param host The new URL host
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_host(const Source &host) {
     static_assert(
         is_url_convertible<Source>::value,
@@ -317,7 +318,7 @@ class url {
   /// \tparam Source The input string type
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_hostname(const Source &hostname) {
     static_assert(
         is_url_convertible<Source>::value,
@@ -356,7 +357,7 @@ class url {
   /// \tparam Source The input string type
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_port(const Source &port) {
     return set_port_impl(port);
   }
@@ -377,7 +378,7 @@ class url {
   /// \tparam Source The input string type
   /// \param pathname The new pathname
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_pathname(const Source &pathname) {
     static_assert(
         is_url_convertible<Source>::value,
@@ -407,7 +408,7 @@ class url {
   /// \tparam Source The input string type
   /// \param search The new search string
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_search(const Source &search) {
     static_assert(
         is_url_convertible<Source>::value,
@@ -440,7 +441,7 @@ class url {
   /// \tparam Source The input string type
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_hash(const Source &hash) {
     static_assert(
         is_url_convertible<Source>::value,
@@ -562,7 +563,7 @@ class url {
       std::optional<url_record> &&base = std::nullopt);
   void update_record(url_record &&url);
 
-  template <class Source>
+  template<class Source>
   tl::expected<void, std::error_code> set_port_impl(
       const Source &port,
       typename std::enable_if<is_url_convertible<Source>::value>::type * = nullptr) {
@@ -596,7 +597,7 @@ class url {
     return set_port(std::string_view(bytes.value()));
   }
 
-  template <typename intT>
+  template<typename intT>
   tl::expected<void, std::error_code> set_port_impl(
       intT port,
       typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) {
@@ -662,7 +663,7 @@ inline tl::expected<url, std::error_code> make_url(
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `true` if the `url` objects are equal, `false` otherwise
-inline bool operator == (const url &lhs, const url &rhs) noexcept {
+inline bool operator==(const url &lhs, const url &rhs) noexcept {
   return lhs.compare(rhs) == 0;
 }
 
@@ -671,7 +672,7 @@ inline bool operator == (const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `!(lhs == rhs)`
-inline bool operator != (const url &lhs, const url &rhs) noexcept {
+inline bool operator!=(const url &lhs, const url &rhs) noexcept {
   return !(lhs == rhs);
 }
 
@@ -680,7 +681,7 @@ inline bool operator != (const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `lhs.compare(rhs) < 0`
-inline bool operator < (const url &lhs, const url &rhs) noexcept {
+inline bool operator<(const url &lhs, const url &rhs) noexcept {
   return lhs.compare(rhs) < 0;
 }
 
@@ -689,7 +690,7 @@ inline bool operator < (const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `lhs.compare(rhs) > 0`
-inline bool operator > (const url &lhs, const url &rhs) noexcept {
+inline bool operator>(const url &lhs, const url &rhs) noexcept {
   return rhs < lhs;
 }
 
@@ -698,7 +699,7 @@ inline bool operator > (const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `!(lhs > rhs)
-inline bool operator <= (const url &lhs, const url &rhs) noexcept {
+inline bool operator<=(const url &lhs, const url &rhs) noexcept {
   return !(lhs > rhs);
 }
 
@@ -707,7 +708,7 @@ inline bool operator <= (const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns !(lhs < rhs)
-inline bool operator >= (const url &lhs, const url &rhs) noexcept {
+inline bool operator>=(const url &lhs, const url &rhs) noexcept {
   return !(lhs < rhs);
 }
 
@@ -715,9 +716,10 @@ inline bool operator >= (const url &lhs, const url &rhs) noexcept {
 /// \param os
 /// \param url
 /// \returns
-inline std::ostream &operator << (std::ostream &os, const url &url) {
+inline std::ostream &operator<<(std::ostream &os, const url &url) {
   return os << url.href();
 }
+}  // namespace v1
 }  // namespace skyr
 
 #if defined(SKYR_PLATFORM_MSVC)

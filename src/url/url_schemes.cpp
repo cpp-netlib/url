@@ -6,7 +6,9 @@
 #include <algorithm>
 #include "url_schemes.hpp"
 
-namespace skyr::details {
+namespace skyr {
+inline namespace v1 {
+namespace details {
 const default_port_list &special_schemes() noexcept {
   static const auto schemes = default_port_list{
     {"ftp", 21},
@@ -16,7 +18,7 @@ const default_port_list &special_schemes() noexcept {
     {"https", 443},
     {"ws", 80},
     {"wss", 443},
-  };
+    };
   return schemes;
 }
 
@@ -49,4 +51,6 @@ bool is_default_port(std::string_view scheme, std::uint16_t port) noexcept {
   auto dport = default_port(scheme);
   return dport && (dport.value() == port);
 }
-}  // namespace skyr::details
+}  // namespace details
+}  // namespace v1
+}  // namespace skyr

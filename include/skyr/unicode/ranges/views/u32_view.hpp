@@ -14,7 +14,9 @@
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 
-namespace skyr::unicode {
+namespace skyr {
+inline namespace v1 {
+namespace unicode {
 ///
 /// \tparam U32Iterator
 template <class U32Iterator>
@@ -194,6 +196,8 @@ namespace view {
 ///
 static constexpr u32_range_fn as_u32;
 }  // namespace view
-}  // namespace skyr::unicode
+}  // namespace unicode
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_UNICODE_U32_VIEW_HPP

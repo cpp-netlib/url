@@ -6,7 +6,9 @@
 #ifndef SKYR_UNICODE_CONSTANTS_HPP
 #define SKYR_UNICODE_CONSTANTS_HPP
 
-namespace skyr::unicode::constants {
+namespace skyr {
+inline namespace v1 {
+namespace unicode::constants {
 namespace surrogates {
 // Leading (high) surrogates: 0xd800 - 0xdbff
 constexpr char16_t lead_min = 0xd800u;
@@ -24,6 +26,8 @@ constexpr char32_t max = 0x0010ffffu;
 }  // namespace code_points
 
 constexpr char bom[] = {'\xef', '\xbb', '\xbf'};
-}  // namespace skyr::unicode::constants
+}  // namespace unicode::constants
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_UNICODE_CONSTANTS_HPP

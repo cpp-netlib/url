@@ -16,7 +16,9 @@
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 
-namespace skyr::unicode {
+namespace skyr {
+inline namespace v1 {
+namespace unicode {
 ///
 /// \tparam CodePointIterator
 template <class CodePointIterator>
@@ -209,6 +211,8 @@ tl::expected<Output, std::error_code> as(transform_u16_range<CodePointRange> &&r
   }
   return result;
 }
-}  // namespace skyr::unicode
+}  // namespace unicode
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_UNICODE_U16_RANGE_HPP

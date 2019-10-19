@@ -12,6 +12,7 @@
 #include <skyr/url/url_record.hpp>
 
 namespace skyr {
+inline namespace v1 {
 /// Parses a URL and returns a `url_record`
 ///
 /// \param input The input string
@@ -20,6 +21,7 @@ namespace skyr {
 tl::expected<url_record, std::error_code> parse(
     std::string_view input,
     std::optional<url_record> base = std::nullopt);
+}  // namespace v1
 }  // namespace skyr
 
 #endif  // SKYR_URL_PARSE_INC

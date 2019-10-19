@@ -13,7 +13,9 @@
 #include <skyr/url/percent_encoding/errors.hpp>
 #include <skyr/url/percent_encoding/percent_encoded_char.hpp>
 
-namespace skyr::percent_encoding {
+namespace skyr {
+inline namespace v1 {
+namespace percent_encoding {
 ///
 /// \tparam OctetIterator
 template <class OctetIterator>
@@ -235,6 +237,8 @@ tl::expected<Output, std::error_code> as(
   }
   return result;
 }
-}  // namespace skyr::percent_encoding
+}  // namespace percent_encoding
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_PERCENT_ENCODING_PERCENT_ENCODE_RANGE_HPP

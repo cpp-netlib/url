@@ -13,7 +13,9 @@
 #include <skyr/url/percent_encoding/errors.hpp>
 #include <skyr/url/percent_encoding/percent_encoded_char.hpp>
 
-namespace skyr::percent_encoding {
+namespace skyr {
+inline namespace v1 {
+namespace percent_encoding {
 namespace details {
 inline tl::expected<char, std::error_code> letter_to_hex(char byte) noexcept {
   if ((byte >= '0') && (byte <= '9')) {
@@ -261,6 +263,8 @@ tl::expected<Output, std::error_code> as(
   }
   return result;
 }
-}  // namespace skyr::percent_encoding
+}  // namespace percent_encoding
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP

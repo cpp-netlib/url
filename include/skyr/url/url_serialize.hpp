@@ -9,6 +9,7 @@
 #include <skyr/url/url_record.hpp>
 
 namespace skyr {
+inline namespace v1 {
 /// Serializes a URL record according to the
 /// [WhatWG specification](https://url.spec.whatwg.org/#url-serializing)
 ///
@@ -18,6 +19,7 @@ namespace skyr {
 /// \returns A serialized URL string
 url_record::string_type serialize(
     const url_record &url, bool exclude_fragment = false);
+}  // namespace v1
 }  // namespace skyr
 
 #endif  // SKYR_URL_SERIALIZE_INC

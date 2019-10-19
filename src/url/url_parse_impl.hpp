@@ -13,6 +13,7 @@
 #include "skyr/url/url_record.hpp"
 
 namespace skyr {
+inline namespace v1 {
 /// States of the URL parser
 enum class url_parse_state {
   /// Pointer is at the scheme start
@@ -72,6 +73,7 @@ tl::expected<url_record, std::error_code> basic_parse(
     const std::optional<url_record> &url = std::nullopt,
     std::optional<url_parse_state> state_override = std::nullopt);
 }  // namespace details
+}  // namespace v1
 }  // namespace skyr
 
 #endif //SKYR_URL_PARSE_IMPL_HPP

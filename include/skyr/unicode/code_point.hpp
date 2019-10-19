@@ -11,7 +11,9 @@
 #include <skyr/unicode/constants.hpp>
 #include <skyr/unicode/core.hpp>
 
-namespace skyr::unicode {
+namespace skyr {
+inline namespace v1 {
+namespace unicode {
 /// This class defines a range over a code point in raw bytes,
 /// according to UTF-8.
 /// \tparam OctetIterator An iterator type over the raw bytes
@@ -279,6 +281,8 @@ inline tl::expected<u16_code_point_t, std::error_code> u16_value(
     tl::expected<u8_code_point_t<OctetIterator>, std::error_code> code_point) {
   return u32_value(code_point).map([] (auto code_point) { return u16_code_point(code_point); });
 }
-}  // namespace skyr::unicode
+}  // namespace unicode
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_UNICODE_CODE_POINT_HPP

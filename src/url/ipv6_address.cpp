@@ -14,6 +14,7 @@
 #include "algorithms.hpp"
 
 namespace skyr {
+inline namespace v1 {
 namespace {
 class ipv6_address_error_category : public std::error_category {
  public:
@@ -331,4 +332,5 @@ std::pair<tl::expected<ipv6_address, std::error_code>, bool> parse_ipv6_address(
 tl::expected<ipv6_address, std::error_code> parse_ipv6_address(std::string_view input) {
   return details::parse_ipv6_address(input).first;
 }
+}  // namespace v1
 }  // namespace skyr

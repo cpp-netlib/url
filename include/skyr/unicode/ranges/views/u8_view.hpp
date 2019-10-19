@@ -17,7 +17,9 @@
 #include <skyr/unicode/ranges/traits.hpp>
 #include <skyr/unicode/ranges/views/unchecked_u8_view.hpp>
 
-namespace skyr::unicode {
+namespace skyr {
+inline namespace v1 {
+namespace unicode {
 ///
 /// \tparam OctetIterator
 template <typename OctetIterator>
@@ -216,6 +218,8 @@ namespace view {
 ///
 static constexpr u8_range_fn as_u8;
 }  // namespace view
-}  // namespace skyr::unicode
+}  // namespace unicode
+}  // namespace v1
+}  // namespace skyr
 
 #endif // SKYR_UNICODE_U8_RANGE_HPP

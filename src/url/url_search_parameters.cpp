@@ -7,6 +7,7 @@
 #include <skyr/url.hpp>
 
 namespace skyr {
+inline namespace v1 {
 url_search_parameters::url_search_parameters(
     std::string_view query) {
   initialize(query);
@@ -22,8 +23,7 @@ url_search_parameters::url_search_parameters(
 
 url_search_parameters::url_search_parameters(
     std::initializer_list<value_type> parameters)
-  : parameters_(parameters) {}
-
+    : parameters_(parameters) {}
 
 void url_search_parameters::swap(url_search_parameters &other) noexcept {
   std::swap(parameters_, other.parameters_);
@@ -37,18 +37,18 @@ void url_search_parameters::append(
 }
 
 namespace {
-template <class Iterator>
+template<class Iterator>
 inline auto remove_parameter(Iterator first, Iterator last, std::string_view name) {
   return std::remove_if(
       first, last,
-      [&name] (const auto &parameter) { return name == parameter.first; });
+      [&name](const auto &parameter) { return name == parameter.first; });
 }
 
-template <class Iterator>
+template<class Iterator>
 inline auto find_parameter(Iterator first, Iterator last, std::string_view name) {
   return std::find_if(
       first, last,
-      [&name] (const auto &parameter) { return name == parameter.first; });
+      [&name](const auto &parameter) { return name == parameter.first; });
 }
 }  // namespace
 
@@ -71,7 +71,7 @@ std::vector<url_search_parameters::string_type> url_search_parameters::get_all(
     std::string_view name) const {
   std::vector<string_type> result;
   result.reserve(parameters_.size());
-  for (auto [parameter_name, value] : parameters_) {
+  for (auto[parameter_name, value] : parameters_) {
     if (parameter_name == name) {
       result.push_back(value);
     }
@@ -136,7 +136,7 @@ void url_search_parameters::initialize(std::string_view query) {
     query.remove_prefix(1);
   }
 
-  for (auto [name, value] : search_parameter_range(query)) {
+  for (auto[name, value] : search_parameter_range(query)) {
     parameters_.emplace_back(name, value);
   }
 }
@@ -148,4 +148,5 @@ void url_search_parameters::update() {
     url_->set_search(std::string_view(query));
   }
 }
+}  // namespace v1
 }  // namespace skyr

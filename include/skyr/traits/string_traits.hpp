@@ -1,4 +1,4 @@
-// Copyright (c) Glyn Matthews 2018.
+// Copyright (c) Glyn Matthews 2018-19.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -11,6 +11,7 @@
 #include <string_view>
 
 namespace skyr {
+inline namespace v1 {
 /// Meta-function to test if the type is of the form
 /// basic_string<charT>
 template <class T, class charT>
@@ -64,6 +65,7 @@ using is_url_convertible =
       is_string_convertible<T, wchar_t>,
       is_string_convertible<T, char16_t>,
       is_string_convertible<T, char32_t>>;
+}  // namespace v1
 }  // namespace skyr
 
 #endif //SKYR_STRING_TRAITS_HPP

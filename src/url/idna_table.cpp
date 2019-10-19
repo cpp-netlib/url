@@ -7,6 +7,7 @@
 #include "idna_table.hpp"
 
 namespace skyr {
+inline namespace v1 {
 namespace {
 struct code_point_range {
   char32_t first;
@@ -8567,4 +8568,5 @@ char32_t map_idna_code_point(char32_t code_point) {
   }
   return code_point;
 }
+}  // namespace v1
 }  // namespace skyr

@@ -12,6 +12,7 @@
 #include <skyr/url.hpp>
 
 namespace skyr {
+inline namespace v1 {
 /// \namespace filesystem
 /// Contains functions to convert from filesystem path to URLs and
 /// vice versa
@@ -19,9 +20,9 @@ namespace filesystem {
 ///
 enum class path_errc {
   ///
-  invalid_path=1,
+      invalid_path = 1,
   ///
-  percent_decoding_error,
+      percent_decoding_error,
 };
 
 /// Creates a `std::error_code` given a `skyr::path_errc` value
@@ -40,6 +41,7 @@ tl::expected<url, std::error_code> from_path(const std::filesystem::path &path);
 /// \returns a path object or an error on failure
 tl::expected<std::filesystem::path, std::error_code> to_path(const url &input);
 }  // namespace filesystem
+}  // namespace v1
 }  // namespace skyr
 
 #endif  // SKYR_FILESYSTEM_PATH_HPP

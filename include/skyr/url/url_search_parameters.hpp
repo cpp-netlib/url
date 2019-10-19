@@ -15,6 +15,7 @@
 #include <cassert>
 
 namespace skyr {
+inline namespace v1 {
 ///
 class search_element_iterator {
  public:
@@ -40,8 +41,7 @@ class search_element_iterator {
   ///
   /// \param query
   explicit search_element_iterator(std::string_view query)
-      : it_(!query.empty()? std::make_optional(std::begin(query)) : std::nullopt)
-      , last_(std::end(query)) {}
+      : it_(!query.empty() ? std::make_optional(std::begin(query)) : std::nullopt), last_(std::end(query)) {}
 
   ///
   /// \return
@@ -63,7 +63,7 @@ class search_element_iterator {
   const_reference operator*() const noexcept {
     assert(it_);
     auto next = std::find_if(
-        it_.value(), last_.value(), [] (auto c) { return (c == '&') || (c == ';'); });
+        it_.value(), last_.value(), [](auto c) { return (c == '&') || (c == ';'); });
     return std::string_view(
         std::addressof(*it_.value()),
         std::distance(it_.value(), next));
@@ -88,11 +88,10 @@ class search_element_iterator {
   void increment() {
     assert(it_);
     it_ = std::find_if(
-        it_.value(), last_.value(), [] (auto c) { return (c == '&') || (c == ';'); });
+        it_.value(), last_.value(), [](auto c) { return (c == '&') || (c == ';'); });
     if (it_ == last_) {
       it_ = std::nullopt;
-    }
-    else {
+    } else {
       ++it_.value();
     }
   }
@@ -202,8 +201,7 @@ class search_parameter_range {
   ///
   /// \param query
   explicit search_parameter_range(std::string_view query)
-      : first_(query)
-      , last_() {}
+      : first_(query), last_() {}
 
   ///
   /// \return
@@ -393,6 +391,7 @@ class url_search_parameters {
 inline void swap(url_search_parameters &lhs, url_search_parameters &rhs) noexcept {
   lhs.swap(rhs);
 }
+}  // namespace v1
 }  // namespace skyr
 
 #endif  // SKYR_URL_SEARCH_PARAMETERS_INC

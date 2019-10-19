@@ -12,6 +12,7 @@
 #include "url_parser_context.hpp"
 
 namespace skyr {
+inline namespace v1 {
 namespace details {
 tl::expected<url_record, std::error_code> basic_parse(
     std::string_view input,
@@ -178,4 +179,5 @@ tl::expected<url_record, std::error_code> parse(
 
   return url;
 }
+}  // namespace v1
 }  // namespace skyr

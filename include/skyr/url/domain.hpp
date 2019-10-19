@@ -12,16 +12,17 @@
 #include <tl/expected.hpp>
 
 namespace skyr {
+inline namespace v1 {
 /// Enumerates domain processing errors
 enum class domain_errc {
   /// The domain code point is disallowed
-  disallowed_code_point = 1,
+      disallowed_code_point = 1,
   /// The encoder or decoder received bad input
-  bad_input,
+      bad_input,
   /// Overflow
-  overflow,
+      overflow,
   /// Unicode encoding error
-  encoding_error,
+      encoding_error,
 };
 
 /// Creates a `std::error_code` given a `skyr::domain_errc` value
@@ -72,11 +73,12 @@ tl::expected<std::string, std::error_code> domain_to_ascii(
 tl::expected<std::string, std::error_code> domain_to_ascii(
     std::u32string_view domain,
     bool be_strict = true);
+}  // namespace v1
 }  // namespace skyr
 
 namespace std {
 template <>
-struct is_error_code_enum<skyr::domain_errc> : true_type {};
+struct is_error_code_enum<skyr::v1::domain_errc> : true_type {};
 }  // namespace std
 
 #endif //SKYR_DOMAIN_HPP

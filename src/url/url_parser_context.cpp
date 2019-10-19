@@ -22,6 +22,7 @@
 #include "algorithms.hpp"
 
 namespace skyr {
+inline namespace v1 {
 namespace {
 bool remove_tabs_and_newlines(std::string &input) {
   auto first = begin(input), last = end(input);
@@ -858,4 +859,5 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_fragmen
   }
   return url_parse_action::increment;
 }
+}  // namespace v1
 }  // namespace skyr

@@ -8,7 +8,9 @@
 
 #include <system_error>
 
-namespace skyr::unicode {
+namespace skyr {
+inline namespace v1 {
+namespace unicode {
 /// Enumerates Unicode errors
 enum class unicode_errc {
   /// Overflow
@@ -25,11 +27,13 @@ enum class unicode_errc {
 /// \param error A Unicode error
 /// \returns A `std::error_code` object
 std::error_code make_error_code(unicode_errc error) noexcept;
-}  // namespace skyr::unicode
+}  // namespace unicode
+}  // namespace v1
+}  // namespace skyr
 
 namespace std {
 template <>
-struct is_error_code_enum<skyr::unicode::unicode_errc> : true_type {};
+struct is_error_code_enum<skyr::v1::unicode::unicode_errc> : true_type {};
 }  // namespace std
 
 #endif //SKYR_UNICODE_ERROR_HPP

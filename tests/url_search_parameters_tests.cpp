@@ -135,68 +135,6 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     CHECK("a=b&c=d" == parameters.to_string());
   }
 
-//  SECTION("copy_test") {
-//    skyr::url_search_parameters parameters{"a=b&c=d"};
-//    skyr::url_search_parameters copy(parameters);
-//
-//    auto it = copy.begin();
-//    REQUIRE_FALSE(it == copy.end());
-//    CHECK("a" == it->first);
-//    CHECK("b" == it->second);
-//    ++it;
-//    CHECK("c" == it->first);
-//    CHECK("d" == it->second);
-//    ++it;
-//    CHECK(it == copy.end());
-//  }
-//
-//  SECTION("copy_assignment_test") {
-//    skyr::url_search_parameters parameters{"a=b&c=d"};
-//    skyr::url_search_parameters copy;
-//    copy = parameters;
-//
-//    auto it = copy.begin();
-//    REQUIRE_FALSE(it == copy.end());
-//    CHECK("a" == it->first);
-//    CHECK("b" == it->second);
-//    ++it;
-//    CHECK("c" == it->first);
-//    CHECK("d" == it->second);
-//    ++it;
-//    CHECK(it == copy.end());
-//  }
-//
-//  SECTION("move_test") {
-//    skyr::url_search_parameters parameters{"a=b&c=d"};
-//    skyr::url_search_parameters copy(std::move(parameters));
-//
-//    auto it = copy.begin();
-//    REQUIRE_FALSE(it == copy.end());
-//    CHECK("a" == it->first);
-//    CHECK("b" == it->second);
-//    ++it;
-//    CHECK("c" == it->first);
-//    CHECK("d" == it->second);
-//    ++it;
-//    CHECK(it == copy.end());
-//  }
-//
-//  SECTION("move_assignment_test") {
-//    skyr::url_search_parameters parameters{"a=b&c=d"};
-//    skyr::url_search_parameters copy;
-//    copy = std::move(parameters);
-//
-//    auto it = copy.begin();
-//    REQUIRE_FALSE(it == copy.end());
-//    CHECK("a" == it->first);
-//    CHECK("b" == it->second);
-//    ++it;
-//    CHECK("c" == it->first);
-//    CHECK("d" == it->second);
-//    ++it;
-//    CHECK(it == copy.end());
-//  }
-
   SECTION("list of pairs") {
     auto parameters = skyr::url_search_parameters{{"key", "730d67"}};
     REQUIRE("key=730d67" == parameters.to_string());

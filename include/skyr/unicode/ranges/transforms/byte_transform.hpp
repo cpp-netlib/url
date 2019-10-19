@@ -14,7 +14,9 @@
 #include <skyr/unicode/ranges/traits.hpp>
 #include <skyr/unicode/ranges/views/u16_view.hpp>
 
-namespace skyr::unicode {
+namespace skyr {
+inline namespace v1 {
+namespace unicode {
 /// An iterator that converts a code point to bytes when dereferenced
 /// \tparam CodePointIterator
 template<class CodePointIterator>
@@ -259,6 +261,8 @@ tl::expected<Output, std::error_code> as(
   }
   return result;
 }
-}  // namespace skyr::unicode
+}  // namespace unicode
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_UNICODE_BYTE_RANGE_HPP

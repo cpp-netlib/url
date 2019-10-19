@@ -11,7 +11,9 @@
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/constants.hpp>
 
-namespace skyr::unicode {
+namespace skyr {
+inline namespace v1 {
+namespace unicode {
 ///
 /// \param octet
 /// \return
@@ -301,6 +303,8 @@ tl::expected<sequence_state<OctetIterator>, std::error_code> find_code_point(
       tl::make_unexpected(make_error_code(unicode_errc::overflow))
       ;
 }
-}  // namespace skyr::unicode
+}  // namespace unicode
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_UNICODE_CORE_HPP

@@ -17,7 +17,9 @@
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 
-namespace skyr::unicode {
+namespace skyr {
+inline namespace v1 {
+namespace unicode {
 ///
 /// \tparam U16Iterator
 template <class U16Iterator>
@@ -211,6 +213,8 @@ namespace view {
 ///
 static constexpr u16_range_fn as_u16;
 }  // namespace view
-}  // namespace skyr::unicode
+}  // namespace unicode
+}  // namespace v1
+}  // namespace skyr
 
 #endif //SKYR_UNICODE_U16_VIEW_HPP

@@ -13,6 +13,7 @@
 #include <locale>
 
 namespace skyr {
+inline namespace v1 {
 inline bool is_ascii(std::u32string_view input) noexcept {
   auto first = begin(input), last = end(input);
   return last == std::find_if(first, last, [](auto c) { return c > 0x7eu; });
@@ -116,6 +117,7 @@ inline bool remove_trailing_whitespace(std::string &input) {
 
   return it == first;
 }
+}  // namespace v1
 }  // namespace skyr
 
 #endif //SKYR_ALGORITHMS_HPP

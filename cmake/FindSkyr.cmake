@@ -1,17 +1,26 @@
-find_path(SKYR_INCLUDE_DIR skyr/url.hpp
-        PATH_SUFFIXES skyr)
+# https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-To-Find-Libraries
 
-find_library(SKYR_LIBRARY NAME Skyr::skyr-url)
+find_package(PkgConfig)
+pkg_check_modules(PC_Skyr QUIET skyr-url)
 
+find_path(Skyr_INCLUDE_DIR
+        NAMES skyr/url.hpp
+        HINTS ${Skyr_INCLUDE_DIR_HINT} ${PC_Skyr_INCLUDEDIR} ${PC_Skyr_INCLUDE_DIRS}
+        )
+
+find_library(Skyr_LIBRARY
+        NAME skyr-url
+        HINTS ${Skyr_LIB_DIR_HINT} ${PC_Skyr_LIBDIR} ${PC_Skyr_LIBRARY_DIRS}
+        )
 
 include(FindPackageHandleStandardArgs)
 
-#Handle standard arguments to find_package like REQUIRED and QUIET
 find_package_handle_standard_args(Skyr
         DEFAULT_MSG
-        SKYR_INCLUDE_DIR SKYR_LIBRARY_NAME)
-mark_as_advanced(SKYR_INCLUDE_DIR SKYR_LIBRARY_NAMES)
+        Skyr_INCLUDE_DIR Skyr_LIBRARY)
 
-
-set(SKYR_LIBRARIES ${SKYR_LIBRARY} )
-set(SKYR_INCLUDE_DIRS ${SKYR_INCLUDE_DIR} )
+if (Skyr_FOUND)
+    mark_as_advanced(Skyr_INCLUDE_DIR Skyr_LIBRARY)
+    set(Skyr_LIBRARIES ${Skyr_LIBRARY})
+    set(Skyr_INCLUDE_DIRS ${Skyr_INCLUDE_DIR})
+endif()

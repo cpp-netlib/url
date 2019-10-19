@@ -12,6 +12,7 @@
 #include <optional>
 
 namespace skyr {
+inline namespace v1 {
 /// Represents the parts of a URL identifier
 class url_record {
 
@@ -81,6 +82,7 @@ class url_record {
 inline void swap(url_record &lhs, url_record &rhs) noexcept {
   lhs.swap(rhs);
 }
+}  // namespace v1
 }  // namespace skyr
 
 #endif // SKYR_URL_RECORD_INC

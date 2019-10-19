@@ -15,6 +15,7 @@
 #include "url_parse_impl.hpp"
 
 namespace skyr {
+inline namespace v1 {
 enum class url_parse_action {
   success = 0,
   increment,
@@ -94,6 +95,7 @@ class url_parser_context {
   tl::expected<url_parse_action, url_parse_errc> parse_fragment(char byte);
 
 };
+}  // namespace v1
 }  // namespace skyr
 
 #endif // SKYR_URL_CONTEXT_HPP

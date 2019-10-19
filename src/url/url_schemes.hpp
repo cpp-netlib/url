@@ -14,7 +14,7 @@
 #include <optional>
 
 namespace skyr {
-/// \exclude
+inline namespace v1 {
 namespace details {
 using default_port_list = std::vector<std::pair<std::string, std::optional<std::uint16_t>>>;
 
@@ -34,6 +34,7 @@ std::optional<std::uint16_t> default_port(std::string_view scheme) noexcept;
 /// \returns
 bool is_default_port(std::string_view scheme, std::uint16_t port) noexcept;
 }  // namespace details
+}  // namespace v1
 }  // namespace skyr
 
 
