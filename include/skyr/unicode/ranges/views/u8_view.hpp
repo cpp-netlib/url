@@ -47,8 +47,8 @@ class u8_range_iterator {
   explicit constexpr u8_range_iterator(
       OctetIterator it,
       OctetIterator last)
-      : it_(it)
-      , last_(last) {}
+      : it_(iterator_type(it, last))
+      , last_(iterator_type()) {}
 
   ///
   /// \return

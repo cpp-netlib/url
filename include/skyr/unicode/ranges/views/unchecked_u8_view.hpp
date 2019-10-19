@@ -37,30 +37,34 @@ class unchecked_u8_range_iterator {
   constexpr unchecked_u8_range_iterator() = default;
   ///
   /// \param it
-  explicit constexpr unchecked_u8_range_iterator(OctetIterator it)
-      : it_(it) {}
+  /// \param last
+  constexpr unchecked_u8_range_iterator(OctetIterator it, OctetIterator last)
+      : it_(it), last_(last) {}
 
   ///
   /// \return
   unchecked_u8_range_iterator operator ++ (int) noexcept {
+    assert(it_);
     auto result = *this;
-    std::advance(it_, sequence_length(*it_));
+    increment();
     return result;
   }
 
   ///
   /// \return
   unchecked_u8_range_iterator &operator ++ () noexcept {
-    std::advance(it_, sequence_length(*it_));
+    assert(it_);
+    increment();
     return *this;
   }
 
   ///
   /// \return
   constexpr reference operator * () const noexcept {
-    auto last = it_;
-    std::advance(last, sequence_length(*it_));
-    return u8_code_point_view<OctetIterator>(it_, last);
+    assert(it_);
+    auto last = it_.value();
+    std::advance(last, sequence_length(*it_.value()));
+    return u8_code_point_view<OctetIterator>(it_.value(), last);
   }
 
   ///
@@ -79,7 +83,14 @@ class unchecked_u8_range_iterator {
 
  private:
 
-  OctetIterator it_;
+  void increment() {
+    std::advance(it_.value(), sequence_length(*it_.value()));
+    if (it_ == last_) {
+      it_ = std::nullopt;
+    }
+  }
+
+  std::optional<OctetIterator> it_, last_;
 
 };
 
