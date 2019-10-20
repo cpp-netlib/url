@@ -12,19 +12,16 @@ TEST_CASE("valid domains", "[domain]") {
   using param = std::pair<std::string, std::string>;
 
   auto domain = GENERATE(
-      param{"example.com", "example.com"}, param{"⌘.ws", "xn--bih.ws"},
-      param{"你好你好", "xn--6qqa088eba"},
-      param{"你好你好.com", "xn--6qqa088eba.com"},
-      param{"उदाहरण.परीक्षा", "xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g"},
-      param{"faß.ExAmPlE", "xn--fa-hia.example"},
-      param{"βόλος.com", "xn--nxasmm1c.com"},
-      param{"Ｇｏ.com", "go.com"});
+      param{u8"example.com", "example.com"}, param{"⌘.ws", "xn--bih.ws"},
+      param{u8"你好你好", "xn--6qqa088eba"},
+      param{u8"你好你好.com", "xn--6qqa088eba.com"},
+      param{u8"उदाहरण.परीक्षा", "xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g"},
+      param{u8"faß.ExAmPlE", "xn--fa-hia.example"},
+      param{u8"βόλος.com", "xn--nxasmm1c.com"},
+      param{u8"Ｇｏ.com", "go.com"});
 
   SECTION("dom ascii_tests") {
-    auto input = std::string();
-    auto expected = std::string();
-    std::tie(input, expected) = domain;
-
+    auto [input, expected] = domain;
     auto instance = skyr::unicode::domain_to_ascii(input);
     REQUIRE(instance);
     CHECK(expected == instance.value());

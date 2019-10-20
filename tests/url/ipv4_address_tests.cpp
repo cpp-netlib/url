@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include "../src/url/ipv4_address.hpp"
+#include "../../src/url/ipv4_address.hpp"
 
 TEST_CASE("ipv4 addresses", "[ipv4]") {
   SECTION("zero_test") {

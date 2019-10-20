@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include "../src/url/ipv6_address.hpp"
+#include "../../src/url/ipv6_address.hpp"
 
 TEST_CASE("ipv6_address_tests", "[ipv6]") {
   SECTION("zero_test") {

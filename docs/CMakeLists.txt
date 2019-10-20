@@ -17,7 +17,8 @@ file(COPY index.rst DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY url.rst DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY url_record.rst DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY url_search_parameters.rst DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY error_codes.rst DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY url_error_codes.rst DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY unicode.rst DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Generate API documentation using Doxygen
 configure_file(

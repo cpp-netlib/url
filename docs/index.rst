@@ -14,6 +14,9 @@ API
     url
     url_record
     url_search_parameters
-    error_codes
+    url_error_codes
+
+    unicode
+
 
 .. include:: changelog.rst
