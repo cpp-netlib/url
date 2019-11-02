@@ -29,7 +29,8 @@ endif()
 if (NOT Skyr_BUILD_WITHOUT_EXCEPTIONS)
     LIST(APPEND URL_TESTS
             url_tests_with_exceptions.cpp
-            url_web_platform_tests_with_exceptions.cpp)
+            url_web_platform_tests_with_exceptions.cpp
+            )
 endif()
 
 foreach (file_name ${URL_TESTS})
@@ -38,4 +39,4 @@ foreach (file_name ${URL_TESTS})
 endforeach ()
 
 file(GLOB URL_TEST_DATA *.txt *.json)
-file(COPY ${URL_TEST_DATA} DESTINATION ${Skyr_BINARY_DIR}/tests)
+file(COPY ${URL_TEST_DATA} DESTINATION ${Skyr_BINARY_DIR}/tests/url)

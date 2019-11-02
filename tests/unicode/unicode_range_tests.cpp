@@ -9,14 +9,16 @@
 #include <catch2/catch.hpp>
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 #include <skyr/unicode/ranges/views/u16_view.hpp>
-#include <skyr/unicode/ranges/views/u32_view.hpp>
 #include <skyr/unicode/ranges/transforms/u16_transform.hpp>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/unicode/ranges/transforms/byte_transform.hpp>
 
 
+namespace unicode = skyr::unicode;
+
+
 TEST_CASE("octet range iterator") {
-  using iterator_type = skyr::unicode::u8_range_iterator<std::string::const_iterator>;
+  using iterator_type = unicode::u8_range_iterator<std::string::const_iterator>;
 
   SECTION("construction") {
     auto bytes = std::string("\xf0\x9f\x92\xa9");
@@ -27,11 +29,9 @@ TEST_CASE("octet range iterator") {
   }
 
   SECTION("construction from array") {
-    using iterator_type = skyr::unicode::u8_range_iterator<char *>;
-
     char bytes[] = "\xf0\x9f\x92\xa9";
     auto first = std::begin(bytes), last = std::end(bytes);
-    auto it = iterator_type(first, last);
+    auto it = unicode::u8_range_iterator<char *>(first, last);
     auto code_point = *it;
     REQUIRE(code_point);
     CHECK(U'\x1F4A9' == u32_value(code_point.value()));
@@ -122,44 +122,44 @@ TEST_CASE("u8 range") {
 
   SECTION("construction") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto view = skyr::unicode::view_u8_range(bytes);
+    auto view = unicode::view_u8_range(bytes);
     CHECK(begin(view) != end(view));
   }
 
   SECTION("empty") {
-    auto view = skyr::unicode::view_u8_range<std::string>();
+    auto view = unicode::view_u8_range<std::string>();
     CHECK(begin(view) == end(view));
   }
 
   SECTION("count") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto view = skyr::unicode::view_u8_range(bytes);
+    auto view = unicode::view_u8_range(bytes);
     CHECK(4 == view.size());
     CHECK(!view.empty());
   }
 
   SECTION("empty count") {
-    auto view = skyr::unicode::view_u8_range<std::string>();
+    auto view = unicode::view_u8_range<std::string>();
     CHECK(view.empty());
   }
 
   SECTION("pipe syntax") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto view = bytes | skyr::unicode::view::as_u8;
+    auto view = unicode::view::as_u8(bytes);
     CHECK(4 == view.size());
     CHECK(!view.empty());
   }
 
   SECTION("pipe syntax with string_view") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto view = std::string_view(bytes) | skyr::unicode::view::as_u8;
+    auto view = unicode::view::as_u8(std::string_view(bytes));
     CHECK(4 == view.size());
     CHECK(!view.empty());
   }
 
   SECTION("pipe syntax invalid") {
     auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto view = bytes | skyr::unicode::view::as_u8;
+    auto view = unicode::view::as_u8(bytes);
     auto it = std::begin(view), last = std::end(view);
     CHECK(!*it++);
     CHECK(it == last);
@@ -169,27 +169,27 @@ TEST_CASE("u8 range") {
 
   SECTION("pipe syntax with u16 string") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto u16 = skyr::unicode::as<std::u16string>(bytes | skyr::unicode::view::as_u8 | skyr::unicode::transform::to_u16);
+    auto u16 = unicode::as<std::u16string>(unicode::view::as_u8(bytes) | unicode::transform::to_u16);
     REQUIRE(u16);
     CHECK(u"\xD83C\xDFF3\xFE0F\x200D\xD83C\xDF08" == u16.value());
   }
 
   SECTION("pipe syntax with u32 string") {
     auto bytes = std::string("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto u32 = skyr::unicode::as<std::u32string>(bytes | skyr::unicode::view::as_u8 | skyr::unicode::transform::to_u32);
+    auto u32 = unicode::as<std::u32string>(unicode::view::as_u8(bytes) | unicode::transform::to_u32);
     REQUIRE(u32);
     CHECK(U"\x1F3F3\xFE0F\x200D\x1F308" == u32.value());
   }
 
   SECTION("pipe syntax with u16 string invalid") {
     auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto u16 = skyr::unicode::as<std::u16string>(bytes | skyr::unicode::view::as_u8 | skyr::unicode::transform::to_u16);
+    auto u16 = unicode::as<std::u16string>(unicode::view::as_u8(bytes) | unicode::transform::to_u16);
     CHECK(!u16);
   }
 
   SECTION("pipe syntax with u32 string invalid") {
     auto bytes = std::string("\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
-    auto u32 = skyr::unicode::as<std::u32string>(bytes | skyr::unicode::view::as_u8 | skyr::unicode::transform::to_u32);
+    auto u32 = unicode::as<std::u32string>(unicode::view::as_u8(bytes) | unicode::transform::to_u32);
     CHECK(!u32);
   }
 }
@@ -197,24 +197,23 @@ TEST_CASE("u8 range") {
 TEST_CASE("write bytes") {
   SECTION("bytes from u32") {
     auto input = std::u32string(U"\x1F3F3\xFE0F\x200D\x1F308");
-    auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::view::as_u32 | skyr::unicode::transform::to_bytes);
+    auto bytes = unicode::as<std::string>(
+        input | unicode::transform::to_bytes);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
+  }
+
+  SECTION("vector of bytes from u32") {
+    auto input = std::u32string(U"\x1F3F3\xFE0F\x200D\x1F308");
+    auto bytes = unicode::as<std::vector<std::byte>>(
+        input | unicode::transform::to_bytes);
+    REQUIRE(bytes);
   }
 
   SECTION("bytes from u16") {
     auto input = std::u16string(u"\xD83C\xDFF3\xFE0F\x200D\xD83C\xDF08");
-    auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::view::as_u16 | skyr::unicode::transform::to_bytes);
-    REQUIRE(bytes);
-    CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
-  }
-
-  SECTION("bytes from u16 (2)") {
-    auto input = std::u16string(u"\xD83C\xDFF3\xFE0F\x200D\xD83C\xDF08");
-    auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::view::as_u16 | skyr::unicode::transform::to_u32 | skyr::unicode::transform::to_bytes);
+    auto bytes = unicode::as<std::string>(
+        unicode::view::as_u16(input) | unicode::transform::to_bytes);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }

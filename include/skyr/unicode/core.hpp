@@ -113,7 +113,7 @@ struct sequence_state {
 ///         pointing to the lead value
 template<class OctetIterator>
 tl::expected<sequence_state<OctetIterator>, std::error_code>
-make_state(OctetIterator it) {
+inline make_state(OctetIterator it) {
   return sequence_state<OctetIterator>(it, 0);
 }
 

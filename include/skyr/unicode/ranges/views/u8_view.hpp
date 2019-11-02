@@ -189,34 +189,13 @@ class view_u8_range {
 
 };
 
-///
-struct u8_range_fn {
-
-  ///
-  /// \tparam OctetRange
-  /// \param range
-  /// \return
-  template <typename OctetRange>
-  constexpr auto operator()(
-      OctetRange &&range) const noexcept {
-    return view_u8_range{std::forward<OctetRange>(range)};
-  }
-
-  ///
-  /// \tparam OctetRange
-  /// \param range
-  /// \return
-  template <typename OctetRange>
-  friend constexpr auto operator|(
-      OctetRange &&range,
-      const u8_range_fn&) noexcept {
-    return view_u8_range{std::forward<OctetRange>(range)};
-  }
-};
-
 namespace view {
 ///
-static constexpr u8_range_fn as_u8;
+template <typename OctetRange>
+inline auto as_u8(
+    const OctetRange &range) noexcept {
+  return view_u8_range{range};
+}
 }  // namespace view
 }  // namespace unicode
 }  // namespace v1

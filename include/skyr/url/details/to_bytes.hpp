@@ -9,7 +9,6 @@
 #include <string>
 #include <skyr/traits/string_traits.hpp>
 #include <skyr/unicode/ranges/views/u16_view.hpp>
-#include <skyr/unicode/ranges/views/u32_view.hpp>
 #include <skyr/unicode/ranges/transforms/byte_transform.hpp>
 
 namespace skyr {
@@ -30,7 +29,7 @@ template<class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, wchar_t>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
-    return unicode::as<std::string>(source | unicode::view::as_u16 | unicode::transform::to_bytes);
+    return unicode::as<std::string>(unicode::view::as_u16(source) | unicode::transform::to_bytes);
   }
 };
 
@@ -38,7 +37,7 @@ template<class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char16_t>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
-    return unicode::as<std::string>(source | unicode::view::as_u16 | unicode::transform::to_bytes);
+    return unicode::as<std::string>(unicode::view::as_u16(source) | unicode::transform::to_bytes);
   }
 };
 

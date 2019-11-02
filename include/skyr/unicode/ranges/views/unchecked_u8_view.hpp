@@ -179,33 +179,16 @@ class view_unchecked_u8_range {
 
 };
 
-///
-struct unchecked_u8_range_fn {
-  ///
-  /// \tparam OctetRange
-  /// \param range
-  /// \return
-  template <typename OctetRange>
-  constexpr auto operator()(
-      OctetRange &&range) const noexcept {
-    return view_unchecked_u8_range{std::forward<OctetRange>(range)};
-  }
-
-  ///
-  /// \tparam OctetRange
-  /// \param range
-  /// \return
-  template <typename OctetRange>
-  friend constexpr auto operator|(
-      OctetRange &&range,
-      const unchecked_u8_range_fn&) noexcept {
-    return view_unchecked_u8_range{std::forward<OctetRange>(range)};
-  }
-};
-
 namespace view {
 ///
-static constexpr unchecked_u8_range_fn unchecked_u8;
+/// \tparam OctetRange
+/// \param range
+/// \return
+template <typename OctetRange>
+inline auto unchecked_u8(
+    const OctetRange &range) noexcept {
+  return view_unchecked_u8_range{range};
+}
 }  // namespace view
 }  // namespace unicode
 }  // namespace v1

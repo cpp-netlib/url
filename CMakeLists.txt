@@ -64,6 +64,11 @@ endif()
 
 add_subdirectory(src)
 
+function(_remove_extension file_name basename)
+    string(REGEX REPLACE "\\.[^.]*$" "" _basename ${file_name})
+    set(${basename} ${_basename} PARENT_SCOPE)
+endfunction()
+
 # Testing
 if (Skyr_BUILD_TESTS)
     message(STATUS "Configuring tests")

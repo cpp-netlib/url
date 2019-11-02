@@ -12,11 +12,6 @@ if (MSVC)
     add_definitions(-D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
 endif(MSVC)
 
-function(_remove_extension file_name basename)
-    string(REGEX REPLACE "\\.[^.]*$" "" _basename ${file_name})
-    set(${basename} ${_basename} PARENT_SCOPE)
-endfunction()
-
 function(_create_test file_name output_dir test_name)
     _remove_extension(${file_name} test)
     add_executable(${test} ${test}.cpp)

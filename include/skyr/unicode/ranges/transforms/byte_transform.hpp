@@ -257,7 +257,8 @@ tl::expected<Output, std::error_code> as(
     if (!byte) {
       return tl::make_unexpected(byte.error());
     }
-    result.push_back(byte.value());
+    result.push_back(
+        static_cast<typename Output::value_type>(byte.value()));
   }
   return result;
 }

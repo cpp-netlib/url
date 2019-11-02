@@ -104,4 +104,4 @@ script:
     - popd
 
 after_failure:
-    - cat Testing/Temporary/LastTest.log
+    - cat _build/Testing/Temporary/LastTest.log

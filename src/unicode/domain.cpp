@@ -77,8 +77,7 @@ inline bool delim(char32_t c) { return c == delimiter; }
 
 tl::expected<std::string, std::error_code> punycode_encode(
     std::string_view input) {
-  auto utf32 = unicode::as<std::u32string>(input | unicode::view::as_u8 |
-      unicode::transform::to_u32);
+  auto utf32 = as<std::u32string>(view::as_u8(input) | transform::to_u32);
   if (!utf32) {
     return tl::make_unexpected(make_error_code(domain_errc::bad_input));
   }
@@ -221,7 +220,7 @@ tl::expected<std::string, std::error_code> punycode_decode(
     result.insert(i++, 1, n);
   }
 
-  return unicode::as<std::string>(result | unicode::transform::to_bytes)
+  return as<std::string>(result | transform::to_bytes)
       .or_else([](auto) -> tl::expected<std::string, std::error_code> {
         return tl::make_unexpected(make_error_code(domain_errc::bad_input));
       });
@@ -319,7 +318,7 @@ tl::expected<std::string, std::error_code> unicode_to_ascii(
   }
 
   auto utf32_domain = join(labels, U'.');
-  return unicode::as<std::string>(utf32_domain | unicode::transform::to_bytes)
+  return as<std::string>(utf32_domain | transform::to_bytes)
       .or_else([](auto) -> tl::expected<std::string, std::error_code> {
         return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
       });
@@ -328,8 +327,7 @@ tl::expected<std::string, std::error_code> unicode_to_ascii(
 
 tl::expected<std::string, std::error_code> domain_to_ascii(
     std::string_view domain, bool be_strict) {
-  auto utf32 = unicode::as<std::u32string>(domain | unicode::view::as_u8 |
-      unicode::transform::to_u32);
+  auto utf32 = as<std::u32string>(view::as_u8(domain) | transform::to_u32);
   if (!utf32) {
     return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
   }
@@ -342,7 +340,7 @@ tl::expected<std::string, std::error_code> domain_to_ascii(
       unicode_to_ascii(domain, false, true, true, be_strict, false, be_strict);
   if (!result) {
     // validation error
-    return tl::make_unexpected(std::move(result.error()));
+    return tl::make_unexpected(result.error());
   }
   return result;
 }
