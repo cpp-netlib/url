@@ -42,7 +42,7 @@ void url::update_record(url_record &&url) {
   href_ = serialize(url_);
   view_ = string_view(href_);
   parameters_.initialize(
-      url_.query ? string_view(url_.query.value()) : string_view(""));
+      url_.query ? string_view(url_.query.value()) : string_view{});
 }
 
 url::string_type url::href() const {

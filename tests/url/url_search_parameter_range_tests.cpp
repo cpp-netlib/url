@@ -9,7 +9,7 @@
 
 TEST_CASE("search_element_iterator_test", "[search_parameter_range]") {
   SECTION("empty_query") {
-    auto first = skyr::search_element_iterator(std::string_view("")), last = skyr::search_element_iterator();
+    auto first = skyr::search_element_iterator(std::string_view()), last = skyr::search_element_iterator();
     CHECK(first == last);
   }
 
@@ -46,11 +46,21 @@ TEST_CASE("search_element_iterator_test", "[search_parameter_range]") {
     ++first;
     CHECK(first == last);
   }
+  
+  SECTION("query_with_one_parameter") {
+    auto search = "query";
+    auto first = skyr::search_element_iterator(std::string_view(search)), last = skyr::search_element_iterator();
+    CHECK(first != last);
+
+    CHECK("query" == *first);
+    ++first;
+    CHECK(first == last);
+  }
 }
 
 TEST_CASE("search_parameter_iterator_test", "[search_parameter_range]") {
   SECTION("empty_query") {
-    auto first = skyr::search_parameter_iterator(std::string_view("")), last = skyr::search_parameter_iterator();
+    auto first = skyr::search_parameter_iterator(std::string_view()), last = skyr::search_parameter_iterator();
     CHECK(first == last);
   }
 
@@ -92,11 +102,22 @@ TEST_CASE("search_parameter_iterator_test", "[search_parameter_range]") {
     ++first;
     CHECK(first == last);
   }
+
+  SECTION("query_with_one_parameter") {
+    auto search = "query";
+    auto first = skyr::search_parameter_iterator(std::string_view(search)), last = skyr::search_parameter_iterator();
+    CHECK(first != last);
+
+    CHECK("query" == (*first).first);
+    CHECK("" == (*first).second);
+    ++first;
+    CHECK(first == last);
+  }
 }
 
 TEST_CASE("search_parameter_range_test", "[search_parameter_range]") {
   SECTION("empty_query") {
-    auto range = skyr::search_parameter_range(std::string_view(""));
+    auto range = skyr::search_parameter_range(std::string_view());
     CHECK(range.empty());
   }
 
@@ -119,5 +140,20 @@ TEST_CASE("search_parameter_range_test", "[search_parameter_range]") {
     auto range = skyr::search_parameter_range(search);
     CHECK(!range.empty());
     CHECK(2 == range.size());
+  }
+
+  SECTION("query_with_no_separators") {
+    auto search = "query";
+    auto range = skyr::search_parameter_range(search);
+    CHECK(!range.empty());
+    CHECK(1 == range.size());
+  }
+
+  SECTION("iterator over query range") {
+    auto search = "query";
+    for (auto [name, value] : skyr::search_parameter_range(search)) {
+      CHECK("query" == name);
+      CHECK(value.empty());
+    }
   }
 }

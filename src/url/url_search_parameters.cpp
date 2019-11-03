@@ -136,7 +136,7 @@ void url_search_parameters::initialize(std::string_view query) {
     query.remove_prefix(1);
   }
 
-  for (auto[name, value] : search_parameter_range(query)) {
+  for (auto [name, value] : search_parameter_range(query)) {
     parameters_.emplace_back(name, value);
   }
 }

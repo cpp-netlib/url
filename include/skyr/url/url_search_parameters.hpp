@@ -41,7 +41,8 @@ class search_element_iterator {
   ///
   /// \param query
   explicit search_element_iterator(std::string_view query)
-      : it_(!query.empty() ? std::make_optional(std::begin(query)) : std::nullopt), last_(std::end(query)) {}
+      : it_(!query.empty() ? std::make_optional(std::begin(query)) : std::nullopt)
+      , last_(!query.empty() ? std::make_optional(std::end(query)) : std::nullopt) {}
 
   ///
   /// \return
@@ -62,11 +63,11 @@ class search_element_iterator {
   /// \return
   const_reference operator*() const noexcept {
     assert(it_);
-    auto next = std::find_if(
+    auto delimiter = std::find_if(
         it_.value(), last_.value(), [](auto c) { return (c == '&') || (c == ';'); });
     return std::string_view(
         std::addressof(*it_.value()),
-        std::distance(it_.value(), next));
+        std::distance(it_.value(), delimiter));
   }
 
   ///
@@ -130,7 +131,7 @@ class search_parameter_iterator {
   ///
   /// \return
   search_parameter_iterator &operator++() {
-    increment();
+    ++it_;
     return *this;
   }
 
@@ -138,7 +139,7 @@ class search_parameter_iterator {
   /// \return
   search_parameter_iterator operator++(int) {
     auto result = *this;
-    increment();
+    ++it_;
     return result;
   }
 
@@ -147,15 +148,16 @@ class search_parameter_iterator {
   const_reference operator*() const noexcept {
     auto first = std::begin(*it_), last = std::end(*it_);
 
-    auto equal = std::find_if(first, last, [](auto c) { return (c == '='); });
+    auto separator = std::find_if(first, last, [](auto c) { return (c == '='); });
 
     auto name =
-        std::string_view(std::addressof(*first), std::distance(first, equal));
-    if (equal != last) {
-      ++equal;
+        std::string_view(std::addressof(*first), std::distance(first, separator));
+    if (separator != last) {
+      ++separator;
     }
-    auto value =
-        std::string_view(std::addressof(*equal), std::distance(equal, last));
+    auto value = (separator == last) ?
+        std::string_view() :
+        std::string_view(std::addressof(*separator), std::distance(separator, last));
 
     return {name, value};
   }
@@ -175,10 +177,6 @@ class search_parameter_iterator {
   }
 
  private:
-
-  void increment() {
-    ++it_;
-  }
 
   search_element_iterator it_;
 
