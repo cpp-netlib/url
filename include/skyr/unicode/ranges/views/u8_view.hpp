@@ -14,7 +14,9 @@
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/code_point.hpp>
-#include <skyr/unicode/ranges/traits.hpp>
+#include <skyr/unicode/traits/iterator_value.hpp>
+#include <skyr/unicode/traits/range_iterator.hpp>
+#include <skyr/unicode/traits/range_value.hpp>
 #include <skyr/unicode/ranges/views/unchecked_u8_view.hpp>
 
 namespace skyr {
@@ -32,7 +34,7 @@ class u8_range_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = tl::expected<typename iterator_type::value_type, std::error_code>;
+  using value_type = tl::expected<typename traits::iterator_value<iterator_type>::type, std::error_code>;
   ///
   using reference = value_type;
   ///
@@ -110,7 +112,7 @@ class u8_range_iterator {
 template <class OctetRange>
 class view_u8_range {
 
-  using octet_iterator_type = typename traits::iterator<OctetRange>::type;
+  using octet_iterator_type = typename traits::range_iterator<OctetRange>::type;
   using iterator_type = u8_range_iterator<octet_iterator_type>;
 
  public:
@@ -194,6 +196,7 @@ namespace view {
 template <typename OctetRange>
 inline auto as_u8(
     const OctetRange &range) noexcept {
+  static_assert(sizeof(typename traits::range_value<OctetRange>::type) == 1);
   return view_u8_range{range};
 }
 }  // namespace view

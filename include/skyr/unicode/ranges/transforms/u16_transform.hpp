@@ -12,7 +12,7 @@
 #include <tl/expected.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
-#include <skyr/unicode/ranges/traits.hpp>
+#include <skyr/unicode/traits/range_iterator.hpp>
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 
@@ -94,7 +94,8 @@ class transform_u16_iterator {
 template <class CodePointRange>
 class transform_u16_range {
 
-  using iterator_type = transform_u16_iterator<typename traits::iterator<CodePointRange>::type>;
+  using iterator_type =
+      transform_u16_iterator<typename traits::range_iterator<CodePointRange>::type>;
 
  public:
 

@@ -30,6 +30,9 @@ set(Skyr_SRCS
         ${Skyr_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/errors.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/core.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/traits/iterator_value.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/traits/range_iterator.hpp
+		${Skyr_SOURCE_DIR}/include/skyr/unicode/traits/range_value.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/u8_view.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/unchecked_u8_view.hpp
 		${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/u16_view.hpp

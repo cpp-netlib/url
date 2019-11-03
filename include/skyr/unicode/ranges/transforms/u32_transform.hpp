@@ -12,7 +12,7 @@
 #include <tl/expected.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
-#include <skyr/unicode/ranges/traits.hpp>
+#include <skyr/unicode/traits/range_iterator.hpp>
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 
 namespace skyr {
@@ -88,7 +88,7 @@ class transform_u32_iterator {
 template <class CodePointRange>
 class transform_u32_range {
 
-  using iterator_type = typename traits::iterator<CodePointRange>::type;
+  using iterator_type = typename traits::range_iterator<CodePointRange>::type;
 
  public:
 

@@ -13,7 +13,8 @@
 #include <tl/expected.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
-#include <skyr/unicode/ranges/traits.hpp>
+#include <skyr/unicode/traits/range_iterator.hpp>
+#include <skyr/unicode/traits/range_value.hpp>
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 
@@ -120,7 +121,7 @@ class u16_range_iterator {
 template <class U16Range>
 class view_u16_range {
 
-  using iterator_type = u16_range_iterator<typename traits::iterator<U16Range>::type>;
+  using iterator_type = u16_range_iterator<typename traits::range_iterator<U16Range>::type>;
 
  public:
 
@@ -195,6 +196,7 @@ namespace view {
 /// \return
 template <typename U16Range>
 inline auto as_u16(const U16Range &range) noexcept {
+  static_assert(sizeof(typename traits::range_value<U16Range>::type) >= 1);
   return view_u16_range{range};
 }
 }  // namespace view

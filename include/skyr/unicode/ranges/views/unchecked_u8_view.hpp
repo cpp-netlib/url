@@ -13,7 +13,7 @@
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/code_point.hpp>
-#include <skyr/unicode/ranges/traits.hpp>
+#include <skyr/unicode/traits/range_iterator.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -99,7 +99,7 @@ class unchecked_u8_range_iterator {
 template <class OctetRange>
 class view_unchecked_u8_range {
 
-  using octet_iterator_type = typename traits::iterator<OctetRange>::type ;
+  using octet_iterator_type = typename traits::range_iterator<OctetRange>::type ;
   using iterator_type = unchecked_u8_range_iterator<octet_iterator_type>;
 
  public:

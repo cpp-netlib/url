@@ -8,8 +8,6 @@
 
 #include <tl/expected.hpp>
 #include <skyr/unicode/errors.hpp>
-#include <skyr/unicode/constants.hpp>
-#include <skyr/unicode/core.hpp>
 #include <skyr/unicode/code_points/u8.hpp>
 #include <skyr/unicode/code_points/u16.hpp>
 
