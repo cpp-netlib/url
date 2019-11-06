@@ -380,11 +380,11 @@ class url {
 
   /// Sets the [URL port](https://url.spec.whatwg.org/#dom-url-port)
   ///
-  /// \tparam Source The input string type
+  /// \tparam PortSource The input type
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
-  template<class Source>
-  tl::expected<void, std::error_code> set_port(const Source &port) {
+  template<class PortSource>
+  tl::expected<void, std::error_code> set_port(const PortSource &port) {
     return set_port_impl(port);
   }
 

@@ -6,6 +6,8 @@
 #ifndef SKYR_UNICODE_DOMAIN_HPP
 #define SKYR_UNICODE_DOMAIN_HPP
 
+/// \file domain.hpp
+
 #include <string>
 #include <string_view>
 #include <system_error>
@@ -14,6 +16,7 @@
 namespace skyr {
 inline namespace v1 {
 namespace unicode {
+/// \enum domain_errc
 /// Enumerates domain processing errors
 enum class domain_errc {
   /// The domain code point is disallowed

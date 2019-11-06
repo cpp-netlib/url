@@ -8,10 +8,4 @@
 
 /// \file skyr/unicode.hpp
 
-/// \defgroup UnicodeEncoding
-///     Functions to process Unicode
-
-/// \defgroup DomainNames
-///     Functions to process domain names
-
 #endif //SKYR_UNICODE_HPP

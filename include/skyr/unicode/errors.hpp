@@ -3,14 +3,17 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_UNICODE_ERROR_HPP
-#define SKYR_UNICODE_ERROR_HPP
+#ifndef SKYR_UNICODE_ERRORS_HPP
+#define SKYR_UNICODE_ERRORS_HPP
+
+/// \file errors.hpp
 
 #include <system_error>
 
 namespace skyr {
 inline namespace v1 {
 namespace unicode {
+/// \enum unicode_errc
 /// Enumerates Unicode errors
 enum class unicode_errc {
   /// Overflow
@@ -36,4 +39,4 @@ template <>
 struct is_error_code_enum<skyr::v1::unicode::unicode_errc> : true_type {};
 }  // namespace std
 
-#endif //SKYR_UNICODE_ERROR_HPP
+#endif //SKYR_UNICODE_ERRORS_HPP

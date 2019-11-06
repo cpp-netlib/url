@@ -18,8 +18,14 @@ set(DOC_FILES
         idna.rst
         domain.rst
         encoding.rst
+        encoding_u8_view.rst
+        encoding_u16_view.rst
+        encoding_byte_transform.rst
+        encoding_u16_transform.rst
+        encoding_u32_transform.rst
         concepts.rst
         url.rst
+        url_class.rst
         url_record.rst
         url_error_codes.rst
         url_search_parameters.rst

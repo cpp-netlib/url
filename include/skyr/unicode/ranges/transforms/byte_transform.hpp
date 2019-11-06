@@ -20,7 +20,7 @@ namespace unicode {
 /// An iterator that converts a code point to bytes when dereferenced
 /// \tparam CodePointIterator
 template<class CodePointIterator>
-class transform_byte_iterator {
+class byte_transform_iterator {
 
  public:
 
@@ -34,26 +34,26 @@ class transform_byte_iterator {
   using difference_type = std::ptrdiff_t;
 
   /// Constructor
-  transform_byte_iterator() = default;
+  byte_transform_iterator() = default;
   /// Constructs an iterator from an iterator that iterates over
   /// code points
   /// \param it
   /// \param last
-  transform_byte_iterator(
+  byte_transform_iterator(
       CodePointIterator it,
       CodePointIterator last)
       : it_(it), last_(last) {}
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  transform_byte_iterator &operator++() noexcept {
+  byte_transform_iterator &operator++() noexcept {
     increment();
     return *this;
   }
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  transform_byte_iterator operator++(int) noexcept {
+  byte_transform_iterator operator++(int) noexcept {
     auto result = *this;
     increment();
     return result;
@@ -101,14 +101,14 @@ class transform_byte_iterator {
   /// Equality operator
   /// \param other The other iterator
   /// \return \c true if the iterators are the same, \c false otherwise
-  constexpr bool operator==(const transform_byte_iterator &other) const noexcept {
+  constexpr bool operator==(const byte_transform_iterator &other) const noexcept {
     return (it_ == other.it_) && (octet_index_ == other.octet_index_);
   }
 
   /// Inequality operator
   /// \param other The other iterator
   /// \return \c true if the iterators are not the same, \c false otherwise
-  constexpr bool operator!=(const transform_byte_iterator &other) const noexcept {
+  constexpr bool operator!=(const byte_transform_iterator &other) const noexcept {
     return !(*this == other);
   }
 
@@ -150,7 +150,7 @@ template<class CodePointRange>
 class transform_byte_range {
 
   using iterator_type =
-      transform_byte_iterator<typename traits::range_iterator<CodePointRange>::type>;
+      byte_transform_iterator<typename traits::range_iterator<CodePointRange>::type>;
 
  public:
 

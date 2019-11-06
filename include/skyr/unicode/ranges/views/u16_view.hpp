@@ -39,15 +39,15 @@ class u16_range_iterator {
   ///
   using difference_type = std::ptrdiff_t;
 
-  ///
+  /// \brief Constructor
   u16_range_iterator() = default;
   ///
-  /// \param it
+  /// \param first
   /// \param last
-  explicit constexpr u16_range_iterator(
-      U16Iterator it,
+  explicit u16_range_iterator(
+      U16Iterator first,
       U16Iterator last)
-      : it_(it)
+      : it_(first)
       , last_(last) {}
 
   ///

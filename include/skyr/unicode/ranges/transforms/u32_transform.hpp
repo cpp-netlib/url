@@ -21,7 +21,7 @@ namespace unicode {
 ///
 /// \tparam CodePointIterator
 template <class CodePointIterator>
-class transform_u32_iterator {
+class u32_transform_iterator {
  public:
 
   ///
@@ -36,15 +36,15 @@ class transform_u32_iterator {
   using difference_type = std::ptrdiff_t;
 
   ///
-  constexpr transform_u32_iterator() = default;
+  constexpr u32_transform_iterator() = default;
   ///
   /// \param it
-  explicit constexpr transform_u32_iterator(CodePointIterator it)
+  explicit constexpr u32_transform_iterator(CodePointIterator it)
       : it_(it) {}
 
   ///
   /// \return
-  transform_u32_iterator operator ++ (int) noexcept {
+  u32_transform_iterator operator ++ (int) noexcept {
     auto result = *this;
     ++it_;
     return result;
@@ -52,7 +52,7 @@ class transform_u32_iterator {
 
   ///
   /// \return
-  transform_u32_iterator &operator ++ () noexcept {
+  u32_transform_iterator &operator ++ () noexcept {
     ++it_;
     return *this;
   }
@@ -66,14 +66,14 @@ class transform_u32_iterator {
   ///
   /// \param other
   /// \return
-  constexpr bool operator == (const transform_u32_iterator &other) const noexcept {
+  constexpr bool operator == (const u32_transform_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
   ///
   /// \param other
   /// \return
-  constexpr bool operator != (const transform_u32_iterator &other) const noexcept {
+  constexpr bool operator != (const u32_transform_iterator &other) const noexcept {
     return !(*this == other);
   }
 

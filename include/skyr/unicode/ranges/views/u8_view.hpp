@@ -22,6 +22,7 @@
 namespace skyr {
 inline namespace v1 {
 namespace unicode {
+/// \brief
 ///
 /// \tparam OctetIterator
 template <typename OctetIterator>
@@ -31,30 +32,34 @@ class u8_range_iterator {
 
  public:
 
-  ///
+  /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
-  ///
+  /// An expected value containing a UTF-8 encoded code point
   using value_type = tl::expected<typename traits::iterator_value<iterator_type>::type, std::error_code>;
-  ///
+  /// A reference type
   using reference = value_type;
-  ///
+  /// A pointer type
   using pointer = typename std::add_pointer<value_type>::type;
-  ///
+  /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
 
-  ///
+  /// \brief Constructs an end range iterator
   constexpr u8_range_iterator() = default;
+  /// \brief Constructs a \c u8_range_iterator from a range of octets
   ///
-  /// \param it
+  /// \param first
   /// \param last
   explicit constexpr u8_range_iterator(
-      OctetIterator it,
+      OctetIterator first,
       OctetIterator last)
-      : it_(iterator_type(it, last))
+      : it_(iterator_type(first, last))
       , last_(iterator_type()) {}
 
+  /// \brief Post-increment operator
   ///
-  /// \return
+  /// Increments through a code point
+  ///
+  /// \return The previous iterator value
   u8_range_iterator operator ++ (int) noexcept {
     assert(it_);
     auto result = *this;
@@ -62,31 +67,39 @@ class u8_range_iterator {
     return result;
   }
 
+  /// \brief Pre-increment operator
   ///
-  /// \return
+  /// Increments through a code point
+  ///
+  /// \return \c *this
   u8_range_iterator &operator ++ () noexcept {
     assert(it_);
     increment();
     return *this;
   }
 
+  /// \brief Dereference operator
   ///
-  /// \return
+  /// Returns a proxy to a UTF-8 encoded code point
+  ///
+  /// \return A proxy to a UTF-8 encoded code point
   constexpr reference operator * () const noexcept {
     assert(it_);
     return checked_u8_code_point(*it_.value());
   }
 
+  /// \brief Equality operator
   ///
-  /// \param other
-  /// \return
+  /// \param other Another iterator
+  /// \return \c true if the iterators are the same, \c false otherwise
   constexpr bool operator == (const u8_range_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
+  /// \brief Inequality operator
   ///
-  /// \param other
-  /// \return
+  /// \param other Another iterator
+  /// \return `!(*this == other)`
   constexpr bool operator != (const u8_range_iterator &other) const noexcept {
     return !(*this == other);
   }
@@ -128,7 +141,7 @@ class view_u8_range {
   using const_iterator = iterator_type;
   ///
   using iterator = const_iterator;
-  ///
+  /// \c std::size_t
   using size_type = std::size_t;
 
   ///
@@ -194,6 +207,9 @@ class view_u8_range {
 
 namespace view {
 ///
+/// \tparam OctetRange
+/// \param range
+/// \return
 template <typename OctetRange>
 inline auto as_u8(
     const OctetRange &range) noexcept {

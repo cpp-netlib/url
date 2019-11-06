@@ -22,7 +22,7 @@ namespace unicode {
 ///
 /// \tparam CodePointIterator
 template <class CodePointIterator>
-class transform_u16_iterator {
+class u16_transform_iterator {
 
  public:
 
@@ -38,11 +38,11 @@ class transform_u16_iterator {
   using difference_type = std::ptrdiff_t;
 
   /// Default constructor
-  transform_u16_iterator() = default;
+  u16_transform_iterator() = default;
   ///
   /// \param it
   /// \param last
-  explicit constexpr transform_u16_iterator(
+  explicit constexpr u16_transform_iterator(
       CodePointIterator it,
       CodePointIterator last)
       : it_(it)
@@ -50,14 +50,14 @@ class transform_u16_iterator {
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  transform_u16_iterator &operator ++ () noexcept {
+  u16_transform_iterator &operator ++ () noexcept {
     ++it_;
     return *this;
   }
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  transform_u16_iterator operator ++ (int) noexcept {
+  u16_transform_iterator operator ++ (int) noexcept {
     auto result = *this;
     ++it_;
     return result;
@@ -73,20 +73,20 @@ class transform_u16_iterator {
   /// Equality operator
   /// \param other The other iterator
   /// \return \c true if the iterators are the same, \c false otherwise
-  bool operator == (const transform_u16_iterator &other) const noexcept {
+  bool operator == (const u16_transform_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
   /// Inequality operator
   /// \param other The other iterator
   /// \return \c true if the iterators are not the same, \c false otherwise
-  bool operator != (const transform_u16_iterator &other) const noexcept {
+  bool operator != (const u16_transform_iterator &other) const noexcept {
     return !(*this == other);
   }
 
  private:
 
-  transform_u32_iterator<CodePointIterator> it_, last_;
+  u32_transform_iterator<CodePointIterator> it_, last_;
 
 };
 
@@ -96,7 +96,7 @@ template <class CodePointRange>
 class transform_u16_range {
 
   using iterator_type =
-      transform_u16_iterator<typename traits::range_iterator<CodePointRange>::type>;
+      u16_transform_iterator<typename traits::range_iterator<CodePointRange>::type>;
 
  public:
 
