@@ -6,11 +6,13 @@
 #ifndef SKYR_VERSION_INC
 #define SKYR_VERSION_INC
 
+/// \file skyr/version.hpp
+
 #include <tuple>
 #include <skyr/config.hpp>
 
 #define SKYR_VERSION_MAJOR 1
-#define SKYR_VERSION_MINOR 2
+#define SKYR_VERSION_MINOR 3
 #define SKYR_VERSION_PATCH 0
 
 #define SKYR_VERSION_STRING \

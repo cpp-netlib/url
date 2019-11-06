@@ -13,7 +13,17 @@
 
 namespace skyr {
 inline namespace v1 {
-/// Represents the parts of a URL identifier
+/// Represents the parts of a URL identifier.
+///
+/// For example:
+/// ```
+/// auto url = skyr::url_parse("http://example.org/");
+/// assert(url);
+/// assert("http" == url.scheme);
+/// assert(url.host);
+/// assert("example.org" == url.host.value());
+/// assert(1 == url.path.sixe());
+/// ```
 class url_record {
 
  public:

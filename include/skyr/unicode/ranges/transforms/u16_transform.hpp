@@ -41,6 +41,7 @@ class transform_u16_iterator {
   transform_u16_iterator() = default;
   ///
   /// \param it
+  /// \param last
   explicit constexpr transform_u16_iterator(
       CodePointIterator it,
       CodePointIterator last)

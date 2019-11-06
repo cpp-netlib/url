@@ -5,7 +5,7 @@
 
 
 cmake_minimum_required(VERSION 3.8)
-project(Skyr VERSION 1.2.0 DESCRIPTION "A C++ library that implements the WhatWG URL specification")
+project(Skyr VERSION 1.3.0 DESCRIPTION "A C++ library that implements the WhatWG URL specification")
 
 option(Skyr_BUILD_TESTS "Build the URL tests." ON)
 option(Skyr_BUILD_DOCS "Build the URL documentation." OFF)

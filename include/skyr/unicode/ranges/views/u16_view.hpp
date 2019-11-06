@@ -43,6 +43,7 @@ class u16_range_iterator {
   u16_range_iterator() = default;
   ///
   /// \param it
+  /// \param last
   explicit constexpr u16_range_iterator(
       U16Iterator it,
       U16Iterator last)

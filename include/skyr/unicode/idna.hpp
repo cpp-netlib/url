@@ -9,6 +9,7 @@
 namespace skyr {
 inline namespace v1 {
 namespace unicode {
+/// \enum idna_status
 /// The status values come from the IDNA mapping table in unicode TR46:
 ///
 /// https://unicode.org/reports/tr46/#IDNA_Mapping_Table

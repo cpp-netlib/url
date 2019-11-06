@@ -1,10 +1,13 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-19 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef SKYR_URL_INC
 #define SKYR_URL_INC
+
+/// \file skyr/url.hpp
+/// \defgroup url
 
 #include <string>
 #include <string_view>
@@ -47,6 +50,15 @@ class url_parse_error : public std::runtime_error {
 
 };
 
+/// \defgroup Concepts
+/// C++ concepts used in the URL interface
+///
+/// \ingroup Concepts
+/// \interface Source
+/// \brief A Unicode-encoded string (any of UTF-8, UTF-16
+///        or UTF-32) that is passed as an input to the URL
+///        parser.
+
 /// Represents a URL. Parsing is performed according to the
 /// [WhatWG specification](https://url.spec.whatwg.org/)
 ///
@@ -66,7 +78,7 @@ class url {
 
   /// The internal ASCII string type, or `std::basic_string<value_type>`
   using string_type = std::string;
-  /// The internal string_view, or `std::basic_string_view<value_type>`
+  /// The internal string view type, or `std::basic_string_view<value_type>`
   using string_view = std::string_view;
   /// The ASCII character type
   using value_type = string_view::value_type;
@@ -137,27 +149,31 @@ class url {
     update_record(std::forward<url_record>(input));
   }
 
-  ///
-  /// \param other
+  /// Copy constructor
+  /// \param other Another `url` object
   url(const url &other)
       : url(url_record(other.url_)) {}
 
-  ///
-  /// \param other
+  /// Move constructor
+  /// \param other Another `url` object
   url(url &&other) noexcept
       : url(std::move(other.url_)) {}
 
   /// Swaps this `url` object with another
   ///
-  /// \param other The other `url` object
+  /// \param other Another `url` object
   void swap(url &other) noexcept;
 
-  /// The URL string
+  /// Returns the [serialization of the context object’s url](https://url.spec.whatwg.org/#dom-url-href)
   ///
   /// Equivalent to `skyr::serialize(url_).value()`
   ///
-  /// \returns The underlying URL string
+  /// \returns The serialization of the context object's url
+  /// \sa to_json
   [[nodiscard]] string_type href() const;
+
+  /// Sets the context object's url according to the
+  /// [steps described in the specification](https://url.spec.whatwg.org/#dom-url-href)
 
   /// \tparam Source The input string type
   /// \param href The input string
@@ -176,18 +192,24 @@ class url {
     return set_href(std::string_view(bytes.value()));
   }
 
+  /// Sets the context object's url according to the
+  /// [steps described in the specification](https://url.spec.whatwg.org/#dom-url-href)
+
+  /// \tparam Source The input string type
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_href(string_view href);
 
-  /// The URL string
+  /// Returns the [serialization of the context object’s url](https://url.spec.whatwg.org/#dom-url-href)
   ///
   /// Equivalent to `skyr::serialize(url_).value()`
   ///
-  /// \returns The underlying URL string
+  /// \returns The serialization of the context object's url
   /// \sa href()
   [[nodiscard]] string_type to_json() const;
 
+  /// Returns the [URL origin](https://url.spec.whatwg.org/#origin)
+  ///
   /// \returns The [URL origin](https://url.spec.whatwg.org/#origin)
   [[nodiscard]] string_type origin() const;
 
@@ -338,9 +360,13 @@ class url {
   /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_hostname(string_view hostname);
 
+  /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)
+  ///
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
   [[nodiscard]] string_type port() const;
 
+  /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)
+  ///
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
   template<typename intT>
   [[nodiscard]] intT port(
@@ -400,7 +426,7 @@ class url {
 
   /// Returns the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
-  /// \returns The URL search string
+  /// \returns The [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   [[nodiscard]] string_type search() const;
 
   /// Sets the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
@@ -433,7 +459,7 @@ class url {
 
   /// Returns the [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
   ///
-  /// \returns The URL hash string
+  /// \returns The [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
   [[nodiscard]] string_type hash() const;
 
   /// Sets the [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
@@ -461,11 +487,15 @@ class url {
   /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_hash(string_view hash);
 
+  /// The URL context object
+  ///
   /// \returns The underlying `url_record` implementation.
   [[nodiscard]] const url_record &record() const & noexcept {
     return url_;
   }
 
+  /// The URL context object
+  ///
   /// \returns The underlying `url_record` implementation.
   [[nodiscard]] url_record &&record() && noexcept {
     return std::move(url_);
@@ -489,11 +519,15 @@ class url {
     return url_.validation_error;
   }
 
-  /// \returns An iterator to the beginning of the URL string
+  /// An iterator to the beginning of the context object's string (`href_`)
+  ///
+  /// \returns An iterator to the beginning of the context object's string
   [[nodiscard]] const_iterator begin() const noexcept {
     return view_.begin();
   }
 
+  /// An iterator to the end of the context object's string (`href_`)
+  ///
   /// \returns An iterator to the end of the URL string
   [[nodiscard]] const_iterator end() const noexcept {
     return view_.end();
@@ -535,14 +569,14 @@ class url {
   /// \post `empty() == true`
   void clear();
 
-  /// Returns the underyling byte buffer
+  /// Returns the underlying byte buffer
   ///
   /// \returns `href_.c_str()`
   [[nodiscard]] const char *c_str() const noexcept {
     return href_.c_str();
   }
 
-  /// Returns the underyling byte buffer
+  /// Returns the underlying byte buffer
   ///
   /// \returns `href_.data()`
   [[nodiscard]] const char *data() const noexcept {
@@ -624,7 +658,8 @@ tl::expected<url, std::error_code> make_url(
     url::string_view input, const std::optional<url_record> &base);
 }  // namespace details
 
-/// Parses a URL string and constructs a `url` object
+/// Parses a URL string and constructs a `url` object on success,
+/// wrapped in a `tl::expected`
 ///
 /// \tparam Source The input string type
 /// \param input The input string
@@ -640,7 +675,8 @@ inline tl::expected<url, std::error_code> make_url(
   return details::make_url(std::string_view(bytes.value()), std::nullopt);
 }
 
-/// Parses a URL string and constructs a `url` object
+/// Parses a URL string and constructs a `url` object on success,
+/// wrapped in a `tl::expected`
 ///
 /// \tparam Source The input string type
 /// \param input The input string

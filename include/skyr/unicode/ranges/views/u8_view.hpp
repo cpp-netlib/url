@@ -46,6 +46,7 @@ class u8_range_iterator {
   constexpr u8_range_iterator() = default;
   ///
   /// \param it
+  /// \param last
   explicit constexpr u8_range_iterator(
       OctetIterator it,
       OctetIterator last)

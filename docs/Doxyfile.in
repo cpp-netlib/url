@@ -793,6 +793,15 @@ WARN_LOGFILE           =
 
 INPUT                  = @CMAKE_SOURCE_DIR@/include/skyr/config.hpp \
                          @CMAKE_SOURCE_DIR@/include/skyr/version.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/unicode.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/unicode/domain.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/unicode/idna.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/unicode/errors.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/unicode/ranges/transforms/byte_transform.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/unicode/ranges/transforms/u16_transform.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/unicode/ranges/transforms/u32_transform.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/unicode/ranges/views/u8_view.hpp \
+                         @CMAKE_SOURCE_DIR@/include/skyr/unicode/ranges/views/u16_view.hpp \
                          @CMAKE_SOURCE_DIR@/include/skyr/url.hpp \
                          @CMAKE_SOURCE_DIR@/include/skyr/url/url_error.hpp \
                          @CMAKE_SOURCE_DIR@/include/skyr/url/url_parse.hpp \

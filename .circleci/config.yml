@@ -15,9 +15,9 @@ jobs:
       - run:
           name: Installing GCC
           command: |
-            apt-get update && apt-get install -y gcc g++ gcc-8 g++-8
-            echo 'export CC=/usr/bin/gcc-8' >> $BASH_ENV
-            echo 'export CXX=/usr/bin/g++-8' >> $BASH_ENV
+            apt-get update && apt-get install -y gcc g++ gcc-9 g++-9
+            echo 'export CC=/usr/bin/gcc-9' >> $BASH_ENV
+            echo 'export CXX=/usr/bin/g++-9' >> $BASH_ENV
       - run:
           name: Install CMAKE
           command: |

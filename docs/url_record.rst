@@ -4,14 +4,14 @@
 `skyr::url_record` class
 ------------------------
 
-.. doxygenclass:: skyr::url_record
+.. doxygenclass:: skyr::v1::url_record
     :members:
 
 `skyr::url_record` functions
 ----------------------------
 
-.. doxygenfunction:: skyr::swap(url_record&, url_record&)
+.. doxygenfunction:: skyr::v1::swap(url_record&, url_record&)
 
-.. doxygenfunction:: skyr::parse
+.. doxygenfunction:: skyr::v1::parse
 
-.. doxygenfunction:: skyr::serialize
+.. doxygenfunction:: skyr::v1::serialize

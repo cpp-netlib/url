@@ -21,6 +21,7 @@ This library provides:
 * URL serialization and comparison
 * Percent encoding and decoding functions
 * IDNA and Punycode functions for domain name parsing
+* Basic Unicode conversion functions
 
 ## Building the project
 

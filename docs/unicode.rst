@@ -1,6 +1,9 @@
 Unicode functions
 =================
 
-.. doxygenenum:: skyr::unicode::idna_status
+.. toctree::
+    :maxdepth: 2
 
-.. doxygenenum:: skyr::unicode::unicode_errc
+    idna
+    domain
+    encoding

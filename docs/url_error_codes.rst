@@ -1,7 +1,7 @@
 `skyr::url_parse_error`
 =======================
 
-.. doxygenenum:: skyr::url_parse_errc
+.. doxygenenum:: skyr::v1::url_parse_errc
 
-.. doxygenclass:: skyr::url_parse_error
+.. doxygenclass:: skyr::v1::url_parse_error
     :members:
