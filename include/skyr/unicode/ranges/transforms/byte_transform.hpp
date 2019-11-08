@@ -17,18 +17,20 @@
 namespace skyr {
 inline namespace v1 {
 namespace unicode {
-/// An iterator that converts a code point to bytes when dereferenced
+/// An iterator that transforms a code point to bytes
+/// (as UTF-8) when dereferenced
+///
 /// \tparam CodePointIterator
 template<class CodePointIterator>
 class byte_transform_iterator {
 
  public:
 
-  ///
+  /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
-  ///
+  /// An expected wrapper around a \c char
   using value_type = tl::expected<char, std::error_code>;
-  ///
+  /// A reference
   using reference = value_type;
   /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
@@ -37,12 +39,13 @@ class byte_transform_iterator {
   byte_transform_iterator() = default;
   /// Constructs an iterator from an iterator that iterates over
   /// code points
-  /// \param it
-  /// \param last
+  ///
+  /// \param first The first iterator in the code point sequence
+  /// \param last The end iterator in the code point sequence
   byte_transform_iterator(
-      CodePointIterator it,
+      CodePointIterator first,
       CodePointIterator last)
-      : it_(it), last_(last) {}
+      : it_(first), last_(last) {}
 
   /// Pre-increment operator
   /// \return A reference to this iterator
@@ -60,7 +63,11 @@ class byte_transform_iterator {
   }
 
   /// Dereference operator
-  /// \return An expected value
+  ///
+  /// Returns the value of the octet as if iterating through a
+  /// UTF-8 encoded sequence.
+  ///
+  /// \return An expected wrapper
   [[nodiscard]] reference operator*() const noexcept {
     auto code_point = u32_value(*it_).value();
 
@@ -107,7 +114,7 @@ class byte_transform_iterator {
 
   /// Inequality operator
   /// \param other The other iterator
-  /// \return \c true if the iterators are not the same, \c false otherwise
+  /// \return \c `!(*this == other)`
   constexpr bool operator!=(const byte_transform_iterator &other) const noexcept {
     return !(*this == other);
   }
@@ -144,7 +151,7 @@ class byte_transform_iterator {
 };
 
 
-/// A range that transforms code point values to bytes.
+/// A range that transforms code point values to a UTF-8 sequence
 /// \tparam CodePointRange
 template<class CodePointRange>
 class transform_byte_range {
@@ -154,7 +161,7 @@ class transform_byte_range {
 
  public:
 
-  /// An expected byte value
+  /// An expected wrapper around a byte value
   using value_type = tl::expected<char, std::error_code>;
   /// \c value_type
   using const_reference = value_type;
@@ -173,32 +180,32 @@ class transform_byte_range {
   /// \post empty()
   transform_byte_range() = default;
 
-  ///
-  /// \param range
+  /// Constructor
+  /// \param range A range of code points
   explicit transform_byte_range(
       const CodePointRange &range) noexcept
       : first(iterator_type{std::begin(range), std::end(range)}),
         last(iterator_type{std::end(range), std::end(range)}) {}
 
-  /// Returns an iterator to the beginning
+  /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
   [[nodiscard]] const_iterator begin() const noexcept {
     return first ? first.value() : iterator_type();
   }
 
-  /// Returns an iterator to the end
+  /// Returns an iterator to the last element in the code point sequence
   /// \return \c const_iterator
   [[nodiscard]] const_iterator end() const noexcept {
     return last ? last.value() : iterator_type();
   }
 
-  /// Returns an iterator to the beginning
+  /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
   [[nodiscard]] const_iterator cbegin() const noexcept {
     return begin();
   }
 
-  /// Returns an iterator to the end
+  /// Returns an iterator to the last element in the code point sequence
   /// \return \c const_iterator
   [[nodiscard]] const_iterator cend() const noexcept {
     return end();

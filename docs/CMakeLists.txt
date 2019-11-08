@@ -23,7 +23,6 @@ set(DOC_FILES
         encoding_byte_transform.rst
         encoding_u16_transform.rst
         encoding_u32_transform.rst
-        concepts.rst
         url.rst
         url_class.rst
         url_record.rst

@@ -50,15 +50,6 @@ class url_parse_error : public std::runtime_error {
 
 };
 
-/// \defgroup Concepts
-/// C++ concepts used in the URL interface
-///
-/// \ingroup Concepts
-/// \interface Source
-/// \brief A Unicode-encoded string (any of UTF-8, UTF-16
-///        or UTF-32) that is passed as an input to the URL
-///        parser.
-
 /// Represents a URL. Parsing is performed according to the
 /// [WhatWG specification](https://url.spec.whatwg.org/)
 ///

@@ -19,6 +19,8 @@
 namespace skyr {
 inline namespace v1 {
 namespace unicode {
+/// An iterator that transform a code point to UTF-16 code
+/// units
 ///
 /// \tparam CodePointIterator
 template <class CodePointIterator>
@@ -26,13 +28,13 @@ class u16_transform_iterator {
 
  public:
 
-  ///
+  /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
-  ///
+  /// An expected wrapper around a UTF-16 encoded code point
   using value_type = tl::expected<u16_code_point_t, std::error_code>;
-  ///
+  /// \c value_type
   using reference = value_type;
-  ///
+  /// \c value_type *
   using pointer = typename std::add_pointer<value_type>::type;
   /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
@@ -40,12 +42,12 @@ class u16_transform_iterator {
   /// Default constructor
   u16_transform_iterator() = default;
   ///
-  /// \param it
+  /// \param first
   /// \param last
   explicit constexpr u16_transform_iterator(
-      CodePointIterator it,
+      CodePointIterator first,
       CodePointIterator last)
-      : it_(it)
+      : it_(first)
       , last_(last) {}
 
   /// Pre-increment operator
@@ -90,6 +92,7 @@ class u16_transform_iterator {
 
 };
 
+/// A range that transforms code point values to a UTF-16 sequence
 ///
 /// \tparam CodePointRange
 template <class CodePointRange>
