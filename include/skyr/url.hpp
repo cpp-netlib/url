@@ -719,6 +719,40 @@ inline bool operator>=(const url &lhs, const url &rhs) noexcept {
 inline std::ostream &operator<<(std::ostream &os, const url &url) {
   return os << url.href();
 }
+
+namespace literals {
+/// Literal operator for a URL string
+/// \param str
+/// \param length
+/// \return A url
+inline auto operator "" _url(const char *str, std::size_t length) {
+  return make_url(std::string_view(str, length));
+}
+
+///
+/// \param str
+/// \param length
+/// \return
+inline auto operator "" _url(const wchar_t *str, std::size_t length) {
+  return make_url(std::wstring_view(str, length));
+}
+
+///
+/// \param str
+/// \param length
+/// \return
+inline auto operator "" _url(const char16_t *str, std::size_t length) {
+  return make_url(std::u16string_view(str, length));
+}
+
+///
+/// \param str
+/// \param length
+/// \return
+inline auto operator "" _url(const char32_t *str, std::size_t length) {
+  return make_url(std::u32string_view(str, length));
+}
+}  // namespace literals
 }  // namespace v1
 }  // namespace skyr
 

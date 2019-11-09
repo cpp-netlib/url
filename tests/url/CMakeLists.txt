@@ -18,6 +18,7 @@ set(
         url_search_parameter_range_tests.cpp
         ipv4_address_tests.cpp
         ipv6_address_tests.cpp
+        url_literal_tests.cpp
     )
 
 if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)

@@ -15,6 +15,7 @@ set(
         example_07.cpp
         example_08.cpp
         example_09.cpp
+        example_10.cpp
     )
 
 foreach(file_name ${EXAMPLES})

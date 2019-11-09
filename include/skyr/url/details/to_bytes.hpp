@@ -21,7 +21,7 @@ template<class Source>
 struct to_bytes_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char>::value>::type> {
   tl::expected<std::string, std::error_code> operator()(const Source &source) const {
-    return source;
+    return std::string(source);
   }
 };
 
