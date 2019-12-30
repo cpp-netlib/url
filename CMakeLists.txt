@@ -19,6 +19,8 @@ option(Skyr_DISABLE_LIBCXX "Instruct Clang to use LLVM's implementation of C++ s
 
 set(CMAKE_VERBOSE_MAKEFILE true)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Threads REQUIRED)
 find_package(tl-expected CONFIG REQUIRED)
