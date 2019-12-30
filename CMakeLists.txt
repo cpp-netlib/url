@@ -15,6 +15,7 @@ option(Skyr_WARNINGS_AS_ERRORS "Treat warnings as errors." ON)
 option(Skyr_BUILD_WITHOUT_EXCEPTIONS "Build without exceptions." OFF)
 option(Skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
 option(Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS "Build the filesystem path functions" OFF)
+option(Skyr_DISABLE_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" ON)
 
 set(CMAKE_VERBOSE_MAKEFILE true)
 set(CMAKE_CXX_STANDARD 17)
