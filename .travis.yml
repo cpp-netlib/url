@@ -15,7 +15,7 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-8']
-      env: [COMPILER='g++-8', VCPKG_TRIPLET='x64-linux', DISABLE_LIBCXX='ON']
+      env: [COMPILER='g++-8', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='OFF']
 
     - os: linux
       compiler: gcc
@@ -23,7 +23,7 @@ matrix:
         apt:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-9']
-      env: [COMPILER='g++-9', VCPKG_TRIPLET='x64-linux', DISABLE_LIBCXX='ON']
+      env: [COMPILER='g++-9', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='OFF']
 
     - os: linux
       compiler: clang
@@ -31,7 +31,7 @@ matrix:
         apt:
           sources: ['llvm-toolchain-xenial-7']
           packages: ['clang++-7', 'libc++-7-dev', 'libc++abi-7-dev']
-      env: [COMPILER='clang++-7', VCPKG_TRIPLET='x64-linux', DISABLE_LIBCXX='OFF']
+      env: [COMPILER='clang++-7', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
 
     - os: linux
       compiler: clang
@@ -39,7 +39,7 @@ matrix:
         apt:
           sources: ['llvm-toolchain-xenial-8']
           packages: ['clang++-8', 'libc++-8-dev', 'libc++abi-8-dev']
-      env: [COMPILER='clang++-8', VCPKG_TRIPLET='x64-linux', DISABLE_LIBCXX='OFF']
+      env: [COMPILER='clang++-8', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
 
 #    # 3/ OSX Clang Builds
 #    - os: osx
@@ -97,7 +97,7 @@ script:
     - cmake -DSkyr_BUILD_TESTS=ON
             -DSkyr_BUILD_DOCS=OFF
             -DSkyr_BUILD_EXAMPLES=OFF
-            -DSkyr_DISABLE_LIBCXX=${DISABLE_LIBCXX}
+            -DSkyr_BUILD_WITH_LLVM_LIBCXX=${BUILD_WITH_LLVM_LIBCXX}
             -DCMAKE_TOOLCHAIN_FILE=${DEPS_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
             ..
     - make -j 8
