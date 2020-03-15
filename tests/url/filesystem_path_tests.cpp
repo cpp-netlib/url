@@ -1,4 +1,4 @@
-// Copyright 2018-19 Glyn Matthews.
+// Copyright 2018-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt of copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -28,6 +28,20 @@ TEST_CASE("filesystem path", "[filesystem_path]") {
     auto path = skyr::filesystem::to_path(instance);
     REQUIRE(path);
     CHECK(path.value().generic_string() == "/path/to/file.txt");
+  }
+
+  SECTION("from_path") {
+    auto path = std::filesystem::path("/path/to/file.txt");
+    auto url = skyr::filesystem::from_path(path);
+    REQUIRE(url);
+    CHECK(url.value().href() == "file:///path/to/file.txt");
+  }
+
+  SECTION("Windows path") {
+    auto path = std::filesystem::path("C:\\path\\to\\file.txt");
+    auto url = skyr::filesystem::from_path(path);
+    REQUIRE(url);
+    CHECK(url.value().href() == "file:///C:/path/to/file.txt");
   }
 
   // TODO: add test with percent encoding

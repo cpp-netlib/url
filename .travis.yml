@@ -2,7 +2,7 @@ sudo: false
 
 language: c++
 
-dist: xenial
+dist: bionic
 
 env:
   global: DEPS_DIR="${TRAVIS_BUILD_DIR}/deps_"
@@ -29,7 +29,7 @@ matrix:
       compiler: clang
       addons: &clang7
         apt:
-          sources: ['llvm-toolchain-xenial-7']
+          sources: ['llvm-toolchain-bionic-7']
           packages: ['clang++-7', 'libc++-7-dev', 'libc++abi-7-dev']
       env: [COMPILER='clang++-7', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
 
@@ -37,9 +37,17 @@ matrix:
       compiler: clang
       addons: &clang8
         apt:
-          sources: ['llvm-toolchain-xenial-8']
+          sources: ['llvm-toolchain-bionic-8']
           packages: ['clang++-8', 'libc++-8-dev', 'libc++abi-8-dev']
       env: [COMPILER='clang++-8', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
+
+    - os: linux
+      compiler: clang
+      addons: &clang9
+        apt:
+          sources: ['llvm-toolchain-bionic-9']
+          packages: ['clang++-9', 'libc++-9-dev', 'libc++abi-9-dev']
+      env: [COMPILER='clang++-9', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
 
 #    # 3/ OSX Clang Builds
 #    - os: osx
