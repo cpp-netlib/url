@@ -1,4 +1,4 @@
-// Copyright 2019 Glyn Matthews.
+// Copyright 2019-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -170,7 +170,8 @@ class percent_decode_range {
   ///
   /// \return
   [[nodiscard]] const_iterator begin() const noexcept {
-    return impl_? impl_.value().first : iterator_type();
+    return impl_?
+           ((impl_.value().first != impl_.value().last)? impl_.value().first : iterator_type()) : iterator_type();
   }
 
   ///

@@ -23,7 +23,7 @@ TEST_CASE("filesystem path", "[filesystem_path]") {
     CHECK(path.value().generic_string() == "/path/to/file.txt");
   }
 
-  SECTION(filesystem_path_tests, http_path) {
+  SECTION("http_path") {
     auto instance = skyr::url{"http://www.example.com/path/to/file.txt"};
     auto path = skyr::filesystem::to_path(instance);
     REQUIRE(path);

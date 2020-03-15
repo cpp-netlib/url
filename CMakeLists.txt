@@ -1,11 +1,18 @@
-# Copyright (c) Glyn Matthews 2012-2019.
+# Copyright (c) Glyn Matthews 2012-2020.
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
 
-cmake_minimum_required(VERSION 3.8)
-project(Skyr VERSION 1.3.0 DESCRIPTION "A C++ library that implements the WhatWG URL specification")
+cmake_minimum_required(VERSION 3.15)
+
+project(
+        Skyr
+        VERSION 1.4.1
+        HOMEPAGE_URL https://cpp-netlib.github.io/url
+        DESCRIPTION "A C++ library that implements the WhatWG URL specification"
+        LANGUAGES CXX
+)
 
 option(Skyr_BUILD_TESTS "Build the URL tests." ON)
 option(Skyr_BUILD_DOCS "Build the URL documentation." OFF)
@@ -14,7 +21,7 @@ option(Skyr_FULL_WARNINGS "Build the library with all warnings turned on." ON)
 option(Skyr_WARNINGS_AS_ERRORS "Treat warnings as errors." ON)
 option(Skyr_BUILD_WITHOUT_EXCEPTIONS "Build without exceptions." OFF)
 option(Skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
-option(Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS "Build the filesystem path functions" OFF)
+option(Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS "Build the filesystem path functions" ON)
 option(Skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
 
 set(CMAKE_VERBOSE_MAKEFILE true)
@@ -66,11 +73,6 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
 endif()
 
 add_subdirectory(src)
-
-function(_remove_extension file_name basename)
-    string(REGEX REPLACE "\\.[^.]*$" "" _basename ${file_name})
-    set(${basename} ${_basename} PARENT_SCOPE)
-endfunction()
 
 # Testing
 if (Skyr_BUILD_TESTS)
