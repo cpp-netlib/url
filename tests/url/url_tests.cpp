@@ -572,6 +572,8 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("https://+:80/vroot/");
     CHECK("https:" == instance.protocol());
     CHECK("+:80" == instance.host());
+    CHECK("+" == instance.hostname());
+    CHECK("80" == instance.port());
     CHECK("/vroot/" == instance.pathname());
   }
 }
