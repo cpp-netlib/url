@@ -66,7 +66,7 @@ tl::expected<std::string, std::error_code> punycode_decode(
 /// \returns An ASCII domain, or an error
 tl::expected<std::string, std::error_code> domain_to_ascii(
     std::string_view domain,
-    bool be_strict = true);
+    bool be_strict = false);
 
 /// Converts a UTF-32 encoded domain to ASCII using
 /// [IDNA processing](https://www.unicode.org/reports/tr46/#Processing)

@@ -566,4 +566,12 @@ TEST_CASE("url_tests", "[url]") {
     CHECK("example.com" == instance.host());
     CHECK("?a=b&c=d" == instance.search());
   }
+
+  SECTION("domain_to_ascii_be_strict_issue_36")
+  {
+    auto instance = skyr::url("https://+:80/vroot/");
+    CHECK("https:" == instance.protocol());
+    CHECK("+:80" == instance.host());
+    CHECK("/vroot/" == instance.pathname());
+  }
 }

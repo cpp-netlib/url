@@ -31,6 +31,11 @@ TEST_CASE("valid domains", "[domain]") {
 TEST_CASE("invalid domains", "[domain]") {
   SECTION("invalid_domain_1") {
     auto instance = skyr::unicode::domain_to_ascii("GOO 　goo.com");
+    REQUIRE(instance);
+  }
+
+  SECTION("invalid_domain_1_be strict") {
+    auto instance = skyr::unicode::domain_to_ascii("GOO 　goo.com", true);
     REQUIRE_FALSE(instance);
   }
 
@@ -46,6 +51,11 @@ TEST_CASE("invalid domains", "[domain]") {
 
   SECTION("invalid_domain_4") {
     auto instance = skyr::unicode::domain_to_ascii("％４１.com");
+    REQUIRE(instance);
+  }
+
+  SECTION("invalid_domain_4_be strict") {
+    auto instance = skyr::unicode::domain_to_ascii("％４１.com", true);
     REQUIRE_FALSE(instance);
   }
 }
