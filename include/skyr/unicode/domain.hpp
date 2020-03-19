@@ -76,7 +76,7 @@ tl::expected<std::string, std::error_code> domain_to_ascii(
 /// \returns An ASCII domain, or an error
 tl::expected<std::string, std::error_code> domain_to_ascii(
     std::u32string_view domain,
-    bool be_strict = true);
+    bool be_strict = false);
 }  // namespace unicode
 }  // namespace v1
 }  // namespace skyr
