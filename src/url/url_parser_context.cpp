@@ -1,4 +1,4 @@
-// Copyright 2018-19 Glyn Matthews.
+// Copyright 2018-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -121,23 +121,28 @@ tl::expected<std::string, url_parse_errc> parse_host(
   return host.value().to_string();
 }
 
-bool is_valid_port(std::string_view port) noexcept {
+tl::expected<std::uint16_t, url_parse_errc> port_number(std::string_view port) noexcept {
   if (port.empty()) {
-    return false;
+    return tl::make_unexpected(url_parse_errc::invalid_port);
   }
 
-  auto first = begin(port);
-  const char* port_first = std::addressof(*first);
+  const char* port_first = port.data();
   char* port_last = nullptr;
-  auto value = std::strtoul(port_first, &port_last, 10);
-  return
-      (port_first != port_last) &&
-      (value < std::numeric_limits<std::uint16_t>::max());
+  auto port_value = std::strtoul(port_first, &port_last, 10);
+
+  if (port_first == port_last) {
+    return tl::make_unexpected(url_parse_errc::invalid_port);
+  }
+
+  if (port_value > std::numeric_limits<std::uint16_t>::max()) {
+    return tl::make_unexpected(url_parse_errc::invalid_port);
+  }
+  return static_cast<std::uint16_t>(port_value);
 }
 
 bool is_url_code_point(char byte) noexcept {
   return
-      std::isalnum(byte, std::locale::classic()) || is_in(byte, "!$&'()*+,-./:/=?@_~");
+      std::isalnum(byte, std::locale::classic()) || is_in(byte, "!$&'()*+,-./:;=?@_~");
 }
 
 bool is_windows_drive_letter(
@@ -270,7 +275,9 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_scheme(
     url.scheme = buffer;
 
     if (state_override) {
-      // TODO: check default port
+      if (url.port == details::default_port(url.scheme)) {
+        url.port = std::nullopt;
+      }
       return url_parse_action::success;
     }
     buffer.clear();
@@ -516,12 +523,11 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_hostnam
       return url_parse_action::success;
     }
   } else if (
-      ((is_eof()) || (byte == '/') || (byte == '?') || (byte == '#')) ||
+      (is_eof() || (byte == '/') || (byte == '?') || (byte == '#')) ||
           (url.is_special() && (byte == '\\'))) {
-    if (it == begin(view)) {
-      return url_parse_action::continue_;
+    if (it != begin(view)) {
+      decrement();
     }
-    decrement();
 
     if (url.is_special() && buffer.empty()) {
       url.validation_error = true;
@@ -565,21 +571,18 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_port(ch
           (url.is_special() && (byte == '\\')) ||
           state_override) {
     if (!buffer.empty()) {
-      if (!is_valid_port(buffer)) {
+      auto port = port_number(buffer);
+
+      if (!port) {
         url.validation_error = true;
-        return tl::make_unexpected(url_parse_errc::invalid_port);
+        return tl::make_unexpected(port.error());
       }
 
-      auto view = std::string_view(url.scheme.data(), url.scheme.length());
-      auto first = buffer.data();
-      decltype(first) last = nullptr;
-      auto port = static_cast<std::uint16_t>(
-          std::strtol(first, &last, 10));
-      if (details::is_default_port(view, port)) {
+      if (details::is_default_port(url.scheme, port.value())) {
         url.port = std::nullopt;
       }
       else {
-        url.port = port;
+        url.port = port.value();
       }
       buffer.clear();
     }

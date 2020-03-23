@@ -13,7 +13,6 @@ const default_port_list &special_schemes() noexcept {
   static const auto schemes = default_port_list{
     {"ftp", 21},
     {"file", std::nullopt},
-    {"gopher", 70},
     {"http", 80},
     {"https", 443},
     {"ws", 80},

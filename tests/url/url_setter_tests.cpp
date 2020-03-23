@@ -221,7 +221,30 @@ TEST_CASE("url_setter_tests", "[url]") {
     CHECK("" == instance.hostname());
     CHECK("/path/to/helicon/" == instance.pathname());
   }
-  
+
+  SECTION("test_host_non_special_scheme")
+  {
+    auto instance = skyr::url{"sc://x/"};
+
+    auto result = instance.set_host("\u0000");
+    REQUIRE(result);
+    CHECK("sc://x/" == instance.href());
+    CHECK("x" == instance.host());
+    CHECK("x" == instance.hostname());
+  }
+
+  SECTION("test_host_non_special_scheme_2")
+  {
+    auto instance = skyr::url{"sc://test@test/"};
+
+    auto result = instance.set_host("");
+    REQUIRE(result);
+    CHECK("sc://test@test/" == instance.href());
+    CHECK("test" == instance.username());
+    CHECK("test" == instance.host());
+    CHECK("test" == instance.hostname());
+  }
+
   SECTION("test_port_no_port") {
     auto instance = skyr::url{"http://example.com/"};
   
@@ -250,7 +273,7 @@ TEST_CASE("url_setter_tests", "[url]") {
     auto instance = skyr::url{"http://example.com/"};
   
     auto result = instance.set_port("Ceci n'est pas un port");
-    REQUIRE_FALSE(result);
+    REQUIRE(result);
     CHECK("http://example.com/" == instance.href());
   }
   
@@ -266,15 +289,15 @@ TEST_CASE("url_setter_tests", "[url]") {
     auto instance = skyr::url{"http://example.com/"};
   
     auto result = instance.set_port("8080C");
-    REQUIRE_FALSE(result);
-    CHECK("http://example.com/" == instance.href());
+    REQUIRE(result);
+    CHECK("http://example.com:8080/" == instance.href());
   }
   
   SECTION("test_port_invalid_port_4") {
     auto instance = skyr::url{"http://example.com/"};
   
     auto result = instance.set_port("-1");
-    REQUIRE_FALSE(result);
+    REQUIRE(result);
     CHECK("http://example.com/" == instance.href());
   }
   
@@ -292,6 +315,14 @@ TEST_CASE("url_setter_tests", "[url]") {
     auto result = instance.set_port(8080);
     REQUIRE(result);
     CHECK("http://example.com:8080/" == instance.href());
+  }
+
+  SECTION("test_port_with_extra_characters") {
+    auto instance = skyr::url{"http://example.com/path"};
+
+    auto result = instance.set_port("8080/stuff");
+    REQUIRE(result);
+    CHECK("http://example.com:8080/path" == instance.href());
   }
   
   SECTION("test_pathname_1") {

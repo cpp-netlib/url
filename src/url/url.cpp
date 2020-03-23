@@ -66,7 +66,6 @@ url::string_type url::origin() const {
     auto url = details::make_url(pathname(), std::nullopt);
     return url ? url.value().origin() : "";
   } else if ((url_.scheme == "ftp") ||
-      (url_.scheme == "gopher") ||
       (url_.scheme == "http") ||
       (url_.scheme == "https") ||
       (url_.scheme == "ws") ||

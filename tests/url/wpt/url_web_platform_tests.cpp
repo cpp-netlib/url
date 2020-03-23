@@ -102,10 +102,11 @@ Catch::Generators::GeneratorWrapper<test_case> test_case_(
 } // namespace
 
 
-TEST_CASE("test_parse_urls_using_base_urls", "[web_platorm]") {
+TEST_CASE("test_parse_urls_using_base_urls", "[web_platform]") {
   auto test_case_data = GENERATE(test_case_("urltestdata.json", false));
 
   SECTION("parse_using_make") {
+    INFO(test_case_data.input);
     auto instance = skyr::make_url(
         test_case_data.input,
         skyr::make_url(test_case_data.base).value());

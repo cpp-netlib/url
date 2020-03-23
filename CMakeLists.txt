@@ -15,6 +15,7 @@ project(
 )
 
 option(Skyr_BUILD_TESTS "Build the URL tests." ON)
+option(Skyr_BUILD_WPT_TESTS "Downloads WPT test data and builds the WPT tests." ON)
 option(Skyr_BUILD_DOCS "Build the URL documentation." OFF)
 option(Skyr_BUILD_EXAMPLES "Build the URL examples." OFF)
 option(Skyr_FULL_WARNINGS "Build the library with all warnings turned on." ON)
@@ -23,6 +24,8 @@ option(Skyr_BUILD_WITHOUT_EXCEPTIONS "Build without exceptions." OFF)
 option(Skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
 option(Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS "Build the filesystem path functions" ON)
 option(Skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
+
+set(Skyr_WPT_TAG "merge_pr_22329" CACHE STRING "The Git tag for the WPT test data" )
 
 set(CMAKE_VERBOSE_MAKEFILE true)
 set(CMAKE_CXX_STANDARD 17)

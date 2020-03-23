@@ -615,28 +615,6 @@ class url {
       return tl::make_unexpected(
           make_error_code(url_parse_errc::invalid_unicode_character));
     }
-
-    if (!bytes.value().empty()) {
-      const char *first = bytes.value().data();
-      char *last = nullptr;
-      auto value = std::strtol(first, &last, 10);
-      if (first == last) {
-        return tl::make_unexpected(
-            make_error_code(url_parse_errc::invalid_port));
-      }
-
-      if (last != first + bytes.value().size()) {
-        return tl::make_unexpected(
-            make_error_code(url_parse_errc::invalid_port));
-      }
-
-      if ((value <= 0) ||
-          (value >= static_cast<long>(std::numeric_limits<unsigned short>::max()))) {
-        return tl::make_unexpected(
-            make_error_code(url_parse_errc::invalid_port));
-      }
-    }
-
     return set_port(std::string_view(bytes.value()));
   }
 

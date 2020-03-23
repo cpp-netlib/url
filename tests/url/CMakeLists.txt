@@ -1,4 +1,4 @@
-# Copyright (c) Glyn Matthews 2012-2019.
+# Copyright (c) Glyn Matthews 2012-2020.
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
@@ -12,7 +12,6 @@ set(
         percent_encoding_tests.cpp
         url_tests.cpp
         url_vector_tests.cpp
-        url_web_platform_tests.cpp
         url_parsing_example_tests.cpp
         url_setter_tests.cpp
         url_search_parameters_tests.cpp
@@ -31,7 +30,6 @@ endif()
 if (NOT Skyr_BUILD_WITHOUT_EXCEPTIONS)
     LIST(APPEND URL_TESTS
             url_tests_with_exceptions.cpp
-            url_web_platform_tests_with_exceptions.cpp
             )
 endif()
 
@@ -39,6 +37,10 @@ foreach (file_name ${URL_TESTS})
     _create_test(${file_name} ${Skyr_BINARY_DIR}/tests/url test)
     add_test(${test} ${Skyr_BINARY_DIR}/tests/url/${test})
 endforeach ()
+
+if (${Skyr_BUILD_WPT_TESTS})
+    add_subdirectory(wpt)
+endif()
 
 file(GLOB URL_TEST_DATA *.txt *.json)
 file(COPY ${URL_TEST_DATA} DESTINATION ${Skyr_BINARY_DIR}/tests/url)
