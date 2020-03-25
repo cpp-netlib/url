@@ -538,7 +538,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_hostnam
         buffer.empty() &&
         (url.includes_credentials() || url.port)) {
       url.validation_error = true;
-      return url_parse_action::continue_;
+      return url_parse_action::success;
     }
 
     auto host = parse_host(buffer, !url.is_special());

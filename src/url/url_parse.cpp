@@ -147,9 +147,6 @@ tl::expected<url_record, std::error_code> basic_parse(
       case url_parse_action::increment:
         break;
       case url_parse_action::continue_:
-        if (context.url.validation_error) {
-          return context.url;
-        }
         continue;
     }
 

@@ -15,7 +15,7 @@ message(STATUS "${wpt_SOURCE_DIR}")
 
 SET(WPT_TESTS
         url_web_platform_tests.cpp
-        url_wpt_setter_tests.cpp
+#        url_wpt_setter_tests.cpp
         )
 
 if (NOT Skyr_BUILD_WITHOUT_EXCEPTIONS)
