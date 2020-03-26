@@ -22,7 +22,7 @@ build_script:
   - git submodule update
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_TOOLCHAIN_FILE=C:\Tools\vcpkg\scripts\buildsystems\vcpkg.cmake
+  - cmake .. -A x64 -DCMAKE_TOOLCHAIN_FILE=C:\Tools\vcpkg\scripts\buildsystems\vcpkg.cmake
   - cmake --build .
   - ctest
 
