@@ -64,7 +64,7 @@ add_library(skyr-url ${Skyr_SRCS})
 
 target_link_libraries(skyr-url PUBLIC tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (NOT Skyr_DISABLE_LIBCXX)
+    if (Skyr_BUILD_WITH_LLVM_LIBCXX)
         target_link_libraries(skyr-url PUBLIC "c++")
     endif()
 elseif(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
