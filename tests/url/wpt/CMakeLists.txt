@@ -11,7 +11,6 @@ FetchContent_Declare(
         GIT_TAG ${Skyr_WPT_TAG}
 )
 FetchContent_MakeAvailable(wpt)
-message(STATUS "${wpt_SOURCE_DIR}")
 
 SET(WPT_TESTS
         url_web_platform_tests.cpp

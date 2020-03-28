@@ -2,62 +2,81 @@ sudo: false
 
 language: c++
 dist: bionic
-#osx_image: xcode10.3
-#
-#compiler:
-#  - gcc
-#  - clang
-#os:
-#  - linux
-#  - osx
+
+compiler:
+  - gcc
+  - clang
+os:
+  - linux
+  - osx
 
 env:
   global:
     - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps_"
     - INSTALL_DIR="${TRAVIS_BUILD_DIR}/install"
+  jobs:
+    - BUILD_WITHOUT_EXCEPTIONS=OFF SHARED_LIB=0 BUILD_TYPE=Debug
+    - BUILD_WITHOUT_EXCEPTIONS=OFF SHARED_LIB=0 BUILD_TYPE=Release
+    - BUILD_WITHOUT_EXCEPTIONS=OFF SHARED_LIB=1 BUILD_TYPE=Debug
+    - BUILD_WITHOUT_EXCEPTIONS=OFF SHARED_LIB=1 BUILD_TYPE=Release
+    - BUILD_WITHOUT_EXCEPTIONS=ON SHARED_LIB=0 BUILD_TYPE=Debug
+    - BUILD_WITHOUT_EXCEPTIONS=ON SHARED_LIB=0 BUILD_TYPE=Release
+    - BUILD_WITHOUT_EXCEPTIONS=ON SHARED_LIB=1 BUILD_TYPE=Debug
+    - BUILD_WITHOUT_EXCEPTIONS=ON SHARED_LIB=1 BUILD_TYPE=Release
 
+addons:
+  apt:
+    sources:
+      - sourceline: 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main'
+        key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
+    packages:
+      - clang-9
+      - cmake
+      - gcc-9
+      - g++-9
+      - ninja-build
+  homebrew:
+    packages:
+      - cmake
+      - gcc@9
+      - llvm@9
+      - ninja
+    update: true
 
-matrix:
-  include:
-    - os: linux
-      compiler: gcc
-      addons: &gcc8
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-8']
-      env: [COMPILER='g++-8', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='OFF']
-
-    - os: linux
-      compiler: gcc
-      addons: &gcc9
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-9']
-      env: [COMPILER='g++-9', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='OFF']
-
-    - os: linux
-      compiler: clang
-      addons: &clang7
-        apt:
-          sources: ['llvm-toolchain-bionic-7']
-          packages: ['clang++-7', 'libc++-7-dev', 'libc++abi-7-dev']
-      env: [COMPILER='clang++-7', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
-
-    - os: linux
-      compiler: clang
-      addons: &clang8
-        apt:
-          sources: ['llvm-toolchain-bionic-8']
-          packages: ['clang++-8', 'libc++-8-dev', 'libc++abi-8-dev']
-      env: [COMPILER='clang++-8', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
-
-    - os: linux
-      compiler: clang
-      addons: &clang9
-        apt:
-          sources: ['llvm-toolchain-bionic-9']
-          packages: ['clang++-9', 'libc++-9-dev', 'libc++abi-9-dev']
-      env: [COMPILER='clang++-9', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
+#matrix:
+#  include:
+#    - os: linux
+#      compiler: gcc
+#      addons: &gcc8
+#        apt:
+#          sources: ['ubuntu-toolchain-r-test']
+#          packages: ['g++-8']
+#      env: [COMPILER='g++-8', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='OFF']
+#
+#    - os: linux
+#      compiler: gcc
+#      addons: &gcc9
+#        apt:
+#          sources: ['ubuntu-toolchain-r-test']
+#          packages: ['g++-9']
+#      env: [COMPILER='g++-9', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='OFF']
+#
+#    - os: linux
+#      compiler: clang
+#      addons: &clang8
+#        apt:
+#          sources: ['llvm-toolchain-bionic-8']
+#          packages: ['clang++-8', 'libc++-8-dev', 'libc++abi-8-dev']
+#      env: [COMPILER='clang++-8', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
+#
+#    - os: linux
+#      compiler: clang
+#      addons: &clang9
+#        apt:
+#          sources: ['llvm-toolchain-bionic-9']
+#          packages: ['clang++-9', 'libc++-9-dev', 'libc++abi-9-dev']
+#      env: [COMPILER='clang++-9', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
 
 #    # 3/ OSX Clang Builds
 #    - os: osx
@@ -75,37 +94,52 @@ before_install:
       CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v3.14.0/cmake-3.14.0-Linux-x86_64.tar.gz"
       mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
-    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      which cmake || brew install cmake
-    fi
-  - |
-    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       which ninja || sudo apt-get install ninja-build
     elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      which cmake || brew install cmake
       which ninja || brew install ninja
     fi
   - popd
   - echo ${INSTALL_DIR}
   - mkdir -p ${INSTALL_DIR}
-  - |
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      brew install gcc
-      brew upgrade gcc
-      export CXX=`which g++`
-    else
-      export CXX=${COMPILER}
-    fi
+#  - |
+#    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+#      brew install gcc
+#      brew upgrade gcc
+#      export CXX=`which g++`
+#    else
+#      export CXX=${COMPILER}
+#    fi
   - echo ${CXX}
   - ${CXX} --version
 
 install:
+  # The following Homebrew packages aren't linked by default, and need to be
+  # prepended to the path explicitly.
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+    export PATH="$(brew --prefix llvm)/bin:$PATH";
+    fi
+  # /usr/bin/gcc points to an older compiler on both Linux and macOS.
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-9" CC="gcc-9"; fi
+  # /usr/bin/clang points to an older compiler on both Linux and macOS.
+  #
+  # Homebrew's llvm package doesn't ship a versioned clang++ binary, so the values
+  # below don't work on macOS. Fortunately, the path change above makes the
+  # default values (clang and clang++) resolve to the correct compiler on macOS.
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+    if [ "$CXX" = "clang++" ]; then export CXX="clang++-9" CC="clang-9"; fi;
+    fi
+  - echo ${CC}
+  - echo ${CXX}
+  - ${CXX} --version
+  - cmake --version
+  # Update dependencies directory
   - mkdir -p ${DEPS_DIR}/vcpkg
   - pushd ${DEPS_DIR}/vcpkg
   - git init
   - git remote add origin https://github.com/Microsoft/vcpkg.git
   - git fetch origin master
   - git checkout -b master origin/master
-  - ${CXX} --version
   - export
   - ./bootstrap-vcpkg.sh
   - ./vcpkg install tl-expected catch2 nlohmann-json
@@ -116,7 +150,6 @@ cache:
     - ${DEPS_DIR}/vcpkg/installed
 
 before_script:
-  - export CXX=${COMPILER}
   - mkdir _build
   - cmake
     -B_build
@@ -125,13 +158,15 @@ before_script:
     -DSkyr_BUILD_DOCS=OFF
     -DSkyr_BUILD_EXAMPLES=OFF
     -DSkyr_BUILD_WITH_LLVM_LIBCXX=${BUILD_WITH_LLVM_LIBCXX}
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+    -DBUILD_SHARED_LIBS=${SHARED_LIB}
     -DCMAKE_TOOLCHAIN_FILE=${DEPS_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
     -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
     .
 
 script:
   - pushd _build
-  - cmake --build . --config Debug --target install -- -v
+  - cmake --build . --target install -- -v
   - ctest
   - popd
 

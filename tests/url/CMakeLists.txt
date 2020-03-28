@@ -19,13 +19,8 @@ set(
         ipv4_address_tests.cpp
         ipv6_address_tests.cpp
         url_literal_tests.cpp
+        filesystem_path_tests.cpp
     )
-
-if (Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS)
-    LIST(APPEND
-            URL_TESTS
-            filesystem_path_tests.cpp)
-endif()
 
 if (NOT Skyr_BUILD_WITHOUT_EXCEPTIONS)
     LIST(APPEND URL_TESTS
