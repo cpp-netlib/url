@@ -180,7 +180,7 @@ class view_u16_range {
   ///
   /// \return
   [[nodiscard]] constexpr size_type size() const noexcept {
-    return std::distance(begin(), end());
+    return static_cast<size_type>(end() - begin());
   }
 
  private:

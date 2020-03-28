@@ -186,7 +186,7 @@ class view_u8_range {
 
   ///
   /// \return
-  [[nodiscard]] size_type size() const noexcept {
+  [[nodiscard]] constexpr size_type size() const noexcept {
     return static_cast<size_type>(std::distance(begin(), end()));
   }
 
