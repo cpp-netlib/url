@@ -9,6 +9,10 @@ configuration:
   - Debug
   - Release
 
+environment:
+  matrix:
+    - SHARED_LIB: OFF
+
 install:
   - cd C:\Tools\vcpkg
   - git pull
@@ -22,7 +26,7 @@ build_script:
   - git submodule update
   - mkdir build
   - cd build
-  - cmake .. -A x64 -DCMAKE_TOOLCHAIN_FILE=C:\Tools\vcpkg\scripts\buildsystems\vcpkg.cmake
+  - cmake -B . -A x64 -DCMAKE_TOOLCHAIN_FILE=C:\Tools\vcpkg\scripts\buildsystems\vcpkg.cmake -DBUILD_SHARED_LIBS=%SHARED_LIB% ..
   - cmake --build .
   - ctest
 
