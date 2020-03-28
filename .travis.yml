@@ -15,14 +15,10 @@ env:
     - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps_"
     - INSTALL_DIR="${TRAVIS_BUILD_DIR}/install"
   jobs:
-    - BUILD_WITHOUT_EXCEPTIONS=OFF SHARED_LIB=OFF BUILD_TYPE=Debug
-    - BUILD_WITHOUT_EXCEPTIONS=OFF SHARED_LIB=OFF BUILD_TYPE=Release
-    - BUILD_WITHOUT_EXCEPTIONS=OFF SHARED_LIB=ON BUILD_TYPE=Debug
-    - BUILD_WITHOUT_EXCEPTIONS=OFF SHARED_LIB=ON BUILD_TYPE=Release
-#    - BUILD_WITHOUT_EXCEPTIONS=ON SHARED_LIB=OFF BUILD_TYPE=Debug
-#    - BUILD_WITHOUT_EXCEPTIONS=ON SHARED_LIB=OFF BUILD_TYPE=Release
-#    - BUILD_WITHOUT_EXCEPTIONS=ON SHARED_LIB=ON BUILD_TYPE=Debug
-#    - BUILD_WITHOUT_EXCEPTIONS=ON SHARED_LIB=ON BUILD_TYPE=Release
+    - SHARED_LIB=OFF BUILD_TYPE=Debug
+    - SHARED_LIB=OFF BUILD_TYPE=Release
+    - SHARED_LIB=ON BUILD_TYPE=Debug
+    - SHARED_LIB=ON BUILD_TYPE=Release
 
 addons:
   apt:
@@ -44,46 +40,6 @@ addons:
       - ninja
     update: true
 
-#matrix:
-#  include:
-#    - os: linux
-#      compiler: gcc
-#      addons: &gcc8
-#        apt:
-#          sources: ['ubuntu-toolchain-r-test']
-#          packages: ['g++-8']
-#      env: [COMPILER='g++-8', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='OFF']
-#
-#    - os: linux
-#      compiler: gcc
-#      addons: &gcc9
-#        apt:
-#          sources: ['ubuntu-toolchain-r-test']
-#          packages: ['g++-9']
-#      env: [COMPILER='g++-9', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='OFF']
-#
-#    - os: linux
-#      compiler: clang
-#      addons: &clang8
-#        apt:
-#          sources: ['llvm-toolchain-bionic-8']
-#          packages: ['clang++-8', 'libc++-8-dev', 'libc++abi-8-dev']
-#      env: [COMPILER='clang++-8', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
-#
-#    - os: linux
-#      compiler: clang
-#      addons: &clang9
-#        apt:
-#          sources: ['llvm-toolchain-bionic-9']
-#          packages: ['clang++-9', 'libc++-9-dev', 'libc++abi-9-dev']
-#      env: [COMPILER='clang++-9', VCPKG_TRIPLET='x64-linux', BUILD_WITH_LLVM_LIBCXX='ON']
-
-#    # 3/ OSX Clang Builds
-#    - os: osx
-#      osx_image: xcode10
-#      compiler: clang
-#      env: [COMPILER='clang', VCPKG_TRIPLET='x64-osx', BUILD_WITH_LLVM_LIBCXX='ON']
-
 before_install:
   - echo ${DEPS_DIR}
   - mkdir -p ${DEPS_DIR}
@@ -102,14 +58,6 @@ before_install:
   - popd
   - echo ${INSTALL_DIR}
   - mkdir -p ${INSTALL_DIR}
-#  - |
-#    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-#      brew install gcc
-#      brew upgrade gcc
-#      export CXX=`which g++`
-#    else
-#      export CXX=${COMPILER}
-#    fi
   - echo ${CXX}
   - ${CXX} --version
 
@@ -158,7 +106,7 @@ before_script:
     -DSkyr_BUILD_TESTS=ON
     -DSkyr_BUILD_DOCS=OFF
     -DSkyr_BUILD_EXAMPLES=OFF
-    -DSkyr_BUILD_WITH_LLVM_LIBCXX=${BUILD_WITH_LLVM_LIBCXX}
+#    -DSkyr_BUILD_WITH_LLVM_LIBCXX=${BUILD_WITH_LLVM_LIBCXX}
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
     -DBUILD_SHARED_LIBS=${SHARED_LIB}
     -DCMAKE_TOOLCHAIN_FILE=${DEPS_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
