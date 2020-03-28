@@ -22,7 +22,7 @@ option(Skyr_FULL_WARNINGS "Build the library with all warnings turned on." ON)
 option(Skyr_WARNINGS_AS_ERRORS "Treat warnings as errors." ON)
 option(Skyr_BUILD_WITHOUT_EXCEPTIONS "Build without exceptions." OFF)
 option(Skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
-option(Skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" ON)
+option(Skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
 
 set(Skyr_WPT_TAG "merge_pr_22329" CACHE STRING "The Git tag for the WPT test data" )
 
