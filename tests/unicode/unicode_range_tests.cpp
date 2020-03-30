@@ -30,7 +30,7 @@ TEST_CASE("octet range iterator") {
   }
 
   SECTION("construction from array") {
-    const auto bytes = "\xf0\x9f\x92\xa9"sv;
+    const char bytes[] = "\xf0\x9f\x92\xa9";
     auto first = std::begin(bytes), last = std::end(bytes);
     auto it = unicode::u8_range_iterator<const char *>(first, last);
     auto code_point = *it;
