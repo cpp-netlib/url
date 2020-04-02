@@ -39,7 +39,7 @@ Using `vcpkg`, install the library dependencies:
 > git fetch origin master
 > git checkout -b master origin/master
 > ./bootstrap-vcpkg.sh
-> ./vcpkg install tl-expected catch2 nlohmann-json
+> ./vcpkg install tl-expected catch2 nlohmann-json fmt
 ```
 
 ### Building with `CMake` and `Ninja`
@@ -158,8 +158,9 @@ Open the `CMake` menu, click `Install`, then `Skyr`.
 This library uses [expected](https://github.com/TartanLlama/expected)
 and a modified implementation of [utfcpp](https://github.com/nemtrif/utfcpp).
 
-The tests use [Catch2](https://github.com/catchorg/catch2) and
-[nlohmann-json](https://github.com/nlohmann/json).
+The tests use [Catch2](https://github.com/catchorg/catch2),
+[nlohmann-json](https://github.com/nlohmann/json) and
+[fmtlib](https://github.com/fmtlib/fmt).
 
 ## Requirements
 
