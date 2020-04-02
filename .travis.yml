@@ -143,6 +143,7 @@ before_script:
     -GNinja
     -DSkyr_WARNINGS_AS_ERRORS=OFF
     -DSkyr_BUILD_TESTS=ON
+    -DSkyr_BUILD_WPT_TESTS=ON
     -DSkyr_BUILD_DOCS=OFF
     -DSkyr_BUILD_EXAMPLES=OFF
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE}

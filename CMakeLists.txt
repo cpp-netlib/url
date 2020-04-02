@@ -15,7 +15,7 @@ project(
 )
 
 option(Skyr_BUILD_TESTS "Build the URL tests." ON)
-option(Skyr_BUILD_WPT_TESTS "Downloads WPT test data and builds the WPT tests." ON)
+option(Skyr_BUILD_WPT_TESTS "Downloads WPT test data and builds the WPT tests." OFF)
 option(Skyr_BUILD_DOCS "Build the URL documentation." OFF)
 option(Skyr_BUILD_EXAMPLES "Build the URL examples." OFF)
 option(Skyr_FULL_WARNINGS "Build the library with all warnings turned on." ON)
