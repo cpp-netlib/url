@@ -7,7 +7,7 @@
 #define SKYR_PERCENT_ENCODED_CHAR_HPP
 
 #include <string>
-#include <set>
+#include <array>
 #include <locale>
 
 namespace skyr {
@@ -16,11 +16,11 @@ namespace percent_encoding {
 namespace details {
 inline constexpr char hex_to_letter(char byte) noexcept {
   if ((byte >= 0x00) && (byte < 0x0a)) {
-    return byte + '0';
+    return static_cast<char>(byte + '0');
   }
 
   if ((byte >= 0x0a) && (byte < 0x10)) {
-    return byte - static_cast<char>(0x0a) + 'A';
+    return static_cast<char>(byte - 0x0a + 'A');
   }
 
   return byte;
@@ -31,8 +31,9 @@ inline constexpr bool is_c0_control_byte(char byte) noexcept {
 }
 
 inline bool is_fragment_byte(char byte) {
-  static const auto set = std::set<char>{0x20, 0x22, 0x3c, 0x3e, 0x60};
-  return is_c0_control_byte(byte) || (set.find(byte) != set.end());
+  constexpr std::array<char, 5> set = {0x20, 0x22, 0x3c, 0x3e, 0x60};
+  auto it = std::find(begin(set), end(set), byte);
+  return is_c0_control_byte(byte) || (it != set.end());
 }
 
 inline bool is_query_byte(char byte) {
@@ -40,14 +41,16 @@ inline bool is_query_byte(char byte) {
 }
 
 inline bool is_path_byte(char byte) {
-  static const auto set = std::set<char>{0x23, 0x3f, 0x7b, 0x7d};
-  return is_fragment_byte(byte) || (set.find(byte) != set.end());
+  constexpr std::array<char, 4> set = {0x23, 0x3f, 0x7b, 0x7d};
+  auto it = std::find(begin(set), end(set), byte);
+  return is_fragment_byte(byte) || (it != set.end());
 }
 
 inline bool is_userinfo_byte(char byte) {
-  static const auto set = std::set<char>{
+  constexpr std::array<char, 10> set = {
       0x2f, 0x3a, 0x3b, 0x3d, 0x40, 0x5b, 0x5c, 0x5d, 0x5e, 0x7c};
-  return is_path_byte(byte) || (set.find(byte) != set.end());
+  auto it = std::find(begin(set), end(set), byte);
+  return is_path_byte(byte) || (it != set.end());
 }
 }  // namespace details
 
@@ -185,7 +188,6 @@ inline percent_encoded_char percent_encode_byte(char byte, encode_set excludes) 
     case encode_set::fragment:
       return percent_encode_byte(byte, details::is_fragment_byte);
   }
-  return {};
 }
 
 /// Tests whether the input string contains percent encoded values

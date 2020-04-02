@@ -7,6 +7,7 @@ include(${Skyr_SOURCE_DIR}/cmake/SkyrFunctions.cmake)
 
 find_package(Catch2 CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
 
 if (MSVC)
     # For json.hpp
@@ -24,6 +25,7 @@ function(_create_test file_name output_dir test_name)
             Skyr::skyr-url
             Catch2::Catch2
             nlohmann_json::nlohmann_json
+            fmt::fmt
     )
     set_target_properties(
         ${test}

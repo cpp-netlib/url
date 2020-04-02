@@ -5,6 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
+#include <fmt/format.h>
 #include <skyr/url/percent_encoding/percent_encode_range.hpp>
 
 TEST_CASE("encode fragment", "[percent_encoding]") {
@@ -44,20 +45,14 @@ TEST_CASE("encode_tests", "[percent_encoding]") {
   SECTION("encode_codepoints_before_0x20_set") {
     for (auto i = 0u; i < 0x20u; ++i) {
       auto encoded = skyr::percent_encoding::percent_encode_byte(i, skyr::percent_encoding::encode_set::c0_control);
-      char buffer[8];
-      std::snprintf(buffer, sizeof(buffer), "%02X", i);
-      auto output = "%"s + buffer;
-      CHECK(output == encoded.to_string());
+      CHECK(fmt::format("%{:02X}", i) == encoded.to_string());
     }
   }
 
   SECTION("encode_codepoints_before_0x7e_set") {
     for (auto i = 0x7fu; i <= 0xffu; ++i) {
       auto encoded = skyr::percent_encoding::percent_encode_byte(i, skyr::percent_encoding::encode_set::c0_control);
-      char buffer[8];
-      std::snprintf(buffer, sizeof(buffer), "%02X", i);
-      auto output = "%"s + buffer;
-      CHECK(output == encoded.to_string());
+      CHECK(fmt::format("%{:02X}", i) == encoded.to_string());
     }
   }
 
