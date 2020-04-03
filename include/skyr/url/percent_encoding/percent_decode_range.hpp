@@ -23,11 +23,11 @@ inline tl::expected<char, std::error_code> letter_to_hex(char byte) noexcept {
   }
 
   if ((byte >= 'a') && (byte <= 'f')) {
-    return byte + static_cast<char>(0x0a) - 'a';
+    return static_cast<char>(byte + '\x0a' - 'a');
   }
 
   if ((byte >= 'A') && (byte <= 'F')) {
-    return byte + static_cast<char>(0x0a) - 'A';
+    return static_cast<char>(byte + '\x0a' - 'A');
   }
 
   return tl::make_unexpected(make_error_code(
@@ -66,11 +66,11 @@ class percent_decode_iterator {
   ///
   percent_decode_iterator(const percent_decode_iterator&) = default;
   ///
-  percent_decode_iterator(percent_decode_iterator&&) = default;
+  percent_decode_iterator(percent_decode_iterator&&) noexcept = default;
   ///
   percent_decode_iterator &operator=(const percent_decode_iterator&) = default;
   ///
-  percent_decode_iterator &operator=(percent_decode_iterator&&) = default;
+  percent_decode_iterator &operator=(percent_decode_iterator&&) noexcept = default;
   ///
   ~percent_decode_iterator() = default;
 

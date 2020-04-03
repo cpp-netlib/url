@@ -15,40 +15,40 @@ inline namespace v1 {
 namespace percent_encoding {
 namespace details {
 inline constexpr char hex_to_letter(char byte) noexcept {
-  if ((byte >= 0x00) && (byte < 0x0a)) {
+  if ((byte >= '\x00') && (byte < '\x0a')) {
     return static_cast<char>(byte + '0');
   }
 
-  if ((byte >= 0x0a) && (byte < 0x10)) {
-    return static_cast<char>(byte - 0x0a + 'A');
+  if ((byte >= '\x0a') && (byte < '\x10')) {
+    return static_cast<char>(byte - '\x0a' + 'A');
   }
 
   return byte;
 }
 
 inline constexpr bool is_c0_control_byte(char byte) noexcept {
-  return (byte <= 0x1f) || (byte > 0x7e);
+  return (byte <= '\x1f') || (byte > '\x7e');
 }
 
 inline bool is_fragment_byte(char byte) {
-  constexpr std::array<char, 5> set = {0x20, 0x22, 0x3c, 0x3e, 0x60};
+  constexpr std::array<char, 5> set = {'\x20', '\x22', '\x3c', '\x3e', '\x60'};
   auto it = std::find(begin(set), end(set), byte);
   return is_c0_control_byte(byte) || (it != set.end());
 }
 
 inline bool is_query_byte(char byte) {
-  return is_fragment_byte(byte) || (byte == 0x27);
+  return is_fragment_byte(byte) || (byte == '\x27');
 }
 
 inline bool is_path_byte(char byte) {
-  constexpr std::array<char, 4> set = {0x23, 0x3f, 0x7b, 0x7d};
+  constexpr std::array<char, 4> set = {'\x23', '\x3f', '\x7b', '\x7d'};
   auto it = std::find(begin(set), end(set), byte);
   return is_fragment_byte(byte) || (it != set.end());
 }
 
 inline bool is_userinfo_byte(char byte) {
   constexpr std::array<char, 10> set = {
-      0x2f, 0x3a, 0x3b, 0x3d, 0x40, 0x5b, 0x5c, 0x5d, 0x5e, 0x7c};
+      '\x2f', '\x3a', '\x3b', '\x3d', '\x40', '\x5b', '\x5c', '\x5d', '\x5e', '\x7c'};
   auto it = std::find(begin(set), end(set), byte);
   return is_path_byte(byte) || (it != set.end());
 }
@@ -105,11 +105,11 @@ struct percent_encoded_char {
   ///
   percent_encoded_char(const percent_encoded_char &) = default;
   ///
-  percent_encoded_char(percent_encoded_char &&) = default;
+  percent_encoded_char(percent_encoded_char &&) noexcept = default;
   ///
   percent_encoded_char &operator=(const percent_encoded_char &) = default;
   ///
-  percent_encoded_char &operator=(percent_encoded_char &&) = default;
+  percent_encoded_char &operator=(percent_encoded_char &&) noexcept = default;
   ///
   ~percent_encoded_char() = default;
 

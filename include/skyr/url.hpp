@@ -168,6 +168,9 @@ class url {
     return *this;
   }
 
+  /// Destructor
+  ~url() = default;
+
   /// Swaps this `url` object with another
   ///
   /// \param other Another `url` object

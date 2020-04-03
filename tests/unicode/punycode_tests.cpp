@@ -32,14 +32,14 @@ TEST_CASE("encode_test", "[punycode]") {
   );
 
   SECTION("encode_set") {
-    const auto [input, expected] = domain;
+    const auto &[input, expected] = domain;
     auto encoded = skyr::unicode::punycode_encode(input);
     REQUIRE(encoded);
     CHECK(expected == encoded.value());
   }
 
   SECTION("decode_set") {
-    const auto [expected, input] = domain;
+    const auto &[expected, input] = domain;
     auto decoded = skyr::unicode::punycode_decode(input);
     REQUIRE(decoded);
     CHECK(expected == decoded.value());

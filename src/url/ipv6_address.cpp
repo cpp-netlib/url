@@ -169,7 +169,7 @@ std::pair<tl::expected<ipv6_address, std::error_code>, bool> parse_ipv6_address(
                       ipv6_address_errc::does_not_start_with_double_colon)), true);
     }
 
-    it += 2;
+    std::advance(it, 2);
     ++piece_index;
     compress = piece_index;
   }
@@ -215,7 +215,7 @@ std::pair<tl::expected<ipv6_address, std::error_code>, bool> parse_ipv6_address(
                     make_error_code(ipv6_address_errc::empty_ipv4_segment)), true);
       }
 
-      it -= length;
+      std::advance(it, -length);
 
       if (piece_index > 6) {
         return

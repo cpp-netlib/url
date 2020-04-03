@@ -88,7 +88,7 @@ struct code_point_range {
 };
 
 const code_point_range statuses[] = {
-{% for code_point in entries %}  { 0x{{ '%04x' % code_point.range[0] }}, 0x{{ '%04x' % code_point.range[1] }}, idna_status::{{ code_point.status.lower() }} },
+{% for code_point in entries %}  { U'\\x{{ '%04x' % code_point.range[0] }}', U'\\x{{ '%04x' % code_point.range[1] }}', idna_status::{{ code_point.status.lower() }} },
 {% endfor %}};
 }  // namespace
 
@@ -110,7 +110,7 @@ struct mapped_code_point {
 };
 
 const mapped_code_point mapped[] = {
-{% for code_point in mapped_entries %}{% if code_point.status in ('mapped', 'disallowed_STD3_mapped') %}  { 0x{{ '%04x' % code_point.range[0] }}, 0x{{ '%04x' % code_point.mapped }} },
+{% for code_point in mapped_entries %}{% if code_point.status in ('mapped', 'disallowed_STD3_mapped') %}  { U'\\x{{ '%04x' % code_point.range[0] }}', U'\\x{{ '%04x' % code_point.mapped }}' },
 {% endif %}{% endfor %}};
 }  // namespace
 

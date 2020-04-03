@@ -1,4 +1,4 @@
-// Copyright 2017-19 Glyn Matthews.
+// Copyright 2017-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -27,7 +27,7 @@ std::optional<std::uint16_t> default_port(std::string_view scheme) noexcept {
   auto it = std::find_if(
       first, last,
       [&scheme](const auto &special_scheme) -> bool {
-        return scheme.compare(special_scheme.first) == 0;
+        return scheme == special_scheme.first;
       });
   if (it != last) {
     return it->second;
@@ -41,7 +41,7 @@ bool is_special(std::string_view scheme) noexcept {
   auto it = std::find_if(
       first, last,
       [&scheme](const auto &special_scheme) -> bool {
-        return scheme.compare(special_scheme.first) == 0;
+        return scheme == special_scheme.first;
       });
   return (it != last);
 }

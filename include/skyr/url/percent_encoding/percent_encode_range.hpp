@@ -49,11 +49,11 @@ class percent_encode_iterator {
   ///
   percent_encode_iterator(const percent_encode_iterator &) = default;
   ///
-  percent_encode_iterator(percent_encode_iterator &&) = default;
+  percent_encode_iterator(percent_encode_iterator &&) noexcept = default;
   ///
   percent_encode_iterator &operator=(const percent_encode_iterator &) = default;
   ///
-  percent_encode_iterator &operator=(percent_encode_iterator &&) = default;
+  percent_encode_iterator &operator=(percent_encode_iterator &&) noexcept = default;
   ///
   ~percent_encode_iterator() = default;
 
@@ -78,18 +78,17 @@ class percent_encode_iterator {
   /// \return
   [[nodiscard]] reference operator*() const noexcept {
     assert(it_);
-    auto byte = static_cast<unsigned char>(*it_.value());
-    if (byte == 0x20u) {
+    auto byte = *it_.value();
+    if (byte == '\x20') {
       percent_encoded_char('+', percent_encoded_char::no_encode());
-    } else if ((byte == 0x2au) || (byte == 0x2du) || (byte == 0x2eu) ||
-               ((byte >= 0x30u) && (byte <= 0x39u)) ||
-               ((byte >= 0x41u) && (byte <= 0x5au)) || (byte == 0x5fu) ||
-               ((byte >= 0x61u) && (byte <= 0x7au))) {
+    } else if ((byte == '\x2a') || (byte == '\x2d') || (byte == '\x2e') ||
+               ((byte >= '\x30') && (byte <= '\x39')) ||
+               ((byte >= '\x41') && (byte <= '\x5a')) || (byte == '\x5f') ||
+               ((byte >= '\x61') && (byte <= '\x7a'))) {
       return percent_encoded_char(
-          static_cast<char>(byte), percent_encoded_char::no_encode());
+          byte, percent_encoded_char::no_encode());
     }
-    return percent_encoded_char(
-        static_cast<char >(byte));
+    return percent_encoded_char(byte);
   }
 
   [[nodiscard]] bool operator==(const percent_encode_iterator &other) const noexcept {
