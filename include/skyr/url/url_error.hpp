@@ -10,8 +10,6 @@
 
 #include <system_error>
 
-using namespace std::literals;
-
 namespace skyr {
 inline namespace v1 {
 /// \enum url_parse_errc

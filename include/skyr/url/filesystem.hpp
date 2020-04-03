@@ -6,17 +6,28 @@
 #ifndef SKYR_FILESYSTEM_PATH_HPP
 #define SKYR_FILESYSTEM_PATH_HPP
 
+
+#if !defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
 #if !defined(__clang__) && (defined(__GNUC__) && __GNUC__ < 8)
-#define _LIBCPP_NO_EXPERIMENTAL_DEPRECATION_WARNING_FILESYSTEM
 #define SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM
-#endif // !defined(__clang__) && (defined(__GNUC__) && __GNUC__ < 8)
+#endif  // !defined(__clang__) && (defined(__GNUC__) && __GNUC__ < 8)
+#endif  // !defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
+
+
+#if defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
+#define _LIBCPP_NO_EXPERIMENTAL_DEPRECATION_WARNING_FILESYSTEM
+#define SKYR_FILESYSTEM_HEADER() <experimental/filesystem>
+#define SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(name) \
+namespace name = std::experimental::filesystem;
+#else
+#define SKYR_FILESYSTEM_HEADER() <filesystem>
+#define SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(name) \
+namespace name = std::filesystem;
+#endif // defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
+
 
 #include <system_error>
-#if defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-#include <experimental/filesystem>
-#else
-#include <filesystem>
-#endif // defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
+#include SKYR_FILESYSTEM_HEADER()
 #include <tl/expected.hpp>
 #include <skyr/url.hpp>
 
@@ -26,11 +37,7 @@ inline namespace v1 {
 /// Contains functions to convert from filesystem path to URLs and
 /// vice versa
 namespace filesystem {
-#if defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-namespace stdfs = std::experimental::filesystem;
-#else
-namespace stdfs = std::filesystem;
-#endif // defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
+SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(stdfs)
 
 ///
 enum class path_errc {

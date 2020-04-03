@@ -29,7 +29,7 @@ url_record::string_type serialize(
       output += ":";
       output += std::to_string(url.port.value());
     }
-  } else if (!url.host && (url.scheme.compare("file") == 0)) {
+  } else if (!url.host && (url.scheme == "file")) {
     output += "//";
   }
 

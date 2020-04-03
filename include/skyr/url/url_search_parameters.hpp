@@ -97,7 +97,7 @@ class search_element_iterator {
     }
   }
 
-  std::optional<std::string_view::const_iterator> it_, last_;
+  std::optional<value_type::const_iterator> it_, last_;
 
 };
 
