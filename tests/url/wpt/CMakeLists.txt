@@ -24,9 +24,9 @@ if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
 endif()
 
 foreach (file_name ${skyr_WPT_TESTS})
-    skyr_create_test(${file_name} ${skyr_BINARY_DIR}/tests/url/wpt test)
-    add_test(${test} ${skyr_BINARY_DIR}/tests/url/wpt/${test})
+    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url/wpt test)
+    add_test(${test} ${PROJECT_BINARY_DIR}/tests/url/wpt/${test})
 endforeach ()
 
 file(GLOB WPT_TEST_DATA ${wpt_SOURCE_DIR}/url/resources/*.json)
-file(COPY ${WPT_TEST_DATA} DESTINATION ${skyr_BINARY_DIR}/tests/url/wpt)
+file(COPY ${WPT_TEST_DATA} DESTINATION ${PROJECT_BINARY_DIR}/tests/url/wpt)

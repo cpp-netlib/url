@@ -29,8 +29,8 @@ if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
 endif()
 
 foreach (file_name ${skyr_URL_TESTS})
-    skyr_create_test(${file_name} ${skyr_BINARY_DIR}/tests/url test)
-    add_test(${test} ${skyr_BINARY_DIR}/tests/url/${test})
+    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test)
+    add_test(${test} ${PROJECT_BINARY_DIR}/tests/url/${test})
 endforeach ()
 
 if (${skyr_BUILD_WPT_TESTS})
@@ -38,4 +38,4 @@ if (${skyr_BUILD_WPT_TESTS})
 endif()
 
 file(GLOB URL_TEST_DATA *.txt *.json)
-file(COPY ${URL_TEST_DATA} DESTINATION ${skyr_BINARY_DIR}/tests/url)
+file(COPY ${URL_TEST_DATA} DESTINATION ${PROJECT_BINARY_DIR}/tests/url)

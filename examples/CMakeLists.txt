@@ -3,7 +3,7 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-include(${skyr_SOURCE_DIR}/cmake/skyr-functions.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-functions.cmake)
 
 foreach(
         file_name
@@ -19,15 +19,15 @@ foreach(
         example_10.cpp)
     skyr_remove_extension(${file_name} example)
     add_executable(${example} ${file_name})
-    add_dependencies(${example} url)
+    add_dependencies(${example} skyr-url)
     target_link_libraries(
         ${example}
         PRIVATE
-            url
+            skyr-url
     )
     set_target_properties(
         ${example}
         PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${skyr_BINARY_DIR}/examples
+            RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/examples
     )
 endforeach()
