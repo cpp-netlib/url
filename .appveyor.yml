@@ -28,11 +28,11 @@ before_build:
  - cmake
   -B _build
   -A x64
-  -DSkyr_WARNINGS_AS_ERRORS=OFF
-  -DSkyr_BUILD_TESTS=ON
-  -DSkyr_BUILD_WPT_TESTS=ON
-  -DSkyr_BUILD_DOCS=OFF
-  -DSkyr_BUILD_EXAMPLES=OFF
+  -Dskyr_WARNINGS_AS_ERRORS=OFF
+  -Dskyr_BUILD_TESTS=ON
+  -Dskyr_BUILD_WPT_TESTS=ON
+  -Dskyr_BUILD_DOCS=OFF
+  -Dskyr_BUILD_EXAMPLES=OFF
   -DCMAKE_TOOLCHAIN_FILE=C:\Tools\vcpkg\scripts\buildsystems\vcpkg.cmake
   -DBUILD_SHARED_LIBS=%SHARED_LIB%
   .
