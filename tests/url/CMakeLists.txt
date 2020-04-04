@@ -4,7 +4,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 set(
-        URL_TESTS
+        skyr_URL_TESTS
 
         # URL
         byte_conversion_tests.cpp
@@ -22,20 +22,20 @@ set(
         filesystem_path_tests.cpp
     )
 
-if (NOT Skyr_BUILD_WITHOUT_EXCEPTIONS)
+if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
     LIST(APPEND URL_TESTS
             url_tests_with_exceptions.cpp
             )
 endif()
 
-foreach (file_name ${URL_TESTS})
-    _create_test(${file_name} ${Skyr_BINARY_DIR}/tests/url test)
-    add_test(${test} ${Skyr_BINARY_DIR}/tests/url/${test})
+foreach (file_name ${skyr_URL_TESTS})
+    skyr_create_test(${file_name} ${skyr_BINARY_DIR}/tests/url test)
+    add_test(${test} ${skyr_BINARY_DIR}/tests/url/${test})
 endforeach ()
 
-if (${Skyr_BUILD_WPT_TESTS})
+if (${skyr_BUILD_WPT_TESTS})
     add_subdirectory(wpt)
 endif()
 
 file(GLOB URL_TEST_DATA *.txt *.json)
-file(COPY ${URL_TEST_DATA} DESTINATION ${Skyr_BINARY_DIR}/tests/url)
+file(COPY ${URL_TEST_DATA} DESTINATION ${skyr_BINARY_DIR}/tests/url)

@@ -153,10 +153,9 @@ before_script:
     .
 
 script:
-  - pushd _build
-  - cmake --build . --target install -- -v
-  - ctest
-  - popd
+  - cmake --build _build
+  - cmake --build _build --target test
+  - cmake --build _build --target install
 
 after_failure:
     - cat _build/Testing/Temporary/LastTest.log

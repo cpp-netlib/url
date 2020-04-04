@@ -7,24 +7,24 @@
 cmake_minimum_required(VERSION 3.14)
 
 project(
-        Skyr
-        VERSION 1.4.5
+        skyr
+        VERSION 1.5.0
         HOMEPAGE_URL https://cpp-netlib.github.io/url
         DESCRIPTION "A C++ library that implements the WhatWG URL specification"
         LANGUAGES CXX
 )
 
-option(Skyr_BUILD_TESTS "Build the URL tests." ON)
-option(Skyr_BUILD_WPT_TESTS "Downloads WPT test data and builds the WPT tests." OFF)
-option(Skyr_BUILD_DOCS "Build the URL documentation." OFF)
-option(Skyr_BUILD_EXAMPLES "Build the URL examples." OFF)
-option(Skyr_FULL_WARNINGS "Build the library with all warnings turned on." ON)
-option(Skyr_WARNINGS_AS_ERRORS "Treat warnings as errors." ON)
-option(Skyr_BUILD_WITHOUT_EXCEPTIONS "Build without exceptions." OFF)
-option(Skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
-option(Skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
+option(skyr_BUILD_TESTS "Build the URL tests." ON)
+option(skyr_BUILD_WPT_TESTS "Downloads WPT test data and builds the WPT tests." OFF)
+option(skyr_BUILD_DOCS "Build the URL documentation." OFF)
+option(skyr_BUILD_EXAMPLES "Build the URL examples." OFF)
+option(skyr_FULL_WARNINGS "Build the library with all warnings turned on." ON)
+option(skyr_WARNINGS_AS_ERRORS "Treat warnings as errors." ON)
+option(skyr_BUILD_WITHOUT_EXCEPTIONS "Build without exceptions." OFF)
+option(skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
+option(skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
 
-set(Skyr_WPT_TAG "merge_pr_22329" CACHE STRING "The Git tag for the WPT test data" )
+set(skyr_WPT_TAG "merge_pr_22329" CACHE STRING "The Git tag for the WPT test data" )
 
 set(CMAKE_VERBOSE_MAKEFILE true)
 set(CMAKE_CXX_STANDARD 17)
@@ -35,15 +35,15 @@ find_package(tl-expected CONFIG REQUIRED)
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR
     ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (Skyr_FULL_WARNINGS)
+    if (skyr_FULL_WARNINGS)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
     endif()
 
-    if (Skyr_WARNINGS_AS_ERRORS)
+    if (skyr_WARNINGS_AS_ERRORS)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
     endif()
 
-    if (Skyr_BUILD_WITHOUT_EXCEPTIONS)
+    if (skyr_BUILD_WITHOUT_EXCEPTIONS)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
     endif()
 
@@ -53,7 +53,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
         message(FATAL_ERROR "Requires VS 2017 or later")
     endif()
 
-    if (Skyr_USE_STATIC_CRT)
+    if (skyr_USE_STATIC_CRT)
         # Replace dynamic MSVCRT linker flags with static version.
         foreach(flag_var
                 CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
@@ -62,13 +62,13 @@ elseif(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
                 string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
             endif(${flag_var} MATCHES "/MD")
         endforeach(flag_var)
-    endif(Skyr_USE_STATIC_CRT)
+    endif(skyr_USE_STATIC_CRT)
 
     add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
 endif()
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (Skyr_BUILD_WITH_LLVM_LIBCXX)
+    if (skyr_BUILD_WITH_LLVM_LIBCXX)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     endif()
 endif()
@@ -76,20 +76,58 @@ endif()
 add_subdirectory(src)
 
 # Testing
-if (Skyr_BUILD_TESTS)
+if (skyr_BUILD_TESTS)
     message(STATUS "Configuring tests")
     enable_testing()
     add_subdirectory(tests)
 endif()
 
 # Documentation
-if (Skyr_BUILD_DOCS)
+if (skyr_BUILD_DOCS)
     message(STATUS "Configuring documentation")
     add_subdirectory(docs)
 endif()
 
 # Examples
-if (Skyr_BUILD_EXAMPLES)
+if (skyr_BUILD_EXAMPLES)
     message(STATUS "Configuring examples")
     add_subdirectory(examples)
 endif()
+
+# Add an alias for projects that use skyr-url as a dependency
+if (NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    add_library(skyr::skyr-url ALIAS skyr-url)
+endif()
+
+# Install
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+
+configure_package_config_file(
+        "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}-config.cmake.in"
+        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+        INSTALL_DESTINATION "share/cmake/${PROJECT_NAME}")
+
+write_basic_package_version_file(
+        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+        COMPATIBILITY SameMajorVersion
+        ARCH_INDEPENDENT)
+
+install(TARGETS url
+        EXPORT ${PROJECT_NAME}-targets
+        INCLUDES DESTINATION "${CMAKE_INSTALL_DATADIR}"
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib)
+
+
+        install(EXPORT ${PROJECT_NAME}-targets
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME}"
+        NAMESPACE skyr::
+        FILE "${PROJECT_NAME}-targets.cmake")
+
+install(FILES
+        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME}")
+
+install(DIRECTORY "include/" TYPE INCLUDE)

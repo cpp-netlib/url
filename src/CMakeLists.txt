@@ -5,10 +5,10 @@
 
 configure_file(
         version.hpp.in
-        ${Skyr_SOURCE_DIR}/include/skyr/version.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/version.hpp
 )
 
-set(Skyr_SRCS
+set(skyr_SRCS
         unicode/errors.cpp
         unicode/idna.cpp
         unicode/domain.cpp
@@ -31,65 +31,59 @@ set(Skyr_SRCS
         url/filesystem.cpp
         url/percent_encoding/errors.cpp
 
-        ${Skyr_SOURCE_DIR}/include/skyr/config.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/version.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/details/to_bytes.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/errors.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/core.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/traits/iterator_value.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/traits/range_iterator.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/traits/range_value.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/u8_view.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/unchecked_u8_view.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/u16_view.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/byte_transform.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u16_transform.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/idna.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/unicode/domain.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/errors.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_decode_range.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encode_range.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encoded_char.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/url_record.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/url_parse.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/url_serialize.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/url_error.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/url_search_parameters.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url/filesystem.hpp
-        ${Skyr_SOURCE_DIR}/include/skyr/url.hpp)
+        ${skyr_SOURCE_DIR}/include/skyr/config.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/version.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/details/to_bytes.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/errors.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/core.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/traits/iterator_value.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/traits/range_iterator.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/traits/range_value.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/u8_view.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/unchecked_u8_view.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/ranges/views/u16_view.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/byte_transform.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u16_transform.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/idna.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/unicode/domain.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/errors.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_decode_range.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encode_range.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encoded_char.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/url_record.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/url_parse.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/url_serialize.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/url_error.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/url_search_parameters.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url/filesystem.hpp
+        ${skyr_SOURCE_DIR}/include/skyr/url.hpp)
 
-add_library(skyr-url ${Skyr_SRCS})
+add_library(url ${skyr_SRCS})
 
-target_link_libraries(skyr-url PUBLIC tl::expected)
+set_property(TARGET url PROPERTY OUTPUT_NAME skyr-url)
+
+target_link_libraries(url PUBLIC tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (Skyr_BUILD_WITH_LLVM_LIBCXX)
-        target_link_libraries(skyr-url PUBLIC "c++")
+    if (skyr_BUILD_WITH_LLVM_LIBCXX)
+        target_link_libraries(url PUBLIC "c++")
     endif()
 elseif(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
-    target_link_libraries(skyr-url PUBLIC "stdc++fs")
+    target_link_libraries(url PUBLIC "stdc++fs")
 endif()
 
-set_target_properties(skyr-url PROPERTIES
+set_target_properties(url PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
         POSITION_INDEPENDENT_CODE ON)
 
-target_include_directories(skyr-url
+target_include_directories(url
     PUBLIC
         $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${Skyr_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${skyr_SOURCE_DIR}/include>
     PRIVATE
-        ${Skyr_SOURCE_DIR}/src)
-
-add_library(Skyr::skyr-url ALIAS skyr-url)
+        ${skyr_SOURCE_DIR}/src)
 
 #propagate sources to parent scope for one-lib-build
-set(Skyr_SRCS ${Skyr_SRCS} PARENT_SCOPE)
-
-# Install
-install(DIRECTORY ${Skyr_SOURCE_DIR}/include DESTINATION ".")
-install(TARGETS skyr-url
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib)
+set(skyr_SRCS ${skyr_SRCS} PARENT_SCOPE)

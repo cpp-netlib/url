@@ -188,6 +188,7 @@ inline percent_encoded_char percent_encode_byte(char byte, encode_set excludes) 
     case encode_set::fragment:
       return percent_encode_byte(byte, details::is_fragment_byte);
   }
+  return percent_encoding::percent_encoded_char(byte);
 }
 
 /// Tests whether the input string contains percent encoded values

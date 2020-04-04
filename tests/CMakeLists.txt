@@ -3,7 +3,7 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-include(${Skyr_SOURCE_DIR}/cmake/SkyrFunctions.cmake)
+include(${skyr_SOURCE_DIR}/cmake/skyr-functions.cmake)
 
 find_package(Catch2 CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -15,14 +15,14 @@ if (MSVC)
 endif(MSVC)
 
 
-function(_create_test file_name output_dir test_name)
-    remove_extension(${file_name} test)
+function(skyr_create_test file_name output_dir test_name)
+    skyr_remove_extension(${file_name} test)
     add_executable(${test} ${test}.cpp)
-    add_dependencies(${test} Skyr::skyr-url)
+    add_dependencies(${test} url)
     target_link_libraries(
         ${test}
         PRIVATE
-            Skyr::skyr-url
+            url
             Catch2::Catch2
             nlohmann_json::nlohmann_json
             fmt::fmt

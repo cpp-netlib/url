@@ -24,9 +24,9 @@ install:
 before_build:
  - git submodule init
  - git submodule update
- - mkdir build
+ - mkdir _build
  - cmake
-  -B build
+  -B _build
   -A x64
   -DSkyr_WARNINGS_AS_ERRORS=OFF
   -DSkyr_BUILD_TESTS=ON
@@ -38,12 +38,11 @@ before_build:
   .
 
 build_script:
-  - cmake --build build
+  - cmake --build _build
 
 test_script:
- - cd build
- - ctest
- - cd ..
+  - cmake --build _build --target RUN_TESTS
+  - cmake --build _build --target install
 
 
 cache: c:\Tools\vcpkg\installed\
