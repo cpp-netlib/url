@@ -25,9 +25,13 @@ This library provides:
 
 ## Using the library
 
+This project requires the availability of a C++17 compliant compiler
+and standard library.
+
 ### ``vcpkg``
 
-``skyr::url`` is available on [``vcpkg``](https://github.com/microsoft/vcpkg):
+``skyr::url`` is available on [``vcpkg``](https://github.com/microsoft/vcpkg).
+It can be followed by executing the following steps:
 
 ```bash
 > cd ${VCPKG_ROOT}
@@ -39,13 +43,10 @@ This library provides:
 > ./vcpkg install skyr-url
 ```
 
-On Window, replace the call to ``bootstrap-vcpkg.sh`` with
-``bootstrap-vcpkg.bat``.
+On Windows - for example, using Powershell - replace the
+call to ``bootstrap-vcpkg.sh`` with ``bootstrap-vcpkg.bat``.
 
 ## Building the project from source
-
-This project requires the availability of a C++17 compliant compiler
-and standard library.
 
 ### Installing dependencies using `vcpkg`
 
@@ -158,27 +159,24 @@ int main(int argc, char *argv[]) {
 
 This gives the output: `https://example.org/%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88`
 
-## Installation
+## Testing and installation
 
 ### Installing with `CMake` and `Ninja`
 
 ```bash
 > cmake .. \
     -G "Ninja" \
+    -Dskyr_BUILD_WITH_WPT_TESTS=ON \
     -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/vcpkg/scripts/buildsystems/vcpkg.cmake \
     -DCMAKE_INSTALL_PREFIX=$PREFIX
 > ninja
-> ninja test      # optional
+> ninja test
 > ninja install
 ```
 
 Where `$PREFIX` is the location where you want to install the
 library. Depending on the location of `$PREFIX`, you may need to run
 the install command as an administrator (e.g. on Linux as `sudo`).
-
-### Installing with `CMake` and `Visual Studio 2017`
-
-Open the `CMake` menu, click `Install`, then `Skyr`.
 
 ## Dependencies
 

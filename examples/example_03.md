@@ -21,7 +21,8 @@ This example parses a string, "🏳️‍🌈", using a base URL,
 
 ## Configuration
 
-To build this example using [``vcpkg``](https://github.com/microsoft/vcpkg),
+To build this example in a project using
+[``vcpkg``](https://github.com/microsoft/vcpkg) and CMake,
 use the following set up:
 
 ```cmake
@@ -35,4 +36,16 @@ find_package(skyr-url CONFIG REQUIRED)
 
 add_executable(example_03 example_03.cpp)
 target_link_libraries(example_03 PRIVATE skyr::url)
+```
+
+and to build it, run cmake like this:
+
+```bash
+> mkdir _build
+> cd _build
+> cmake \
+  -G Ninja \
+  -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+  ..
+> ninja
 ```
