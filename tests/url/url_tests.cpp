@@ -385,12 +385,12 @@ TEST_CASE("url_tests", "[url]") {
   }
 
   SECTION("https_scheme_is_special") {
-    auto instance = skyr::url("http://example.com");
+    auto instance = skyr::url("https://example.com");
     CHECK(instance.is_special());
   }
 
   SECTION("file_scheme_is_special") {
-    auto instance = skyr::url("http://example.com");
+    auto instance = skyr::url("file://example.com");
     CHECK(instance.is_special());
   }
 
