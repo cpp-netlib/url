@@ -5,12 +5,12 @@
 
 #include <iostream>
 #include <skyr/url.hpp>
-#include <skyr/percent_encoding/percent_decode_range.hpp>
+#include <skyr/percent_encoding/percent_decode.hpp>
 
 int main(int argc, char *argv[]) {
-  using namespace skyr::percent_encoding;
+  using skyr::percent_decode;
 
   auto url = skyr::url("http://example.org/\xf0\x9f\x92\xa9");
-  auto value = as<std::string>(url.record().path.back() | view::decode).value();
+  auto value = percent_decode<std::string>(url.record().path.back()).value();
   std::cout << value << std::endl;
 }
