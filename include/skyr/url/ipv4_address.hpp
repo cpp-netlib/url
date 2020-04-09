@@ -15,6 +15,32 @@
 
 namespace skyr {
 inline namespace v1 {
+namespace details {
+inline bool is_big_endian() noexcept {
+  const auto word = 0x0001;
+  auto bytes = static_cast<const unsigned char *>(static_cast<const void *>(&word));
+  return bytes[0] != 0x01;
+}
+
+inline unsigned int swap_endianness(unsigned int v) noexcept {
+  const std::array<unsigned char, 4> bytes = {{
+      static_cast<unsigned char>(v >>  0u),
+      static_cast<unsigned char>(v >>  8u),
+      static_cast<unsigned char>(v >> 16u),
+      static_cast<unsigned char>(v >> 24u)
+  }};
+  return *static_cast<const unsigned int *>(static_cast<const void *>(bytes.data()));
+}
+
+inline unsigned int to_network_byte_order(unsigned int v) noexcept {
+  return (is_big_endian()) ? v : swap_endianness(v);
+}
+
+inline unsigned int from_network_byte_order(unsigned int v) noexcept {
+  return (is_big_endian()) ? v : swap_endianness(v);
+}
+}  // namespace details
+
 /// Enumerates IPv4 address parsing errors
 enum class ipv4_address_errc {
   /// The input contains more than 4 segments
@@ -46,20 +72,23 @@ class ipv4_address {
    /// Constructor
    /// \param address Sets the IPv4 address to `address`
   explicit ipv4_address(unsigned int address)
-      : address_(address) {}
+      : address_(details::to_network_byte_order(address)) {}
 
   /// The address value
   /// \returns The address value
   [[nodiscard]] unsigned int address() const noexcept {
-    return address_;
+    return details::from_network_byte_order(address_);
   }
 
-  /// The address in bytes
+  /// The address in bytes in network byte order
   /// \returns The address in bytes
   [[nodiscard]] std::array<unsigned char, 4> to_bytes() const noexcept {
-    std::array<unsigned char, 4> bytes{};
-    std::memcpy(bytes.data(), &address_, bytes.size());
-    return bytes;
+    return {{
+      static_cast<unsigned char>(address_ >> 24u),
+      static_cast<unsigned char>(address_ >> 16u),
+      static_cast<unsigned char>(address_ >>  8u),
+      static_cast<unsigned char>(address_ >>  0u)
+    }};
   }
 
   /// \returns The address as a string

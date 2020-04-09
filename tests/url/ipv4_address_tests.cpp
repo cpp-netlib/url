@@ -65,4 +65,17 @@ TEST_CASE("ipv4 addresses", "[ipv4]") {
     auto instance = skyr::parse_ipv4_address(address);
     REQUIRE_FALSE(instance);
   }
+
+  SECTION("loopback_as_bytes") {
+    auto instance = skyr::ipv4_address(0x7f000001);
+    std::array<unsigned char, 4> bytes{{0x7f, 0x00, 0x00, 0x01}};
+    CHECK(bytes == instance.to_bytes());
+  }
+
+  SECTION("parse_loopback_test_as_bytes") {
+    auto instance = skyr::parse_ipv4_address("127.0.0.1"s);
+    REQUIRE(instance);
+    std::array<unsigned char, 4> bytes{{0x7f, 0x00, 0x00, 0x01}};
+    CHECK(bytes == instance.value().to_bytes());
+  }
 }
