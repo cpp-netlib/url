@@ -116,8 +116,7 @@ install(TARGETS skyr-url
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib)
 
-
-        install(EXPORT ${PROJECT_NAME}-targets
+install(EXPORT ${PROJECT_NAME}-targets
         DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME}"
         NAMESPACE skyr::
         FILE "${PROJECT_NAME}-targets.cmake")

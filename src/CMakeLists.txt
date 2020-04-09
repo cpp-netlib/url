@@ -46,6 +46,7 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/idna.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/domain.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/details/to_bytes.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/url/details/endianness.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/percent_encoding/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_decode_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encode_range.hpp
@@ -82,6 +83,3 @@ target_include_directories(skyr-url
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     PRIVATE
         ${PROJECT_SOURCE_DIR}/src)
-#
-##propagate sources to parent scope for one-lib-build
-#set(skyr_SRCS ${skyr_SRCS} PARENT_SCOPE)
