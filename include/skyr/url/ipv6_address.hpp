@@ -42,8 +42,6 @@ class ipv6_address {
 
   std::array<unsigned short, 8> address_ = {0, 0, 0, 0, 0, 0, 0, 0};
 
-  using repr_type = decltype(address_);
-
  public:
 
   /// Constructor
@@ -53,6 +51,14 @@ class ipv6_address {
   /// \param address Sets the IPv6 address to `address`
   explicit ipv6_address(std::array<unsigned short, 8> address)
       : address_(address) {}
+
+  /// The address in bytes
+  /// \returns The address in bytes
+  [[nodiscard]] std::array<unsigned char, 16> to_bytes() const noexcept {
+    std::array<unsigned char, 16> bytes{};
+    std::memcpy(bytes.data(), address_.data(), bytes.size());
+    return bytes;
+  }
 
    /// \returns The IPv4 address as a string
   [[nodiscard]] std::string to_string() const;

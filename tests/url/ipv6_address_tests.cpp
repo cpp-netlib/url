@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include "../../src/url/ipv6_address.hpp"
+#include <skyr/url/ipv6_address.hpp>
 
 TEST_CASE("ipv6_address_tests", "[ipv6]") {
   using namespace std::string_literals;
@@ -21,6 +21,7 @@ TEST_CASE("ipv6_address_tests", "[ipv6]") {
     auto instance = skyr::ipv6_address(address);
     CHECK("::1" == instance.to_string());
   }
+
 
   SECTION("ipv6_address_test_1") {
     const auto address = "1080:0:0:0:8:800:200C:417A"s;

@@ -188,6 +188,35 @@ tl::expected<void, std::error_code> url::set_hostname(string_view hostname) {
       });
 }
 
+bool url::is_ipv4_address() const {
+  return parse_ipv4_address(hostname()).has_value();
+}
+
+std::optional<skyr::ipv4_address> url::ipv4_address() const {
+  auto address = parse_ipv4_address(hostname());
+  return address.has_value() ? std::make_optional(address.value()) : std::nullopt;
+}
+
+bool url::is_ipv6_address() const {
+  if (!url_.host) {
+    return false;
+  }
+  auto view = std::string_view(url_.host.value());
+  if ((view.size() <= 2) || view.front() != '[' || view.back() != ']') {
+    return false;
+  }
+  return parse_ipv6_address(view.substr(1, view.size() - 2)).has_value();
+}
+
+std::optional<skyr::ipv6_address> url::ipv6_address() const {
+  auto address = parse_ipv6_address(hostname());
+  return address.has_value() ? std::make_optional(address.value()) : std::nullopt;
+}
+
+bool url::is_domain() const {
+  return !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
+}
+
 url::string_type url::port() const {
   if (!url_.port) {
     return {};

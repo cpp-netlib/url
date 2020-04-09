@@ -1,4 +1,4 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -6,6 +6,7 @@
 #ifndef SKYR_IPV4_ADDRESS_INC
 #define SKYR_IPV4_ADDRESS_INC
 
+#include <array>
 #include <string>
 #include <string_view>
 #include <system_error>
@@ -51,6 +52,14 @@ class ipv4_address {
   /// \returns The address value
   [[nodiscard]] unsigned int address() const noexcept {
     return address_;
+  }
+
+  /// The address in bytes
+  /// \returns The address in bytes
+  [[nodiscard]] std::array<unsigned char, 4> to_bytes() const noexcept {
+    std::array<unsigned char, 4> bytes{};
+    std::memcpy(bytes.data(), &address_, bytes.size());
+    return bytes;
   }
 
   /// \returns The address as a string

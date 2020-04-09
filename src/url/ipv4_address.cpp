@@ -11,7 +11,7 @@
 #include <optional>
 #include <cstdlib>
 #include <cerrno>
-#include "ipv4_address.hpp"
+#include <skyr/url/ipv4_address.hpp>
 
 namespace skyr {
 inline namespace v1 {

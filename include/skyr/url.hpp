@@ -19,6 +19,8 @@
 #include <skyr/url/url_record.hpp>
 #include <skyr/url/url_error.hpp>
 #include <skyr/url/url_search_parameters.hpp>
+#include <skyr/url/ipv4_address.hpp>
+#include <skyr/url/ipv6_address.hpp>
 #include <skyr/url/details/to_bytes.hpp>
 
 #if defined(SKYR_PLATFORM_MSVC)
@@ -363,6 +365,23 @@ class url {
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
   tl::expected<void, std::error_code> set_hostname(string_view hostname);
+
+  /// Checks if the hostname is a valid IPv4 address
+  [[nodiscard]] bool is_ipv4_address() const;
+
+  /// Returns an optional ipv4_address value if the hostname is a
+  /// valid IPv4 address
+  [[nodiscard]] std::optional<skyr::ipv4_address> ipv4_address() const;
+
+  /// Checks if the hostname is a valid IPv6 address
+  [[nodiscard]] bool is_ipv6_address() const;
+
+  /// Returns an optional ipv6_address value if the hostname is a
+  /// valid IPv6 address
+  [[nodiscard]] std::optional<skyr::ipv6_address> ipv6_address() const;
+
+  /// Checks if the hostname is a valid domain name
+  [[nodiscard]] bool is_domain() const;
 
   /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)
   ///

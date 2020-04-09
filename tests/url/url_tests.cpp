@@ -168,6 +168,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://129.79.245.252/");
     CHECK("http:" == instance.protocol());
     CHECK("129.79.245.252" == instance.host());
+    CHECK(instance.is_ipv4_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -175,6 +176,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://127.0.0.1/");
     CHECK("http:" == instance.protocol());
     CHECK("127.0.0.1" == instance.host());
+    CHECK(instance.is_ipv4_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -182,6 +184,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[1080:0:0:0:8:800:200C:417A]/");
     CHECK("http:" == instance.protocol());
     CHECK("[1080::8:800:200c:417a]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -189,6 +192,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[2001:db8:85a3:8d3:1319:8a2e:370:7348]/");
     CHECK("http:" == instance.protocol());
     CHECK("[2001:db8:85a3:8d3:1319:8a2e:370:7348]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -196,6 +200,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[2001:db8:85a3:0:0:8a2e:370:7334]/");
     CHECK("http:" == instance.protocol());
     CHECK("[2001:db8:85a3::8a2e:370:7334]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -203,6 +208,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[2001:db8:85a3::8a2e:370:7334]/");
     CHECK("http:" == instance.protocol());
     CHECK("[2001:db8:85a3::8a2e:370:7334]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -210,6 +216,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[2001:0db8:0000:0000:0000:0000:1428:57ab]/");
     CHECK("http:" == instance.protocol());
     CHECK("[2001:db8::1428:57ab]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -217,6 +224,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[2001:0db8:0000:0000:0000::1428:57ab]/");
     CHECK("http:" == instance.protocol());
     CHECK("[2001:db8::1428:57ab]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -224,6 +232,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[2001:0db8:0:0:0:0:1428:57ab]/");
     CHECK("http:" == instance.protocol());
     CHECK("[2001:db8::1428:57ab]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -231,6 +240,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[2001:0db8:0:0::1428:57ab]/");
     CHECK("http:" == instance.protocol());
     CHECK("[2001:db8::1428:57ab]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -238,6 +248,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[2001:0db8::1428:57ab]/");
     CHECK("http:" == instance.protocol());
     CHECK("[2001:db8::1428:57ab]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -245,6 +256,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[2001:db8::1428:57ab]/");
     CHECK("http:" == instance.protocol());
     CHECK("[2001:db8::1428:57ab]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -252,6 +264,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[::ffff:0c22:384e]/");
     CHECK("http:" == instance.protocol());
     CHECK("[::ffff:c22:384e]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -259,6 +272,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[fe80::]/");
     CHECK("http:" == instance.protocol());
     CHECK("[fe80::]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -266,6 +280,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[::ffff:c000:280]/");
     CHECK("http:" == instance.protocol());
     CHECK("[::ffff:c000:280]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -273,6 +288,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[::1]/");
     CHECK("http:" == instance.protocol());
     CHECK("[::1]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -280,6 +296,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[0000:0000:0000:0000:0000:0000:0000:0001]/");
     CHECK("http:" == instance.protocol());
     CHECK("[::1]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -287,6 +304,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[::ffff:12.34.56.78]/");
     CHECK("http:" == instance.protocol());
     CHECK("[::ffff:c22:384e]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -294,6 +312,7 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://[::ffff:192.0.2.128]/");
     CHECK("http:" == instance.protocol());
     CHECK("[::ffff:c000:280]" == instance.host());
+    CHECK(instance.is_ipv6_address());
     CHECK("/" == instance.pathname());
   }
 
@@ -569,13 +588,33 @@ TEST_CASE("url_tests", "[url]") {
     CHECK("?a=b&c=d" == instance.search());
   }
 
-  SECTION("domain_to_ascii_be_strict_issue_36")
-  {
+  SECTION("domain_to_ascii_be_strict_issue_36") {
     auto instance = skyr::url("https://+:80/vroot/");
     CHECK("https:" == instance.protocol());
     CHECK("+:80" == instance.host());
     CHECK("+" == instance.hostname());
     CHECK("80" == instance.port());
     CHECK("/vroot/" == instance.pathname());
+  }
+
+  SECTION("is_ipv4_accessor_like_short_ipv4_issue_51") {
+    auto instance = skyr::url("http://198.51.100/");
+    CHECK(instance.is_ipv4_address());
+    CHECK(!instance.is_ipv6_address());
+    CHECK(!instance.is_domain());
+  }
+
+  SECTION("is_ipv4_accessor_like_long_ipv4_issue_51") {
+    auto instance = skyr::url("http://198.51.100.0.255/");
+    CHECK(!instance.is_ipv4_address());
+    CHECK(!instance.is_ipv6_address());
+    CHECK(instance.is_domain());
+  }
+
+  SECTION("is_ipv4_accessor_like_short_ipv4_issue_51") {
+    auto instance = skyr::url("http://0x7f.0.0.0x7f/");
+    CHECK(instance.is_ipv4_address());
+    CHECK(!instance.is_ipv6_address());
+    CHECK(!instance.is_domain());
   }
 }

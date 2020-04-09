@@ -17,8 +17,8 @@
 #include <skyr/url/percent_encoding/percent_encode_range.hpp>
 #include "url_parser_context.hpp"
 #include "url_schemes.hpp"
-#include "ipv4_address.hpp"
-#include "ipv6_address.hpp"
+#include "skyr/url/ipv4_address.hpp"
+#include "skyr/url/ipv6_address.hpp"
 #include "algorithms.hpp"
 
 namespace skyr {

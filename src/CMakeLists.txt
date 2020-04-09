@@ -16,9 +16,7 @@ set(skyr_SRCS
         url/url_parser_context.cpp
         url/url_record.cpp
         url/ipv4_address.cpp
-        url/ipv4_address.hpp
         url/ipv6_address.cpp
-        url/ipv6_address.hpp
         url/algorithms.hpp
         url/url_parse.cpp
         url/url_parse_impl.hpp
@@ -33,7 +31,6 @@ set(skyr_SRCS
 
         ${PROJECT_SOURCE_DIR}/include/skyr/config.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/version.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/url/details/to_bytes.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/core.hpp
@@ -48,10 +45,13 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/idna.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/domain.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/url/details/to_bytes.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/percent_encoding/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_decode_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encode_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/percent_encoding/percent_encoded_char.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/url/ipv4_address.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/url/ipv6_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_record.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_parse.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_serialize.hpp

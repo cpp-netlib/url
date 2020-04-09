@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include "../../src/url/ipv4_address.hpp"
+#include <skyr/url/ipv4_address.hpp>
 
 TEST_CASE("ipv4 addresses", "[ipv4]") {
   using namespace std::string_literals;
@@ -44,6 +44,13 @@ TEST_CASE("ipv4 addresses", "[ipv4]") {
     auto instance = skyr::parse_ipv4_address(address);
     REQUIRE(instance);
     CHECK(0x814ff5fc == instance.value().address());
+  }
+
+  SECTION("parse_address_looks_short_test") {
+    const auto address = "129.79.245"s;
+    auto instance = skyr::parse_ipv4_address(address);
+    REQUIRE(instance);
+    CHECK(0x814f00f5 == instance.value().address());
   }
 
   SECTION("parse_address_with_hex") {
