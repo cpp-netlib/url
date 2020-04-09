@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <iterator>
 #include <system_error>
+#include <cstring>
 #include <tl/expected.hpp>
 
 namespace skyr {
