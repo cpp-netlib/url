@@ -1,4 +1,4 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <iterator>
 #include <system_error>
-#include <cstring>
 #include <tl/expected.hpp>
+#include <skyr/url/details/endianness.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -50,18 +50,24 @@ class ipv6_address {
 
   /// Constructor
   /// \param address Sets the IPv6 address to `address`
-  explicit ipv6_address(std::array<unsigned short, 8> address)
-      : address_(address) {}
+  explicit ipv6_address(std::array<unsigned short, 8> address) {
+    for (auto i = 0UL; i < address.size(); ++i) {
+      address_[i] = details::to_network_byte_order(address[i]);
+    }
+  }
 
-  /// The address in bytes
+  /// The address in bytes in network byte order
   /// \returns The address in bytes
   [[nodiscard]] std::array<unsigned char, 16> to_bytes() const noexcept {
     std::array<unsigned char, 16> bytes{};
-    std::memcpy(bytes.data(), address_.data(), bytes.size());
+    for (auto i = 0UL; i < address_.size(); ++i) {
+      bytes[i * 2    ] = address_[i] >> 8u;
+      bytes[i * 2 + 1] = address_[i];
+    }
     return bytes;
   }
 
-   /// \returns The IPv4 address as a string
+   /// \returns The IPv6 address as a string
   [[nodiscard]] std::string to_string() const;
 
 };

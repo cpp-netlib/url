@@ -12,35 +12,10 @@
 #include <system_error>
 #include <optional>
 #include <tl/expected.hpp>
+#include <skyr/url/details/endianness.hpp>
 
 namespace skyr {
 inline namespace v1 {
-namespace details {
-inline bool is_big_endian() noexcept {
-  const auto word = 0x0001;
-  auto bytes = static_cast<const unsigned char *>(static_cast<const void *>(&word));
-  return bytes[0] != 0x01;
-}
-
-inline unsigned int swap_endianness(unsigned int v) noexcept {
-  const std::array<unsigned char, 4> bytes = {{
-      static_cast<unsigned char>(v >>  0u),
-      static_cast<unsigned char>(v >>  8u),
-      static_cast<unsigned char>(v >> 16u),
-      static_cast<unsigned char>(v >> 24u)
-  }};
-  return *static_cast<const unsigned int *>(static_cast<const void *>(bytes.data()));
-}
-
-inline unsigned int to_network_byte_order(unsigned int v) noexcept {
-  return (is_big_endian()) ? v : swap_endianness(v);
-}
-
-inline unsigned int from_network_byte_order(unsigned int v) noexcept {
-  return (is_big_endian()) ? v : swap_endianness(v);
-}
-}  // namespace details
-
 /// Enumerates IPv4 address parsing errors
 enum class ipv4_address_errc {
   /// The input contains more than 4 segments

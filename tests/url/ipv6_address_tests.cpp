@@ -22,7 +22,6 @@ TEST_CASE("ipv6_address_tests", "[ipv6]") {
     CHECK("::1" == instance.to_string());
   }
 
-
   SECTION("ipv6_address_test_1") {
     const auto address = "1080:0:0:0:8:800:200C:417A"s;
     auto instance = skyr::parse_ipv6_address(address);
@@ -133,5 +132,15 @@ TEST_CASE("ipv6_address_tests", "[ipv6]") {
     auto instance = skyr::parse_ipv6_address(address);
     REQUIRE(instance);
     CHECK("::ffff:c000:280" == instance.value().to_string());
+  }
+
+  SECTION("loopback_test") {
+    auto address = std::array<unsigned short, 8>{{0, 0, 0, 0, 0, 0, 0, 1}};
+    auto instance = skyr::ipv6_address(address);
+    std::array<unsigned char, 16> bytes{
+      {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+      }};
+    CHECK(bytes == instance.to_bytes());
   }
 }
