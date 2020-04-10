@@ -9,12 +9,12 @@
 #include <map>
 #include <array>
 #include <locale>
+#include <skyr/network/ipv4_address.hpp>
+#include <skyr/network/ipv6_address.hpp>
 #include <skyr/unicode/domain.hpp>
-#include <skyr/url/percent_encoding/percent_decode_range.hpp>
+#include <skyr/percent_encoding/percent_decode_range.hpp>
 #include "url_parser_context.hpp"
 #include "url_schemes.hpp"
-#include "skyr/network/ipv4_address.hpp"
-#include "skyr/network/ipv6_address.hpp"
 #include "string/starts_with.hpp"
 #include "string/locale.hpp"
 
