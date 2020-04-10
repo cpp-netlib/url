@@ -6,7 +6,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 #include <fmt/format.h>
-#include <skyr/url/percent_encoding/percent_encode_range.hpp>
+#include <skyr/percent_encoding/percent_encode_range.hpp>
 
 TEST_CASE("encode fragment", "[percent_encoding]") {
   auto c = GENERATE(
