@@ -198,10 +198,7 @@ std::optional<skyr::ipv4_address> url::ipv4_address() const {
 }
 
 bool url::is_ipv6_address() const {
-  if (!url_.host) {
-    return false;
-  }
-  auto view = std::string_view(url_.host.value());
+  auto view = std::string_view(hostname());
   if ((view.size() <= 2) || view.front() != '[' || view.back() != ']') {
     return false;
   }
@@ -209,7 +206,12 @@ bool url::is_ipv6_address() const {
 }
 
 std::optional<skyr::ipv6_address> url::ipv6_address() const {
-  auto address = parse_ipv6_address(hostname());
+  auto view = std::string_view(hostname());
+  if ((view.size() <= 2) || view.front() != '[' || view.back() != ']') {
+    return std::nullopt;
+  }
+
+  auto address = parse_ipv6_address(view.substr(1, view.size() - 2));
   return address.has_value() ? std::make_optional(address.value()) : std::nullopt;
 }
 
