@@ -61,8 +61,8 @@ class ipv6_address {
   [[nodiscard]] std::array<unsigned char, 16> to_bytes() const noexcept {
     std::array<unsigned char, 16> bytes{};
     for (auto i = 0UL; i < address_.size(); ++i) {
-      bytes[i * 2    ] = address_[i] >> 8u;
-      bytes[i * 2 + 1] = address_[i];
+      bytes[i * 2    ] = static_cast<unsigned char>(address_[i] >> 8u);
+      bytes[i * 2 + 1] = static_cast<unsigned char>(address_[i]);
     }
     return bytes;
   }
