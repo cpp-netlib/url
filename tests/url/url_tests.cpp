@@ -602,6 +602,7 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(instance.is_ipv4_address());
     CHECK(!instance.is_ipv6_address());
     CHECK(!instance.is_domain());
+    CHECK(!instance.is_opaque());
   }
 
   SECTION("is_ipv4_accessor_like_long_ipv4_issue_51") {
@@ -609,6 +610,7 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(!instance.is_ipv4_address());
     CHECK(!instance.is_ipv6_address());
     CHECK(instance.is_domain());
+    CHECK(!instance.is_opaque());
   }
 
   SECTION("is_ipv4_accessor_like_short_ipv4_issue_51") {
@@ -616,5 +618,30 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(instance.is_ipv4_address());
     CHECK(!instance.is_ipv6_address());
     CHECK(!instance.is_domain());
+    CHECK(!instance.is_opaque());
+  }
+
+  SECTION("is_domain_issue_51") {
+    auto instance = skyr::url("http://www.example.com/");
+    CHECK(!instance.is_ipv4_address());
+    CHECK(!instance.is_ipv6_address());
+    CHECK(instance.is_domain());
+    CHECK(!instance.is_opaque());
+  }
+
+  SECTION("is_opaque_issue_5") {
+    auto instance = skyr::url("git://example.com");
+    CHECK(!instance.is_ipv4_address());
+    CHECK(!instance.is_ipv6_address());
+    CHECK(!instance.is_domain());
+    CHECK(instance.is_opaque());
+  }
+
+  SECTION("is_opaque_ipv6_issue_5") {
+    auto instance = skyr::url("non-special://[1:2:0:0:5:0:0:0]/");
+    CHECK(!instance.is_ipv4_address());
+    CHECK(instance.is_ipv6_address());
+    CHECK(!instance.is_domain());
+    CHECK(instance.is_opaque());
   }
 }

@@ -222,7 +222,11 @@ std::optional<skyr::ipv6_address> url::ipv6_address() const {
 }
 
 bool url::is_domain() const {
-  return !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
+  return details::is_special(url_.scheme) && !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
+}
+
+bool url::is_opaque() const {
+  return !details::is_special(url_.scheme) && !hostname().empty();
 }
 
 url::string_type url::port() const {

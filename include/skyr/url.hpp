@@ -383,6 +383,9 @@ class url {
   /// Checks if the hostname is a valid domain name
   [[nodiscard]] bool is_domain() const;
 
+  /// Checks if the hostname is a valid domain name
+  [[nodiscard]] bool is_opaque() const;
+
   /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)
   ///
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
