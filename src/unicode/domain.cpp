@@ -9,7 +9,9 @@
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/unicode/domain.hpp>
 #include <skyr/unicode/idna.hpp>
-#include "string/algorithms.hpp"
+#include "string/ascii.hpp"
+#include "string/join.hpp"
+#include "string/split.hpp"
 
 namespace skyr {
 inline namespace v1 {

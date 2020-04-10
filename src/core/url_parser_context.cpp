@@ -15,7 +15,8 @@
 #include "url_schemes.hpp"
 #include "skyr/network/ipv4_address.hpp"
 #include "skyr/network/ipv6_address.hpp"
-#include "string/algorithms.hpp"
+#include "string/starts_with.hpp"
+#include "string/locale.hpp"
 
 namespace skyr {
 inline namespace v1 {
@@ -23,10 +24,50 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 namespace {
+inline bool contains(
+    char byte,
+    std::string_view view) noexcept {
+  auto first = begin(view), last = end(view);
+  return last != std::find(first, last, byte);
+}
+
+bool remove_leading_whitespace(std::string &input) {
+  auto view = std::string_view(input);
+  auto first = begin(view), last = end(view);
+  auto it = std::find_if(
+      first, last,
+      [] (auto byte) -> bool {
+        return !is_c0_control_or_whitespace(byte);
+      });
+  if (it != first) {
+    input.assign(it, last);
+  }
+  return it == first;
+}
+
+bool remove_trailing_whitespace(std::string &input) {
+  using reverse_iterator =
+  std::reverse_iterator<std::string::const_iterator>;
+
+  auto first = reverse_iterator(end(input)),
+      last = reverse_iterator(begin(input));
+  auto it = std::find_if(
+      first, last,
+      [] (auto byte) -> bool {
+        return !is_c0_control_or_whitespace(byte);
+      });
+  if (it != first) {
+    input = std::string(it, last);
+    std::reverse(begin(input), end(input));
+  }
+
+  return it == first;
+}
+
 bool remove_tabs_and_newlines(std::string &input) {
   auto first = begin(input), last = end(input);
   auto it = std::remove_if(
-      first, last, [] (auto byte) -> bool { return is_in(byte, "\t\r\n"sv); });
+      first, last, [] (auto byte) -> bool { return contains(byte, "\t\r\n"sv); });
   input.erase(it, end(input));
   return it == last;
 }
@@ -39,13 +80,12 @@ inline bool is_forbidden_host_point(std::string_view::value_type byte) noexcept 
 }
 
 bool remaining_starts_with(
-    std::string_view::const_iterator first,
-    std::string_view::const_iterator last,
-    const char *chars) noexcept {
-  if (first == last) {
+    std::string_view input,
+    std::string_view chars) noexcept {
+  if (input.empty()) {
     return false;
   }
-  return starts_with(++first, last, chars);
+  return starts_with(input.substr(1), chars);
 }
 
 tl::expected<std::string, url_parse_errc> parse_opaque_host(std::string_view input) {
@@ -142,7 +182,7 @@ tl::expected<std::uint16_t, url_parse_errc> port_number(std::string_view port) n
 
 bool is_url_code_point(char byte) noexcept {
   return
-      std::isalnum(byte, std::locale::classic()) || is_in(byte, "!$&'()*+,-./:;=?@_~"sv);
+      std::isalnum(byte, std::locale::classic()) || contains(byte, "!$&'()*+,-./:;=?@_~"sv);
 }
 
 bool is_windows_drive_letter(
@@ -250,7 +290,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_scheme_
 }
 
 tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_scheme(char byte) {
-  if (std::isalnum(byte, std::locale::classic()) || is_in(byte, "+-.")) {
+  if (std::isalnum(byte, std::locale::classic()) || contains(byte, "+-."sv)) {
     auto lower = std::tolower(byte, std::locale::classic());
     buffer.push_back(lower);
   } else if (byte == ':') {
@@ -283,7 +323,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_scheme(
     buffer.clear();
 
     if (url.scheme == "file") {
-      if (!remaining_starts_with(it, end(view), "//")) {
+      if (!remaining_starts_with(view.substr(std::distance(std::begin(view), it)), "//"sv)) {
         url.validation_error = true;
       }
       state = url_parse_state::file;
@@ -291,7 +331,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_scheme(
       state = url_parse_state::special_relative_or_authority;
     } else if (url.is_special()) {
       state = url_parse_state::special_authority_slashes;
-    } else if (remaining_starts_with(it, end(view), "/")) {
+    } else if (remaining_starts_with(view.substr(std::distance(std::begin(view), it)), "/"sv)) {
       state = url_parse_state::path_or_authority;
       increment();
     } else {
@@ -337,7 +377,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_no_sche
 }
 
 tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_special_relative_or_authority(char byte) {
-  if ((byte == '/') && remaining_starts_with(it, end(view), "/")) {
+  if ((byte == '/') && remaining_starts_with(view.substr(std::distance(std::begin(view), it)), "/"sv)) {
     increment();
     state = url_parse_state::special_authority_ignore_slashes;
   } else {
@@ -436,7 +476,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_relativ
 }
 
 tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_special_authority_slashes(char byte) {
-  if ((byte == '/') && remaining_starts_with(it, end(view), "/")) {
+  if ((byte == '/') && remaining_starts_with(view.substr(std::distance(std::begin(view), it)), "/"sv)) {
     increment();
     state = url_parse_state::special_authority_ignore_slashes;
   } else {
@@ -842,7 +882,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_query(c
   } else if (!is_eof()) {
     if ((byte < '!') ||
         (byte > '~') ||
-        (is_in(byte, "\"#<>")) ||
+        (contains(byte, "\"#<>"sv)) ||
         ((byte == '\'') && url.is_special())) {
       auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::query);
       url.query.value() += pct_encoded.to_string();

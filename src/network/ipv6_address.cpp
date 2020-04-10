@@ -11,10 +11,12 @@
 #include <algorithm>
 #include <optional>
 #include <skyr/network/ipv6_address.hpp>
-#include "string/algorithms.hpp"
+#include "string/starts_with.hpp"
 
 namespace skyr {
 inline namespace v1 {
+using namespace std::string_view_literals;
+
 namespace {
 class ipv6_address_error_category : public std::error_category {
  public:
@@ -161,7 +163,7 @@ std::pair<tl::expected<ipv6_address, std::error_code>, bool> parse_ipv6_address(
   if (*it == ':') {
     auto next_it = it;
     ++next_it;
-    if (!starts_with(next_it, last, ":")) {
+    if (!starts_with(std::string_view(std::addressof(*next_it), std::distance(next_it, last)), ":"sv)) {
       return
           std::make_pair(
               tl::make_unexpected(

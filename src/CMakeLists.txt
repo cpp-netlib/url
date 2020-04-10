@@ -17,7 +17,11 @@ set(skyr_SRCS
         core/url_record.cpp
         network/ipv4_address.cpp
         network/ipv6_address.cpp
-        string/algorithms.hpp
+        string/ascii.hpp
+        string/join.hpp
+        string/locale.hpp
+        string/split.hpp
+        string/starts_with.hpp
         core/url_parse.cpp
         core/url_parse_impl.hpp
         core/url_serialize.cpp
