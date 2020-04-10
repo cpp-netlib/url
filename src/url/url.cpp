@@ -5,12 +5,12 @@
 
 #include <cassert>
 #include <functional>
-#include "skyr/url.hpp"
-#include "skyr/url/url_parse.hpp"
-#include "skyr/url/url_serialize.hpp"
-#include "skyr/url/percent_encoding/percent_encode_range.hpp"
-#include "url_parse_impl.hpp"
-#include "url_schemes.hpp"
+#include <skyr/url.hpp>
+#include <skyr/core/url_parse.hpp>
+#include <skyr/core/url_serialize.hpp>
+#include <skyr/url/percent_encoding/percent_encode_range.hpp>
+#include "core/url_parse_impl.hpp"
+#include "core/url_schemes.hpp"
 
 namespace skyr {
 inline namespace v1 {

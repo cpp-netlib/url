@@ -5,21 +5,17 @@
 
 #include <iterator>
 #include <limits>
-#include <cmath>
-#include <sstream>
 #include <deque>
 #include <map>
 #include <array>
 #include <locale>
-#include <cstring>
 #include <skyr/unicode/domain.hpp>
 #include <skyr/url/percent_encoding/percent_decode_range.hpp>
-#include <skyr/url/percent_encoding/percent_encode_range.hpp>
 #include "url_parser_context.hpp"
 #include "url_schemes.hpp"
-#include "skyr/url/ipv4_address.hpp"
-#include "skyr/url/ipv6_address.hpp"
-#include "algorithms.hpp"
+#include "skyr/network/ipv4_address.hpp"
+#include "skyr/network/ipv6_address.hpp"
+#include "string/algorithms.hpp"
 
 namespace skyr {
 inline namespace v1 {

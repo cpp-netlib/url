@@ -9,7 +9,7 @@
 #include <system_error>
 #include <optional>
 #include <tl/expected.hpp>
-#include <skyr/url/url_record.hpp>
+#include <skyr/core/url_record.hpp>
 
 namespace skyr {
 inline namespace v1 {

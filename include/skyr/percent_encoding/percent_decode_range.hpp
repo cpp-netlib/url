@@ -10,8 +10,8 @@
 #include <cassert>
 #include <optional>
 #include <tl/expected.hpp>
-#include <skyr/url/percent_encoding/errors.hpp>
-#include <skyr/url/percent_encoding/percent_encoded_char.hpp>
+#include <skyr/percent_encoding/errors.hpp>
+#include <skyr/percent_encoding/percent_encoded_char.hpp>
 
 namespace skyr {
 inline namespace v1 {

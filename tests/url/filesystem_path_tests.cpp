@@ -6,7 +6,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 #include <skyr/url.hpp>
-#include <skyr/url/filesystem.hpp>
+#include <skyr/filesystem/path.hpp>
 
 #if defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
 namespace stdfs = std::experimental::filesystem;

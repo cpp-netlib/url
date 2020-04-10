@@ -1,11 +1,11 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt of copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <iostream>
-#include <skyr/url/url_parse.hpp>
-#include <skyr/url/url_serialize.hpp>
+#include <skyr/core/url_parse.hpp>
+#include <skyr/core/url_serialize.hpp>
 
 int main(int argc, char *argv[]) {
   auto base = skyr::parse("https://example.org/");

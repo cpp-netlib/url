@@ -4,9 +4,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <vector>
-#include <skyr/url/url_parse.hpp>
-#include <skyr/url/url_error.hpp>
-#include <skyr/url/url_serialize.hpp>
+#include <skyr/core/url_parse.hpp>
+#include <skyr/core/url_error.hpp>
+#include <skyr/core/url_serialize.hpp>
 #include "url_parse_impl.hpp"
 #include "url_parser_context.hpp"
 
