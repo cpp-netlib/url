@@ -98,7 +98,7 @@ TEST_CASE("query_parameter_iterator_test", "[query_parameter_range]") {
 
   SECTION("query_with_two_parameters_and_semicolon_separator") {
     auto query = "a=b;c=d"sv;
-    auto first = skyr::query_parameter_iterator(query, ';'), last = skyr::query_parameter_iterator();
+    auto first = skyr::query_parameter_iterator(query), last = skyr::query_parameter_iterator();
     CHECK(first != last);
 
     CHECK("a" == (*first).first);
@@ -147,7 +147,7 @@ TEST_CASE("query_parameter_range_test", "[query_parameter_range]") {
 
   SECTION("query_with_two_parameters_and_semicolon_separator") {
     auto query = "a=b;c=d"sv;
-    auto range = skyr::query_parameter_range(query, ';');
+    auto range = skyr::query_parameter_range(query);
     CHECK(!range.empty());
     CHECK(2 == range.size());
   }
