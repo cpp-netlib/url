@@ -644,4 +644,19 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(!instance.is_domain());
     CHECK(instance.is_opaque());
   }
+
+  SECTION("url_origin_01") {
+    auto instance = skyr::url("https://example.org/foo/bar?baz");
+    CHECK("https://example.org" == instance.origin());
+  }
+
+  SECTION("url_origin_02") {
+    auto instance = skyr::url("https://測試");
+    CHECK("https://xn--g6w251d" == instance.origin());
+  }
+
+  SECTION("url_origin_03") {
+    auto instance = skyr::url("blob:https://whatwg.org/d0360e2f-caee-469f-9a2f-87d5b0456f6f");
+    CHECK("https://whatwg.org" == instance.origin());
+  }
 }
