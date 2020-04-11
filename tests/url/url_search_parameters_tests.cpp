@@ -325,4 +325,23 @@ TEST_CASE("url") {
     CHECK("?c=d" == instance.search());
     CHECK("c=d" == instance.record().query.value());
   }
+
+  SECTION("test_percent_decoding") {
+    auto url = skyr::url(
+        "https://example.org/?q=\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88&key=e1f7bc78");
+    auto value = url.search_parameters().get("q");
+    CHECK(value);
+    CHECK(value.value() == "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    CHECK("?q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88&key=e1f7bc78" == url.search());
+  }
+
+  SECTION("test_percent_decoding_setter") {
+    auto url = skyr::url(
+        "https://example.org/?key=e1f7bc78");
+    url.search_parameters().set("q", "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    auto value = url.search_parameters().get("q");
+    CHECK(value);
+    CHECK(value.value() == "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    CHECK("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search());
+  }
 }
