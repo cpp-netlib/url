@@ -8,7 +8,7 @@
 
 #include <string_view>
 #include <tl/expected.hpp>
-#include <skyr/url/percent_encoding/percent_encode_range.hpp>
+#include <skyr/percent_encoding/percent_encode_range.hpp>
 
 namespace skyr {
 inline namespace v1 {
