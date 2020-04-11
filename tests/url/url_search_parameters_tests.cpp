@@ -344,4 +344,14 @@ TEST_CASE("url") {
     CHECK(value.value() == "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
     CHECK("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search());
   }
+
+  SECTION("test_percent_decoding_append") {
+    auto url = skyr::url(
+        "https://example.org/?key=e1f7bc78");
+    url.search_parameters().append("q", "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    auto value = url.search_parameters().get("q");
+    CHECK(value);
+    CHECK(value.value() == "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88");
+    CHECK("?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == url.search());
+  }
 }

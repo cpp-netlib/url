@@ -35,9 +35,7 @@ void url_search_parameters::swap(url_search_parameters &other) noexcept {
 void url_search_parameters::append(
     std::string_view name,
     std::string_view value) {
-  auto encoded_name = percent_encode<std::string>(name);
-  auto encoded_value = percent_encode<std::string>(value);
-  parameters_.emplace_back(encoded_name.value(), encoded_value.value());
+  parameters_.emplace_back(name, value);
   update();
 }
 
