@@ -61,6 +61,7 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_parse.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_serialize.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_error.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/query/query_iterator.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/details/to_bytes.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/details/endianness.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_record.hpp

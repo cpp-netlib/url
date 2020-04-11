@@ -15,7 +15,7 @@ set(
         url_parsing_example_tests.cpp
         url_setter_tests.cpp
         url_search_parameters_tests.cpp
-        url_search_parameter_range_tests.cpp
+        query_parameter_range_tests.cpp
         ipv4_address_tests.cpp
         ipv6_address_tests.cpp
         url_literal_tests.cpp

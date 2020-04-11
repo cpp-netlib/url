@@ -1,21 +1,25 @@
-// Copyright 2019 Glyn Matthews.
+// Copyright 2019-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt of copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include <skyr/url/url_search_parameters.hpp>
+#include <string_view>
+#include <skyr/query/query_iterator.hpp>
 
-TEST_CASE("search_element_iterator_test", "[search_parameter_range]") {
+TEST_CASE("query_element_iterator_test", "[query_parameter_range]") {
+  using namespace std::string_view_literals;
+
   SECTION("empty_query") {
-    auto first = skyr::search_element_iterator(std::string_view()), last = skyr::search_element_iterator();
+    auto query = ""sv;
+    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
     CHECK(first == last);
   }
 
   SECTION("query_with_single_element") {
-    auto search = "a=b";
-    auto first = skyr::search_element_iterator(std::string_view(search)), last = skyr::search_element_iterator();
+    auto query = "a=b"sv;
+    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
     CHECK(first != last);
 
     CHECK("a=b" == *first);
@@ -24,8 +28,8 @@ TEST_CASE("search_element_iterator_test", "[search_parameter_range]") {
   }
 
   SECTION("query_with_two_elements") {
-    auto search = "a=b&c=d";
-    auto first = skyr::search_element_iterator(std::string_view(search)), last = skyr::search_element_iterator();
+    auto query = "a=b&c=d"sv;
+    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
     CHECK(first != last);
 
     CHECK("a=b" == *first);
@@ -36,8 +40,8 @@ TEST_CASE("search_element_iterator_test", "[search_parameter_range]") {
   }
 
   SECTION("query_with_two_elements_and_semicolon_separator") {
-    auto search = "a=b;c=d";
-    auto first = skyr::search_element_iterator(std::string_view(search)), last = skyr::search_element_iterator();
+    auto query = "a=b;c=d"sv;
+    auto first = skyr::query_element_iterator(query, ';'), last = skyr::query_element_iterator();
     CHECK(first != last);
 
     CHECK("a=b" == *first);
@@ -48,8 +52,8 @@ TEST_CASE("search_element_iterator_test", "[search_parameter_range]") {
   }
   
   SECTION("query_with_one_parameter") {
-    auto search = "query";
-    auto first = skyr::search_element_iterator(std::string_view(search)), last = skyr::search_element_iterator();
+    auto query = "query"sv;
+    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
     CHECK(first != last);
 
     CHECK("query" == *first);
@@ -58,15 +62,18 @@ TEST_CASE("search_element_iterator_test", "[search_parameter_range]") {
   }
 }
 
-TEST_CASE("search_parameter_iterator_test", "[search_parameter_range]") {
+TEST_CASE("query_parameter_iterator_test", "[query_parameter_range]") {
+  using namespace std::string_view_literals;
+
   SECTION("empty_query") {
-    auto first = skyr::search_parameter_iterator(std::string_view()), last = skyr::search_parameter_iterator();
+    auto query = ""sv;
+    auto first = skyr::query_parameter_iterator(query), last = skyr::query_parameter_iterator();
     CHECK(first == last);
   }
 
   SECTION("query_with_single_parameter") {
-    auto search = "a=b";
-    auto first = skyr::search_parameter_iterator(std::string_view(search)), last = skyr::search_parameter_iterator();
+    auto query = "a=b"sv;
+    auto first = skyr::query_parameter_iterator(query), last = skyr::query_parameter_iterator();
     CHECK(first != last);
 
     CHECK("a" == (*first).first);
@@ -76,8 +83,8 @@ TEST_CASE("search_parameter_iterator_test", "[search_parameter_range]") {
   }
 
   SECTION("query_with_two_parameters") {
-    auto search = "a=b&c=d";
-    auto first = skyr::search_parameter_iterator(std::string_view(search)), last = skyr::search_parameter_iterator();
+    auto query = "a=b&c=d"sv;
+    auto first = skyr::query_parameter_iterator(query), last = skyr::query_parameter_iterator();
     CHECK(first != last);
 
     CHECK("a" == (*first).first);
@@ -90,8 +97,8 @@ TEST_CASE("search_parameter_iterator_test", "[search_parameter_range]") {
   }
 
   SECTION("query_with_two_parameters_and_semicolon_separator") {
-    auto search = "a=b;c=d";
-    auto first = skyr::search_parameter_iterator(std::string_view(search)), last = skyr::search_parameter_iterator();
+    auto query = "a=b;c=d"sv;
+    auto first = skyr::query_parameter_iterator(query, ';'), last = skyr::query_parameter_iterator();
     CHECK(first != last);
 
     CHECK("a" == (*first).first);
@@ -104,8 +111,8 @@ TEST_CASE("search_parameter_iterator_test", "[search_parameter_range]") {
   }
 
   SECTION("query_with_one_parameter") {
-    auto search = "query";
-    auto first = skyr::search_parameter_iterator(std::string_view(search)), last = skyr::search_parameter_iterator();
+    auto query = "query"sv;
+    auto first = skyr::query_parameter_iterator(query), last = skyr::query_parameter_iterator();
     CHECK(first != last);
 
     CHECK("query" == (*first).first);
@@ -115,43 +122,46 @@ TEST_CASE("search_parameter_iterator_test", "[search_parameter_range]") {
   }
 }
 
-TEST_CASE("search_parameter_range_test", "[search_parameter_range]") {
+TEST_CASE("query_parameter_range_test", "[query_parameter_range]") {
+  using namespace std::string_view_literals;
+
   SECTION("empty_query") {
-    auto range = skyr::search_parameter_range(std::string_view());
+    auto query = ""sv;
+    auto range = skyr::query_parameter_range(query);
     CHECK(range.empty());
   }
 
   SECTION("query_with_single_parameter") {
-    auto search = "a=b";
-    auto range = skyr::search_parameter_range(search);
+    auto query = "a=b"sv;
+    auto range = skyr::query_parameter_range(query);
     CHECK(!range.empty());
     CHECK(1 == range.size());
   }
 
   SECTION("query_with_two_parameters") {
-    auto search = "a=b&c=d";
-    auto range = skyr::search_parameter_range(search);
+    auto query = "a=b&c=d"sv;
+    auto range = skyr::query_parameter_range(query);
     CHECK(!range.empty());
     CHECK(2 == range.size());
   }
 
   SECTION("query_with_two_parameters_and_semicolon_separator") {
-    auto search = "a=b;c=d";
-    auto range = skyr::search_parameter_range(search);
+    auto query = "a=b;c=d"sv;
+    auto range = skyr::query_parameter_range(query, ';');
     CHECK(!range.empty());
     CHECK(2 == range.size());
   }
 
   SECTION("query_with_no_separators") {
-    auto search = "query";
-    auto range = skyr::search_parameter_range(search);
+    auto query = "query"sv;
+    auto range = skyr::query_parameter_range(query);
     CHECK(!range.empty());
     CHECK(1 == range.size());
   }
 
   SECTION("iterator over query range") {
-    auto search = "query";
-    for (auto [name, value] : skyr::search_parameter_range(search)) {
+    auto query = "query"sv;
+    for (auto [name, value] : skyr::query_parameter_range(query)) {
       CHECK("query" == name);
       CHECK(value.empty());
     }

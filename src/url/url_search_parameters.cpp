@@ -4,6 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <skyr/url/url_search_parameters.hpp>
+#include <skyr/query/query_iterator.hpp>
 #include <skyr/url.hpp>
 
 namespace skyr {
@@ -136,7 +137,7 @@ void url_search_parameters::initialize(std::string_view query) {
     query.remove_prefix(1);
   }
 
-  for (auto [name, value] : search_parameter_range(query)) {
+  for (auto [name, value] : query_parameter_range(query)) {
     parameters_.emplace_back(name, value);
   }
 }
