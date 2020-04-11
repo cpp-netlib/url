@@ -39,10 +39,9 @@ class query_element_iterator {
 
   ///
   /// \param query
-  explicit query_element_iterator(std::string_view query, char separator='&')
+  explicit query_element_iterator(std::string_view query)
       : it_(!query.empty() ? std::make_optional(std::begin(query)) : std::nullopt)
-      , last_(!query.empty() ? std::make_optional(std::end(query)) : std::nullopt)
-      , separator_(separator) {}
+      , last_(!query.empty() ? std::make_optional(std::end(query)) : std::nullopt) {}
 
   ///
   /// \return
@@ -64,7 +63,7 @@ class query_element_iterator {
   const_reference operator*() const noexcept {
     assert(it_);
     auto delimiter = std::find_if(
-        it_.value(), last_.value(), [this](auto c) { return c == separator_; });
+        it_.value(), last_.value(), [](auto c) { return (c == '&') || (c == ';'); });
     return std::string_view(
         std::addressof(*it_.value()),
         std::distance(it_.value(), delimiter));
@@ -89,7 +88,7 @@ class query_element_iterator {
   void increment() {
     assert(it_);
     it_ = std::find_if(
-        it_.value(), last_.value(), [this](auto c) { return c == separator_; });
+        it_.value(), last_.value(), [](auto c) { return (c == '&') || (c == ';'); });
     if (it_ == last_) {
       it_ = std::nullopt;
     } else {
@@ -98,7 +97,6 @@ class query_element_iterator {
   }
 
   std::optional<value_type::const_iterator> it_, last_;
-  const char separator_ = '&';
 
 };
 
@@ -126,9 +124,8 @@ class query_parameter_iterator {
 
   ///
   /// \param query
-  explicit query_parameter_iterator(std::string_view query, char separator='&', char equal='=')
-      : it_(query, separator)
-      , equal_(equal) {}
+  explicit query_parameter_iterator(std::string_view query)
+      : it_(query) {}
 
   ///
   /// \return
@@ -150,7 +147,7 @@ class query_parameter_iterator {
   const_reference operator*() const noexcept {
     auto first = std::begin(*it_), last = std::end(*it_);
 
-    auto equal_it = std::find_if(first, last, [this](auto c) { return (c == equal_); });
+    auto equal_it = std::find_if(first, last, [](auto c) { return (c == '='); });
 
     auto name =
         std::string_view(std::addressof(*first), std::distance(first, equal_it));
@@ -181,7 +178,6 @@ class query_parameter_iterator {
  private:
 
   query_element_iterator it_;
-  const char equal_ = '=';
 
 };
 
@@ -201,8 +197,8 @@ class query_parameter_range {
 
   ///
   /// \param query
-  explicit query_parameter_range(std::string_view query, char separator='&')
-      : first_(query, separator), last_() {}
+  explicit query_parameter_range(std::string_view query)
+      : first_(query), last_() {}
 
   ///
   /// \return

@@ -5,6 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
+#define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <skyr/percent_encoding/percent_encode_range.hpp>
 

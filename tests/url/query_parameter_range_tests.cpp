@@ -41,7 +41,7 @@ TEST_CASE("query_element_iterator_test", "[query_parameter_range]") {
 
   SECTION("query_with_two_elements_and_semicolon_separator") {
     auto query = "a=b;c=d"sv;
-    auto first = skyr::query_element_iterator(query, ';'), last = skyr::query_element_iterator();
+    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
     CHECK(first != last);
 
     CHECK("a=b" == *first);
