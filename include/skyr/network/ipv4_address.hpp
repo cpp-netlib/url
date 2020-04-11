@@ -12,7 +12,7 @@
 #include <system_error>
 #include <optional>
 #include <tl/expected.hpp>
-#include <skyr/url/details/endianness.hpp>
+#include <skyr/details/endianness.hpp>
 
 namespace skyr {
 inline namespace v1 {

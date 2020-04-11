@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_SERIALIZE_INC
-#define SKYR_URL_SERIALIZE_INC
+#ifndef SKYR_CORE_URL_SERIALIZE_INC
+#define SKYR_CORE_URL_SERIALIZE_INC
 
 #include <skyr/core/url_record.hpp>
 
@@ -22,4 +22,4 @@ url_record::string_type serialize(
 }  // namespace v1
 }  // namespace skyr
 
-#endif  // SKYR_URL_SERIALIZE_INC
+#endif  // SKYR_CORE_URL_SERIALIZE_INC

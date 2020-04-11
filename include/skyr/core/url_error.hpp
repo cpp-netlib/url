@@ -1,12 +1,10 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_ERROR_INC
-#define SKYR_URL_ERROR_INC
-
-/// \file skyr/url/url_error.hpp
+#ifndef SKYR_CORE_URL_ERROR_INC
+#define SKYR_CORE_URL_ERROR_INC
 
 #include <system_error>
 
@@ -55,4 +53,4 @@ template <>
 struct is_error_code_enum<skyr::v1::url_parse_errc> : true_type {};
 }  // namespace std
 
-#endif // SKYR_URL_ERROR_INC
+#endif // SKYR_CORE_URL_ERROR_INC

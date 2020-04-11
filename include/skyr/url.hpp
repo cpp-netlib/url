@@ -21,7 +21,7 @@
 #include <skyr/url/url_search_parameters.hpp>
 #include <skyr/network/ipv4_address.hpp>
 #include <skyr/network/ipv6_address.hpp>
-#include <skyr/url/details/to_bytes.hpp>
+#include <skyr/details/to_bytes.hpp>
 
 #if defined(SKYR_PLATFORM_MSVC)
 #pragma warning(push)

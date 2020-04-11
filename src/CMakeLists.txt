@@ -54,14 +54,19 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encoded_char.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_decode.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv4_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_record.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_parse.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_serialize.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_error.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/url/details/to_bytes.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/url/details/endianness.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/details/to_bytes.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/details/endianness.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/url/url_record.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/url/url_parse.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/url/url_serialize.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/url/url_error.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_search_parameters.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/filesystem/path.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp)

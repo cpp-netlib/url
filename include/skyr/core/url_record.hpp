@@ -1,10 +1,10 @@
-// Copyright 2019 Glyn Matthews.
+// Copyright 2019-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_RECORD_INC
-#define SKYR_URL_RECORD_INC
+#ifndef SKYR_CORE_URL_RECORD_INC
+#define SKYR_CORE_URL_RECORD_INC
 
 #include <vector>
 #include <string>
@@ -95,4 +95,4 @@ inline void swap(url_record &lhs, url_record &rhs) noexcept {
 }  // namespace v1
 }  // namespace skyr
 
-#endif // SKYR_URL_RECORD_INC
+#endif // SKYR_CORE_URL_RECORD_INC
