@@ -6,6 +6,13 @@
 #ifndef SKYR_URL_QUERY_ITERATOR_HPP
 #define SKYR_URL_QUERY_ITERATOR_HPP
 
+#include <string_view>
+#include <optional>
+#include <iterator>
+#include <type_traits>
+#include <algorithm>
+#include <utility>
+
 namespace skyr {
 inline namespace v1 {
 ///
