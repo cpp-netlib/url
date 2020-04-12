@@ -12,14 +12,15 @@
 namespace skyr {
 inline namespace v1 {
 namespace details {
-inline bool is_big_endian() noexcept {
+inline auto is_big_endian() noexcept {
   const auto word = 0x0001;
   auto bytes = static_cast<const unsigned char *>(static_cast<const void *>(&word));
   return bytes[0] != 0x01;
 }
 
 template <typename intT>
-inline intT swap_endianness(intT v, typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) noexcept {
+inline auto swap_endianness(
+    intT v, typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) noexcept -> intT {
   constexpr auto byte_count = sizeof(v);
   std::array<unsigned char, byte_count> bytes{};
   for (auto i = 0UL; i < byte_count; ++i) {
@@ -28,11 +29,11 @@ inline intT swap_endianness(intT v, typename std::enable_if<std::is_integral<int
   return *static_cast<const intT *>(static_cast<const void *>(bytes.data()));
 }
 
-inline unsigned int to_network_byte_order(unsigned int v) noexcept {
+inline auto to_network_byte_order(unsigned int v) noexcept {
   return (is_big_endian()) ? v : swap_endianness(v);
 }
 
-inline unsigned int from_network_byte_order(unsigned int v) noexcept {
+inline auto from_network_byte_order(unsigned int v) noexcept {
   return (is_big_endian()) ? v : swap_endianness(v);
 }
 }  // namespace details

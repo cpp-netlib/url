@@ -24,14 +24,14 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 namespace {
-inline bool contains(
+inline auto contains(
     char byte,
     std::string_view view) noexcept {
   auto first = begin(view), last = end(view);
   return last != std::find(first, last, byte);
 }
 
-bool remove_leading_whitespace(std::string &input) {
+auto remove_leading_whitespace(std::string &input) {
   auto view = std::string_view(input);
   auto first = begin(view), last = end(view);
   auto it = std::find_if(
@@ -45,7 +45,7 @@ bool remove_leading_whitespace(std::string &input) {
   return it == first;
 }
 
-bool remove_trailing_whitespace(std::string &input) {
+auto remove_trailing_whitespace(std::string &input) {
   using reverse_iterator =
   std::reverse_iterator<std::string::const_iterator>;
 
@@ -64,7 +64,7 @@ bool remove_trailing_whitespace(std::string &input) {
   return it == first;
 }
 
-bool remove_tabs_and_newlines(std::string &input) {
+auto remove_tabs_and_newlines(std::string &input) {
   auto first = begin(input), last = end(input);
   auto it = std::remove_if(
       first, last, [] (auto byte) -> bool { return contains(byte, "\t\r\n"sv); });
@@ -72,14 +72,14 @@ bool remove_tabs_and_newlines(std::string &input) {
   return it == last;
 }
 
-inline bool is_forbidden_host_point(std::string_view::value_type byte) noexcept {
+inline auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
   using namespace std::string_view_literals;
   static const auto forbidden = "\0\t\n\r #%/:?@[\\]"sv;
   auto first = begin(forbidden), last = end(forbidden);
   return last != std::find(first, last, byte);
 }
 
-bool remaining_starts_with(
+auto remaining_starts_with(
     std::string_view input,
     std::string_view chars) noexcept {
   if (input.empty()) {
@@ -88,7 +88,7 @@ bool remaining_starts_with(
   return starts_with(input.substr(1), chars);
 }
 
-tl::expected<std::string, url_parse_errc> parse_opaque_host(std::string_view input) {
+auto parse_opaque_host(std::string_view input) -> tl::expected<std::string, url_parse_errc> {
   auto first = begin(input), last = end(input);
   auto it = std::find_if(
       first, last, [] (auto byte) -> bool {
@@ -107,8 +107,8 @@ tl::expected<std::string, url_parse_errc> parse_opaque_host(std::string_view inp
   return output;
 }
 
-tl::expected<std::string, url_parse_errc> parse_host(
-    std::string_view input, bool is_not_special = false) {
+auto parse_host(
+    std::string_view input, bool is_not_special = false) -> tl::expected<std::string, url_parse_errc> {
   if (!input.empty() && (input.front() == '[')) {
     if (input.back() != ']') {
       // result.validation_error = true;
@@ -161,7 +161,7 @@ tl::expected<std::string, url_parse_errc> parse_host(
   return host.value().to_string();
 }
 
-tl::expected<std::uint16_t, url_parse_errc> port_number(std::string_view port) noexcept {
+auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {
   if (port.empty()) {
     return tl::make_unexpected(url_parse_errc::invalid_port);
   }
@@ -180,38 +180,31 @@ tl::expected<std::uint16_t, url_parse_errc> port_number(std::string_view port) n
   return static_cast<std::uint16_t>(port_value);
 }
 
-bool is_url_code_point(char byte) noexcept {
+auto is_url_code_point(char byte) noexcept {
   return
       std::isalnum(byte, std::locale::classic()) || contains(byte, "!$&'()*+,-./:;=?@_~"sv);
 }
 
-bool is_windows_drive_letter(
-    std::string_view::const_iterator it,
-    std::string_view::const_iterator last) noexcept {
-  if (std::distance(it, last) < 2) {
+inline auto is_windows_drive_letter(std::string_view segment) noexcept {
+  if (segment.size() < 2) {
     return false;
   }
 
-  if (!std::isalpha(*it, std::locale::classic())) {
+  if (!std::isalpha(segment[0], std::locale::classic())) {
     return false;
   }
 
-  ++it;
-  auto result = ((*it == ':') || (*it == '|'));
+  auto result = ((segment[1] == ':') || (segment[1] == '|'));
   if (result) {
-    ++it;
-    if (it != last) {
-      result = ((*it == '/') || (*it == '\\') || (*it == '?') || (*it == '#'));
+    if (segment.size() > 2) {
+      result = ((segment[2] == '/') || (segment[2] == '\\') || (segment[2] == '?') || (segment[2] == '#'));
     }
   }
   return result;
+
 }
 
-inline bool is_windows_drive_letter(std::string_view segment) noexcept {
-  return is_windows_drive_letter(begin(segment), end(segment));
-}
-
-bool is_single_dot_path_segment(std::string_view segment) noexcept {
+inline auto is_single_dot_path_segment(std::string_view segment) noexcept {
   auto lower = std::string(segment);
   std::transform(begin(lower), end(lower), begin(lower),
                  [] (auto byte) -> decltype(byte) {
@@ -221,7 +214,7 @@ bool is_single_dot_path_segment(std::string_view segment) noexcept {
   return ((lower == ".") || (lower == "%2e"));
 }
 
-bool is_double_dot_path_segment(std::string_view segment) noexcept {
+auto is_double_dot_path_segment(std::string_view segment) noexcept {
   auto lower = std::string(segment);
   std::transform(begin(lower), end(lower), begin(lower),
                  [] (auto byte) -> decltype(byte) {
@@ -272,7 +265,7 @@ url_parser_context::url_parser_context(
   it = begin(view);
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_scheme_start(char byte) {
+auto url_parser_context::parse_scheme_start(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (std::isalpha(byte, std::locale::classic())) {
     auto lower = std::tolower(byte, std::locale::classic());
     buffer.push_back(lower);
@@ -289,7 +282,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_scheme_
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_scheme(char byte) {
+auto url_parser_context::parse_scheme(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (std::isalnum(byte, std::locale::classic()) || contains(byte, "+-."sv)) {
     auto lower = std::tolower(byte, std::locale::classic());
     buffer.push_back(lower);
@@ -352,7 +345,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_scheme(
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_no_scheme(char byte) {
+auto url_parser_context::parse_no_scheme(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (!base || (base.value().cannot_be_a_base_url && (byte != '#'))) {
     url.validation_error = true;
     return tl::make_unexpected(url_parse_errc::not_an_absolute_url_with_fragment);
@@ -376,7 +369,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_no_sche
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_special_relative_or_authority(char byte) {
+auto url_parser_context::parse_special_relative_or_authority(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if ((byte == '/') && remaining_starts_with(view.substr(std::distance(std::begin(view), it)), "/"sv)) {
     increment();
     state = url_parse_state::special_authority_ignore_slashes;
@@ -388,7 +381,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_special
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_path_or_authority(char byte) {
+auto url_parser_context::parse_path_or_authority(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (byte == '/') {
     state = url_parse_state::authority;
   } else {
@@ -398,7 +391,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_path_or
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_relative(char byte) {
+auto url_parser_context::parse_relative(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   url.scheme = base.value().scheme;
   if (is_eof()) {
     url.username = base.value().username;
@@ -453,7 +446,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_relativ
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_relative_slash(char byte) {
+auto url_parser_context::parse_relative_slash(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (url.is_special() && ((byte == '/') || (byte == '\\'))) {
     if (byte == '\\') {
       url.validation_error = true;
@@ -475,7 +468,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_relativ
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_special_authority_slashes(char byte) {
+auto url_parser_context::parse_special_authority_slashes(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if ((byte == '/') && remaining_starts_with(view.substr(std::distance(std::begin(view), it)), "/"sv)) {
     increment();
     state = url_parse_state::special_authority_ignore_slashes;
@@ -488,7 +481,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_special
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_special_authority_ignore_slashes(char byte) {
+auto url_parser_context::parse_special_authority_ignore_slashes(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if ((byte != '/') && (byte != '\\')) {
     decrement();
     state = url_parse_state::authority;
@@ -498,7 +491,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_special
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_authority(char byte) {
+auto url_parser_context::parse_authority(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (byte == '@') {
     url.validation_error = true;
     if (at_flag) {
@@ -538,7 +531,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_authori
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_hostname(char byte) {
+auto url_parser_context::parse_hostname(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (state_override && (url.scheme == "file")) {
     state = url_parse_state::file_host;
     if (it == begin(view)) {
@@ -603,7 +596,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_hostnam
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_port(char byte) {
+auto url_parser_context::parse_port(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (std::isdigit(byte, std::locale::classic())) {
     buffer += byte;
   } else if (
@@ -641,7 +634,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_port(ch
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_file(char byte) {
+auto url_parser_context::parse_file(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   url.scheme = "file";
 
   if ((byte == '/') || (byte == '\\')) {
@@ -667,7 +660,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_file(ch
       url.fragment = std::string();
       state = url_parse_state::fragment;
     } else {
-      if (!is_windows_drive_letter(it, end(view))) {
+      if (!is_windows_drive_letter(view.substr(0, std::distance(begin(view), it)))) {
         url.host = base.value().host;
         url.path = base.value().path;
         shorten_path(url.scheme, url.path);
@@ -692,7 +685,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_file(ch
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_file_slash(char byte) {
+auto url_parser_context::parse_file_slash(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if ((byte == '/') || (byte == '\\')) {
     if (byte == '\\') {
       url.validation_error = true;
@@ -700,7 +693,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_file_sl
     state = url_parse_state::file_host;
   } else {
     if (base &&
-            ((base.value().scheme == "file") && !is_windows_drive_letter(it, end(view)))) {
+            ((base.value().scheme == "file") && !is_windows_drive_letter(view.substr(0, std::distance(begin(view), it))))) {
       if (!base.value().path.empty() && is_windows_drive_letter(base.value().path[0])) {
         url.path.push_back(base.value().path[0]);
       } else {
@@ -715,7 +708,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_file_sl
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_file_host(char byte) {
+auto url_parser_context::parse_file_host(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if ((is_eof()) || (byte == '/') || (byte == '\\') || (byte == '?') || (byte == '#')) {
     bool at_begin = (it == begin(view));
     if (!at_begin) {
@@ -759,7 +752,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_file_ho
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_path_start(char byte) {
+auto url_parser_context::parse_path_start(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   bool at_begin = (it == begin(view));
   if (url.is_special()) {
     if (byte == '\\') {
@@ -790,7 +783,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_path_st
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_path(char byte) {
+auto url_parser_context::parse_path(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (((is_eof()) || (byte == '/')) ||
       (url.is_special() && (byte == '\\')) ||
       (!state_override && ((byte == '?') || (byte == '#')))) {
@@ -852,7 +845,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_path(ch
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_cannot_be_a_base_url(char byte) {
+auto url_parser_context::parse_cannot_be_a_base_url(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (byte == '?') {
     url.query = std::string();
     state = url_parse_state::query;
@@ -875,7 +868,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_cannot_
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_query(char byte) {
+auto url_parser_context::parse_query(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (!state_override && (byte == '#')) {
     url.fragment = std::string();
     state = url_parse_state::fragment;
@@ -893,7 +886,7 @@ tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_query(c
   return url_parse_action::increment;
 }
 
-tl::expected<url_parse_action, url_parse_errc> url_parser_context::parse_fragment(char byte) {
+auto url_parser_context::parse_fragment(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   if (byte == '\0') {
     url.validation_error = true;
   } else {

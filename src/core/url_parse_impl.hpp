@@ -67,11 +67,11 @@ namespace details {
 /// \param url An optional `url_record`
 /// \param state_override
 /// \returns A `url_record` on success and an error code on failure
-tl::expected<url_record, std::error_code> basic_parse(
+auto basic_parse(
     std::string_view input,
     std::optional<url_record> base = std::nullopt,
     const std::optional<url_record> &url = std::nullopt,
-    std::optional<url_parse_state> state_override = std::nullopt);
+    std::optional<url_parse_state> state_override = std::nullopt) -> tl::expected<url_record, std::error_code>;
 }  // namespace details
 }  // namespace v1
 }  // namespace skyr

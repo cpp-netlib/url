@@ -17,8 +17,8 @@ inline namespace v1 {
 /// \param exclude_fragment A flag to exclude the fragment from
 ///        serialization, if set
 /// \returns A serialized URL string
-url_record::string_type serialize(
-    const url_record &url, bool exclude_fragment = false);
+auto serialize(
+    const url_record &url, bool exclude_fragment = false) -> url_record::string_type;
 }  // namespace v1
 }  // namespace skyr
 

@@ -18,9 +18,9 @@ inline namespace v1 {
 /// \param input The input string
 /// \param base An optional base URL
 /// \returns A `url_record` on success and an error code on failure
-tl::expected<url_record, std::error_code> parse(
+auto parse(
     std::string_view input,
-    std::optional<url_record> base = std::nullopt);
+    std::optional<url_record> base = std::nullopt) -> tl::expected<url_record, std::error_code>;
 }  // namespace v1
 }  // namespace skyr
 

@@ -13,11 +13,11 @@
 namespace skyr {
 inline namespace v1 {
 namespace details {
-tl::expected<url_record, std::error_code> basic_parse(
+auto basic_parse(
     std::string_view input,
     std::optional<url_record> base,
     const std::optional<url_record> &url,
-    std::optional<url_parse_state> state_override) {
+    std::optional<url_parse_state> state_override) -> tl::expected<url_record, std::error_code> {
   using return_type = tl::expected<url_parse_action, url_parse_errc>;
   using url_parse_func = std::function<return_type(url_parser_context &, char)>;
   using url_parse_funcs = std::vector<url_parse_func>;
@@ -139,9 +139,9 @@ tl::expected<url_record, std::error_code> basic_parse(
 }
 }  // namespace details
 
-tl::expected<url_record, std::error_code> parse(
+auto parse(
     std::string_view input,
-    std::optional<url_record> base) {
+    std::optional<url_record> base) -> tl::expected<url_record, std::error_code> {
   auto url = details::basic_parse(input, std::move(base));
 
   if (!url) {

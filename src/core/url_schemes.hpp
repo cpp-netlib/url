@@ -19,20 +19,20 @@ namespace details {
 using default_port_list = std::vector<std::pair<std::string, std::optional<std::uint16_t>>>;
 
 /// \returns
-const default_port_list &special_schemes() noexcept;
+auto special_schemes() noexcept -> const default_port_list &;
 
 /// \param scheme
 /// \returns
-bool is_special(std::string_view scheme) noexcept;
+auto is_special(std::string_view scheme) noexcept -> bool;
 
 /// \param scheme
 /// \returns
-std::optional<std::uint16_t> default_port(std::string_view scheme) noexcept;
+auto default_port(std::string_view scheme) noexcept -> std::optional<std::uint16_t>;
 
 /// \param scheme
 /// \param port
 /// \returns
-bool is_default_port(std::string_view scheme, std::uint16_t port) noexcept;
+auto is_default_port(std::string_view scheme, std::uint16_t port) noexcept -> bool;
 }  // namespace details
 }  // namespace v1
 }  // namespace skyr

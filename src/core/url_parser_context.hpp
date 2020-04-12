@@ -51,7 +51,7 @@ class url_parser_context {
       const std::optional<url_record> &url,
       std::optional<url_parse_state> state_override = std::nullopt);
 
-  [[nodiscard]] bool is_eof() const noexcept {
+  [[nodiscard]] auto is_eof() const noexcept {
     return it == end(view);
   }
 
@@ -73,26 +73,26 @@ class url_parser_context {
     it = it - buffer.size() - 1;
   }
 
-  tl::expected<url_parse_action, url_parse_errc> parse_scheme_start(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_scheme(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_no_scheme(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_special_relative_or_authority(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_path_or_authority(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_relative(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_relative_slash(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_special_authority_slashes(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_special_authority_ignore_slashes(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_authority(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_hostname(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_port(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_file(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_file_slash(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_file_host(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_path_start(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_path(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_cannot_be_a_base_url(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_query(char byte);
-  tl::expected<url_parse_action, url_parse_errc> parse_fragment(char byte);
+  auto parse_scheme_start(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_scheme(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_no_scheme(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_special_relative_or_authority(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_path_or_authority(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_relative(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_relative_slash(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_special_authority_slashes(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_special_authority_ignore_slashes(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_authority(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_hostname(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_port(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_file(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_file_slash(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_file_host(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_path_start(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_path(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_cannot_be_a_base_url(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_query(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
+  auto parse_fragment(char byte) -> tl::expected<url_parse_action, url_parse_errc>;
 
 };
 }  // namespace v1

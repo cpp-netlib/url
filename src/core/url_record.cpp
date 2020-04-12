@@ -1,4 +1,4 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -8,15 +8,15 @@
 
 namespace skyr {
 inline namespace v1 {
-bool url_record::is_special() const noexcept {
+auto url_record::is_special() const noexcept -> bool {
   return skyr::details::is_special(std::string_view(scheme));
 }
 
-bool url_record::includes_credentials() const noexcept {
+auto url_record::includes_credentials() const noexcept -> bool {
   return !username.empty() || !password.empty();
 }
 
-bool url_record::cannot_have_a_username_password_or_port() const noexcept {
+auto url_record::cannot_have_a_username_password_or_port() const noexcept -> bool {
   return
       (!host || host.value().empty()) ||
           cannot_be_a_base_url ||

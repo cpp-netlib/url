@@ -7,8 +7,8 @@
 
 namespace skyr {
 inline namespace v1 {
-url_record::string_type serialize(
-    const url_record &url, bool exclude_fragment) {
+auto serialize(
+    const url_record &url, bool exclude_fragment) -> url_record::string_type {
   auto output = url.scheme + ":";
 
   if (url.host) {
