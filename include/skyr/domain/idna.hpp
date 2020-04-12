@@ -3,16 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_UNICODE_IDNA_HPP
-#define SKYR_UNICODE_IDNA_HPP
+#ifndef SKYR_DOMAIN_IDNA_HPP
+#define SKYR_DOMAIN_IDNA_HPP
 
 namespace skyr {
 inline namespace v1 {
-namespace unicode {
+namespace domain {
 /// \enum idna_status
-/// The status values come from the IDNA mapping table in unicode TR46:
+/// The status values come from the IDNA mapping table in domain TR46:
 ///
-/// https://unicode.org/reports/tr46/#IDNA_Mapping_Table
+/// https://domain.org/reports/tr46/#IDNA_Mapping_Table
 ///
 enum class idna_status {
   /// The code point is disallowed
@@ -45,8 +45,8 @@ auto map_idna_status(char32_t code_point) -> idna_status;
 /// \return The code point or mapped value, depending on the status of the code
 /// point
 auto map_idna_code_point(char32_t code_point) -> char32_t;
-}  // namespace unicode
+}  // namespace domain
 }  // namespace v1
 }  // namespace skyr
 
-#endif  // SKYR_UNICODE_IDNA_HPP
+#endif  // SKYR_DOMAIN_IDNA_HPP

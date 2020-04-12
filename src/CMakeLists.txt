@@ -10,8 +10,10 @@ configure_file(
 
 set(skyr_SRCS
         unicode/errors.cpp
-        unicode/idna.cpp
-        unicode/domain.cpp
+        domain/errors.cpp
+        domain/domain.cpp
+        domain/punycode.cpp
+        domain/idna.cpp
         core/url_parser_context.hpp
         core/url_parser_context.cpp
         core/url_record.cpp
@@ -47,8 +49,9 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/byte_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u16_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/idna.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/domain.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/domain/errors.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/domain/idna.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/domain/domain.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_decode_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode_range.hpp

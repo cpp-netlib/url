@@ -11,7 +11,7 @@
 #include <locale>
 #include <skyr/network/ipv4_address.hpp>
 #include <skyr/network/ipv6_address.hpp>
-#include <skyr/unicode/domain.hpp>
+#include <skyr/domain/domain.hpp>
 #include <skyr/percent_encoding/percent_decode_range.hpp>
 #include "url_parser_context.hpp"
 #include "url_schemes.hpp"
@@ -137,7 +137,7 @@ tl::expected<std::string, url_parse_errc> parse_host(
     return tl::make_unexpected(url_parse_errc::cannot_decode_host_point);
   }
 
-  auto ascii_domain = unicode::domain_to_ascii(domain.value());
+  auto ascii_domain = domain_to_ascii(domain.value());
   if (!ascii_domain) {
     return tl::make_unexpected(url_parse_errc::domain_error);
   }

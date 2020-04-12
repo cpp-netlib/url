@@ -1,4 +1,4 @@
-# Copyright 2018 Glyn Matthews.
+# Copyright 2018-20 Glyn Matthews.
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
@@ -75,11 +75,11 @@ def main():
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
-#include <skyr/unicode/idna.hpp>
+#include <skyr/domain/idna.hpp>
 
 namespace skyr {
 inline namespace v1 {
-namespace unicode {
+namespace domain {
 namespace {
 struct code_point_range {
   char32_t first;
@@ -127,7 +127,7 @@ auto map_idna_code_point(char32_t code_point) -> char32_t {
   }
   return code_point;
 }
-}  // namespace unicode
+}  // namespace domain
 }  // namespace v1
 }  // namespace skyr
 """)
