@@ -76,7 +76,7 @@ class percent_encode_iterator {
 
   ///
   /// \return
-  [[nodiscard]] auto operator*() const noexcept -> reference {
+  [[nodiscard]] auto operator*() const noexcept -> const_reference {
     assert(it_);
     auto byte = *it_.value();
     if (byte == '\x20') {
