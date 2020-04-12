@@ -17,28 +17,28 @@ namespace unicode {
 ///
 /// \param octet
 /// \return
-constexpr uint8_t mask8(char octet) {
-  return 0xffu & static_cast<uint8_t>(octet);
+constexpr auto mask8(char octet) {
+  return static_cast<uint8_t>(0xffu & static_cast<unsigned char>(octet));
 }
 
 ///
 /// \param value
 /// \return
-constexpr char16_t mask16(char16_t value) {
-  return 0xffffu & value;
+constexpr auto mask16(char16_t value) -> char16_t {
+  return u'\xffff' & value;
 }
 
 ///
 /// \param octet
 /// \return
-constexpr bool is_trail(char octet) {
+constexpr auto is_trail(char octet) {
   return ((mask8(octet) >> 6u) == 0x2u);
 }
 
 ///
 /// \param code_point
 /// \return
-constexpr bool is_lead_surrogate(char16_t code_point) {
+constexpr auto is_lead_surrogate(char16_t code_point) {
   return
       (code_point >= constants::surrogates::lead_min) &&
       (code_point <= constants::surrogates::lead_max);
@@ -47,7 +47,7 @@ constexpr bool is_lead_surrogate(char16_t code_point) {
 ///
 /// \param value
 /// \return
-constexpr bool is_trail_surrogate(char16_t value) {
+constexpr auto is_trail_surrogate(char16_t value) {
   return
       (value >= constants::surrogates::trail_min) &&
       (value <= constants::surrogates::trail_max);
@@ -56,7 +56,7 @@ constexpr bool is_trail_surrogate(char16_t value) {
 ///
 /// \param value
 /// \return
-constexpr bool is_surrogate(char16_t value) {
+constexpr auto is_surrogate(char16_t value) {
   return
       (value >= constants::surrogates::lead_min) &&
       (value <= constants::surrogates::trail_max);
@@ -65,7 +65,7 @@ constexpr bool is_surrogate(char16_t value) {
 /// Tests if the code point is a valid value.
 /// \param code_point
 /// \return \c true if it has a valid value, \c false otherwise
-constexpr bool is_valid_code_point(char32_t code_point) {
+constexpr auto is_valid_code_point(char32_t code_point) {
   return
       (code_point <= constants::code_points::max) &&
       !is_surrogate(static_cast<char16_t>(code_point));
@@ -74,7 +74,7 @@ constexpr bool is_valid_code_point(char32_t code_point) {
 /// Returns the size of the sequnce given the lead octet value.
 /// \param lead_value
 /// \return 1, 2, 3 or 4
-constexpr long sequence_length(char lead_value) {
+constexpr auto sequence_length(char lead_value) {
   auto lead = mask8(lead_value);
   if (lead < 0x80u) {
     return 1;
@@ -112,8 +112,7 @@ struct sequence_state {
 /// \return A sequence_state with a value of 0, and the iterator
 ///         pointing to the lead value
 template<class OctetIterator>
-tl::expected<sequence_state<OctetIterator>, std::error_code>
-inline make_state(OctetIterator it) {
+inline auto make_state(OctetIterator it) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
   return sequence_state<OctetIterator>(it, 0);
 }
 
@@ -124,9 +123,9 @@ inline make_state(OctetIterator it) {
 /// \param value The updated value
 /// \return A new state with an updateds value
 template<class OctetIterator>
-inline sequence_state<OctetIterator> update_value(
+inline auto update_value(
     sequence_state<OctetIterator> state,
-    char32_t value) {
+    char32_t value) -> sequence_state<OctetIterator> {
   return {state.it, value};
 }
 
@@ -136,8 +135,8 @@ inline sequence_state<OctetIterator> update_value(
 /// \return The new state with the updated iterator, on an error if
 ///         the sequence isn't valid
 template<typename OctetIterator>
-inline tl::expected<sequence_state<OctetIterator>, std::error_code>
-increment(sequence_state<OctetIterator> state) {
+inline auto
+increment(sequence_state<OctetIterator> state) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
   ++state.it;
   if (!is_trail(*state.it)) {
     return tl::make_unexpected(
@@ -152,8 +151,7 @@ namespace details {
 /// \param state
 /// \return
 template<typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, std::error_code>
-inline mask_byte(sequence_state<OctetIterator> state) {
+inline auto mask_byte(sequence_state<OctetIterator> state) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
   return update_value(state, mask8(*state.it));
 }
 
@@ -163,8 +161,7 @@ inline mask_byte(sequence_state<OctetIterator> state) {
 /// \param first
 /// \return
 template<typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, std::error_code>
-from_two_byte_sequence(OctetIterator first) {
+auto from_two_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
   using result_type = tl::expected<sequence_state<OctetIterator>, std::error_code>;
 
   auto set_code_point = [](auto state) -> result_type {
@@ -186,8 +183,7 @@ from_two_byte_sequence(OctetIterator first) {
 /// \param first
 /// \return
 template<typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, std::error_code>
-from_three_byte_sequence(OctetIterator first) {
+auto from_three_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
   using result_type = tl::expected<sequence_state<OctetIterator>, std::error_code>;
 
   auto update_code_point_from_second_byte = [](auto state) -> result_type {
@@ -216,8 +212,7 @@ from_three_byte_sequence(OctetIterator first) {
 /// \param first
 /// \return
 template<typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, std::error_code>
-from_four_byte_sequence(OctetIterator first) {
+auto from_four_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
   using result_type = tl::expected<sequence_state<OctetIterator>, std::error_code>;
 
   auto update_code_point_from_second_byte = [](auto state) -> result_type {
@@ -257,8 +252,8 @@ from_four_byte_sequence(OctetIterator first) {
 /// \param first
 /// \return
 template <typename OctetIterator>
-tl::expected<sequence_state<OctetIterator>, std::error_code> find_code_point(
-    OctetIterator first) {
+auto find_code_point(
+    OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
   const auto length = sequence_length(*first);
   switch (length) {
     case 1:

@@ -21,7 +21,7 @@
 #include <skyr/url/url_search_parameters.hpp>
 #include <skyr/network/ipv4_address.hpp>
 #include <skyr/network/ipv6_address.hpp>
-#include <skyr/details/to_bytes.hpp>
+#include <skyr/unicode/details/to_bytes.hpp>
 
 #if defined(SKYR_PLATFORM_MSVC)
 #pragma warning(push)
@@ -42,7 +42,7 @@ class url_parse_error : public std::runtime_error {
       : runtime_error("URL parse error"), error_(error) {}
 
   /// \returns An error code
-  [[nodiscard]] std::error_code error() const noexcept {
+  [[nodiscard]] auto error() const noexcept {
     return error_;
   }
 
@@ -176,7 +176,7 @@ class url {
   ///
   /// \returns The serialization of the context object's url
   /// \sa to_json
-  [[nodiscard]] string_type href() const;
+  [[nodiscard]] auto href() const -> string_type;
 
   /// Sets the context object's url according to the
   /// [steps described in the specification](https://url.spec.whatwg.org/#dom-url-href)
@@ -185,7 +185,7 @@ class url {
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
   template<class Source>
-  tl::expected<void, std::error_code> set_href(const Source &href) {
+  auto set_href(const Source &href) -> tl::expected<void, std::error_code> {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -204,7 +204,7 @@ class url {
   /// \tparam Source The input string type
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_href(string_view href);
+  auto set_href(string_view href) -> tl::expected<void, std::error_code>;
 
   /// Returns the [serialization of the context object’s url](https://url.spec.whatwg.org/#dom-url-href)
   ///
@@ -212,17 +212,17 @@ class url {
   ///
   /// \returns The serialization of the context object's url
   /// \sa href()
-  [[nodiscard]] string_type to_json() const;
+  [[nodiscard]] auto to_json() const -> string_type;
 
   /// Returns the [URL origin](https://url.spec.whatwg.org/#origin)
   ///
   /// \returns The [URL origin](https://url.spec.whatwg.org/#origin)
-  [[nodiscard]] string_type origin() const;
+  [[nodiscard]] auto origin() const -> string_type;
 
   /// The URL scheme + `":"`
   ///
   /// \returns The [URL protocol](https://url.spec.whatwg.org/#dom-url-protocol)
-  [[nodiscard]] string_type protocol() const;
+  [[nodiscard]] auto protocol() const -> string_type;
 
   /// Sets the [URL protocol](https://url.spec.whatwg.org/#dom-url-protocol)
   ///
@@ -230,7 +230,7 @@ class url {
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
   template<class Source>
-  tl::expected<void, std::error_code> set_protocol(const Source &protocol) {
+  auto set_protocol(const Source &protocol) -> tl::expected<void, std::error_code> {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -248,10 +248,10 @@ class url {
   ///
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_protocol(string_view protocol);
+  auto set_protocol(string_view protocol) -> tl::expected<void, std::error_code>;
 
   /// \returns The [URL username](https://url.spec.whatwg.org/#dom-url-username)
-  [[nodiscard]] string_type username() const;
+  [[nodiscard]] auto username() const -> string_type;
 
   /// Sets the [URL username](https://url.spec.whatwg.org/#dom-url-username)
   ///
@@ -259,7 +259,7 @@ class url {
   /// \param username The new username
   /// \returns An error on failure to parse the new URL
   template<class Source>
-  tl::expected<void, std::error_code> set_username(const Source &username) {
+  auto set_username(const Source &username) -> tl::expected<void, std::error_code> {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -276,14 +276,14 @@ class url {
   ///
   /// \param username The new username
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_username(string_view username);
+  auto set_username(string_view username) -> tl::expected<void, std::error_code>;
 
   /// The [URL password](https://url.spec.whatwg.org/#dom-url-password)
   ///
   /// Equivalent to: `url_.password? url_.password.value() : string_type()`
   ///
   /// \returns The URL password
-  [[nodiscard]] string_type password() const;
+  [[nodiscard]] auto password() const -> string_type;
 
   /// Sets the [URL password](https://url.spec.whatwg.org/#dom-url-password)
   ///
@@ -291,7 +291,7 @@ class url {
   /// \param password The new password
   /// \returns An error on failure to parse the new URL
   template<class Source>
-  tl::expected<void, std::error_code> set_password(const Source &password) {
+  auto set_password(const Source &password) -> tl::expected<void, std::error_code> {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -308,10 +308,10 @@ class url {
   ///
   /// \param password The new password
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_password(string_view password);
+  auto set_password(string_view password) -> tl::expected<void, std::error_code>;
 
   /// \returns The [URL host](https://url.spec.whatwg.org/#dom-url-host)
-  [[nodiscard]] string_type host() const;
+  [[nodiscard]] auto host() const -> string_type;
 
   /// Sets the [URL host](https://url.spec.whatwg.org/#dom-url-host)
   ///
@@ -319,7 +319,7 @@ class url {
   /// \param host The new URL host
   /// \returns An error on failure to parse the new URL
   template<class Source>
-  tl::expected<void, std::error_code> set_host(const Source &host) {
+  auto set_host(const Source &host) -> tl::expected<void, std::error_code> {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -336,10 +336,10 @@ class url {
   ///
   /// \param host The new URL host
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_host(string_view host);
+  auto set_host(string_view host) -> tl::expected<void, std::error_code>;
 
   /// \returns The [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
-  [[nodiscard]] string_type hostname() const;
+  [[nodiscard]] auto hostname() const -> string_type;
 
   /// Sets the [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
   ///
@@ -347,7 +347,7 @@ class url {
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
   template<class Source>
-  tl::expected<void, std::error_code> set_hostname(const Source &hostname) {
+  auto set_hostname(const Source &hostname) -> tl::expected<void, std::error_code> {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -364,38 +364,38 @@ class url {
   ///
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_hostname(string_view hostname);
+  auto set_hostname(string_view hostname) -> tl::expected<void, std::error_code>;
 
   /// Checks if the hostname is a valid IPv4 address
-  [[nodiscard]] bool is_ipv4_address() const;
+  [[nodiscard]] auto is_ipv4_address() const -> bool;
 
   /// Returns an optional ipv4_address value if the hostname is a
   /// valid IPv4 address
-  [[nodiscard]] std::optional<skyr::ipv4_address> ipv4_address() const;
+  [[nodiscard]] auto ipv4_address() const -> std::optional<skyr::ipv4_address>;
 
   /// Checks if the hostname is a valid IPv6 address
-  [[nodiscard]] bool is_ipv6_address() const;
+  [[nodiscard]] auto is_ipv6_address() const -> bool;
 
   /// Returns an optional ipv6_address value if the hostname is a
   /// valid IPv6 address
-  [[nodiscard]] std::optional<skyr::ipv6_address> ipv6_address() const;
+  [[nodiscard]] auto ipv6_address() const -> std::optional<skyr::ipv6_address>;
 
   /// Checks if the hostname is a valid domain name
-  [[nodiscard]] bool is_domain() const;
+  [[nodiscard]] auto is_domain() const -> bool;
 
   /// Checks if the hostname is a valid domain name
-  [[nodiscard]] bool is_opaque() const;
+  [[nodiscard]] auto is_opaque() const -> bool;
 
   /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)
   ///
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
-  [[nodiscard]] string_type port() const;
+  [[nodiscard]] auto port() const -> string_type;
 
   /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)
   ///
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
   template<typename intT>
-  [[nodiscard]] intT port(
+  [[nodiscard]] auto port(
       typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) const {
     auto p = port();
     const char *port_first = p.data();
@@ -410,7 +410,7 @@ class url {
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
   template<class PortSource>
-  tl::expected<void, std::error_code> set_port(const PortSource &port) {
+  auto set_port(const PortSource &port) -> tl::expected<void, std::error_code> {
     return set_port_impl(port);
   }
 
@@ -418,12 +418,12 @@ class url {
   ///
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_port(string_view port);
+  auto set_port(string_view port) -> tl::expected<void, std::error_code>;
 
   /// Returns the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
   ///
   /// \returns The URL pathname
-  [[nodiscard]] string_type pathname() const;
+  [[nodiscard]] auto pathname() const -> string_type;
 
   /// Sets the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
   ///
@@ -431,7 +431,7 @@ class url {
   /// \param pathname The new pathname
   /// \returns An error on failure to parse the new URL
   template<class Source>
-  tl::expected<void, std::error_code> set_pathname(const Source &pathname) {
+  auto set_pathname(const Source &pathname) -> tl::expected<void, std::error_code> {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -448,12 +448,12 @@ class url {
   ///
   /// \param pathname The new pathname
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_pathname(string_view pathname);
+  auto set_pathname(string_view pathname) -> tl::expected<void, std::error_code>;
 
   /// Returns the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
   /// \returns The [URL search string](https://url.spec.whatwg.org/#dom-url-search)
-  [[nodiscard]] string_type search() const;
+  [[nodiscard]] auto search() const -> string_type;
 
   /// Sets the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
@@ -461,7 +461,7 @@ class url {
   /// \param search The new search string
   /// \returns An error on failure to parse the new URL
   template<class Source>
-  tl::expected<void, std::error_code> set_search(const Source &search) {
+  auto set_search(const Source &search) -> tl::expected<void, std::error_code> {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -478,15 +478,15 @@ class url {
   ///
   /// \param search The new search string
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_search(string_view search);
+  auto set_search(string_view search) -> tl::expected<void, std::error_code>;
 
   /// \returns A reference to the search parameters
-  [[nodiscard]] url_search_parameters &search_parameters();
+  [[nodiscard]] auto search_parameters() -> url_search_parameters &;
 
   /// Returns the [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
   ///
   /// \returns The [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
-  [[nodiscard]] string_type hash() const;
+  [[nodiscard]] auto hash() const -> string_type;
 
   /// Sets the [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
   ///
@@ -494,7 +494,7 @@ class url {
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
   template<class Source>
-  tl::expected<void, std::error_code> set_hash(const Source &hash) {
+  auto set_hash(const Source &hash) -> tl::expected<void, std::error_code> {
     static_assert(
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
@@ -511,19 +511,19 @@ class url {
   ///
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
-  tl::expected<void, std::error_code> set_hash(string_view hash);
+  auto set_hash(string_view hash) -> tl::expected<void, std::error_code>;
 
   /// The URL context object
   ///
   /// \returns The underlying `url_record` implementation.
-  [[nodiscard]] const url_record &record() const & noexcept {
+  [[nodiscard]] auto record() const & noexcept -> const url_record & {
     return url_;
   }
 
   /// The URL context object
   ///
   /// \returns The underlying `url_record` implementation.
-  [[nodiscard]] url_record &&record() && noexcept {
+  [[nodiscard]] auto record() && noexcept -> url_record && {
     return std::move(url_);
   }
 
@@ -532,7 +532,7 @@ class url {
   ///
   /// \returns `true` if the URL scheme is special, `false`
   ///          otherwise
-  [[nodiscard]] bool is_special() const noexcept {
+  [[nodiscard]] auto is_special() const noexcept {
     return url_.is_special();
   }
 
@@ -541,21 +541,21 @@ class url {
   ///
   /// \returns `true` if there was a validation error during
   ///          parsing, `false` otherwise
-  [[nodiscard]] bool validation_error() const noexcept {
+  [[nodiscard]] auto validation_error() const noexcept {
     return url_.validation_error;
   }
 
   /// An iterator to the beginning of the context object's string (`href_`)
   ///
   /// \returns An iterator to the beginning of the context object's string
-  [[nodiscard]] const_iterator begin() const noexcept {
+  [[nodiscard]] auto begin() const noexcept {
     return view_.begin();
   }
 
   /// An iterator to the end of the context object's string (`href_`)
   ///
   /// \returns An iterator to the end of the URL string
-  [[nodiscard]] const_iterator end() const noexcept {
+  [[nodiscard]] auto end() const noexcept {
     return view_.end();
   }
 
@@ -563,13 +563,13 @@ class url {
   ///
   /// \returns `true` if the URL is an empty string, `false`
   ///          otherwise
-  [[nodiscard]] bool empty() const noexcept {
+  [[nodiscard]] auto empty() const noexcept {
     return view_.empty();
   }
 
   /// Gets the size of the URL buffer
   /// \return The size of the URL buffer
-  [[nodiscard]] size_type size() const noexcept {
+  [[nodiscard]] auto size() const noexcept {
     return view_.size();
   }
 
@@ -577,7 +577,7 @@ class url {
   ///
   /// \param other The other `url` object
   /// \returns `href_.compare(other.href_)`
-  [[nodiscard]] int compare(const url &other) const noexcept {
+  [[nodiscard]] auto compare(const url &other) const noexcept {
     return view_.compare(other.view_);
   }
 
@@ -587,8 +587,8 @@ class url {
   /// \param scheme
   /// \returns The default port if the scheme is special, `nullopt`
   ///          otherwise
-  [[nodiscard]] static std::optional<std::uint16_t> default_port(
-      std::string_view scheme) noexcept;
+  [[nodiscard]] static auto default_port(
+      std::string_view scheme) noexcept -> std::optional<std::uint16_t>;
 
   /// Clears the underlying URL string
   ///
@@ -598,14 +598,14 @@ class url {
   /// Returns the underlying byte buffer
   ///
   /// \returns `href_.c_str()`
-  [[nodiscard]] const char *c_str() const noexcept {
+  [[nodiscard]] auto c_str() const noexcept {
     return href_.c_str();
   }
 
   /// Returns the underlying byte buffer
   ///
   /// \returns `href_.data()`
-  [[nodiscard]] const char *data() const noexcept {
+  [[nodiscard]] auto data() const noexcept {
     return href_.data();
   }
 
@@ -624,9 +624,9 @@ class url {
   void update_record(url_record &&url);
 
   template<class Source>
-  tl::expected<void, std::error_code> set_port_impl(
+  auto set_port_impl(
       const Source &port,
-      typename std::enable_if<is_url_convertible<Source>::value>::type * = nullptr) {
+      typename std::enable_if<is_url_convertible<Source>::value>::type * = nullptr) -> tl::expected<void, std::error_code> {
     auto bytes = details::to_bytes(port);
     if (!bytes) {
       return tl::make_unexpected(
@@ -636,9 +636,9 @@ class url {
   }
 
   template<typename intT>
-  tl::expected<void, std::error_code> set_port_impl(
+  auto set_port_impl(
       intT port,
-      typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) {
+      typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) -> tl::expected<void, std::error_code> {
     return set_port(string_view(std::to_string(port)));
   }
 
@@ -658,8 +658,8 @@ class url {
 void swap(url &lhs, url &rhs) noexcept;
 
 namespace details {
-tl::expected<url, std::error_code> make_url(
-    url::string_view input, const std::optional<url_record> &base);
+auto make_url(
+    url::string_view input, const std::optional<url_record> &base) -> tl::expected<url, std::error_code>;
 }  // namespace details
 
 /// Parses a URL string and constructs a `url` object on success,
@@ -669,8 +669,8 @@ tl::expected<url, std::error_code> make_url(
 /// \param input The input string
 /// \returns A `url` object on success, an error on failure
 template<class Source>
-inline tl::expected<url, std::error_code> make_url(
-    const Source &input) {
+inline auto make_url(
+    const Source &input) -> tl::expected<url, std::error_code> {
   auto bytes = details::to_bytes(input);
   if (!bytes) {
     return tl::make_unexpected(
@@ -687,8 +687,8 @@ inline tl::expected<url, std::error_code> make_url(
 /// \param base The base URL
 /// \returns A `url` object on success, an error on failure
 template<class Source>
-inline tl::expected<url, std::error_code> make_url(
-    const Source &input, const url &base) {
+inline auto make_url(
+    const Source &input, const url &base) -> tl::expected<url, std::error_code> {
   auto bytes = details::to_bytes(input);
   if (!bytes) {
     return tl::make_unexpected(
@@ -703,7 +703,7 @@ inline tl::expected<url, std::error_code> make_url(
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `true` if the `url` objects are equal, `false` otherwise
-inline bool operator==(const url &lhs, const url &rhs) noexcept {
+inline auto operator==(const url &lhs, const url &rhs) noexcept {
   return lhs.compare(rhs) == 0;
 }
 
@@ -712,7 +712,7 @@ inline bool operator==(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `!(lhs == rhs)`
-inline bool operator!=(const url &lhs, const url &rhs) noexcept {
+inline auto operator!=(const url &lhs, const url &rhs) noexcept {
   return !(lhs == rhs);
 }
 
@@ -721,7 +721,7 @@ inline bool operator!=(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `lhs.compare(rhs) < 0`
-inline bool operator<(const url &lhs, const url &rhs) noexcept {
+inline auto operator<(const url &lhs, const url &rhs) noexcept {
   return lhs.compare(rhs) < 0;
 }
 
@@ -730,7 +730,7 @@ inline bool operator<(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `lhs.compare(rhs) > 0`
-inline bool operator>(const url &lhs, const url &rhs) noexcept {
+inline auto operator>(const url &lhs, const url &rhs) noexcept {
   return rhs < lhs;
 }
 
@@ -739,7 +739,7 @@ inline bool operator>(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `!(lhs > rhs)
-inline bool operator<=(const url &lhs, const url &rhs) noexcept {
+inline auto operator<=(const url &lhs, const url &rhs) noexcept {
   return !(lhs > rhs);
 }
 
@@ -748,7 +748,7 @@ inline bool operator<=(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns !(lhs < rhs)
-inline bool operator>=(const url &lhs, const url &rhs) noexcept {
+inline auto operator>=(const url &lhs, const url &rhs) noexcept {
   return !(lhs < rhs);
 }
 
@@ -756,7 +756,7 @@ inline bool operator>=(const url &lhs, const url &rhs) noexcept {
 /// \param os
 /// \param url
 /// \returns
-inline std::ostream &operator<<(std::ostream &os, const url &url) {
+inline auto &operator<<(std::ostream &os, const url &url) {
   return os << url.href();
 }
 

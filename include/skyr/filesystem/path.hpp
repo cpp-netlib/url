@@ -50,18 +50,18 @@ enum class path_errc {
 /// Creates a `std::error_code` given a `skyr::path_errc` value
 /// \param error A filesystem path conversion error
 /// \returns A `std::error_code` object
-std::error_code make_error_code(path_errc error) noexcept;
+auto make_error_code(path_errc error) noexcept -> std::error_code;
 
 /// Converts a path object to a URL with a file protocol. Handles
 /// some processing, including percent encoding
 /// \param path A filesystem path
 /// \returns a url object or an error on failure
-tl::expected<url, std::error_code> from_path(const stdfs::path &path);
+auto from_path(const stdfs::path &path) -> tl::expected<url, std::error_code>;
 
 /// Converts a URL pathname to a filesystem path
 /// \param input A url object
 /// \returns a path object or an error on failure
-tl::expected<stdfs::path, std::error_code> to_path(const url &input);
+auto to_path(const url &input) -> tl::expected<stdfs::path, std::error_code>;
 }  // namespace filesystem
 }  // namespace v1
 }  // namespace skyr

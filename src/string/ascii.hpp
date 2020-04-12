@@ -12,7 +12,7 @@
 
 namespace skyr {
 inline namespace v1 {
-inline bool is_ascii(std::u32string_view input) noexcept {
+inline auto is_ascii(std::u32string_view input) noexcept {
   auto first = begin(input), last = end(input);
   return last == std::find_if(first, last, [](auto c) { return c > 0x7eu; });
 }

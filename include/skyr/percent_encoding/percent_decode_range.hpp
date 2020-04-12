@@ -17,7 +17,7 @@ namespace skyr {
 inline namespace v1 {
 namespace percent_encoding {
 namespace details {
-inline tl::expected<char, std::error_code> letter_to_hex(char byte) noexcept {
+inline auto letter_to_hex(char byte) noexcept -> tl::expected<char, std::error_code> {
   if ((byte >= '0') && (byte <= '9')) {
     return byte - '0';
   }
@@ -76,7 +76,7 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  percent_decode_iterator operator++(int) noexcept {
+  auto operator++(int) noexcept {
     assert(it_);
     auto result = *this;
     increment();
@@ -85,7 +85,7 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  percent_decode_iterator &operator++() noexcept {
+  auto &operator++() noexcept {
     assert(it_);
     increment();
     return *this;
@@ -93,7 +93,7 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  [[nodiscard]] const_reference operator * () const noexcept {
+  [[nodiscard]] auto operator * () const noexcept -> const_reference {
     assert(it_);
     if (*it_.value() == '%') {
       if (std::distance(it_.value(), last_.value()) < 3) {
@@ -118,7 +118,7 @@ class percent_decode_iterator {
   ///
   /// \param other
   /// \return
-  bool operator==(const percent_decode_iterator &other) const noexcept {
+  auto operator==(const percent_decode_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
@@ -169,38 +169,38 @@ class percent_decode_range {
 
   ///
   /// \return
-  [[nodiscard]] const_iterator begin() const noexcept {
+  [[nodiscard]] auto begin() const noexcept {
     return impl_?
            ((impl_.value().first != impl_.value().last)? impl_.value().first : iterator_type()) : iterator_type();
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator end() const noexcept {
+  [[nodiscard]] auto end() const noexcept {
     return iterator_type();
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator cbegin() const noexcept {
+  [[nodiscard]] auto cbegin() const noexcept {
     return begin();
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator cend() const noexcept {
+  [[nodiscard]] auto cend() const noexcept {
     return end();
   }
 
   ///
   /// \return
-  [[nodiscard]] bool empty() const noexcept {
+  [[nodiscard]] auto empty() const noexcept {
     return begin() == end();
   }
 
   ///
   /// \return
-  [[nodiscard]] size_type size() const noexcept {
+  [[nodiscard]] auto size() const noexcept {
     return static_cast<size_type>(std::distance(begin(), end()));
   }
 
@@ -253,8 +253,8 @@ static constexpr percent_decode_fn decode;
 /// \param range
 /// \return
 template <class Output, class OctetRange>
-tl::expected<Output, std::error_code> as(
-    percent_decode_range<OctetRange> &&range) {
+auto as(
+    percent_decode_range<OctetRange> &&range) -> tl::expected<Output, std::error_code> {
   auto result = Output();
   for (auto &&byte : range) {
     if (!byte) {

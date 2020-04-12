@@ -12,7 +12,7 @@
 
 namespace skyr {
 inline namespace v1 {
-inline std::u32string join(
+inline auto join(
     const std::vector<std::u32string> &elements, char32_t separator) {
   auto result = std::u32string();
   for (const auto &element : elements) {

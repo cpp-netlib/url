@@ -50,13 +50,13 @@ class u8_code_point_view {
 
   /// Returns an iterator to the beginning
   /// \return \c const_iterator
-  [[nodiscard]] constexpr const_iterator begin() const noexcept {
+  [[nodiscard]] constexpr auto begin() const noexcept {
     return first;
   }
 
   /// Returns an iterator to the end
   /// \return \c const_iterator
-  [[nodiscard]] constexpr const_iterator end() const noexcept {
+  [[nodiscard]] constexpr auto end() const noexcept {
     return last;
   }
 
@@ -78,7 +78,7 @@ class u8_code_point_view {
     return sequence_length(*first);
   }
 
-  [[nodiscard]] char32_t u32_value() const noexcept {
+  [[nodiscard]] auto u32_value() const noexcept {
     return find_code_point(first).map([] (auto &&state) { return state.value; }).value();
   }
 
@@ -93,8 +93,8 @@ class u8_code_point_view {
 /// \param range
 /// \return
 template<typename OctetRange>
-inline tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, std::error_code> u8_code_point(
-    const OctetRange &range) {
+inline auto u8_code_point(
+    const OctetRange &range) -> tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, std::error_code> {
   auto first = std::begin(range), last = std::end(range);
   auto length = sequence_length(*first);
   if (std::distance(first, last) > length) {
@@ -118,7 +118,7 @@ inline tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, std
 /// \param range
 /// \return
 template <typename OctetRange>
-inline tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, std::error_code> checked_u8_code_point(
+inline auto checked_u8_code_point(
     const OctetRange &range) {
   using result_type = tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, std::error_code>;
 

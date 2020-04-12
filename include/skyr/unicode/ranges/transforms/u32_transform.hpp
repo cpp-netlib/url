@@ -29,9 +29,13 @@ class u32_transform_iterator {
   ///
   using value_type = tl::expected<char32_t, std::error_code>;
   ///
-  using reference = value_type;
+  using const_reference = value_type;
   ///
-  using pointer = typename std::add_pointer<value_type>::type;
+  using reference = const_reference;
+  ///
+  using const_pointer = const typename std::add_pointer<value_type>::type;
+  ///
+  using pointer = const_pointer;
   ///
   using difference_type = std::ptrdiff_t;
 
@@ -44,7 +48,7 @@ class u32_transform_iterator {
 
   ///
   /// \return
-  u32_transform_iterator operator ++ (int) noexcept {
+  auto operator ++ (int) noexcept {
     auto result = *this;
     ++it_;
     return result;
@@ -52,21 +56,21 @@ class u32_transform_iterator {
 
   ///
   /// \return
-  u32_transform_iterator &operator ++ () noexcept {
+  auto &operator ++ () noexcept {
     ++it_;
     return *this;
   }
 
   ///
   /// \return
-  [[nodiscard]] reference operator*() const noexcept {
+  [[nodiscard]] auto operator*() const noexcept -> const_reference {
     return (*it_).and_then([](auto code_point) { return u32_value(code_point); });
   }
 
   ///
   /// \param other
   /// \return
-  constexpr bool operator == (const u32_transform_iterator &other) const noexcept {
+  constexpr auto operator == (const u32_transform_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
@@ -115,13 +119,13 @@ class transform_u32_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr const_iterator begin() const noexcept {
+  [[nodiscard]] constexpr auto begin() const noexcept {
     return const_iterator(range_.begin());
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr const_iterator end() const noexcept {
+  [[nodiscard]] constexpr auto end() const noexcept {
     return const_iterator(range_.end());
   }
 
@@ -191,7 +195,7 @@ static constexpr transform_u32_range_fn to_u32;
 /// \param range
 /// \return
 template <class Output, class CodePointRange>
-tl::expected<Output, std::error_code> as(transform_u32_range<CodePointRange> &&range) {
+auto as(transform_u32_range<CodePointRange> &&range) -> tl::expected<Output, std::error_code> {
   auto result = Output{};
   for (auto &&code_point : range) {
     auto u32_code_point = u32_value(code_point);

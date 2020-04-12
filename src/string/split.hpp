@@ -13,7 +13,7 @@
 
 namespace skyr {
 inline namespace v1 {
-inline std::vector<std::u32string> split(
+inline auto split(
     std::u32string_view input, char32_t separator) noexcept {
   auto elements = std::vector<std::u32string>{};
   if (!input.empty()) {

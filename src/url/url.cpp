@@ -45,11 +45,11 @@ void url::update_record(url_record &&url) {
       url_.query ? string_view(url_.query.value()) : string_view{});
 }
 
-url::string_type url::href() const {
+auto url::href() const -> string_type {
   return href_;
 }
 
-tl::expected<void, std::error_code> url::set_href(string_view href) {
+auto url::set_href(string_view href) -> tl::expected<void, std::error_code> {
   return details::basic_parse(href)
       .and_then([this](auto &&new_url) -> tl::expected<void, std::error_code> {
         update_record(std::forward<url_record>(new_url));
@@ -57,11 +57,11 @@ tl::expected<void, std::error_code> url::set_href(string_view href) {
       });
 }
 
-url::string_type url::to_json() const {
+auto url::to_json() const -> string_type {
   return href_;
 }
 
-url::string_type url::origin() const {
+auto url::origin() const -> string_type {
   if (url_.scheme == "blob") {
     auto url = details::make_url(pathname(), std::nullopt);
     return url ? url.value().origin() : "";
@@ -77,11 +77,11 @@ url::string_type url::origin() const {
   return "null";
 }
 
-url::string_type url::protocol() const {
+auto url::protocol() const -> string_type {
   return url_.scheme + ":";
 }
 
-tl::expected<void, std::error_code> url::set_protocol(string_view protocol) {
+auto url::set_protocol(string_view protocol) -> tl::expected<void, std::error_code> {
   auto protocol_ = static_cast<string_type>(protocol);
   if (protocol_.back() != ':') {
     protocol_ += ':';
@@ -96,11 +96,11 @@ tl::expected<void, std::error_code> url::set_protocol(string_view protocol) {
       });
 }
 
-url::string_type url::username() const {
+auto url::username() const -> string_type {
   return url_.username;
 }
 
-tl::expected<void, std::error_code> url::set_username(string_view username) {
+auto url::set_username(string_view username) -> tl::expected<void, std::error_code> {
   if (url_.cannot_have_a_username_password_or_port()) {
     return tl::make_unexpected(make_error_code(
         url_parse_errc::cannot_have_a_username_password_or_port));
@@ -118,11 +118,11 @@ tl::expected<void, std::error_code> url::set_username(string_view username) {
   return {};
 }
 
-url::string_type url::password() const {
+auto url::password() const -> string_type {
   return url_.password;
 }
 
-tl::expected<void, std::error_code> url::set_password(string_view password) {
+auto url::set_password(string_view password) -> tl::expected<void, std::error_code> {
   if (url_.cannot_have_a_username_password_or_port()) {
     return tl::make_unexpected(make_error_code(
         url_parse_errc::cannot_have_a_username_password_or_port));
@@ -140,7 +140,7 @@ tl::expected<void, std::error_code> url::set_password(string_view password) {
   return {};
 }
 
-url::string_type url::host() const {
+auto url::host() const -> url::string_type {
   if (!url_.host) {
     return {};
   }
@@ -152,7 +152,7 @@ url::string_type url::host() const {
   return url_.host.value() + ":" + std::to_string(url_.port.value());
 }
 
-tl::expected<void, std::error_code> url::set_host(string_view host) {
+auto url::set_host(string_view host) -> tl::expected<void, std::error_code> {
   if (url_.cannot_be_a_base_url) {
     return tl::make_unexpected(make_error_code(
         url_parse_errc::cannot_be_a_base_url));
@@ -166,7 +166,7 @@ tl::expected<void, std::error_code> url::set_host(string_view host) {
       });
 }
 
-url::string_type url::hostname() const {
+auto url::hostname() const -> string_type {
   if (!url_.host) {
     return {};
   }
@@ -174,7 +174,7 @@ url::string_type url::hostname() const {
   return url_.host.value();
 }
 
-tl::expected<void, std::error_code> url::set_hostname(string_view hostname) {
+auto url::set_hostname(string_view hostname) -> tl::expected<void, std::error_code> {
   if (url_.cannot_be_a_base_url) {
     return tl::make_unexpected(make_error_code(
         url_parse_errc::cannot_be_a_base_url));
@@ -188,16 +188,16 @@ tl::expected<void, std::error_code> url::set_hostname(string_view hostname) {
       });
 }
 
-bool url::is_ipv4_address() const {
+auto url::is_ipv4_address() const -> bool {
   return parse_ipv4_address(hostname()).has_value();
 }
 
-std::optional<skyr::ipv4_address> url::ipv4_address() const {
+auto url::ipv4_address() const -> std::optional<skyr::ipv4_address> {
   auto address = parse_ipv4_address(hostname());
-  return address.has_value() ? std::make_optional(address.value()) : std::nullopt;
+  return address ? std::make_optional(address.value()) : std::nullopt;
 }
 
-bool url::is_ipv6_address() const {
+auto url::is_ipv6_address() const -> bool {
   if (!url_.host) {
     return false;
   }
@@ -208,7 +208,7 @@ bool url::is_ipv6_address() const {
   return parse_ipv6_address(view.substr(1, view.size() - 2)).has_value();
 }
 
-std::optional<skyr::ipv6_address> url::ipv6_address() const {
+auto url::ipv6_address() const -> std::optional<skyr::ipv6_address> {
   if (!url_.host) {
     return std::nullopt;
   }
@@ -221,15 +221,15 @@ std::optional<skyr::ipv6_address> url::ipv6_address() const {
   return address.has_value() ? std::make_optional(address.value()) : std::nullopt;
 }
 
-bool url::is_domain() const {
+auto url::is_domain() const -> bool {
   return details::is_special(url_.scheme) && !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
 }
 
-bool url::is_opaque() const {
+auto url::is_opaque() const -> bool {
   return !details::is_special(url_.scheme) && !hostname().empty();
 }
 
-url::string_type url::port() const {
+auto url::port() const -> string_type {
   if (!url_.port) {
     return {};
   }
@@ -237,7 +237,7 @@ url::string_type url::port() const {
   return std::to_string(url_.port.value());
 }
 
-tl::expected<void, std::error_code> url::set_port(string_view port) {
+auto url::set_port(string_view port) -> tl::expected<void, std::error_code> {
   if (url_.cannot_have_a_username_password_or_port()) {
     return tl::make_unexpected(make_error_code(
         url_parse_errc::cannot_have_a_username_password_or_port));
@@ -259,7 +259,7 @@ tl::expected<void, std::error_code> url::set_port(string_view port) {
   return {};
 }
 
-url::string_type url::pathname() const {
+auto url::pathname() const -> string_type {
   if (url_.cannot_be_a_base_url) {
     return url_.path.front();
   }
@@ -276,7 +276,7 @@ url::string_type url::pathname() const {
   return pathname.substr(0, pathname.length() - 1);
 }
 
-tl::expected<void, std::error_code> url::set_pathname(string_view pathname) {
+auto  url::set_pathname(string_view pathname) -> tl::expected<void, std::error_code> {
   if (url_.cannot_be_a_base_url) {
     return tl::make_unexpected(make_error_code(
         url_parse_errc::cannot_be_a_base_url));
@@ -291,7 +291,7 @@ tl::expected<void, std::error_code> url::set_pathname(string_view pathname) {
       });
 }
 
-url::string_type url::search() const {
+auto url::search() const -> string_type {
   if (!url_.query || url_.query.value().empty()) {
     return {};
   }
@@ -299,7 +299,7 @@ url::string_type url::search() const {
   return "?" + url_.query.value();
 }
 
-tl::expected<void, std::error_code> url::set_search(string_view search) {
+auto url::set_search(string_view search) -> tl::expected<void, std::error_code> {
   auto url = url_;
   if (search.empty()) {
     url.query = std::nullopt;
@@ -320,11 +320,11 @@ tl::expected<void, std::error_code> url::set_search(string_view search) {
       });
 }
 
-url_search_parameters &url::search_parameters() {
+auto url::search_parameters() -> url_search_parameters & {
   return parameters_;
 }
 
-url::string_type url::hash() const {
+auto url::hash() const -> string_type {
   if (!url_.fragment || url_.fragment.value().empty()) {
     return {};
   }
@@ -332,7 +332,7 @@ url::string_type url::hash() const {
   return "#" + url_.fragment.value();
 }
 
-tl::expected<void, std::error_code> url::set_hash(string_view hash) {
+auto url::set_hash(string_view hash) -> tl::expected<void, std::error_code> {
   if (hash.empty()) {
     url_.fragment = std::nullopt;
     update_record(std::move(url_));
@@ -352,7 +352,7 @@ tl::expected<void, std::error_code> url::set_hash(string_view hash) {
       });
 }
 
-std::optional<std::uint16_t> url::default_port(std::string_view scheme) noexcept {
+auto url::default_port(std::string_view scheme) noexcept -> std::optional<std::uint16_t> {
   return details::default_port(scheme);
 }
 
@@ -365,9 +365,9 @@ void swap(url &lhs, url &rhs) noexcept {
 }
 
 namespace details {
-tl::expected<url, std::error_code> make_url(
+auto make_url(
     url::string_view input,
-    const std::optional<url_record> &base) {
+    const std::optional<url_record> &base) -> tl::expected<url, std::error_code> {
   return parse(input, base)
       .and_then([](auto &&new_url) -> tl::expected<url, std::error_code> {
         return url(std::forward<url_record>(new_url));

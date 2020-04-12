@@ -21,12 +21,12 @@
 
 namespace skyr {
 /// \returns The major, minor and patch version as a tuple
-static constexpr auto version() noexcept -> std::tuple<int, int, int> {
+static constexpr std::tuple<int, int, int> version() noexcept {
   return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR, SKYR_VERSION_PATCH};
 }
 
 /// \returns The version as a string in the form MAJOR.MINOR
-static constexpr auto version_string() noexcept -> const char * {
+static constexpr const char *version_string() noexcept {
   return SKYR_VERSION_STRING;
 }
 }  // namespace skyr

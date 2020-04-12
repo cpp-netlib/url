@@ -37,9 +37,13 @@ class u8_range_iterator {
   /// An expected value containing a UTF-8 encoded code point
   using value_type = tl::expected<typename traits::iterator_value<iterator_type>::type, std::error_code>;
   /// A reference type
-  using reference = value_type;
+  using const_reference = value_type;
+  /// A reference type
+  using reference = const_reference;
   /// A pointer type
-  using pointer = typename std::add_pointer<value_type>::type;
+  using const_pointer = const typename std::add_pointer<value_type>::type;
+  /// A pointer type
+  using pointer = const_pointer;
   /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
 
@@ -60,7 +64,7 @@ class u8_range_iterator {
   /// Increments through a code point
   ///
   /// \return The previous iterator value
-  u8_range_iterator operator ++ (int) noexcept {
+  auto operator ++ (int) noexcept {
     assert(it_);
     auto result = *this;
     increment();
@@ -72,7 +76,7 @@ class u8_range_iterator {
   /// Increments through a code point
   ///
   /// \return \c *this
-  u8_range_iterator &operator ++ () noexcept {
+  auto &operator ++ () noexcept {
     assert(it_);
     increment();
     return *this;
@@ -83,7 +87,7 @@ class u8_range_iterator {
   /// Returns a proxy to a UTF-8 encoded code point
   ///
   /// \return A proxy to a UTF-8 encoded code point
-  constexpr reference operator * () const noexcept {
+  constexpr auto operator * () const noexcept -> const_reference {
     assert(it_);
     return checked_u8_code_point(*it_.value());
   }
@@ -92,7 +96,7 @@ class u8_range_iterator {
   ///
   /// \param other Another iterator
   /// \return \c true if the iterators are the same, \c false otherwise
-  constexpr bool operator == (const u8_range_iterator &other) const noexcept {
+  constexpr auto operator == (const u8_range_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
@@ -100,7 +104,7 @@ class u8_range_iterator {
   ///
   /// \param other Another iterator
   /// \return `!(*this == other)`
-  constexpr bool operator != (const u8_range_iterator &other) const noexcept {
+  constexpr auto operator != (const u8_range_iterator &other) const noexcept {
     return !(*this == other);
   }
 
@@ -156,13 +160,13 @@ class view_u8_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr const_iterator begin() const noexcept {
+  [[nodiscard]] constexpr auto begin() const noexcept {
     return impl_? impl_.value().first : iterator_type();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr const_iterator end() const noexcept {
+  [[nodiscard]] constexpr auto end() const noexcept {
     return iterator_type();
   }
 
@@ -180,13 +184,13 @@ class view_u8_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr bool empty() const noexcept {
+  [[nodiscard]] constexpr auto empty() const noexcept {
     return begin() == end();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr size_type size() const noexcept {
+  [[nodiscard]] constexpr auto size() const noexcept {
     return static_cast<size_type>(std::distance(begin(), end()));
   }
 

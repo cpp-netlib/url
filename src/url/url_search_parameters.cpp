@@ -63,15 +63,15 @@ void url_search_parameters::remove(
   update();
 }
 
-std::optional<url_search_parameters::string_type> url_search_parameters::get(
-    std::string_view name) const {
+auto url_search_parameters::get(
+    std::string_view name) const -> std::optional<string_type> {
   auto first = std::begin(parameters_), last = std::end(parameters_);
   auto it = find_parameter(first, last, name);
   return (it != last) ? std::make_optional(it->second) : std::nullopt;
 }
 
-std::vector<url_search_parameters::string_type> url_search_parameters::get_all(
-    std::string_view name) const {
+auto url_search_parameters::get_all(
+    std::string_view name) const -> std::vector<string_type> {
   std::vector<string_type> result;
   result.reserve(parameters_.size());
   for (auto[parameter_name, value] : parameters_) {
@@ -82,7 +82,7 @@ std::vector<url_search_parameters::string_type> url_search_parameters::get_all(
   return result;
 }
 
-bool url_search_parameters::contains(std::string_view name) const noexcept {
+auto url_search_parameters::contains(std::string_view name) const noexcept -> bool {
   auto first = std::begin(parameters_), last = std::end(parameters_);
   return find_parameter(first, last, name) != last;
 }
@@ -115,7 +115,7 @@ void url_search_parameters::sort() {
   update();
 }
 
-url_search_parameters::string_type url_search_parameters::to_string() const {
+auto url_search_parameters::to_string() const -> string_type {
   auto result = string_type{};
 
   auto first = std::begin(parameters_), last = std::end(parameters_);

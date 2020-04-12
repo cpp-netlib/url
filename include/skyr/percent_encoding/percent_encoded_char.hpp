@@ -14,7 +14,7 @@ namespace skyr {
 inline namespace v1 {
 namespace percent_encoding {
 namespace details {
-inline constexpr char hex_to_letter(char byte) noexcept {
+inline constexpr auto hex_to_letter(char byte) noexcept {
   if ((byte >= '\x00') && (byte < '\x0a')) {
     return static_cast<char>(byte + '0');
   }
@@ -26,27 +26,27 @@ inline constexpr char hex_to_letter(char byte) noexcept {
   return byte;
 }
 
-inline constexpr bool is_c0_control_byte(char byte) noexcept {
+inline constexpr auto is_c0_control_byte(char byte) noexcept {
   return (byte <= '\x1f') || (byte > '\x7e');
 }
 
-inline bool is_fragment_byte(char byte) {
+inline auto is_fragment_byte(char byte) {
   constexpr std::array<char, 5> set = {'\x20', '\x22', '\x3c', '\x3e', '\x60'};
   auto it = std::find(begin(set), end(set), byte);
   return is_c0_control_byte(byte) || (it != set.end());
 }
 
-inline bool is_query_byte(char byte) {
+inline auto is_query_byte(char byte) {
   return is_fragment_byte(byte) || (byte == '\x27');
 }
 
-inline bool is_path_byte(char byte) {
+inline auto is_path_byte(char byte) {
   constexpr std::array<char, 4> set = {'\x23', '\x3f', '\x7b', '\x7d'};
   auto it = std::find(begin(set), end(set), byte);
   return is_fragment_byte(byte) || (it != set.end());
 }
 
-inline bool is_userinfo_byte(char byte) {
+inline auto is_userinfo_byte(char byte) {
   constexpr std::array<char, 10> set = {
       '\x2f', '\x3a', '\x3b', '\x3d', '\x40', '\x5b', '\x5c', '\x5d', '\x5e', '\x7c'};
   auto it = std::find(begin(set), end(set), byte);
@@ -115,37 +115,37 @@ struct percent_encoded_char {
 
   ///
   /// \return
-  [[nodiscard]] const_iterator begin() const noexcept {
+  [[nodiscard]] auto begin() const noexcept {
     return impl_.begin();
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator end() const noexcept {
+  [[nodiscard]] auto end() const noexcept {
     return impl_.end();
   }
 
   ///
   /// \return
-  [[nodiscard]] size_type size() const noexcept {
+  [[nodiscard]] auto size() const noexcept {
     return impl_.size();
   }
 
   ///
   /// \return
-  [[nodiscard]] bool is_encoded() const noexcept {
+  [[nodiscard]] auto is_encoded() const noexcept {
     return impl_.size() == 3;
   }
 
   ///
   /// \return
-  [[nodiscard]] std::string to_string() const & {
+  [[nodiscard]] auto to_string() const & -> std::string {
     return impl_;
   }
 
   ///
   /// \return
-  [[nodiscard]] std::string &&to_string() && noexcept {
+  [[nodiscard]] auto to_string() && noexcept -> std::string && {
     return std::move(impl_);
   }
 
@@ -161,7 +161,7 @@ struct percent_encoded_char {
 /// \param pred
 /// \return
 template <class Pred>
-inline percent_encoded_char percent_encode_byte(char byte, Pred pred) {
+inline auto percent_encode_byte(char byte, Pred pred) -> percent_encoded_char {
   if (pred(byte)) {
     return percent_encoding::percent_encoded_char(byte);
   }
@@ -173,7 +173,7 @@ inline percent_encoded_char percent_encode_byte(char byte, Pred pred) {
 /// \param byte
 /// \param excludes
 /// \return
-inline percent_encoded_char percent_encode_byte(char byte, encode_set excludes) {
+inline auto percent_encode_byte(char byte, encode_set excludes) -> percent_encoded_char {
   switch (excludes) {
     case encode_set::none:
       return percent_encoding::percent_encoded_char(byte);
@@ -195,7 +195,7 @@ inline percent_encoded_char percent_encode_byte(char byte, encode_set excludes) 
 /// \param input An ASCII string
 /// \returns `true` if the input string contains percent encoded
 ///          values, `false` otherwise
-inline bool is_percent_encoded(std::string_view input) noexcept {
+inline auto is_percent_encoded(std::string_view input) noexcept {
     auto first = begin(input), last = end(input);
     auto it = first;
 

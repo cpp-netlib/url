@@ -13,7 +13,7 @@
 #include <iterator>
 #include <system_error>
 #include <tl/expected.hpp>
-#include <skyr/details/endianness.hpp>
+#include <skyr/platform/endianness.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -36,7 +36,7 @@ enum class ipv6_address_errc {
 /// value
 /// \param error An IPv6 address error
 /// \returns A `std::error_code` object
-std::error_code make_error_code(ipv6_address_errc error);
+auto make_error_code(ipv6_address_errc error) -> std::error_code;
 
 /// Represents an IPv6 address
 class ipv6_address {
@@ -58,7 +58,7 @@ class ipv6_address {
 
   /// The address in bytes in network byte order
   /// \returns The address in bytes
-  [[nodiscard]] std::array<unsigned char, 16> to_bytes() const noexcept {
+  [[nodiscard]] auto to_bytes() const noexcept -> std::array<unsigned char, 16> {
     std::array<unsigned char, 16> bytes{};
     for (auto i = 0UL; i < address_.size(); ++i) {
       bytes[i * 2    ] = static_cast<unsigned char>(address_[i] >> 8u);
@@ -68,7 +68,7 @@ class ipv6_address {
   }
 
    /// \returns The IPv6 address as a string
-  [[nodiscard]] std::string to_string() const;
+  [[nodiscard]] auto to_string() const -> std::string;
 
 };
 

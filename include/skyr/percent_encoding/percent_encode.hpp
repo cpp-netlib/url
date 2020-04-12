@@ -15,7 +15,7 @@ inline namespace v1 {
 /// Percent encodes the input
 /// \returns The percent encoded output when successful, an error otherwise.
 template <class Output>
-inline tl::expected<Output, std::error_code> percent_encode(std::string_view input) {
+inline auto percent_encode(std::string_view input) {
   using namespace v1::percent_encoding;
   return as<Output>(input | view::encode);
 }

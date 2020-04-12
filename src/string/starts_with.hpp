@@ -11,7 +11,7 @@
 
 namespace skyr {
 inline namespace v1 {
-inline bool starts_with(
+inline auto starts_with(
     std::string_view input,
     std::string_view chars) noexcept {
   auto first = std::begin(input), last = std::end(input);

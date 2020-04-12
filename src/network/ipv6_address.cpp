@@ -20,40 +20,37 @@ using namespace std::string_view_literals;
 namespace {
 class ipv6_address_error_category : public std::error_category {
  public:
-  [[nodiscard]] const char *name() const noexcept override;
-  [[nodiscard]] std::string message(int error) const noexcept override;
-};
-
-const char *ipv6_address_error_category::name() const noexcept {
-  return "ipv6 address";
-}
-
-std::string ipv6_address_error_category::message(int error) const noexcept {
-  switch (static_cast<ipv6_address_errc>(error)) {
-    case ipv6_address_errc::does_not_start_with_double_colon:
-      return "IPv6 piece does not start with a double colon.";
-    case ipv6_address_errc::invalid_piece:
-      return "Invalid IPv6 piece.";
-    case ipv6_address_errc::compress_expected:
-      return "IPv6 address compression was expected.";
-    case ipv6_address_errc::empty_ipv4_segment:
-      return "IPv4 segment is empty.";
-    case ipv6_address_errc::invalid_ipv4_segment_number:
-      return "IPv4 segment number is invalid.";
-    default:
-      return "(Unknown error)";
+  [[nodiscard]] auto name() const noexcept -> const char * override {
+    return "ipv6 address";
   }
-}
+
+  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
+    switch (static_cast<ipv6_address_errc>(error)) {
+      case ipv6_address_errc::does_not_start_with_double_colon:
+        return "IPv6 piece does not start with a double colon.";
+      case ipv6_address_errc::invalid_piece:
+        return "Invalid IPv6 piece.";
+      case ipv6_address_errc::compress_expected:
+        return "IPv6 address compression was expected.";
+      case ipv6_address_errc::empty_ipv4_segment:
+        return "IPv4 segment is empty.";
+      case ipv6_address_errc::invalid_ipv4_segment_number:
+        return "IPv4 segment number is invalid.";
+      default:
+        return "(Unknown error)";
+    }
+  }
+};
 
 const ipv6_address_error_category category{};
 }  // namespace
 
-std::error_code make_error_code(ipv6_address_errc error) {
+auto make_error_code(ipv6_address_errc error) -> std::error_code {
   return std::error_code(static_cast<int>(error), category);
 }
 
 namespace {
-inline std::uint16_t hex_to_dec(char byte) noexcept {
+inline auto hex_to_dec(char byte) noexcept {
   assert(std::isxdigit(byte, std::locale::classic()));
 
   auto byte_lower = std::tolower(byte, std::locale::classic());
@@ -62,11 +59,11 @@ inline std::uint16_t hex_to_dec(char byte) noexcept {
     return static_cast<std::uint16_t>(byte_lower - '0');
   }
 
-  return static_cast<std::uint16_t>(byte_lower - 'a') + 10;
+  return static_cast<std::uint16_t>(byte_lower - 'a' + 10);
 }
 }  // namespace
 
-std::string ipv6_address::to_string() const {
+auto ipv6_address::to_string() const -> std::string {
   using namespace std::string_literals;
 
   auto output = ""s;
@@ -144,7 +141,7 @@ std::string ipv6_address::to_string() const {
 
 namespace details {
 namespace {
-std::pair<tl::expected<ipv6_address, std::error_code>, bool> parse_ipv6_address(std::string_view input) {
+auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_address, std::error_code>, bool> {
   auto address = std::array<unsigned short, 8>{{0, 0, 0, 0, 0, 0, 0, 0}};
   auto piece_index = 0;
   auto compress = std::optional<decltype(piece_index)>();
@@ -332,8 +329,7 @@ std::pair<tl::expected<ipv6_address, std::error_code>, bool> parse_ipv6_address(
 }  // namespace
 }  // namespace details
 
-
-tl::expected<ipv6_address, std::error_code> parse_ipv6_address(std::string_view input) {
+auto parse_ipv6_address(std::string_view input) -> tl::expected<ipv6_address, std::error_code> {
   return details::parse_ipv6_address(input).first;
 }
 }  // namespace v1

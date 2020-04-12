@@ -59,7 +59,7 @@ class percent_encode_iterator {
 
   ///
   /// \return
-  percent_encode_iterator &operator++() noexcept {
+  auto &operator++() noexcept {
     assert(it_);
     increment();
     return *this;
@@ -67,7 +67,7 @@ class percent_encode_iterator {
 
   ///
   /// \return
-  percent_encode_iterator operator++(int) noexcept {
+  auto operator++(int) noexcept {
     assert(it_);
     auto result = *this;
     increment();
@@ -76,7 +76,7 @@ class percent_encode_iterator {
 
   ///
   /// \return
-  [[nodiscard]] reference operator*() const noexcept {
+  [[nodiscard]] auto operator*() const noexcept -> reference {
     assert(it_);
     auto byte = *it_.value();
     if (byte == '\x20') {
@@ -91,11 +91,11 @@ class percent_encode_iterator {
     return percent_encoded_char(byte);
   }
 
-  [[nodiscard]] bool operator==(const percent_encode_iterator &other) const noexcept {
+  [[nodiscard]] auto operator==(const percent_encode_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
-  [[nodiscard]] bool operator!=(const percent_encode_iterator &other) const noexcept {
+  [[nodiscard]] auto operator!=(const percent_encode_iterator &other) const noexcept {
     return !(*this == other);
   }
 
@@ -140,37 +140,37 @@ class percent_encode_range {
 
   ///
   /// \return
-  [[nodiscard]] const_iterator begin() const noexcept {
+  [[nodiscard]] auto begin() const noexcept {
     return impl_? impl_.value().first : iterator_type();
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator end() const noexcept {
+  [[nodiscard]] auto end() const noexcept {
     return iterator_type();
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator cbegin() const noexcept {
+  [[nodiscard]] auto cbegin() const noexcept {
     return begin();
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator cend() const noexcept {
+  [[nodiscard]] auto cend() const noexcept {
     return end();
   }
 
   ///
   /// \return
-  [[nodiscard]] bool empty() const noexcept {
+  [[nodiscard]] auto empty() const noexcept {
     return begin() == end();
   }
 
   ///
   /// \return
-  [[nodiscard]] size_type size() const noexcept {
+  [[nodiscard]] auto size() const noexcept {
     return static_cast<size_type>(std::distance(begin(), end()));
   }
 
@@ -222,8 +222,8 @@ static constexpr percent_encode_fn encode;
 /// \param range
 /// \return
 template <class Output, class OctetRange>
-tl::expected<Output, std::error_code> as(
-    percent_encode_range<OctetRange> &&range) {
+auto as(
+    percent_encode_range<OctetRange> &&range) -> tl::expected<Output, std::error_code> {
   auto result = Output();
   for (auto &&byte : range) {
     if (!byte) {

@@ -29,7 +29,9 @@ class unchecked_u8_range_iterator {
   ///
   using value_type = u8_code_point_view<OctetIterator>;
   ///
-  using reference = value_type;
+  using const_reference = value_type;
+  ///
+  using reference = const_reference;
   ///
   using difference_type = std::ptrdiff_t;
 
@@ -43,7 +45,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  unchecked_u8_range_iterator operator ++ (int) noexcept {
+  auto operator ++ (int) noexcept {
     assert(it_);
     auto result = *this;
     increment();
@@ -52,7 +54,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  unchecked_u8_range_iterator &operator ++ () noexcept {
+  auto &operator ++ () noexcept {
     assert(it_);
     increment();
     return *this;
@@ -60,7 +62,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  constexpr reference operator * () const noexcept {
+  constexpr auto operator * () const noexcept -> const_reference {
     assert(it_);
     auto last = it_.value();
     std::advance(last, sequence_length(*it_.value()));
@@ -70,14 +72,14 @@ class unchecked_u8_range_iterator {
   ///
   /// \param other
   /// \return
-  constexpr bool operator == (const unchecked_u8_range_iterator &other) const noexcept {
+  constexpr auto operator == (const unchecked_u8_range_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
   ///
   /// \param other
   /// \return
-  constexpr bool operator != (const unchecked_u8_range_iterator &other) const noexcept {
+  constexpr auto operator != (const unchecked_u8_range_iterator &other) const noexcept {
     return !(*this == other);
   }
 
@@ -130,13 +132,13 @@ class view_unchecked_u8_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr const_iterator begin() const noexcept {
+  [[nodiscard]] constexpr auto begin() const noexcept {
     return impl_? impl_.value().first : iterator_type();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr const_iterator end() const noexcept {
+  [[nodiscard]] constexpr auto end() const noexcept {
     return impl_? impl_.value().last : iterator_type();
   }
 
@@ -154,13 +156,13 @@ class view_unchecked_u8_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr bool empty() const noexcept {
+  [[nodiscard]] constexpr auto empty() const noexcept {
     return begin() == end();
   }
 
   ///
   /// \return
-  [[nodiscard]] size_type size() const noexcept {
+  [[nodiscard]] auto size() const noexcept {
     return static_cast<size_type>(std::distance(begin(), end()));
   }
 

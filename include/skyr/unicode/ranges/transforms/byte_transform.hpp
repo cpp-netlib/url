@@ -49,14 +49,14 @@ class byte_transform_iterator {
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  byte_transform_iterator &operator++() noexcept {
+  auto &operator++() noexcept {
     increment();
     return *this;
   }
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  byte_transform_iterator operator++(int) noexcept {
+  auto operator++(int) noexcept {
     auto result = *this;
     increment();
     return result;
@@ -68,7 +68,7 @@ class byte_transform_iterator {
   /// UTF-8 encoded sequence.
   ///
   /// \return An expected wrapper
-  [[nodiscard]] reference operator*() const noexcept {
+  [[nodiscard]] auto operator*() const noexcept -> reference {
     auto code_point = u32_value(*it_).value();
 
     if (!is_valid_code_point(code_point)) {
@@ -108,14 +108,14 @@ class byte_transform_iterator {
   /// Equality operator
   /// \param other The other iterator
   /// \return \c true if the iterators are the same, \c false otherwise
-  constexpr bool operator==(const byte_transform_iterator &other) const noexcept {
+  constexpr auto operator==(const byte_transform_iterator &other) const noexcept -> bool {
     return (it_ == other.it_) && (octet_index_ == other.octet_index_);
   }
 
   /// Inequality operator
   /// \param other The other iterator
   /// \return \c `!(*this == other)`
-  constexpr bool operator!=(const byte_transform_iterator &other) const noexcept {
+  constexpr auto operator!=(const byte_transform_iterator &other) const noexcept -> bool {
     return !(*this == other);
   }
 
@@ -189,31 +189,31 @@ class transform_byte_range {
 
   /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] const_iterator begin() const noexcept {
+  [[nodiscard]] auto begin() const noexcept {
     return first ? first.value() : iterator_type();
   }
 
   /// Returns an iterator to the last element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] const_iterator end() const noexcept {
+  [[nodiscard]] auto end() const noexcept {
     return last ? last.value() : iterator_type();
   }
 
   /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] const_iterator cbegin() const noexcept {
+  [[nodiscard]] auto cbegin() const noexcept {
     return begin();
   }
 
   /// Returns an iterator to the last element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] const_iterator cend() const noexcept {
+  [[nodiscard]] auto cend() const noexcept {
     return end();
   }
 
   /// Tests if the byte range is empty
   /// \return \c true if the range is empty, \c false otherwise
-  [[nodiscard]] bool empty() const noexcept {
+  [[nodiscard]] auto empty() const noexcept {
     return begin() == end();
   }
 
@@ -258,8 +258,8 @@ static constexpr byte_range_fn to_bytes;
 /// \param range
 /// \return
 template <class Output, typename CodePointRange>
-tl::expected<Output, std::error_code> as(
-    transform_byte_range<CodePointRange> &&range) {
+auto as(
+    transform_byte_range<CodePointRange> &&range) -> tl::expected<Output, std::error_code> {
   auto result = Output{};
   for (auto &&byte : range) {
     if (!byte) {

@@ -33,9 +33,13 @@ class u16_range_iterator {
   ///
   using value_type = tl::expected<u16_code_point_t, std::error_code>;
   ///
-  using reference = value_type;
+  using const_reference = value_type;
   ///
-  using pointer = typename std::add_pointer<value_type>::type;
+  using reference = const_reference;
+  ///
+  using const_pointer = const typename std::add_pointer<value_type>::type;
+  ///
+  using pointer = const_reference;
   ///
   using difference_type = std::ptrdiff_t;
 
@@ -52,7 +56,7 @@ class u16_range_iterator {
 
   ///
   /// \return
-  u16_range_iterator operator ++ (int) noexcept {
+  auto operator ++ (int) noexcept {
     auto result = *this;
     increment();
     return result;
@@ -60,14 +64,14 @@ class u16_range_iterator {
 
   ///
   /// \return
-  u16_range_iterator &operator ++ () noexcept {
+  auto &operator ++ () noexcept {
     increment();
     return *this;
   }
 
   ///
   /// \return
-  reference operator * () const noexcept {
+  auto operator * () const noexcept -> const_reference {
     assert(it_);
     auto value = mask16(*it_.value());
     if (is_lead_surrogate(value)) {
@@ -91,14 +95,14 @@ class u16_range_iterator {
   ///
   /// \param other
   /// \return
-  bool operator == (const u16_range_iterator &other) const noexcept {
+  auto operator == (const u16_range_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
   ///
   /// \param other
   /// \return
-  bool operator != (const u16_range_iterator &other) const noexcept {
+  auto operator != (const u16_range_iterator &other) const noexcept {
     return !(*this == other);
   }
 
@@ -149,13 +153,13 @@ class view_u16_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr const_iterator begin() const noexcept {
+  [[nodiscard]] constexpr auto begin() const noexcept {
     return iterator_type(std::begin(range_), std::end(range_));
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr const_iterator end() const noexcept {
+  [[nodiscard]] constexpr auto end() const noexcept {
     return iterator_type();
   }
 
@@ -173,13 +177,13 @@ class view_u16_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr bool empty() const noexcept {
+  [[nodiscard]] constexpr auto empty() const noexcept {
     return begin() == end();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr size_type size() const noexcept {
+  [[nodiscard]] constexpr auto size() const noexcept {
     return static_cast<size_type>(end() - begin());
   }
 

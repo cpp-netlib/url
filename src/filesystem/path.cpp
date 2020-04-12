@@ -12,11 +12,11 @@ namespace filesystem {
 namespace {
 class path_error_category : public std::error_category {
  public:
-  [[nodiscard]] const char *name() const noexcept override {
+  [[nodiscard]] auto name() const noexcept -> const char * override {
     return "url filesystem path";
   }
 
-  [[nodiscard]] std::string message(int error) const noexcept override {
+  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
     switch (static_cast<path_errc>(error)) {
       case path_errc::invalid_path: return "Invalid path";
       case path_errc::percent_decoding_error: return "Percent decoding error";
@@ -28,15 +28,15 @@ class path_error_category : public std::error_category {
 const path_error_category category{};
 }  // namespace
 
-std::error_code make_error_code(path_errc error) noexcept {
+auto make_error_code(path_errc error) noexcept -> std::error_code {
   return std::error_code(static_cast<int>(error), category);
 }
 
-tl::expected<url, std::error_code> from_path(const stdfs::path &path) {
+auto from_path(const stdfs::path &path) -> tl::expected<url, std::error_code> {
   return make_url("file://" + path.generic_u8string());
 }
 
-tl::expected<stdfs::path, std::error_code> to_path(const url &input) {
+auto to_path(const url &input) -> tl::expected<stdfs::path, std::error_code> {
   auto pathname = input.pathname();
   auto decoded = skyr::percent_encoding::as<std::string>(
       pathname | skyr::percent_encoding::view::decode);

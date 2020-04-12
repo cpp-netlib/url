@@ -45,14 +45,14 @@ class query_element_iterator {
 
   ///
   /// \return
-  query_element_iterator &operator++() {
+  auto &operator++() {
     increment();
     return *this;
   }
 
   ///
   /// \return
-  query_element_iterator operator++(int) {
+  auto operator++(int) {
     auto result = *this;
     increment();
     return result;
@@ -60,7 +60,7 @@ class query_element_iterator {
 
   ///
   /// \return
-  const_reference operator*() const noexcept {
+  auto operator*() const noexcept -> const_reference {
     assert(it_);
     auto delimiter = std::find_if(
         it_.value(), last_.value(), [](auto c) { return (c == '&') || (c == ';'); });
@@ -72,14 +72,14 @@ class query_element_iterator {
   ///
   /// \param other
   /// \return
-  bool operator==(const query_element_iterator &other) const noexcept {
+  auto operator==(const query_element_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
   ///
   /// \param other
   /// \return
-  bool operator!=(const query_element_iterator &other) const noexcept {
+  auto operator!=(const query_element_iterator &other) const noexcept {
     return !(*this == other);
   }
 
@@ -129,14 +129,14 @@ class query_parameter_iterator {
 
   ///
   /// \return
-  query_parameter_iterator &operator++() {
+  auto &operator++() {
     ++it_;
     return *this;
   }
 
   ///
   /// \return
-  query_parameter_iterator operator++(int) {
+  auto operator++(int) {
     auto result = *this;
     ++it_;
     return result;
@@ -144,7 +144,7 @@ class query_parameter_iterator {
 
   ///
   /// \return
-  const_reference operator*() const noexcept {
+  auto operator*() const noexcept -> const_reference {
     auto first = std::begin(*it_), last = std::end(*it_);
 
     auto equal_it = std::find_if(first, last, [](auto c) { return (c == '='); });
@@ -164,14 +164,14 @@ class query_parameter_iterator {
   ///
   /// \param other
   /// \return
-  bool operator==(const query_parameter_iterator &other) const noexcept {
+  auto operator==(const query_parameter_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
   ///
   /// \param other
   /// \return
-  bool operator!=(const query_parameter_iterator &other) const noexcept {
+  auto operator!=(const query_parameter_iterator &other) const noexcept {
     return !(*this == other);
   }
 
@@ -202,37 +202,37 @@ class query_parameter_range {
 
   ///
   /// \return
-  [[nodiscard]] const_iterator begin() const noexcept {
+  [[nodiscard]] auto begin() const noexcept {
     return first_;
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator end() const noexcept {
+  [[nodiscard]] auto end() const noexcept {
     return last_;
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator cbegin() const noexcept {
+  [[nodiscard]] auto cbegin() const noexcept {
     return begin();
   }
 
   ///
   /// \return
-  [[nodiscard]] const_iterator cend() const noexcept {
+  [[nodiscard]] auto cend() const noexcept {
     return end();
   }
 
   ///
   /// \return
-  [[nodiscard]] bool empty() const noexcept {
+  [[nodiscard]] auto empty() const noexcept {
     return first_ == last_;
   }
 
   ///
   /// \return
-  [[nodiscard]] size_type size() const noexcept {
+  [[nodiscard]] auto size() const noexcept {
     return static_cast<size_type>(std::distance(first_, last_));
   }
 

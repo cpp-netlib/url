@@ -11,7 +11,7 @@
 namespace skyr {
 inline namespace v1 {
 template <class charT>
-inline bool is_c0_control_or_whitespace(charT byte) noexcept {
+inline auto is_c0_control_or_whitespace(charT byte) noexcept {
   return std::iscntrl(byte, std::locale::classic()) || std::isspace(byte, std::locale::classic());
 }
 }  // namespace v1

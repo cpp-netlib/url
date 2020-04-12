@@ -77,18 +77,18 @@ class url_search_parameters {
 
   /// \param name The search parameter name
   /// \returns The first search parameter value with the given name
-  [[nodiscard]] std::optional<string_type> get(std::string_view name) const;
+  [[nodiscard]] auto get(std::string_view name) const -> std::optional<string_type>;
 
   /// \param name The search parameter name
   /// \returns All search parameter values with the given name
-  [[nodiscard]] std::vector<string_type> get_all(std::string_view name) const;
+  [[nodiscard]] auto get_all(std::string_view name) const -> std::vector<string_type>;
 
   /// Tests if there is a parameter with the given name
   ///
   /// \param name The search parameter name
   /// \returns `true` if the value is in the search parameters,
   /// `false` otherwise.
-  [[nodiscard]] bool contains(std::string_view name) const noexcept;
+  [[nodiscard]] auto contains(std::string_view name) const noexcept -> bool;
 
   /// Sets a URL search parameter
   ///
@@ -114,39 +114,39 @@ class url_search_parameters {
   void sort();
 
   /// \returns An iterator to the first element in the search parameters
-  [[nodiscard]] const_iterator begin() const noexcept {
+  [[nodiscard]] auto begin() const noexcept {
     return parameters_.begin();
   }
 
   /// \returns An iterator to the last element in the search parameters
-  [[nodiscard]] const_iterator end() const noexcept {
+  [[nodiscard]] auto end() const noexcept {
     return parameters_.end();
   }
 
   /// \returns An iterator to the first element in the search parameters
-  [[nodiscard]] const_iterator cbegin() const noexcept {
+  [[nodiscard]] auto cbegin() const noexcept {
     return begin();
   }
 
   /// \returns An iterator to the last element in the search parameters
-  [[nodiscard]] const_iterator cend() const noexcept {
+  [[nodiscard]] auto cend() const noexcept {
     return end();
   }
 
   /// \returns `true` if the URL search string is empty, `false`
   ///          otherwise
-  [[nodiscard]] bool empty() const noexcept {
+  [[nodiscard]] auto empty() const noexcept {
     return parameters_.empty();
   }
 
   /// \returns The size of the parameters array (i.e. the
   ///          number of parameters)
-  [[nodiscard]] size_type size() const noexcept {
+  [[nodiscard]] auto size() const noexcept {
     return parameters_.size();
   }
 
   /// \returns The serialized URL search parameters
-  [[nodiscard]] string_type to_string() const;
+  [[nodiscard]] auto to_string() const -> string_type;
 
  private:
   void initialize(std::string_view query);

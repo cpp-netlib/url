@@ -33,9 +33,13 @@ class u16_transform_iterator {
   /// An expected wrapper around a UTF-16 encoded code point
   using value_type = tl::expected<u16_code_point_t, std::error_code>;
   /// \c value_type
-  using reference = value_type;
+  using const_reference = value_type;
+  /// \c const_reference
+  using reference = const_reference;
   /// \c value_type *
-  using pointer = typename std::add_pointer<value_type>::type;
+  using const_pointer = const typename std::add_pointer<value_type>::type;
+  /// \c value_type *
+  using pointer = const_pointer;
   /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
 
@@ -52,14 +56,14 @@ class u16_transform_iterator {
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  u16_transform_iterator &operator ++ () noexcept {
+  auto &operator ++ () noexcept {
     ++it_;
     return *this;
   }
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  u16_transform_iterator operator ++ (int) noexcept {
+  auto operator ++ (int) noexcept {
     auto result = *this;
     ++it_;
     return result;
@@ -67,7 +71,7 @@ class u16_transform_iterator {
 
   /// Dereference operator
   /// \return An expected value
-  [[nodiscard]] reference operator * () const noexcept {
+  [[nodiscard]] auto operator * () const noexcept -> const_reference {
     auto code_point = *it_;
     return code_point.map([](auto value) { return u16_code_point(value); });
   }
@@ -75,7 +79,7 @@ class u16_transform_iterator {
   /// Equality operator
   /// \param other The other iterator
   /// \return \c true if the iterators are the same, \c false otherwise
-  bool operator == (const u16_transform_iterator &other) const noexcept {
+  auto operator == (const u16_transform_iterator &other) const noexcept {
     return it_ == other.it_;
   }
 
@@ -127,13 +131,13 @@ class transform_u16_range {
 
   /// Returns an iterator to the beginning
   /// \return \c const_iterator
-  [[nodiscard]] const_iterator begin() const noexcept {
+  [[nodiscard]] auto begin() const noexcept {
     return iterator_type(std::begin(range_), std::end(range_));
   }
 
   /// Returns an iterator to the end
   /// \return \c const_iterator
-  [[nodiscard]] const_iterator end() const noexcept {
+  [[nodiscard]] auto end() const noexcept {
     return iterator_type();
   }
 
@@ -203,7 +207,7 @@ static constexpr transform_u16_range_fn to_u16;
 /// \param range
 /// \return
 template <class Output, class CodePointRange>
-tl::expected<Output, std::error_code> as(transform_u16_range<CodePointRange> &&range) {
+auto as(transform_u16_range<CodePointRange> &&range) -> tl::expected<Output, std::error_code> {
   auto result = Output{};
   for (auto &&code_point : range) {
     if (!code_point) {

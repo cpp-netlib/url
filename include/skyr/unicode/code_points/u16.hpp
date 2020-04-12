@@ -45,7 +45,13 @@ class u16_code_point_t {
 
   ///
   /// \return
-  [[nodiscard]] uint16_t lead_value() const {
+  [[nodiscard]] constexpr auto is_surrogate_pair() const noexcept {
+    return code_point_ > U'\xffff';
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] auto lead_value() const {
     return is_surrogate_pair()?
            static_cast<char16_t>((code_point_ >> 10U) + constants::surrogates::lead_offset) :
            static_cast<char16_t>(code_point_);
@@ -53,19 +59,13 @@ class u16_code_point_t {
 
   ///
   /// \return
-  [[nodiscard]] uint16_t trail_value() const {
+  [[nodiscard]] auto trail_value() const {
     return is_surrogate_pair()?
            static_cast<char16_t>((code_point_ & 0x3ffU) + constants::surrogates::trail_min) :
            0;
   }
 
-  ///
-  /// \return
-  [[nodiscard]] constexpr bool is_surrogate_pair() const noexcept {
-    return code_point_ > 0xffffU;
-  }
-
-  [[nodiscard]] tl::expected<char32_t, std::error_code> u32_value() const noexcept {
+  [[nodiscard]] auto u32_value() const noexcept -> tl::expected<char32_t, std::error_code> {
     return code_point_;
   }
 
@@ -78,14 +78,14 @@ class u16_code_point_t {
 ///
 /// \param code_point
 /// \return
-inline u16_code_point_t u16_code_point(char32_t code_point) {
+inline auto u16_code_point(char32_t code_point) {
   return u16_code_point_t(code_point);
 }
 
 ///
 /// \param code_point
 /// \return
-inline u16_code_point_t u16_code_point(char16_t code_point) {
+inline auto u16_code_point(char16_t code_point) {
   return u16_code_point_t(code_point);
 }
 
@@ -93,7 +93,7 @@ inline u16_code_point_t u16_code_point(char16_t code_point) {
 /// \param lead_code_unit
 /// \param trail_code_unit
 /// \return
-inline u16_code_point_t u16_code_point(
+inline auto u16_code_point(
     char16_t lead_code_unit,
     char16_t trail_code_unit) {
   return u16_code_point_t(lead_code_unit, trail_code_unit);

@@ -24,7 +24,7 @@ namespace percent_encoding {
   /// value
   /// \param error A percent encoding error
   /// \returns A `std::error_code` object
-  std::error_code make_error_code(percent_encode_errc error) noexcept;
+  auto make_error_code(percent_encode_errc error) noexcept -> std::error_code;
 }  // namespace percent_encoding
 }  // namespace v1
 }  // namespace skyr

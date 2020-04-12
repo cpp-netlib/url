@@ -18,40 +18,37 @@ inline namespace v1 {
 namespace {
 class ipv4_address_error_category : public std::error_category {
  public:
-  [[nodiscard]] const char *name() const noexcept override;
-  [[nodiscard]] std::string message(int error) const noexcept override;
-};
-
-const char *ipv4_address_error_category::name() const noexcept {
-  return "ipv4 address";
-}
-
-std::string ipv4_address_error_category::message(int error) const noexcept {
-  switch (static_cast<ipv4_address_errc>(error)) {
-    case ipv4_address_errc::too_many_segments:
-      return "Input contains more than 4 segments";
-    case ipv4_address_errc::empty_segment:
-      return "Empty input";
-    case ipv4_address_errc::invalid_segment_number:
-      return "Invalid segment number";
-    case ipv4_address_errc::overflow:
-      return "Overflow";
-    default:
-      return "(Unknown error)";
+  [[nodiscard]] auto name() const noexcept -> const char * override {
+    return "ipv4 address";
   }
-}
+
+  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
+    switch (static_cast<ipv4_address_errc>(error)) {
+      case ipv4_address_errc::too_many_segments:
+        return "Input contains more than 4 segments";
+      case ipv4_address_errc::empty_segment:
+        return "Empty input";
+      case ipv4_address_errc::invalid_segment_number:
+        return "Invalid segment number";
+      case ipv4_address_errc::overflow:
+        return "Overflow";
+      default:
+        return "(Unknown error)";
+    }
+  }
+};
 
 const ipv4_address_error_category category{};
 }  // namespace
 
-std::error_code make_error_code(ipv4_address_errc error) {
+auto make_error_code(ipv4_address_errc error) -> std::error_code {
   return std::error_code(static_cast<int>(error), category);
 }
 
 namespace {
-tl::expected<std::uint64_t, std::error_code> parse_ipv4_number(
+auto parse_ipv4_number(
     std::string_view input,
-    bool &validation_error_flag) {
+    bool &validation_error_flag) -> tl::expected<std::uint64_t, std::error_code> {
   auto base = 10;
 
   if (
@@ -78,7 +75,7 @@ tl::expected<std::uint64_t, std::error_code> parse_ipv4_number(
 }
 }  // namespace
 
-std::string ipv4_address::to_string() const {
+auto ipv4_address::to_string() const -> std::string {
   using namespace std::string_literals;
 
   auto output = ""s;
@@ -99,7 +96,7 @@ std::string ipv4_address::to_string() const {
 
 namespace details {
 namespace {
-std::pair<tl::expected<ipv4_address, std::error_code>, bool> parse_ipv4_address(std::string_view input) {
+auto parse_ipv4_address(std::string_view input) -> std::pair<tl::expected<ipv4_address, std::error_code>, bool> {
   auto validation_error_flag = false;
   auto validation_error = false;
 
@@ -199,7 +196,7 @@ std::pair<tl::expected<ipv4_address, std::error_code>, bool> parse_ipv4_address(
 }  // namespace
 }  // namespace details
 
-tl::expected<ipv4_address, std::error_code> parse_ipv4_address(std::string_view input) {
+auto parse_ipv4_address(std::string_view input) -> tl::expected<ipv4_address, std::error_code> {
   return details::parse_ipv4_address(input).first;
 }
 }  // namespace v1

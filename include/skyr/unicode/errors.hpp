@@ -29,7 +29,7 @@ enum class unicode_errc {
 /// Creates a `std::error_code` given a `skyr::unicode_errc` value
 /// \param error A Unicode error
 /// \returns A `std::error_code` object
-std::error_code make_error_code(unicode_errc error) noexcept;
+auto make_error_code(unicode_errc error) noexcept -> std::error_code;
 }  // namespace unicode
 }  // namespace v1
 }  // namespace skyr

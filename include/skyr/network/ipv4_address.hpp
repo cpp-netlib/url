@@ -12,7 +12,7 @@
 #include <system_error>
 #include <optional>
 #include <tl/expected.hpp>
-#include <skyr/details/endianness.hpp>
+#include <skyr/platform/endianness.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -32,7 +32,7 @@ enum class ipv4_address_errc {
 /// value
 /// \param error An IPv4 address error
 /// \returns A `std::error_code` object
-std::error_code make_error_code(ipv4_address_errc error);
+auto make_error_code(ipv4_address_errc error) -> std::error_code;
 
 /// Represents an IPv4 address
 class ipv4_address {
@@ -51,13 +51,13 @@ class ipv4_address {
 
   /// The address value
   /// \returns The address value
-  [[nodiscard]] unsigned int address() const noexcept {
+  [[nodiscard]] auto address() const noexcept {
     return details::from_network_byte_order(address_);
   }
 
   /// The address in bytes in network byte order
   /// \returns The address in bytes
-  [[nodiscard]] std::array<unsigned char, 4> to_bytes() const noexcept {
+  [[nodiscard]] auto to_bytes() const noexcept -> std::array<unsigned char, 4> {
     return {{
       static_cast<unsigned char>(address_ >> 24u),
       static_cast<unsigned char>(address_ >> 16u),
@@ -67,15 +67,15 @@ class ipv4_address {
   }
 
   /// \returns The address as a string
-  [[nodiscard]] std::string to_string() const;
+  [[nodiscard]] auto to_string() const -> std::string;
 
 };
 
 /// Parses an IPv4 address
 /// \param input An input string
 /// \returns An `ipv4_address` object or an error
-tl::expected<ipv4_address, std::error_code> parse_ipv4_address(
-    std::string_view input);
+auto parse_ipv4_address(
+    std::string_view input) -> tl::expected<ipv4_address, std::error_code>;
 }  // namespace v1
 }  // namespace skyr
 

@@ -6,7 +6,7 @@
 #include <string>
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include <skyr/details/to_bytes.hpp>
+#include <skyr/unicode/details/to_bytes.hpp>
 
 TEST_CASE("weird_01", "byte_conversion_tests") {
   auto bytes = skyr::details::to_bytes(U"http://\xfdD0zyx.com");
