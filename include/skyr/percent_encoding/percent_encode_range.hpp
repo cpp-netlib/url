@@ -9,7 +9,6 @@
 #include <iterator>
 #include <cassert>
 #include <optional>
-#include <tl/expected.hpp>
 #include <skyr/percent_encoding/errors.hpp>
 #include <skyr/percent_encoding/percent_encoded_char.hpp>
 
@@ -25,7 +24,7 @@ class percent_encode_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = tl::expected<percent_encoded_char, std::error_code>;
+  using value_type = percent_encoded_char;
   ///
   using const_reference = value_type;
   ///
@@ -223,15 +222,12 @@ static constexpr percent_encode_fn encode;
 /// \return
 template <class Output, class OctetRange>
 auto as(
-    percent_encode_range<OctetRange> &&range) -> tl::expected<Output, std::error_code> {
+    percent_encode_range<OctetRange> &&range) {
   auto result = Output();
   for (auto &&byte : range) {
-    if (!byte) {
-      return tl::make_unexpected(byte.error());
-    }
     std::copy(
-        std::begin(byte.value()),
-        std::end(byte.value()),
+        std::begin(byte),
+        std::end(byte),
         std::back_inserter(result));
   }
   return result;

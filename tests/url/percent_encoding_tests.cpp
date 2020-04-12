@@ -60,14 +60,12 @@ TEST_CASE("encode_tests", "[percent_encoding]") {
   SECTION("u8_test_1") {
     const auto input = "\xf0\x9f\x92\xa9"s;
     auto encoded = skyr::percent_encoding::as<std::string>(input | skyr::percent_encoding::view::encode);
-    REQUIRE(encoded);
-    CHECK("%F0%9F%92%A9" == encoded.value());
+    CHECK("%F0%9F%92%A9" == encoded);
   }
 
   SECTION("u8_test_2") {
     const auto input = "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88"s;
     auto encoded = skyr::percent_encoding::as<std::string>(input | skyr::percent_encoding::view::encode);
-    REQUIRE(encoded);
-    CHECK("%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == encoded.value());
+    CHECK("%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88" == encoded);
   }
 }

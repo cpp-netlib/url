@@ -121,9 +121,9 @@ auto url_search_parameters::to_string() const -> string_type {
   auto first = std::begin(parameters_), last = std::end(parameters_);
   auto it = first;
   while (it != last) {
-    result.append(percent_encode<string_type>(it->first).value());
+    result.append(percent_encode<string_type>(it->first));
     result.append("=");
-    result.append(percent_encode<string_type>(it->second).value());
+    result.append(percent_encode<string_type>(it->second));
 
     ++it;
     if (it != last) {
