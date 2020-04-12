@@ -390,8 +390,12 @@ class url {
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
   template<typename intT>
   [[nodiscard]] auto port(
-      typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) const {
+      typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) const -> std::optional<intT> {
     auto p = port();
+    if (p.empty()) {
+      return std::nullopt;
+    }
+
     const char *port_first = p.data();
     char *port_last = nullptr;
     return static_cast<intT>(
