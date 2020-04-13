@@ -8,6 +8,6 @@
 
 // Deprecated header, use skyr/core/url_parse.hpp
 
-#include <skyr/core/url_parse.hpp>
+#include <skyr/core/parse.hpp>
 
 #endif  // SKYR_URL_PARSE_INC

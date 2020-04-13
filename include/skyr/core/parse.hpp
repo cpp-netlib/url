@@ -20,7 +20,7 @@ inline namespace v1 {
 /// \returns A `url_record` on success and an error code on failure
 auto parse(
     std::string_view input,
-    std::optional<url_record> base = std::nullopt) -> tl::expected<url_record, std::error_code>;
+    std::optional<url_record> base=std::nullopt) -> tl::expected<url_record, std::error_code>;
 }  // namespace v1
 }  // namespace skyr
 

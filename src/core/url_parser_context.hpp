@@ -10,7 +10,7 @@
 #include <string_view>
 #include <optional>
 #include <tl/expected.hpp>
-#include <skyr/core/url_error.hpp>
+#include <skyr/core/errors.hpp>
 #include <skyr/core/url_record.hpp>
 #include "url_parse_impl.hpp"
 

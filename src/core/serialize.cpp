@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <skyr/core/url_serialize.hpp>
+#include <skyr/core/serialize.hpp>
 
 namespace skyr {
 inline namespace v1 {

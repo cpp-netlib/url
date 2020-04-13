@@ -4,8 +4,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <iostream>
-#include <skyr/core/url_parse.hpp>
-#include <skyr/core/url_serialize.hpp>
+#include <skyr/core/parse.hpp>
+#include <skyr/core/serialize.hpp>
 
 int main(int argc, char *argv[]) {
   auto base = skyr::parse("https://example.org/");

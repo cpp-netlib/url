@@ -18,7 +18,7 @@ inline namespace v1 {
 ///        serialization, if set
 /// \returns A serialized URL string
 auto serialize(
-    const url_record &url, bool exclude_fragment = false) -> url_record::string_type;
+    const url_record &url, bool exclude_fragment=false) -> url_record::string_type;
 }  // namespace v1
 }  // namespace skyr
 

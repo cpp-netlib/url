@@ -10,7 +10,7 @@
 #include <string>
 #include <cstdint>
 #include <optional>
-#include <skyr/core/url_schemes.hpp>
+#include <skyr/core/schemes.hpp>
 
 namespace skyr {
 inline namespace v1 {

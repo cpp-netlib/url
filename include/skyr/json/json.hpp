@@ -33,7 +33,7 @@ class json_error_category : public std::error_category {
 
   [[nodiscard]] auto message(int error) const noexcept -> std::string override {
     switch (static_cast<json_errc>(error)) {
-      case json_errc::invalid_query: return "Invalid query objecg";
+      case json_errc::invalid_query: return "Invalid query object";
       default: return "(Unknown error)";
     }
   }

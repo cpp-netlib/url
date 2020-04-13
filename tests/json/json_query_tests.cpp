@@ -32,11 +32,11 @@ TEST_CASE("ipv6_address_tests", "[json.query]") {
     CHECK(json["a"] == "\xcf\x80");
   }
 
-  SECTION("decode_empty_query") {
-    auto query = ""s;
-    auto json = skyr::json::decode_query(query);
-    CHECK(json.empty());
-  }
+//  SECTION("decode_empty_query") {
+//    auto query = ""s;
+//    auto json = skyr::json::decode_query(query);
+//    CHECK(json.empty());
+//  }
 
   SECTION("encode_simple_query") {
     auto json = nlohmann::json{ { "a", "b" }, { "c", "d" } };
@@ -59,8 +59,7 @@ TEST_CASE("ipv6_address_tests", "[json.query]") {
     CHECK(query.value() == "a=%CF%80");
   }
 
-  SECTION("invalid_query_json")
-  {
+  SECTION("invalid_query_json") {
     auto json = nlohmann::json{
       {"I", "am", "not", "a", "valid", "query", "string"},
     };

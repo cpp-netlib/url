@@ -13,9 +13,9 @@ add_library(
 
         core/url_parser_context.hpp
         core/url_parser_context.cpp
-        core/url_parse.cpp
+        core/parse.cpp
         core/url_parse_impl.hpp
-        core/url_serialize.cpp
+        core/serialize.cpp
         domain/domain.cpp
         domain/punycode.cpp
         domain/idna.cpp
@@ -33,10 +33,10 @@ add_library(
         ${PROJECT_SOURCE_DIR}/include/skyr/config.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/version.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_record.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_parse.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_serialize.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_schemes.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_error.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/parse.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/serialize.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/schemes.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/core.hpp

@@ -14,7 +14,7 @@
 #include <skyr/domain/domain.hpp>
 #include <skyr/percent_encoding/percent_decode_range.hpp>
 #include "url_parser_context.hpp"
-#include "skyr/core/url_schemes.hpp"
+#include "skyr/core/schemes.hpp"
 #include "string/starts_with.hpp"
 #include "string/locale.hpp"
 

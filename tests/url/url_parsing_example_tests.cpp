@@ -5,8 +5,8 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include <skyr/core/url_parse.hpp>
-#include <skyr/core/url_serialize.hpp>
+#include <skyr/core/parse.hpp>
+#include <skyr/core/serialize.hpp>
 
 /// https://url.spec.whatwg.org/#example-url-parsing
 

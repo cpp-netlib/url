@@ -8,6 +8,6 @@
 
 // Deprecated header, use skyr/core/url_error.hpp
 
-#include <skyr/core/url_error.hpp>
+#include <skyr/core/errors.hpp>
 
 #endif // SKYR_URL_ERROR_INC

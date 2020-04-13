@@ -20,6 +20,3 @@ if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
     skyr_create_test(url_tests_with_exceptions.cpp ${PROJECT_BINARY_DIR}/tests/url test)
     add_test(${test} ${PROJECT_BINARY_DIR}/tests/url/${test})
 endif()
-
-file(GLOB URL_TEST_DATA *.txt *.json)
-file(COPY ${URL_TEST_DATA} DESTINATION ${PROJECT_BINARY_DIR}/tests/url)

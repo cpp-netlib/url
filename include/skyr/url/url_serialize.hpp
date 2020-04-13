@@ -8,6 +8,6 @@
 
 // Deprecated header, use skyr/core/url_serialize.hpp
 
-#include <skyr/core/url_serialize.hpp>
+#include <skyr/core/serialize.hpp>
 
 #endif  // SKYR_URL_SERIALIZE_INC
