@@ -24,7 +24,7 @@ inline auto swap_endianness(
   constexpr auto byte_count = sizeof(v);
   std::array<unsigned char, byte_count> bytes{};
   for (auto i = 0UL; i < byte_count; ++i) {
-    bytes[i] = (v >> (i * 8));
+    bytes[i] = static_cast<unsigned char>(v >> (i * 8));
   }
   return *static_cast<const intT *>(static_cast<const void *>(bytes.data()));
 }

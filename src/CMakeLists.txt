@@ -66,6 +66,7 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/query/query_iterator.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/platform/endianness.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/json/json.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_record.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_parse.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_serialize.hpp
@@ -76,7 +77,7 @@ set(skyr_SRCS
 
 add_library(skyr-url ${skyr_SRCS})
 
-target_link_libraries(skyr-url PUBLIC tl::expected)
+target_link_libraries(skyr-url PUBLIC tl::expected nlohmann_json::nlohmann_json)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     if (skyr_BUILD_WITH_LLVM_LIBCXX)
         target_link_libraries(skyr-url PUBLIC "c++")

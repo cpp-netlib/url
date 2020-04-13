@@ -6,7 +6,6 @@
 include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-functions.cmake)
 
 find_package(Catch2 CONFIG REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 
 if (MSVC)

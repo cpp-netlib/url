@@ -14,6 +14,7 @@ set(
         url_search_parameters_tests.cpp
         query_parameter_range_tests.cpp
         url_literal_tests.cpp
+        json_query_tests.cpp
     )
 
 if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
