@@ -7,6 +7,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 #include <skyr/domain/domain.hpp>
+#include <skyr/domain/errors.hpp>
 
 TEST_CASE("valid domains to ascii", "[domain]") {
   using param = std::pair<std::string, std::string>;
@@ -72,8 +73,15 @@ TEST_CASE("invalid domains", "[domain]") {
     REQUIRE(instance);
   }
 
-  SECTION("invalid_domain_4_be strict") {
+  SECTION("invalid_domain_4_bestrict") {
     auto instance = skyr::domain_to_ascii("％４１.com", true);
     REQUIRE_FALSE(instance);
+  }
+
+  SECTION("invalid_name_long_name") {
+    auto domain = std::string(300, 'x') + ".com";
+    auto instance = skyr::domain_to_ascii(domain, true);
+    REQUIRE_FALSE(instance);
+    REQUIRE(static_cast<skyr::domain_errc>(instance.error().value()) == skyr::domain_errc::invalid_length);
   }
 }

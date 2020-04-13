@@ -9,6 +9,7 @@
 #include <skyr/core/parse.hpp>
 #include <skyr/core/serialize.hpp>
 #include <skyr/percent_encoding/percent_encode_range.hpp>
+#include <skyr/domain/domain.hpp>
 #include "core/url_parse_impl.hpp"
 #include "skyr/core/schemes.hpp"
 
@@ -227,6 +228,10 @@ auto url::ipv6_address() const -> std::optional<skyr::ipv6_address> {
 
 auto url::is_domain() const -> bool {
   return url_.is_special() && !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
+}
+
+[[nodiscard]] auto url::domain() const -> std::optional<string_type> {
+  return is_domain()? std::make_optional(skyr::domain_to_unicode(hostname()).value()) : std::nullopt;
 }
 
 auto url::is_opaque() const -> bool {

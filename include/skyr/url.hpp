@@ -377,6 +377,9 @@ class url {
   /// Checks if the hostname is a valid domain name
   [[nodiscard]] auto is_domain() const -> bool;
 
+  /// Returns the decoded domain name
+  [[nodiscard]] auto domain() const -> std::optional<string_type>;
+
   /// Checks if the hostname is a valid domain name
   [[nodiscard]] auto is_opaque() const -> bool;
 

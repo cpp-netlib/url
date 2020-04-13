@@ -659,4 +659,10 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("blob:https://whatwg.org/d0360e2f-caee-469f-9a2f-87d5b0456f6f");
     CHECK("https://whatwg.org" == instance.origin());
   }
+
+  SECTION("url_domain") {
+    auto instance = skyr::url("https://xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g/path/");
+    CHECK(instance.is_domain());
+    CHECK(instance.domain().value() == "उदाहरण.परीक्षा");
+  }
 }

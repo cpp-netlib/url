@@ -98,17 +98,17 @@ auto unicode_to_ascii(
   }
 
   if (verify_dns_length) {
-    //    auto length = domain.value().size();
-    //    if ((length < 1) || (length > 253)) {
-    //      return make_unexpected(domain_errc::invalid_length);
-    //    }
-    //
-    //    for (const auto &label : labels) {
-    //      auto label_length = label.size();
-    //      if ((label_length < 1) || (label_length > 63)) {
-    //        return make_unexpected(domain_errc::invalid_length);
-    //      }
-    //    }
+    auto length = domain.value().size();
+    if ((length < 1) || (length > 253)) {
+      return tl::make_unexpected(make_error_code(domain_errc::invalid_length));
+    }
+
+    for (const auto &label : labels) {
+      auto label_length = label.size();
+      if ((label_length < 1) || (label_length > 63)) {
+        return tl::make_unexpected(make_error_code(domain_errc::invalid_length));
+      }
+    }
   }
 
   auto utf32_domain = join(labels, U'.');

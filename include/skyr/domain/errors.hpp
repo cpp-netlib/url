@@ -21,6 +21,8 @@ enum class domain_errc {
   overflow,
   /// Unicode encoding error
   encoding_error,
+  /// Invalid domain name length
+  invalid_length,
 };
 
 namespace details {
@@ -36,6 +38,7 @@ class domain_error_category : public std::error_category {
       case domain_errc::bad_input:return "Bad input";
       case domain_errc::overflow:return "Overflow";
       case domain_errc::encoding_error:return "Encoding error";
+      case domain_errc::invalid_length:return "Invalid domain name length";
       default:return "(Unknown error)";
     }
   }
