@@ -10,7 +10,7 @@
 #include <skyr/core/url_serialize.hpp>
 #include <skyr/percent_encoding/percent_encode_range.hpp>
 #include "core/url_parse_impl.hpp"
-#include "core/url_schemes.hpp"
+#include "skyr/core/url_schemes.hpp"
 
 namespace skyr {
 inline namespace v1 {
@@ -226,11 +226,11 @@ auto url::ipv6_address() const -> std::optional<skyr::ipv6_address> {
 }
 
 auto url::is_domain() const -> bool {
-  return details::is_special(url_.scheme) && !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
+  return url_.is_special() && !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
 }
 
 auto url::is_opaque() const -> bool {
-  return !details::is_special(url_.scheme) && !hostname().empty();
+  return !url_.is_special() && !hostname().empty();
 }
 
 auto url::port() const -> string_type {
@@ -363,7 +363,7 @@ auto url::set_hash(string_view hash) -> std::error_code {
 }
 
 auto url::default_port(std::string_view scheme) noexcept -> std::optional<std::uint16_t> {
-  return details::default_port(scheme);
+  return skyr::default_port(scheme);
 }
 
 void url::clear() {

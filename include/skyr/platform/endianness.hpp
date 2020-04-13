@@ -11,13 +11,13 @@
 
 namespace skyr {
 inline namespace v1 {
-namespace details {
 inline auto is_big_endian() noexcept {
   const auto word = 0x0001;
   auto bytes = static_cast<const unsigned char *>(static_cast<const void *>(&word));
   return bytes[0] != 0x01;
 }
 
+namespace details {
 template <typename intT>
 inline auto swap_endianness(
     intT v, typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) noexcept -> intT {
@@ -28,15 +28,17 @@ inline auto swap_endianness(
   }
   return *static_cast<const intT *>(static_cast<const void *>(bytes.data()));
 }
-
-inline auto to_network_byte_order(unsigned int v) noexcept {
-  return (is_big_endian()) ? v : swap_endianness(v);
-}
-
-inline auto from_network_byte_order(unsigned int v) noexcept {
-  return (is_big_endian()) ? v : swap_endianness(v);
-}
 }  // namespace details
+
+template <class intT>
+inline auto to_network_byte_order(intT v) noexcept {
+  return (is_big_endian()) ? v : details::swap_endianness(v);
+}
+
+template <class intT>
+inline auto from_network_byte_order(intT v) noexcept {
+  return (is_big_endian()) ? v : details::swap_endianness(v);
+}
 }  // namespace v1
 }  // namespace skyr
 

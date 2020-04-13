@@ -52,7 +52,7 @@ class ipv6_address {
   /// \param address Sets the IPv6 address to `address`
   explicit ipv6_address(std::array<unsigned short, 8> address) {
     for (auto i = 0UL; i < address.size(); ++i) {
-      address_[i] = details::to_network_byte_order(address[i]);
+      address_[i] = to_network_byte_order(address[i]);
     }
   }
 

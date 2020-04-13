@@ -14,7 +14,7 @@
 #include <skyr/domain/domain.hpp>
 #include <skyr/percent_encoding/percent_decode_range.hpp>
 #include "url_parser_context.hpp"
-#include "url_schemes.hpp"
+#include "skyr/core/url_schemes.hpp"
 #include "string/starts_with.hpp"
 #include "string/locale.hpp"
 
@@ -288,11 +288,11 @@ auto url_parser_context::parse_scheme(char byte) -> tl::expected<url_parse_actio
     buffer.push_back(lower);
   } else if (byte == ':') {
     if (state_override) {
-      if (url.is_special() && !details::is_special(buffer)) {
+      if (url.is_special() && !is_special(buffer)) {
         return tl::make_unexpected(url_parse_errc::cannot_override_scheme);
       }
 
-      if (!url.is_special() && details::is_special(buffer)) {
+      if (!url.is_special() && is_special(buffer)) {
         return tl::make_unexpected(url_parse_errc::cannot_override_scheme);
       }
 
@@ -308,7 +308,7 @@ auto url_parser_context::parse_scheme(char byte) -> tl::expected<url_parse_actio
     url.scheme = buffer;
 
     if (state_override) {
-      if (url.port == details::default_port(url.scheme)) {
+      if (url.port == default_port(url.scheme)) {
         url.port = std::nullopt;
       }
       return url_parse_action::success;
@@ -611,7 +611,8 @@ auto url_parser_context::parse_port(char byte) -> tl::expected<url_parse_action,
         return tl::make_unexpected(port.error());
       }
 
-      if (details::is_default_port(url.scheme, port.value())) {
+      auto dport = default_port(url.scheme);
+      if (dport && (dport.value() == port.value())) {
         url.port = std::nullopt;
       }
       else {

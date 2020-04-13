@@ -9,14 +9,18 @@ configure_file(
 )
 
 set(skyr_SRCS
+        core/url_parser_context.hpp
+        core/url_parser_context.cpp
+        core/url_parse.cpp
+        core/url_parse_impl.hpp
+        core/url_serialize.cpp
+        core/url_error.cpp
         unicode/errors.cpp
         domain/errors.cpp
         domain/domain.cpp
         domain/punycode.cpp
         domain/idna.cpp
-        core/url_parser_context.hpp
-        core/url_parser_context.cpp
-        core/url_record.cpp
+        percent_encoding/errors.cpp
         network/ipv4_address.cpp
         network/ipv6_address.cpp
         string/ascii.hpp
@@ -24,19 +28,17 @@ set(skyr_SRCS
         string/locale.hpp
         string/split.hpp
         string/starts_with.hpp
-        core/url_parse.cpp
-        core/url_parse_impl.hpp
-        core/url_serialize.cpp
-        core/url_schemes.hpp
-        core/url_schemes.cpp
         url/url.cpp
-        core/url_error.cpp
         url/url_search_parameters.cpp
         filesystem/path.cpp
-        percent_encoding/errors.cpp
 
         ${PROJECT_SOURCE_DIR}/include/skyr/config.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/version.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_record.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_parse.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_serialize.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_schemes.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_error.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/core.hpp
@@ -49,6 +51,7 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/byte_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u16_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/details/to_bytes.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/idna.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/punycode.hpp
@@ -61,12 +64,7 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv4_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_record.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_parse.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_serialize.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_error.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/query/query_iterator.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/details/to_bytes.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/platform/endianness.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_record.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_parse.hpp

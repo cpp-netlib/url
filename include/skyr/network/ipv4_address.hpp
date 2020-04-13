@@ -47,12 +47,12 @@ class ipv4_address {
    /// Constructor
    /// \param address Sets the IPv4 address to `address`
   explicit ipv4_address(unsigned int address)
-      : address_(details::to_network_byte_order(address)) {}
+      : address_(to_network_byte_order(address)) {}
 
   /// The address value
   /// \returns The address value
   [[nodiscard]] auto address() const noexcept {
-    return details::from_network_byte_order(address_);
+    return from_network_byte_order(address_);
   }
 
   /// The address in bytes in network byte order
