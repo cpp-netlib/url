@@ -15,16 +15,6 @@
 
 namespace skyr {
 inline namespace v1 {
-/// Converts a UTF-8 encoded domain to ASCII using
-/// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
-///
-/// \param domain A domain
-/// \param be_strict Tells the processor to be strict
-/// \returns An ASCII domain, or an error
-auto domain_to_ascii(
-    std::string_view domain,
-    bool be_strict = false) -> tl::expected<std::string, std::error_code>;
-
 /// Converts a UTF-32 encoded domain to ASCII using
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
 ///
@@ -33,9 +23,23 @@ auto domain_to_ascii(
 /// \returns An ASCII domain, or an error
 auto domain_to_ascii(
     std::u32string_view domain,
-    bool be_strict = false) -> tl::expected<std::string, std::error_code>;
+    bool be_strict=false) -> tl::expected<std::string, std::error_code>;
 
-auto ascii_to_domain(std::string_view ascii) -> tl::expected<std::string, std::error_code>;
+/// Converts a UTF-8 encoded domain to ASCII using
+/// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
+///
+/// \param domain A domain
+/// \param be_strict Tells the processor to be strict
+/// \returns An ASCII domain, or an error
+auto domain_to_ascii(
+    std::string_view domain,
+    bool be_strict=false) -> tl::expected<std::string, std::error_code>;
+
+/// Converts a Punycode encoded domain to UTF-8
+///
+/// \param ascii A Punycode encoded domain
+/// \returns A valid UTF-8 encoded domain, or an error
+auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, std::error_code>;
 }  // namespace v1
 }  // namespace skyr
 

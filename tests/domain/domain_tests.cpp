@@ -40,7 +40,7 @@ TEST_CASE("valid domains from ascii", "[domain]") {
 
   SECTION("ascii_to_domain_tests") {
     const auto &[expected, input] = domain;
-    auto instance = skyr::ascii_to_domain(input);
+    auto instance = skyr::domain_to_unicode(input);
     REQUIRE(instance);
     CHECK(expected == instance.value());
   }

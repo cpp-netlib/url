@@ -120,15 +120,6 @@ auto unicode_to_ascii(
 }  // namespace
 
 auto domain_to_ascii(
-    std::string_view domain, bool be_strict) -> tl::expected<std::string, std::error_code> {
-  auto utf32 = unicode::as<std::u32string>(unicode::view::as_u8(domain) | unicode::transform::to_u32);
-  if (!utf32) {
-    return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
-  }
-  return domain_to_ascii(utf32.value(), be_strict);
-}
-
-auto domain_to_ascii(
     std::u32string_view domain, bool be_strict) -> tl::expected<std::string, std::error_code> {
   auto result =
       unicode_to_ascii(domain, false, true, true, be_strict, false, be_strict);
@@ -139,7 +130,16 @@ auto domain_to_ascii(
   return result;
 }
 
-auto ascii_to_domain(std::string_view ascii) -> tl::expected<std::string, std::error_code> {
+auto domain_to_ascii(
+    std::string_view domain, bool be_strict) -> tl::expected<std::string, std::error_code> {
+  auto utf32 = unicode::as<std::u32string>(unicode::view::as_u8(domain) | unicode::transform::to_u32);
+  if (!utf32) {
+    return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
+  }
+  return domain_to_ascii(utf32.value(), be_strict);
+}
+
+auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, std::error_code> {
   auto labels = split(ascii, '.');
 
   for (auto &label : labels) {
