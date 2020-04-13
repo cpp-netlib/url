@@ -107,7 +107,7 @@ class query_parameter_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = std::pair<std::string_view, std::string_view>;
+  using value_type = std::pair<std::string_view, std::optional<std::string_view>>;
   ///
   using const_reference = value_type;
   ///
@@ -155,8 +155,8 @@ class query_parameter_iterator {
       ++equal_it;
     }
     auto value = (equal_it == last) ?
-                 std::string_view() :
-                 std::string_view(std::addressof(*equal_it), std::distance(equal_it, last));
+                 std::nullopt :
+                 std::make_optional(std::string_view(std::addressof(*equal_it), std::distance(equal_it, last)));
 
     return {name, value};
   }

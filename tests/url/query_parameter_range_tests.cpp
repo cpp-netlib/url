@@ -116,7 +116,7 @@ TEST_CASE("query_parameter_iterator_test", "[query_parameter_range]") {
     CHECK(first != last);
 
     CHECK("query" == (*first).first);
-    CHECK("" == (*first).second);
+    CHECK_FALSE((*first).second);
     ++first;
     CHECK(first == last);
   }
@@ -134,28 +134,28 @@ TEST_CASE("query_parameter_range_test", "[query_parameter_range]") {
   SECTION("query_with_single_parameter") {
     auto query = "a=b"sv;
     auto range = skyr::query_parameter_range(query);
-    CHECK(!range.empty());
+    CHECK_FALSE(range.empty());
     CHECK(1 == range.size());
   }
 
   SECTION("query_with_two_parameters") {
     auto query = "a=b&c=d"sv;
     auto range = skyr::query_parameter_range(query);
-    CHECK(!range.empty());
+    CHECK_FALSE(range.empty());
     CHECK(2 == range.size());
   }
 
   SECTION("query_with_two_parameters_and_semicolon_separator") {
     auto query = "a=b;c=d"sv;
     auto range = skyr::query_parameter_range(query);
-    CHECK(!range.empty());
+    CHECK_FALSE(range.empty());
     CHECK(2 == range.size());
   }
 
   SECTION("query_with_no_separators") {
     auto query = "query"sv;
     auto range = skyr::query_parameter_range(query);
-    CHECK(!range.empty());
+    CHECK_FALSE(range.empty());
     CHECK(1 == range.size());
   }
 
@@ -163,7 +163,7 @@ TEST_CASE("query_parameter_range_test", "[query_parameter_range]") {
     auto query = "query"sv;
     for (auto [name, value] : skyr::query_parameter_range(query)) {
       CHECK("query" == name);
-      CHECK(value.empty());
+      CHECK_FALSE(value);
     }
   }
 }

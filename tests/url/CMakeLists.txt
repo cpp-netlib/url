@@ -3,10 +3,7 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-set(
-        skyr_URL_TESTS
-
-        # URL
+foreach (file_name
         url_tests.cpp
         url_vector_tests.cpp
         url_parsing_example_tests.cpp
@@ -14,19 +11,15 @@ set(
         url_search_parameters_tests.cpp
         query_parameter_range_tests.cpp
         url_literal_tests.cpp
-        json_query_tests.cpp
-    )
-
-if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
-    LIST(APPEND URL_TESTS
-            url_tests_with_exceptions.cpp
-            )
-endif()
-
-foreach (file_name ${skyr_URL_TESTS})
+        )
     skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test)
     add_test(${test} ${PROJECT_BINARY_DIR}/tests/url/${test})
 endforeach ()
+
+if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
+    skyr_create_test(url_tests_with_exceptions.cpp ${PROJECT_BINARY_DIR}/tests/url test)
+    add_test(${test} ${PROJECT_BINARY_DIR}/tests/url/${test})
+endif()
 
 file(GLOB URL_TEST_DATA *.txt *.json)
 file(COPY ${URL_TEST_DATA} DESTINATION ${PROJECT_BINARY_DIR}/tests/url)

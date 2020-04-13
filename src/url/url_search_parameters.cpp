@@ -141,7 +141,7 @@ void url_search_parameters::initialize(std::string_view query) {
 
   for (auto [name, value] : query_parameter_range(query)) {
     auto decoded_name = percent_decode<std::string>(name);
-    auto decoded_value = percent_decode<std::string>(value);
+    auto decoded_value = value? percent_decode<std::string>(value.value()) : std::string();
     parameters_.emplace_back(decoded_name.value(), decoded_value.value());
   }
 }
