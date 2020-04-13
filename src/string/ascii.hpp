@@ -12,9 +12,15 @@
 
 namespace skyr {
 inline namespace v1 {
-inline auto is_ascii(std::u32string_view input) noexcept {
+template <class charT>
+inline auto is_ascii(std::basic_string_view<charT> input) noexcept {
   auto first = begin(input), last = end(input);
-  return last == std::find_if(first, last, [](auto c) { return c > 0x7eu; });
+  return last == std::find_if(first, last, [](auto c) { return c > static_cast<charT>(0x7eu); });
+}
+
+template <class charT>
+inline auto is_ascii(const std::basic_string<charT> &input) noexcept {
+  return is_ascii(std::basic_string_view<charT>(input));
 }
 }  // namespace v1
 }  // namespace skyr

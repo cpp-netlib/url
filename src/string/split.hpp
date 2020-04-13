@@ -13,9 +13,10 @@
 
 namespace skyr {
 inline namespace v1 {
+template <class charT>
 inline auto split(
-    std::u32string_view input, char32_t separator) noexcept {
-  auto elements = std::vector<std::u32string>{};
+    std::basic_string_view<charT> input, charT separator) noexcept {
+  auto elements = std::vector<std::basic_string<charT>>{};
   if (!input.empty()) {
     auto it = begin(input), prev = begin(input), last = end(input);
     while (it != last) {
@@ -29,6 +30,12 @@ inline auto split(
     elements.emplace_back(prev, it);
   }
   return elements;
+}
+
+template <class charT>
+inline auto split(
+    const std::basic_string<charT> &input, charT separator) noexcept {
+  return split(std::basic_string_view<charT>(input), separator);
 }
 }  // namespace v1
 }  // namespace skyr

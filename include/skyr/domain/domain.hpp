@@ -34,6 +34,8 @@ auto domain_to_ascii(
 auto domain_to_ascii(
     std::u32string_view domain,
     bool be_strict = false) -> tl::expected<std::string, std::error_code>;
+
+auto ascii_to_domain(std::string_view ascii) -> tl::expected<std::string, std::error_code>;
 }  // namespace v1
 }  // namespace skyr
 

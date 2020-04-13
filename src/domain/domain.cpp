@@ -29,7 +29,8 @@ auto process(
 
   while (it != last) {
     switch (domain::map_idna_status(*it)) {
-      case domain::idna_status::disallowed:error = true;
+      case domain::idna_status::disallowed:
+        error = true;
         break;
       case domain::idna_status::disallowed_std3_valid:
         if (use_std3_ascii_rules) {
@@ -45,8 +46,10 @@ auto process(
           result += domain::map_idna_code_point(*it);
         }
         break;
-      case domain::idna_status::ignored:break;
-      case domain::idna_status::mapped:result += domain::map_idna_code_point(*it);
+      case domain::idna_status::ignored:
+        break;
+      case domain::idna_status::mapped:
+        result += domain::map_idna_code_point(*it);
         break;
       case domain::idna_status::deviation:
         if (transitional_processing) {
@@ -55,7 +58,8 @@ auto process(
           result += *it;
         }
         break;
-      case domain::idna_status::valid:result += *it;
+      case domain::idna_status::valid:
+        result += *it;
         break;
     }
 
@@ -134,5 +138,20 @@ auto domain_to_ascii(
   }
   return result;
 }
+
+auto ascii_to_domain(std::string_view ascii) -> tl::expected<std::string, std::error_code> {
+  auto labels = split(ascii, '.');
+
+  for (auto &label : labels) {
+    auto encoded = punycode_decode(label);
+    if (!encoded) {
+      return tl::make_unexpected(encoded.error());
+    }
+    label.assign(begin(encoded.value()), end(encoded.value()));
+  }
+
+  return join(labels, '.');
+}
+
 }  // namespace v1
 }  // namespace skyr

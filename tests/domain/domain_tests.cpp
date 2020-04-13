@@ -8,7 +8,7 @@
 #include <catch.hpp>
 #include <skyr/domain/domain.hpp>
 
-TEST_CASE("valid domains", "[domain]") {
+TEST_CASE("valid domains to ascii", "[domain]") {
   using param = std::pair<std::string, std::string>;
 
   auto domain = GENERATE(
@@ -20,9 +20,27 @@ TEST_CASE("valid domains", "[domain]") {
       param{"βόλος.com", "xn--nxasmm1c.com"},
       param{"Ｇｏ.com", "go.com"});
 
-  SECTION("dom ascii_tests") {
+  SECTION("domain_to_ascii_tests") {
     const auto &[input, expected] = domain;
     auto instance = skyr::domain_to_ascii(input);
+    REQUIRE(instance);
+    CHECK(expected == instance.value());
+  }
+}
+
+TEST_CASE("valid domains from ascii", "[domain]") {
+  using param = std::pair<std::string, std::string>;
+
+  auto domain = GENERATE(
+      param{"example.com", "example.com"}, param{"⌘.ws", "xn--bih.ws"},
+      param{"你好你好", "xn--6qqa088eba"},
+      param{"你好你好.com", "xn--6qqa088eba.com"},
+      param{"उदाहरण.परीक्षा", "xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g"},
+      param{"βόλος.com", "xn--nxasmm1c.com"});
+
+  SECTION("ascii_to_domain_tests") {
+    const auto &[expected, input] = domain;
+    auto instance = skyr::ascii_to_domain(input);
     REQUIRE(instance);
     CHECK(expected == instance.value());
   }
