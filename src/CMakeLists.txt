@@ -8,19 +8,17 @@ configure_file(
         ${PROJECT_SOURCE_DIR}/include/skyr/version.hpp
 )
 
-set(skyr_SRCS
+add_library(
+        skyr-url
+
         core/url_parser_context.hpp
         core/url_parser_context.cpp
         core/url_parse.cpp
         core/url_parse_impl.hpp
         core/url_serialize.cpp
-        core/url_error.cpp
-        unicode/errors.cpp
-        domain/errors.cpp
         domain/domain.cpp
         domain/punycode.cpp
         domain/idna.cpp
-        percent_encoding/errors.cpp
         network/ipv4_address.cpp
         network/ipv6_address.cpp
         string/ascii.hpp
@@ -66,7 +64,6 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/query/query_iterator.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/platform/endianness.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/json/json.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_record.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_parse.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url/url_serialize.hpp
@@ -75,14 +72,11 @@ set(skyr_SRCS
         ${PROJECT_SOURCE_DIR}/include/skyr/filesystem/path.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp)
 
-add_library(skyr-url ${skyr_SRCS})
-
-target_link_libraries(skyr-url PUBLIC tl::expected nlohmann_json::nlohmann_json)
-if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (skyr_BUILD_WITH_LLVM_LIBCXX)
-        target_link_libraries(skyr-url PUBLIC "c++")
-    endif()
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
+target_link_libraries(skyr-url PUBLIC tl::expected)
+if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})
+    target_link_libraries(skyr-url PUBLIC "c++")
+endif()
+if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
     target_link_libraries(skyr-url PUBLIC "stdc++fs")
 endif()
 
@@ -97,3 +91,11 @@ target_include_directories(skyr-url
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     PRIVATE
         ${PROJECT_SOURCE_DIR}/src)
+
+add_library(skyr-json INTERFACE)
+
+target_link_libraries(skyr-json INTERFACE tl::expected nlohmann_json::nlohmann_json)
+
+target_include_directories(skyr-json
+        INTERFACE
+        ${PROJECT_SOURCE_DIR}/include)

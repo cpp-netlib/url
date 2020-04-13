@@ -23,10 +23,32 @@ enum class domain_errc {
   encoding_error,
 };
 
+namespace details {
+class domain_error_category : public std::error_category {
+ public:
+  [[nodiscard]] auto name() const noexcept -> const char * override {
+    return "domain";
+  }
+
+  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
+    switch (static_cast<domain_errc>(error)) {
+      case domain_errc::disallowed_code_point:return "Disallowed code point";
+      case domain_errc::bad_input:return "Bad input";
+      case domain_errc::overflow:return "Overflow";
+      case domain_errc::encoding_error:return "Encoding error";
+      default:return "(Unknown error)";
+    }
+  }
+};
+}  // namespace details
+
 /// Creates a `std::error_code` given a `skyr::domain_errc` value
 /// \param error A domain error
 /// \returns A `std::error_code` object
-auto make_error_code(domain_errc error) noexcept -> std::error_code;
+inline auto make_error_code(domain_errc error) noexcept -> std::error_code {
+  static const details::domain_error_category category{};
+  return std::error_code(static_cast<int>(error), category);
+}
 }  // namespace v1
 }  // namespace skyr
 

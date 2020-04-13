@@ -16,36 +16,6 @@
 namespace skyr {
 inline namespace v1 {
 namespace {
-class ipv4_address_error_category : public std::error_category {
- public:
-  [[nodiscard]] auto name() const noexcept -> const char * override {
-    return "ipv4 address";
-  }
-
-  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
-    switch (static_cast<ipv4_address_errc>(error)) {
-      case ipv4_address_errc::too_many_segments:
-        return "Input contains more than 4 segments";
-      case ipv4_address_errc::empty_segment:
-        return "Empty input";
-      case ipv4_address_errc::invalid_segment_number:
-        return "Invalid segment number";
-      case ipv4_address_errc::overflow:
-        return "Overflow";
-      default:
-        return "(Unknown error)";
-    }
-  }
-};
-
-const ipv4_address_error_category category{};
-}  // namespace
-
-auto make_error_code(ipv4_address_errc error) -> std::error_code {
-  return std::error_code(static_cast<int>(error), category);
-}
-
-namespace {
 auto parse_ipv4_number(
     std::string_view input,
     bool &validation_error_flag) -> tl::expected<std::uint64_t, std::error_code> {

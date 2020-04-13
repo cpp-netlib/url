@@ -32,11 +32,40 @@ enum class ipv6_address_errc {
   invalid_ipv4_segment_number,
 };
 
+namespace details {
+class ipv6_address_error_category : public std::error_category {
+ public:
+  [[nodiscard]] auto name() const noexcept -> const char * override {
+    return "ipv6 address";
+  }
+
+  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
+    switch (static_cast<ipv6_address_errc>(error)) {
+      case ipv6_address_errc::does_not_start_with_double_colon:
+        return "IPv6 piece does not start with a double colon.";
+      case ipv6_address_errc::invalid_piece:
+        return "Invalid IPv6 piece.";
+      case ipv6_address_errc::compress_expected:
+        return "IPv6 address compression was expected.";
+      case ipv6_address_errc::empty_ipv4_segment:
+        return "IPv4 segment is empty.";
+      case ipv6_address_errc::invalid_ipv4_segment_number:
+        return "IPv4 segment number is invalid.";
+      default:
+        return "(Unknown error)";
+    }
+  }
+};
+}  // namespace details
+
 /// Creates a `std::error_code` given a `skyr::ipv6_address_errc`
 /// value
 /// \param error An IPv6 address error
 /// \returns A `std::error_code` object
-auto make_error_code(ipv6_address_errc error) -> std::error_code;
+inline auto make_error_code(ipv6_address_errc error) -> std::error_code {
+  static const details::ipv6_address_error_category category{};
+  return std::error_code(static_cast<int>(error), category);
+}
 
 /// Represents an IPv6 address
 class ipv6_address {

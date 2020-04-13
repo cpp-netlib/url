@@ -26,10 +26,32 @@ enum class unicode_errc {
   invalid_code_point,
 };
 
+namespace details {
+class unicode_error_category : public std::error_category {
+ public:
+  [[nodiscard]] auto name() const noexcept -> const char * override {
+    return "unicode";
+  }
+
+  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
+    switch (static_cast<unicode_errc>(error)) {
+      case unicode_errc::overflow:return "Overflow";
+      case unicode_errc::invalid_lead:return "Invalid lead";
+      case unicode_errc::illegal_byte_sequence:return "Illegal byte sequence";
+      case unicode_errc::invalid_code_point:return "Invalid code point";
+      default:return "(Unknown error)";
+    }
+  }
+};
+}  // namespace details
+
 /// Creates a `std::error_code` given a `skyr::unicode_errc` value
 /// \param error A Unicode error
 /// \returns A `std::error_code` object
-auto make_error_code(unicode_errc error) noexcept -> std::error_code;
+inline auto make_error_code(unicode_errc error) noexcept -> std::error_code {
+  static const details::unicode_error_category category{};
+  return std::error_code(static_cast<int>(error), category);
+}
 }  // namespace unicode
 }  // namespace v1
 }  // namespace skyr

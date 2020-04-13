@@ -58,4 +58,13 @@ TEST_CASE("ipv6_address_tests", "[json.query]") {
     REQUIRE(query);
     CHECK(query.value() == "a=%CF%80");
   }
+
+  SECTION("invalid_query_json")
+  {
+    auto json = nlohmann::json{
+      {"I", "am", "not", "a", "valid", "query", "string"},
+    };
+    auto query = skyr::json::encode_query(json);
+    REQUIRE_FALSE(query);
+  }
 }

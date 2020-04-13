@@ -22,6 +22,7 @@ function(skyr_create_test file_name output_dir test_name)
         ${test}
         PRIVATE
             skyr-url
+            skyr-json
             Catch2::Catch2
             nlohmann_json::nlohmann_json
             fmt::fmt

@@ -30,7 +30,6 @@ before_build:
   -A x64
   -Dskyr_WARNINGS_AS_ERRORS=OFF
   -Dskyr_BUILD_TESTS=ON
-  -Dskyr_BUILD_WPT_TESTS=ON
   -Dskyr_BUILD_DOCS=OFF
   -Dskyr_BUILD_EXAMPLES=OFF
   -DCMAKE_TOOLCHAIN_FILE=C:\Tools\vcpkg\scripts\buildsystems\vcpkg.cmake

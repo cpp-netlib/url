@@ -28,11 +28,38 @@ enum class ipv4_address_errc {
   overflow,
 };
 
+namespace details {
+class ipv4_address_error_category : public std::error_category {
+ public:
+  [[nodiscard]] auto name() const noexcept -> const char * override {
+    return "ipv4 address";
+  }
+
+  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
+    switch (static_cast<ipv4_address_errc>(error)) {
+      case ipv4_address_errc::too_many_segments:
+        return "Input contains more than 4 segments";
+      case ipv4_address_errc::empty_segment:
+        return "Empty input";
+      case ipv4_address_errc::invalid_segment_number:
+        return "Invalid segment number";
+      case ipv4_address_errc::overflow:
+        return "Overflow";
+      default:
+        return "(Unknown error)";
+    }
+  }
+};
+}  // namespace details
+
 /// Creates a `std::error_code` given a `skyr::ipv4_address_errc`
 /// value
 /// \param error An IPv4 address error
 /// \returns A `std::error_code` object
-auto make_error_code(ipv4_address_errc error) -> std::error_code;
+inline auto make_error_code(ipv4_address_errc error) -> std::error_code {
+  static const details::ipv4_address_error_category category{};
+  return std::error_code(static_cast<int>(error), category);
+}
 
 /// Represents an IPv4 address
 class ipv4_address {

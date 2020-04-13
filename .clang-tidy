@@ -1,4 +1,4 @@
-Checks: '-*,bugprone-*,-bugprone-exception-escape,clang-diagnostic-*,cppcoreguidelines-*,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-macro-usage,-cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-avoid-c-arrays,misc-*,-misc-unused-parameters,-misc-non-private-member-variables-in-classes,modernize-*,-modernize-use-trailing-return-type,performance-*'
+Checks: '-*,bugprone-*,-bugprone-exception-escape,clang-diagnostic-*,cppcoreguidelines-*,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-macro-usage,-cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-avoid-c-arrays,misc-*,-misc-unused-parameters,-misc-non-private-member-variables-in-classes,modernize-*,performance-*'
 CheckOptions:
   - key:             readability-identifier-naming.ClassCase
     value:           lower_case

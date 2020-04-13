@@ -47,10 +47,30 @@ enum class path_errc {
   percent_decoding_error,
 };
 
+namespace details {
+class path_error_category : public std::error_category {
+ public:
+  [[nodiscard]] auto name() const noexcept -> const char * override {
+    return "url filesystem path";
+  }
+
+  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
+    switch (static_cast<path_errc>(error)) {
+      case path_errc::invalid_path: return "Invalid path";
+      case path_errc::percent_decoding_error: return "Percent decoding error";
+      default: return "(Unknown error)";
+    }
+  }
+};
+}  // namespace details
+
 /// Creates a `std::error_code` given a `skyr::path_errc` value
 /// \param error A filesystem path conversion error
 /// \returns A `std::error_code` object
-auto make_error_code(path_errc error) noexcept -> std::error_code;
+inline auto make_error_code(path_errc error) noexcept -> std::error_code {
+  static const details::path_error_category category{};
+  return std::error_code(static_cast<int>(error), category);
+}
 
 /// Converts a path object to a URL with a file protocol. Handles
 /// some processing, including percent encoding
