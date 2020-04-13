@@ -37,4 +37,7 @@ endfunction()
 
 add_subdirectory(unicode)
 add_subdirectory(domain)
+add_subdirectory(percent_encoding)
+add_subdirectory(network)
 add_subdirectory(url)
+add_subdirectory(filesystem)

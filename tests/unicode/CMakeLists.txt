@@ -7,7 +7,8 @@ foreach (
         file_name
         unicode_tests.cpp
         unicode_code_point_tests.cpp
-        unicode_range_tests.cpp)
+        unicode_range_tests.cpp
+        byte_conversion_tests.cpp)
     skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/unicode test)
     add_test(${test} ${PROJECT_BINARY_DIR}/tests/unicode/${test})
 endforeach ()

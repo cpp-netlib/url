@@ -7,19 +7,13 @@ set(
         skyr_URL_TESTS
 
         # URL
-        byte_conversion_tests.cpp
-        percent_decoding_tests.cpp
-        percent_encoding_tests.cpp
         url_tests.cpp
         url_vector_tests.cpp
         url_parsing_example_tests.cpp
         url_setter_tests.cpp
         url_search_parameters_tests.cpp
         query_parameter_range_tests.cpp
-        ipv4_address_tests.cpp
-        ipv6_address_tests.cpp
         url_literal_tests.cpp
-        filesystem_path_tests.cpp
     )
 
 if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
