@@ -6,7 +6,7 @@
 #ifndef SKYR_URL_SERIALIZE_INC
 #define SKYR_URL_SERIALIZE_INC
 
-// Deprecated header, use skyr/core/url_serialize.hpp
+// Deprecated header, use skyr/core/serialize.hpp
 
 #include <skyr/core/serialize.hpp>
 

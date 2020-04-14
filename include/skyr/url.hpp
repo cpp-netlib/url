@@ -6,9 +6,6 @@
 #ifndef SKYR_URL_INC
 #define SKYR_URL_INC
 
-/// \file skyr/url.hpp
-/// \defgroup url
-
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -37,34 +34,27 @@ inline namespace v1 {
 class url_parse_error : public std::runtime_error {
  public:
   /// Constructor
-  /// \param error An error code value
-  explicit url_parse_error(std::error_code error) noexcept
-      : runtime_error("URL parse error"), error_(error) {}
+  /// \param code An error code value
+  explicit url_parse_error(std::error_code code) noexcept
+      : runtime_error("URL parse error"), code_(code) {}
 
   /// \returns An error code
-  [[nodiscard]] auto error() const noexcept {
-    return error_;
+  [[nodiscard]] auto code() const noexcept {
+    return code_;
   }
 
  private:
 
-  std::error_code error_;
+  std::error_code code_;
 
 };
 
-/// Represents a URL. Parsing is performed according to the
+/// This class represents a URL. Parsing on construction is
+/// performed according to the
 /// [WhatWG specification](https://url.spec.whatwg.org/)
 ///
 /// The API follows closely the
 /// [WhatWG IDL specification](https://url.spec.whatwg.org/#url-class).
-///
-/// For example:
-/// ```
-/// auto url = skyr::url("http://example.org/");
-/// assert("http:" == url.scheme());
-/// assert("example.org" == url.hostname());
-/// assert("/" == url.pathname());
-/// ```
 class url {
 
  public:

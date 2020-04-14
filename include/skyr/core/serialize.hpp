@@ -7,6 +7,7 @@
 #define SKYR_CORE_URL_SERIALIZE_INC
 
 #include <skyr/core/url_record.hpp>
+#include <skyr/core/errors.hpp>
 
 namespace skyr {
 inline namespace v1 {

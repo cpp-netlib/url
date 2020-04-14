@@ -38,7 +38,7 @@ PROJECT_NAME           = "Skyr URL"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         =
+PROJECT_NUMBER         = @skyr-url_VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -829,23 +829,13 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @PROJECT_SOURCE_DIR@/include/skyr/config.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/version.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/unicode.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/unicode/domain.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/unicode/idna.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/unicode/errors.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/unicode/ranges/transforms/byte_transform.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/unicode/ranges/transforms/u16_transform.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/unicode/ranges/transforms/u32_transform.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/unicode/ranges/views/u8_view.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/unicode/ranges/views/u16_view.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/url.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/url/url_error.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/url/url_parse.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/url/url_record.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/url/url_search_parameters.hpp \
-                         @PROJECT_SOURCE_DIR@/include/skyr/url/url_serialize.hpp
+INPUT                  = @PROJECT_SOURCE_DIR@/include/skyr/ \
+                         @PROJECT_SOURCE_DIR@/include/skyr/core/ \
+                         @PROJECT_SOURCE_DIR@/include/skyr/domain/ \
+                         @PROJECT_SOURCE_DIR@/include/skyr/network/ \
+                         @PROJECT_SOURCE_DIR@/include/skyr/percent_encoding/ \
+                         @PROJECT_SOURCE_DIR@/include/skyr/filesystem/ \
+                         @PROJECT_SOURCE_DIR@/include/skyr/json/
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

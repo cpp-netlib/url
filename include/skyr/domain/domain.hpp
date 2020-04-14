@@ -6,12 +6,11 @@
 #ifndef SKYR_DOMAIN_DOMAIN_HPP
 #define SKYR_DOMAIN_DOMAIN_HPP
 
-/// \file domain.hpp
-
 #include <string>
 #include <string_view>
 #include <system_error>
 #include <tl/expected.hpp>
+#include <skyr/domain/errors.hpp>
 
 namespace skyr {
 inline namespace v1 {

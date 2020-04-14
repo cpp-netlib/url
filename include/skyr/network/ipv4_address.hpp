@@ -89,7 +89,7 @@ class ipv4_address {
       static_cast<unsigned char>(address_ >> 24u),
       static_cast<unsigned char>(address_ >> 16u),
       static_cast<unsigned char>(address_ >>  8u),
-      static_cast<unsigned char>(address_ >>  0u)
+      static_cast<unsigned char>(address_)
     }};
   }
 

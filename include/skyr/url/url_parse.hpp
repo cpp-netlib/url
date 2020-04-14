@@ -6,7 +6,7 @@
 #ifndef SKYR_URL_PARSE_INC
 #define SKYR_URL_PARSE_INC
 
-// Deprecated header, use skyr/core/url_parse.hpp
+// Deprecated header, use skyr/core/parse.hpp
 
 #include <skyr/core/parse.hpp>
 

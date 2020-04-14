@@ -10,14 +10,17 @@
 #include <optional>
 #include <tl/expected.hpp>
 #include <skyr/core/url_record.hpp>
+#include <skyr/core/errors.hpp>
 
 namespace skyr {
 inline namespace v1 {
-/// Parses a URL and returns a `url_record`
+/// Parses a URL is according to the
+/// [WhatWG specification](https://url.spec.whatwg.org/)
 ///
-/// \param input The input string
-/// \param base An optional base URL
-/// \returns A `url_record` on success and an error code on failure
+/// \param input A UTF-8 encoded input string
+/// \param base An optional base ``url_record``
+/// \returns An expected ``url_record`` on success, or an
+///          ``error_code`` if parsing ``input`` failed
 auto parse(
     std::string_view input,
     std::optional<url_record> base=std::nullopt) -> tl::expected<url_record, std::error_code>;

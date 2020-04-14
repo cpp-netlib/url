@@ -39,7 +39,6 @@ class percent_encode_iterator {
   ///
   /// \param it
   /// \param last
-  /// \param excludes
   percent_encode_iterator(
       OctetIterator it,
       OctetIterator last)
@@ -132,7 +131,6 @@ class percent_encode_range {
   percent_encode_range() = default;
   ///
   /// \param range
-  /// \param excludes
   explicit percent_encode_range(
       const OctetRange &range)
       : impl_(impl(std::begin(range), std::end(range))) {}

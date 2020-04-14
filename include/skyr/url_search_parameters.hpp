@@ -52,10 +52,6 @@ class url_search_parameters {
   /// \param query The search string
   explicit url_search_parameters(std::string_view query);
 
-  /// Constructor
-  /// \param url The URL
-  explicit url_search_parameters(url *url);
-
   ///
   /// \param parameters
   url_search_parameters(std::initializer_list<value_type> parameters);
@@ -149,6 +145,9 @@ class url_search_parameters {
   [[nodiscard]] auto to_string() const -> string_type;
 
  private:
+
+  explicit url_search_parameters(url *url);
+
   void initialize(std::string_view query);
   void update();
 

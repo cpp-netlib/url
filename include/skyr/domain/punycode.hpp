@@ -10,6 +10,7 @@
 #include <string_view>
 #include <system_error>
 #include <tl/expected.hpp>
+#include <skyr/domain/errors.hpp>
 
 namespace skyr {
 inline namespace v1 {

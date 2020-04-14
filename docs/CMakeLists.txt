@@ -11,29 +11,19 @@ find_package(Doxygen REQUIRED)
 find_package(Pandoc REQUIRED)
 find_package(Sphinx REQUIRED)
 
-set(DOC_FILES
+# Copy RST files
+foreach(doc_file
         _build
         _static
         _templates
         index.rst
-        unicode.rst
-        idna.rst
-        domain.rst
-        encoding.rst
-        encoding_u8_view.rst
-        encoding_u16_view.rst
-        encoding_byte_transform.rst
-        encoding_u16_transform.rst
-        encoding_u32_transform.rst
         url.rst
-        url_class.rst
-        url_record.rst
-        url_error_codes.rst
-        url_search_parameters.rst
-        )
-
-# Copy RST files
-foreach(doc_file ${DOC_FILES})
+        core.rst
+        domain.rst
+        network.rst
+        percent_encoding.rst
+        filesystem.rst
+        json.rst)
     file(COPY ${doc_file} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
 
