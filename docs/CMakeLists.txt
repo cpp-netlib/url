@@ -49,7 +49,6 @@ add_custom_target(
 # Convert markdown to RST
 SET(
         GENERATED_FROM_MARKDOWN
-        readme.rst
         changelog.rst
 )
 

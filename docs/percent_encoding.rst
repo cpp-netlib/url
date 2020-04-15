@@ -4,6 +4,9 @@ Percent Encoding
 Description
 -----------
 
+The functions below allow percent encoding and decoding, most
+commonly used in URL paths, query parameter and fragments.
+
 Headers
 -------
 
@@ -15,8 +18,6 @@ Headers
 Example
 -------
 
-The functions below allow percent encoding and decoding, most
-commonly used in URL paths, query parameter and fragments.
 
 API
 ---

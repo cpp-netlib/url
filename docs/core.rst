@@ -29,15 +29,24 @@ Example
 
 .. code-block:: c++
 
-    auto url = skyr::url_parse("http://example.org/");
-    assert(url);
-    assert("http" == url.scheme);
-    assert(url.host);
-    assert("example.org" == url.host.value());
-    assert(1 == url.path.size())
+    #include <skyr/core/url_record.hpp>
+    #include <skyr/core/parse.hpp>
+    #include <skyr/core/serialize.hpp>
+    #include <iostream>
 
-    auto serialized = skyr::serialize(url);
-    assert("http://example.org/" == serialized);
+    int main() {
+      auto url = skyr::url_parse("http://example.org/");
+      std::cout << url << std::endl;
+      std::cout << "Scheme:     " << url.scheme << std::endl;
+      std::cout << "Hostname:   " == url.host.value());
+      std::cout << "Pathname:   ";
+      for (const auto &path : url.path) {
+        << std::cout << "/" << path;
+      }
+      std::cout << std::endl;
+
+      std::cout << "Serializer: " << skyr::serialize(url) << std::endl;
+    }
 
 API
 ---

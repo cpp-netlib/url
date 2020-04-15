@@ -22,6 +22,21 @@ Headers
 Example
 -------
 
+.. code-block:: c++
+
+   #include <skyr/domain/domain.hpp>
+   #include <iostream>
+
+   int main() {
+     using namespace std::string_literals;
+
+     auto domain = "उदाहरण.परीक्षा"s;
+     auto encoded = skyr::domain::domain_to_ascii(domain);
+     if (encoded) {
+       std::cout << encoded.value() << std::endl;
+     }
+   }
+
 API
 ---
 

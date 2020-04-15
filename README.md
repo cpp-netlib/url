@@ -213,7 +213,7 @@ Windows:
 ## License
 
 This library is released under the Boost Software License (please see
-http://boost.org/LICENSE_1_0.txt or the accompanying LICENSE_1_0.txt
+http://boost.org/LICENSE_1_0.txt or the accompanying [LICENSE_1_0.txt](LICENSE_1_0.txt)
 file for the full text).
 
 ## Why *skyr*?
@@ -224,10 +224,7 @@ itself was randomly chosen.
 ## Contact
 
 Any questions about this library can be addressed to the cpp-netlib
-[developers mailing list]. Issues can be filed on GitHub at
-http://github.com/cpp-netlib/url/issues.
+[developers mailing list](cpp-netlib@googlegroups.com). Issues can
+be filed on our [GitHub page](http://github.com/cpp-netlib/url/issues).
 
 You can also contact me via Twitter [@glynos](https://twitter.com/glynos).
-
-[developers mailing list]: cpp-netlib@googlegroups.com
-

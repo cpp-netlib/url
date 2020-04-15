@@ -6,8 +6,23 @@
 Skyr URL
 ========
 
+Introduction
+------------
+
+This library provides:
+
+- A `skyr::url` class that implements a generic URL parser,
+  conforming with the WhatWG URL specification
+- URL serialization and comparison
+- Percent encoding and decoding functions
+- IDNA and Punycode functions for domain name parsing
+- Basic Unicode conversion functions
+
 Quick Start
 -----------
+
+This project requires the availability of a C++17 compliant compiler
+and standard library.
 
 1. Download ``vcpkg`` and install the dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -92,19 +107,22 @@ Quick Start
    > cmake --build _build
    > ./_build/url_test
 
-Introduction
-------------
+Design objectives
+^^^^^^^^^^^^^^^^^
+
+* Uses modern C++17 features
+* Cross-platform
+* Easy to use and read
+* Compliant to the the WhatWG URL standard
+* Works naturally with Unicode strings
+* Uses modern CMake and is available as a dependency using a package
+  manager
+
+Documentation
+-------------
 
 .. toctree::
-   :maxdepth: 1
-
-   readme
-
-API
----
-
-.. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    url
    core
