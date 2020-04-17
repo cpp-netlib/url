@@ -854,7 +854,7 @@ auto url_parser_context::parse_cannot_be_a_base_url(char byte) -> tl::expected<u
     url.fragment = std::string();
     state = url_parse_state::fragment;
   } else {
-    if (!is_eof() && !is_url_code_point(byte) && (byte != '%')) {
+    if (!is_eof() && (!is_url_code_point(byte) && (byte != '%'))) {
       url.validation_error = true;
     }
     else if ((byte == '%') && !percent_encoding::is_percent_encoded(
@@ -876,7 +876,7 @@ auto url_parser_context::parse_query(char byte) -> tl::expected<url_parse_action
   } else if (!is_eof()) {
     if ((byte < '!') ||
         (byte > '~') ||
-        (contains(byte, "\"#<>"sv)) ||
+        (contains(byte, R"("#<>)"sv)) ||
         ((byte == '\'') && url.is_special())) {
       auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::query);
       url.query.value() += pct_encoded.to_string();

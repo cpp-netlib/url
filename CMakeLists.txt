@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
         skyr-url
-        VERSION 1.7.0
+        VERSION 1.7.1
         HOMEPAGE_URL https://cpp-netlib.github.io/url
         DESCRIPTION "A C++ library that implements the WhatWG URL specification"
         LANGUAGES CXX
@@ -95,6 +95,7 @@ endif()
 # Add an alias for projects that use skyr-url as a dependency
 if (NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     add_library(skyr::skyr-url ALIAS skyr-url)
+    add_library(skyr::skyr-json ALIAS skyr-json)
 endif()
 
 # Install
@@ -111,7 +112,7 @@ write_basic_package_version_file(
         COMPATIBILITY SameMajorVersion
         ARCH_INDEPENDENT)
 
-install(TARGETS skyr-url
+install(TARGETS skyr-url skyr-json
         EXPORT ${PROJECT_NAME}-targets
         INCLUDES DESTINATION "${CMAKE_INSTALL_DATADIR}"
         ARCHIVE DESTINATION lib
