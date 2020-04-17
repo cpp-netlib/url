@@ -30,6 +30,7 @@ namespace name = std::filesystem;
 #include SKYR_FILESYSTEM_HEADER()
 #include <tl/expected.hpp>
 #include <skyr/url.hpp>
+#include <skyr/percent_encoding/percent_decode.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -76,12 +77,23 @@ inline auto make_error_code(path_errc error) noexcept -> std::error_code {
 /// some processing, including percent encoding
 /// \param path A filesystem path
 /// \returns a url object or an error on failure
-auto from_path(const stdfs::path &path) -> tl::expected<url, std::error_code>;
+inline auto from_path(const stdfs::path &path) -> tl::expected<url, std::error_code> {
+  return make_url("file://" + path.generic_u8string());
+}
 
 /// Converts a URL pathname to a filesystem path
 /// \param input A url object
 /// \returns a path object or an error on failure
-auto to_path(const url &input) -> tl::expected<stdfs::path, std::error_code>;
+
+inline auto to_path(const url &input) -> tl::expected<stdfs::path, std::error_code> {
+  auto pathname = input.pathname();
+  auto decoded = skyr::percent_decode<std::string>(pathname);
+  if (!decoded) {
+    return tl::make_unexpected(
+        make_error_code(path_errc::percent_decoding_error));
+  }
+  return stdfs::path(decoded.value());
+}
 }  // namespace filesystem
 }  // namespace v1
 }  // namespace skyr

@@ -28,7 +28,6 @@ add_library(
         string/starts_with.hpp
         url/url.cpp
         url/url_search_parameters.cpp
-        filesystem/path.cpp
 
         ${PROJECT_SOURCE_DIR}/include/skyr/config.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/version.hpp
