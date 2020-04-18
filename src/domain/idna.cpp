@@ -4,6 +4,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
+#include <iterator>
+#include <cassert>
 #include <skyr/domain/idna.hpp>
 
 namespace skyr {
@@ -2840,13 +2842,13 @@ const code_point_range statuses[] = {
 }  // namespace
 
 auto map_idna_status(char32_t code_point) -> idna_status {
-  auto first = std::addressof(statuses[0]);
-  auto last = first + (sizeof(statuses) / sizeof(statuses[0]));
-  auto it = std::lower_bound(
-    first, last, code_point,
-    [] (const auto &range, auto code_point) -> bool {
-      return range.last < code_point;
-    });
+  static const auto less = [] (const auto &range, auto code_point) {
+    return range.last < code_point;
+  };
+
+  auto first = std::begin(statuses), last = std::end(statuses);
+  auto it = std::lower_bound(first, last, code_point, less);
+  assert(it != last);
   return it->status;
 }
 
@@ -8672,17 +8674,13 @@ const mapped_code_point mapped[] = {
 }  // namespace
 
 auto map_idna_code_point(char32_t code_point) -> char32_t {
-  auto first = std::addressof(mapped[0]);
-  auto last = first + (sizeof(mapped) / sizeof(mapped[0]));
-  auto it = std::lower_bound(
-    first, last, code_point,
-    [](const auto &mapped, auto code_point) -> bool {
-      return mapped.code_point < code_point;
-    });
-  if (it != last) {
-    return it->mapped;
-  }
-  return code_point;
+  static const auto less = [](const auto &mapped, auto code_point) {
+    return mapped.code_point < code_point;
+  };
+
+  auto first = std::begin(mapped), last = std::end(mapped);
+  auto it = std::lower_bound(first, last, code_point, less);
+  return (it != last) ? it->mapped : code_point;
 }
 }  // namespace domain
 }  // namespace v1
