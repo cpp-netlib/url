@@ -46,10 +46,6 @@ auto adapt(char32_t delta, char32_t numpoints, bool firsttime) {
   }
   return k + (base - tmin + 1) * delta / (delta + skew);
 }
-
-inline auto to_ascii(const std::string &input) { return "xn--"s + input; }
-
-inline auto delim(char32_t c) { return c == delimiter; }
 }  // namespace
 
 auto punycode_encode(
@@ -127,7 +123,7 @@ auto punycode_encode(
     ++delta, ++n;
   }
 
-  return to_ascii(result);
+  return "xn--"s + result;
 }
 
 auto punycode_decode(
@@ -146,7 +142,7 @@ auto punycode_decode(
 
   auto basic = 0U;
   for (auto j = 0U; j < input.size(); ++j) {
-    if (delim(input[j])) {
+    if (input[j] == delimiter) {
       basic = j;
     }
   }
@@ -155,12 +151,12 @@ auto punycode_decode(
     result += input[j];
   }
 
-  auto in = static_cast<char32_t>((basic > 0U) ? (basic + 1U) : 0U);
-  auto i = static_cast<char32_t>(0U);
+  auto in = (basic > U'\x00') ? (basic + U'\x01') : U'\x00';
+  auto i = U'\x00';
   while (in < input.size()) {
     auto oldi = i;
 
-    auto w = static_cast<char32_t>(1U);
+    auto w = U'\x01';
     auto k = base;
     while (true) {
       if (in >= input.size()) {

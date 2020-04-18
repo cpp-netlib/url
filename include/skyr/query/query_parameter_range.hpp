@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_QUERY_ITERATOR_HPP
-#define SKYR_URL_QUERY_ITERATOR_HPP
+#ifndef SKYR_URL_QUERY_PARAMETER_RANGE_HPP
+#define SKYR_URL_QUERY_PARAMETER_RANGE_HPP
 
 #include <string_view>
 #include <optional>
@@ -244,4 +244,4 @@ class query_parameter_range {
 }  // namespace v1
 }  // namespace skyr
 
-#endif //SKYR_URL_QUERY_ITERATOR_HPP
+#endif //SKYR_URL_QUERY_PARAMETER_RANGE_HPP

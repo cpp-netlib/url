@@ -11,7 +11,7 @@
 #include <vector>
 #include <tl/expected.hpp>
 #include <nlohmann/json.hpp>
-#include <skyr/query/query_iterator.hpp>
+#include <skyr/query/query_parameter_range.hpp>
 #include <skyr/percent_encoding/percent_encode.hpp>
 #include <skyr/percent_encoding/percent_decode.hpp>
 

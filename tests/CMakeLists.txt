@@ -16,7 +16,8 @@ endif(MSVC)
 
 function(skyr_create_test file_name output_dir test_name)
     skyr_remove_extension(${file_name} test)
-    add_executable(${test} ${test}.cpp)
+    add_executable(${test})
+    target_sources(${test} PRIVATE ${test}.cpp)
     add_dependencies(${test} skyr-url)
     target_link_libraries(
         ${test}

@@ -6,7 +6,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 #include <string_view>
-#include <skyr/query/query_iterator.hpp>
+#include <skyr/query/query_parameter_range.hpp>
 
 TEST_CASE("query_element_iterator_test", "[query_parameter_range]") {
   using namespace std::string_view_literals;

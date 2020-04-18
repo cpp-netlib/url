@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <skyr/url_search_parameters.hpp>
-#include <skyr/query/query_iterator.hpp>
+#include <skyr/query/query_parameter_range.hpp>
 #include <skyr/percent_encoding/percent_encode.hpp>
 #include <skyr/percent_encoding/percent_decode.hpp>
 #include <skyr/url.hpp>
