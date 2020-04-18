@@ -11,8 +11,7 @@ foreach (file_name
         url_search_parameters_tests.cpp
         query_parameter_range_tests.cpp
         )
-    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test)
-    add_test(${test} ${PROJECT_BINARY_DIR}/tests/url/${test})
+    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url)
 endforeach ()
 
 if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
@@ -20,7 +19,6 @@ if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
             url_tests_with_exceptions.cpp
             url_literal_tests.cpp
             )
-        skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test)
-        add_test(${test} ${PROJECT_BINARY_DIR}/tests/url/${test})
+        skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url)
     endforeach()
 endif()

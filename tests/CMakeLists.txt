@@ -14,7 +14,7 @@ if (MSVC)
 endif(MSVC)
 
 
-function(skyr_create_test file_name output_dir test_name)
+function(skyr_create_test file_name output_dir)
     skyr_remove_extension(${file_name} test)
     add_executable(${test})
     target_sources(${test} PRIVATE ${test}.cpp)
@@ -33,7 +33,7 @@ function(skyr_create_test file_name output_dir test_name)
         PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${output_dir}
     )
-    set(${test_name} ${test} PARENT_SCOPE)
+    add_test(${test} ${output_dir}/${test})
 endfunction()
 
 add_subdirectory(unicode)

@@ -7,6 +7,5 @@ foreach (file_name
         ipv4_address_tests.cpp
         ipv6_address_tests.cpp
         )
-    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/network test)
-    add_test(${test} ${PROJECT_BINARY_DIR}/tests/network/${test})
+    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/network)
 endforeach ()

@@ -5,5 +5,4 @@
 
 foreach (file_name filesystem_path_tests.cpp)
     skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/filesystem test)
-    add_test(${test} ${PROJECT_BINARY_DIR}/tests/filesystem/${test})
 endforeach ()
