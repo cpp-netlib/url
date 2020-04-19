@@ -94,7 +94,7 @@ class ipv4_address {
   }
 
   /// \returns The address as a string
-  [[nodiscard]] auto to_string() const -> std::string;
+  [[nodiscard]] auto serialize() const -> std::string;
 
 };
 

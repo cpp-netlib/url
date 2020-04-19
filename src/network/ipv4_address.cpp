@@ -45,7 +45,7 @@ auto parse_ipv4_number(
 }
 }  // namespace
 
-auto ipv4_address::to_string() const -> std::string {
+auto ipv4_address::serialize() const -> std::string {
   using namespace std::string_literals;
 
   auto output = ""s;

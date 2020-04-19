@@ -21,8 +21,8 @@ using default_port_list = std::vector<std::pair<std::string, std::optional<std::
 
 inline auto special_schemes() noexcept -> const default_port_list & {
   static const auto schemes = default_port_list{
-      {"ftp", 21},
       {"file", std::nullopt},
+      {"ftp", 21},
       {"http", 80},
       {"https", 443},
       {"ws", 80},
@@ -30,35 +30,29 @@ inline auto special_schemes() noexcept -> const default_port_list & {
   };
   return schemes;
 }
+
+inline auto scheme_less(
+    const default_port_list::value_type &special_scheme,
+    std::string_view scheme) -> bool {
+  return special_scheme.first < scheme;
+};
 }  // namespace details
 
 /// \param scheme
 /// \returns
 inline auto is_special(std::string_view scheme) noexcept -> bool {
   const auto &schemes = details::special_schemes();
-  auto first = begin(schemes), last = end(schemes);
-  auto it = std::find_if(
-      first, last,
-      [&scheme](const auto &special_scheme) -> bool {
-        return scheme == special_scheme.first;
-      });
-  return (it != last);
+  auto it = std::lower_bound(begin(schemes), end(schemes), scheme, details::scheme_less);
+  return ((it != end(schemes)) && !(scheme < it->first));
 }
 
 /// \param scheme
 /// \returns
-inline auto default_port(std::string_view scheme) noexcept -> std::optional<std::uint16_t> {
+inline auto default_port(std::string_view scheme) noexcept
+    -> std::optional<std::uint16_t> {
   const auto &schemes = details::special_schemes();
-  auto first = begin(schemes), last = end(schemes);
-  auto it = std::find_if(
-      first, last,
-      [&scheme](const auto &special_scheme) -> bool {
-        return scheme == special_scheme.first;
-      });
-  if (it != last) {
-    return it->second;
-  }
-  return std::nullopt;
+  auto it = std::lower_bound(begin(schemes), end(schemes), scheme, details::scheme_less);
+  return ((it != end(schemes)) && !(scheme < it->first)) ? it->second : std::nullopt;
 }
 }  // namespace v1
 }  // namespace skyr

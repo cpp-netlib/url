@@ -120,7 +120,7 @@ auto parse_host(
     view.remove_suffix(1);
     auto ipv6_address = parse_ipv6_address(view);
     if (ipv6_address) {
-      return "[" + ipv6_address.value().to_string() + "]";
+      return "[" + ipv6_address.value().serialize() + "]";
     }
     else {
       return tl::make_unexpected(url_parse_errc::invalid_ipv6_address);
@@ -158,7 +158,7 @@ auto parse_host(
       return ascii_domain.value();
     }
   }
-  return host.value().to_string();
+  return host.value().serialize();
 }
 
 auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {

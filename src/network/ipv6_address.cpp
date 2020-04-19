@@ -31,7 +31,7 @@ inline auto hex_to_dec(char byte) noexcept {
 }
 }  // namespace
 
-auto ipv6_address::to_string() const -> std::string {
+auto ipv6_address::serialize() const -> std::string {
   using namespace std::string_literals;
 
   auto output = ""s;

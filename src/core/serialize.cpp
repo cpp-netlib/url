@@ -22,8 +22,15 @@ auto serialize(
       output += "@";
     }
 
-    // TODO: serialize host
-    output += url.host.value();
+    if (auto ipv4_address = parse_ipv4_address(url.host.value())) {
+      output += ipv4_address.value().serialize();
+    }
+    else if (auto ipv6_address = parse_ipv6_address(url.host.value())) {
+      output += ipv6_address.value().serialize();
+    }
+    else {
+      output += url.host.value();
+    }
 
     if (url.port) {
       output += ":";

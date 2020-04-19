@@ -1,0 +1,47 @@
+// Copyright 2018-19 Glyn Matthews.
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt of copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
+#include <skyr/core/parse.hpp>
+#include <skyr/core/serialize.hpp>
+
+/// https://url.spec.whatwg.org/#example-url-parsing
+
+TEST_CASE("url_parsing_example_tests", "[parse]") {
+  using namespace std::string_literals;
+
+  SECTION("url_path_1") {
+    auto instance = skyr::parse("https:example.org");
+    REQUIRE(instance);
+    CHECK(1 == instance.value().path.size());
+  }
+
+  SECTION("url_path_2") {
+    auto instance = skyr::parse("https://////example.com///");
+    REQUIRE(instance);
+    CHECK(3 == instance.value().path.size());
+  }
+
+  SECTION("url_parse_fails_1") {
+    auto instance = skyr::parse("https://ex ample.org/");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("url_parse_fails_2") {
+    auto instance = skyr::parse("example");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("url_parse_fails_3") {
+    auto instance = skyr::parse("https://example.com:demo");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("url_parse_fails_4") {
+    auto instance = skyr::parse("http://[www.example.com]/");
+    REQUIRE_FALSE(instance);
+  }
+}

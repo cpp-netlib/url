@@ -11,7 +11,7 @@ AlwaysBreakBeforeMultilineStrings: true
 BreakBeforeBinaryOperators: None
 BreakConstructorInitializersBeforeComma: false
 BinPackParameters: true
-ColumnLimit:     80
+ColumnLimit:     120
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ExperimentalAutoDetectBinPacking: false
 IndentCaseLabels: true

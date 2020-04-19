@@ -12,17 +12,17 @@ TEST_CASE("ipv4 addresses", "[ipv4]") {
 
   SECTION("zero_test") {
     auto instance = skyr::ipv4_address(0);
-    CHECK("0.0.0.0" == instance.to_string());
+    CHECK("0.0.0.0" == instance.serialize());
   }
 
   SECTION("loopback_test") {
     auto instance = skyr::ipv4_address(0x7f000001);
-    CHECK("127.0.0.1" == instance.to_string());
+    CHECK("127.0.0.1" == instance.serialize());
   }
 
   SECTION("address_test") {
     auto instance = skyr::ipv4_address(0x814ff5fc);
-    CHECK("129.79.245.252" == instance.to_string());
+    CHECK("129.79.245.252" == instance.serialize());
   }
 
   SECTION("parse_zero_test") {

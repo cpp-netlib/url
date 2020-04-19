@@ -97,7 +97,7 @@ class ipv6_address {
   }
 
    /// \returns The IPv6 address as a string
-  [[nodiscard]] auto to_string() const -> std::string;
+  [[nodiscard]] auto serialize() const -> std::string;
 
 };
 

@@ -4,12 +4,13 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 foreach (file_name
+        url_parse_tests.cpp
+        url_serialize_tests.cpp
         url_tests.cpp
         url_vector_tests.cpp
-        url_parsing_example_tests.cpp
         url_setter_tests.cpp
-        url_search_parameters_tests.cpp
         query_parameter_range_tests.cpp
+        url_search_parameters_tests.cpp
         )
     skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url)
 endforeach ()

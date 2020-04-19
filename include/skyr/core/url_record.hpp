@@ -10,6 +10,8 @@
 #include <string>
 #include <cstdint>
 #include <optional>
+#include <skyr/network/ipv4_address.hpp>
+#include <skyr/network/ipv6_address.hpp>
 #include <skyr/core/schemes.hpp>
 
 namespace skyr {
