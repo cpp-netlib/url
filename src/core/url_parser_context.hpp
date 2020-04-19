@@ -1,4 +1,4 @@
-// Copyright 2018 Glyn Matthews.
+// Copyright 2018-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -33,7 +33,7 @@ class url_parser_context {
 
   std::string_view::const_iterator it;
 
-  std::optional<url_record> base;
+  const url_record *base;
   url_record url;
 
   url_parse_state state;
@@ -47,9 +47,9 @@ class url_parser_context {
 
   url_parser_context(
       std::string_view input,
-      std::optional<url_record> base,
-      const std::optional<url_record> &url,
-      std::optional<url_parse_state> state_override = std::nullopt);
+      const url_record *base,
+      const url_record *url=nullptr,
+      std::optional<url_parse_state> state_override=std::nullopt);
 
   [[nodiscard]] auto is_eof() const noexcept {
     return it == end(view);

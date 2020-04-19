@@ -99,7 +99,7 @@ class url {
       SKYR_EXCEPTIONS_THROW(url_parse_error(
           make_error_code(url_parse_errc::invalid_unicode_character)));
     }
-    initialize(std::string_view(bytes.value()));
+    initialize(bytes.value());
   }
 
   /// Parses a URL from the input string. The input string can be
@@ -121,7 +121,8 @@ class url {
       SKYR_EXCEPTIONS_THROW(url_parse_error(
           make_error_code(url_parse_errc::invalid_unicode_character)));
     }
-    initialize(std::string_view(bytes.value()), base.record());
+    const auto &base_record = base.record();
+    initialize(bytes.value(), &base_record);
   }
 
   /// Constructs a URL from an existing record
@@ -611,7 +612,7 @@ class url {
 
   void initialize(
       string_view input,
-      std::optional<url_record> &&base = std::nullopt);
+      const url_record *base=nullptr);
   void update_record(url_record &&url);
 
   template<class Source>
@@ -649,7 +650,7 @@ void swap(url &lhs, url &rhs) noexcept;
 
 namespace details {
 auto make_url(
-    url::string_view input, const std::optional<url_record> &base) -> tl::expected<url, std::error_code>;
+    url::string_view input, const url_record *base) -> tl::expected<url, std::error_code>;
 }  // namespace details
 
 /// Parses a URL string and constructs a `url` object on success,
@@ -666,7 +667,7 @@ inline auto make_url(
     return tl::make_unexpected(
         make_error_code(url_parse_errc::invalid_unicode_character));
   }
-  return details::make_url(std::string_view(bytes.value()), std::nullopt);
+  return details::make_url(std::string_view(bytes.value()), nullptr);
 }
 
 /// Parses a URL string and constructs a `url` object on success,
@@ -684,7 +685,8 @@ inline auto make_url(
     return tl::make_unexpected(
         make_error_code(url_parse_errc::invalid_unicode_character));
   }
-  return details::make_url(std::string_view(bytes.value()), base.record());
+  const auto &base_record = base.record();
+  return details::make_url(std::string_view(bytes.value()), &base_record);
 }
 
 /// Tests two URLs for equality according to the

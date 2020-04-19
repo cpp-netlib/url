@@ -24,10 +24,10 @@ void url::swap(url &other) noexcept {
   swap(parameters_, other.parameters_);
 }
 
-void url::initialize(string_view input, std::optional<url_record> &&base) {
+void url::initialize(string_view input, const url_record *base) {
   using result_type = tl::expected<void, std::error_code>;
 
-  parse(input, base)
+  details::parse(input, base)
       .and_then([=](auto &&url) -> result_type {
         update_record(std::forward<url_record>(url));
         return {};
@@ -65,7 +65,7 @@ auto url::to_json() const -> string_type {
 
 auto url::origin() const -> string_type {
   if (url_.scheme == "blob") {
-    auto url = details::make_url(pathname(), std::nullopt);
+    auto url = details::make_url(pathname(), nullptr);
     return url ? url.value().origin() : "";
   } else if ((url_.scheme == "ftp") ||
       (url_.scheme == "http") ||
@@ -91,7 +91,7 @@ auto url::set_protocol(string_view protocol) -> std::error_code {
   }
 
   auto new_url = details::basic_parse(
-      protocol, std::nullopt, url_, url_parse_state::scheme_start);
+      protocol, nullptr, &url_, url_parse_state::scheme_start);
   if (!new_url) {
     return new_url.error();
   }
@@ -162,7 +162,7 @@ auto url::set_host(string_view host) -> std::error_code {
   }
 
   auto new_url = details::basic_parse(
-      host, std::nullopt, url_, url_parse_state::host);
+      host, nullptr, &url_, url_parse_state::host);
   if (!new_url) {
     return new_url.error();
   }
@@ -185,7 +185,7 @@ auto url::set_hostname(string_view hostname) -> std::error_code {
   }
 
   auto new_url = details::basic_parse(
-      hostname, std::nullopt, url_, url_parse_state::hostname);
+      hostname, nullptr, &url_, url_parse_state::hostname);
   if (!new_url) {
     return new_url.error();
   }
@@ -258,7 +258,7 @@ auto url::set_port(string_view port) -> std::error_code {
     update_record(std::move(new_url));
   } else {
     auto new_url = details::basic_parse(
-        port, std::nullopt, url_, url_parse_state::port);
+        port, nullptr, &url_, url_parse_state::port);
     if (!new_url) {
       return new_url.error();
     }
@@ -293,7 +293,7 @@ auto  url::set_pathname(string_view pathname) -> std::error_code {
 
   url_.path.clear();
   auto new_url = details::basic_parse(
-      pathname, std::nullopt, url_, url_parse_state::path_start);
+      pathname, nullptr, &url_, url_parse_state::path_start);
   if (!new_url) {
     return new_url.error();
   }
@@ -323,7 +323,7 @@ auto url::set_search(string_view search) -> std::error_code {
 
   url.query = "";
   auto new_url = details::basic_parse(
-      search, std::nullopt, url, url_parse_state::query);
+      search, nullptr, &url, url_parse_state::query);
   if (!new_url) {
     return new_url.error();
   }
@@ -359,7 +359,7 @@ auto url::set_hash(string_view hash) -> std::error_code {
   }
 
   url_.fragment = "";
-  auto new_url = details::basic_parse(hash, std::nullopt, url_, url_parse_state::fragment);
+  auto new_url = details::basic_parse(hash, nullptr, &url_, url_parse_state::fragment);
   if (!new_url) {
     return new_url.error();
   }
@@ -382,7 +382,7 @@ void swap(url &lhs, url &rhs) noexcept {
 namespace details {
 auto make_url(
     url::string_view input,
-    const std::optional<url_record> &base) -> tl::expected<url, std::error_code> {
+    const url_record *base) -> tl::expected<url, std::error_code> {
   return parse(input, base)
       .and_then([](auto &&new_url) -> tl::expected<url, std::error_code> {
         return url(std::forward<url_record>(new_url));

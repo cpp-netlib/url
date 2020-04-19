@@ -6,7 +6,6 @@
 #include <vector>
 #include <skyr/core/parse.hpp>
 #include <skyr/core/errors.hpp>
-#include <skyr/core/serialize.hpp>
 #include "url_parse_impl.hpp"
 #include "url_parser_context.hpp"
 
@@ -15,8 +14,8 @@ inline namespace v1 {
 namespace details {
 auto basic_parse(
     std::string_view input,
-    std::optional<url_record> base,
-    const std::optional<url_record> &url,
+    const url_record *base,
+    const url_record *url,
     std::optional<url_parse_state> state_override) -> tl::expected<url_record, std::error_code> {
   using return_type = tl::expected<url_parse_action, url_parse_errc>;
   using url_parse_func = std::function<return_type(url_parser_context &, char)>;
@@ -110,7 +109,7 @@ auto basic_parse(
   };
 
   auto context = url_parser_context(
-      input, std::move(base), url, state_override);
+      input, base, url, state_override);
 
   while (true) {
     auto func = parse_funcs[static_cast<std::size_t>(context.state)];
@@ -140,23 +139,14 @@ auto basic_parse(
 }  // namespace details
 
 auto parse(
+    std::string_view input) -> tl::expected<url_record, std::error_code> {
+  return details::parse(input, nullptr);
+}
+
+auto parse(
     std::string_view input,
-    std::optional<url_record> base) -> tl::expected<url_record, std::error_code> {
-  auto url = details::basic_parse(input, std::move(base));
-
-  if (!url) {
-    return url;
-  }
-
-  if (url.value().scheme == "blob") {
-    return url;
-  }
-
-  if (url.value().path.empty()) {
-    return url;
-  }
-
-  return url;
+    const url_record &base) -> tl::expected<url_record, std::error_code> {
+  return details::parse(input, &base);
 }
 }  // namespace v1
 }  // namespace skyr

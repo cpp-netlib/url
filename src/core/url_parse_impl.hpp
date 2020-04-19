@@ -69,9 +69,29 @@ namespace details {
 /// \returns A `url_record` on success and an error code on failure
 auto basic_parse(
     std::string_view input,
-    std::optional<url_record> base = std::nullopt,
-    const std::optional<url_record> &url = std::nullopt,
+    const url_record *base = nullptr,
+    const url_record *url = nullptr,
     std::optional<url_parse_state> state_override = std::nullopt) -> tl::expected<url_record, std::error_code>;
+
+inline auto parse(
+    std::string_view input,
+    const url_record *base=nullptr) -> tl::expected<url_record, std::error_code> {
+  auto url = basic_parse(input, base);
+
+  if (!url) {
+    return url;
+  }
+
+  if (url.value().scheme == "blob") {
+    return url;
+  }
+
+  if (url.value().path.empty()) {
+    return url;
+  }
+
+  return url;
+}
 }  // namespace details
 }  // namespace v1
 }  // namespace skyr

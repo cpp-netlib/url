@@ -24,11 +24,9 @@ Example
    #include <iostream>
 
    int main() {
-     using namespace skyr::literals;
-
-     auto url = "file:///usr/bin/clang"_url;
-     auto filepath = skyr::filesystem::path(url.pathname()).value();
-     std::cout << filepath << std::endl;
+     auto path = std::filesystem::path("/usr/bin/clang");
+     auto url = skyr::filesystem::from_path(path).value();
+     std::cout << url << std::endl;
    }
 
 API
