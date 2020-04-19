@@ -672,4 +672,10 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(instance.protocol() == "file:");
     CHECK(instance.pathname() == "/c:/foo/bar.html");
   }
+
+  SECTION("regression_failure_02") {
+    auto base = skyr::url("about:blank");
+    auto instance = skyr::url("http://example.org/test?%GH", base);
+    CHECK(instance.search() == "?%GH");
+  }
 }
