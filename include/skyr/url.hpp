@@ -667,7 +667,7 @@ inline auto make_url(
     return tl::make_unexpected(
         make_error_code(url_parse_errc::invalid_unicode_character));
   }
-  return details::make_url(std::string_view(bytes.value()), nullptr);
+  return details::make_url(bytes.value(), nullptr);
 }
 
 /// Parses a URL string and constructs a `url` object on success,
@@ -686,7 +686,7 @@ inline auto make_url(
         make_error_code(url_parse_errc::invalid_unicode_character));
   }
   const auto &base_record = base.record();
-  return details::make_url(std::string_view(bytes.value()), &base_record);
+  return details::make_url(bytes.value(), &base_record);
 }
 
 /// Tests two URLs for equality according to the
