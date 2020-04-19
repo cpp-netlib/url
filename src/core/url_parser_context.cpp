@@ -201,7 +201,6 @@ inline auto is_windows_drive_letter(std::string_view segment) noexcept {
     }
   }
   return result;
-
 }
 
 inline auto is_single_dot_path_segment(std::string_view segment) noexcept {
@@ -661,7 +660,7 @@ auto url_parser_context::parse_file(char byte) -> tl::expected<url_parse_action,
       url.fragment = std::string();
       state = url_parse_state::fragment;
     } else {
-      if (!is_windows_drive_letter(view.substr(0, std::distance(begin(view), it)))) {
+      if (!is_windows_drive_letter(view.substr(std::distance(begin(view), it)))) {
         url.host = base->host;
         url.path = base->path;
         shorten_path(url.scheme, url.path);
@@ -694,7 +693,7 @@ auto url_parser_context::parse_file_slash(char byte) -> tl::expected<url_parse_a
     state = url_parse_state::file_host;
   } else {
     if (base &&
-            ((base->scheme == "file") && !is_windows_drive_letter(view.substr(0, std::distance(begin(view), it))))) {
+            ((base->scheme == "file") && !is_windows_drive_letter(view.substr(std::distance(begin(view), it))))) {
       if (!base->path.empty() && is_windows_drive_letter(base->path[0])) {
         url.path.push_back(base->path[0]);
       } else {
