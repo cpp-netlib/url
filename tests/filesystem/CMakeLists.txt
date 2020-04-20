@@ -7,5 +7,5 @@ include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-functions.cmake)
 
 foreach (file_name filesystem_path_tests.cpp)
     skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/filesystem test_name)
-    target_link_libraries(${test_name} skyr-filesystem)
-endforeach ()
+    target_link_libraries(${test_name} PRIVATE skyr-filesystem)
+endforeach()
