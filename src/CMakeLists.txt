@@ -100,7 +100,7 @@ add_library(skyr-filesystem INTERFACE)
 
 target_link_libraries(skyr-filesystem INTERFACE tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
-    target_link_libraries(skyr-filesystem PUBLIC "stdc++fs")
+    target_link_libraries(skyr-filesystem INTERFACE "stdc++fs")
 endif()
 
 target_include_directories(skyr-filesystem
