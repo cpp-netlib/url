@@ -20,6 +20,7 @@ option(skyr_BUILD_EXAMPLES "Build the URL examples." OFF)
 option(skyr_FULL_WARNINGS "Build the library with all warnings turned on." ON)
 option(skyr_WARNINGS_AS_ERRORS "Treat warnings as errors." ON)
 option(skyr_BUILD_WITHOUT_EXCEPTIONS "Build without exceptions." OFF)
+option(skyr_BUILD_WITHOUT_RTTI "Build without RTTI." OFF)
 option(skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
 option(skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
 
@@ -45,10 +46,18 @@ if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
     endif()
 
+    if (skyr_BUILD_WITHOUT_RTTI)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
+    endif()
+
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wmissing-declarations")
 elseif(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
     if(DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1900)
         message(FATAL_ERROR "Requires VS 2017 or later")
+    endif()
+
+    if (skyr_BUILD_WITHOUT_RTTI)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /GR-")
     endif()
 
     if (skyr_USE_STATIC_CRT)
@@ -95,6 +104,7 @@ endif()
 # Add an alias for projects that use skyr-url as a dependency
 if (NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     add_library(skyr::skyr-url ALIAS skyr-url)
+    add_library(skyr::skyr-filesystem ALIAS skyr-filesystem)
     add_library(skyr::skyr-json ALIAS skyr-json)
 endif()
 

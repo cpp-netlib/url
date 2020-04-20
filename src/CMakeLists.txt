@@ -8,6 +8,10 @@ configure_file(
         ${PROJECT_SOURCE_DIR}/include/skyr/version.hpp
 )
 
+#################################################
+# skyr-url
+#################################################
+
 add_library(
         skyr-url
 )
@@ -69,15 +73,11 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/path/path_element_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/platform/endianness.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url_search_parameters.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/filesystem/path.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp)
 
 target_link_libraries(skyr-url PUBLIC tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})
     target_link_libraries(skyr-url PUBLIC "c++")
-endif()
-if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
-    target_link_libraries(skyr-url PUBLIC "stdc++fs")
 endif()
 
 set_target_properties(skyr-url PROPERTIES
@@ -91,6 +91,27 @@ target_include_directories(skyr-url
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     PRIVATE
         ${PROJECT_SOURCE_DIR}/src)
+
+#################################################
+# skyr-filesystem
+#################################################
+
+add_library(skyr-filesystem INTERFACE)
+
+target_link_libraries(skyr-filesystem INTERFACE tl::expected)
+if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
+    target_link_libraries(skyr-filesystem PUBLIC "stdc++fs")
+endif()
+
+target_include_directories(skyr-filesystem
+        INTERFACE
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        )
+
+#################################################
+# skyr-json
+#################################################
 
 add_library(skyr-json INTERFACE)
 

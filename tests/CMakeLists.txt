@@ -14,7 +14,7 @@ if (MSVC)
 endif(MSVC)
 
 
-function(skyr_create_test file_name output_dir)
+function(skyr_create_test file_name output_dir test_name)
     skyr_remove_extension(${file_name} test)
     add_executable(${test})
     target_sources(${test} PRIVATE ${test}.cpp)
@@ -23,7 +23,6 @@ function(skyr_create_test file_name output_dir)
         ${test}
         PRIVATE
             skyr-url
-            skyr-json
             Catch2::Catch2
             nlohmann_json::nlohmann_json
             fmt::fmt
@@ -34,6 +33,7 @@ function(skyr_create_test file_name output_dir)
             RUNTIME_OUTPUT_DIRECTORY ${output_dir}
     )
     add_test(${test} ${output_dir}/${test})
+    set(test_name ${test} PARENT SCOPE)
 endfunction()
 
 add_subdirectory(unicode)

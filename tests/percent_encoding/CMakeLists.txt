@@ -7,5 +7,5 @@ foreach (file_name
         percent_decoding_tests.cpp
         percent_encoding_tests.cpp
         )
-    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/percent_encoding)
+    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/percent_encoding test_name)
 endforeach ()

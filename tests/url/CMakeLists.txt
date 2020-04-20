@@ -12,7 +12,7 @@ foreach (file_name
         query_parameter_range_tests.cpp
         url_search_parameters_tests.cpp
         )
-    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url)
+    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test_name)
 endforeach ()
 
 if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
@@ -20,6 +20,6 @@ if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
             url_tests_with_exceptions.cpp
             url_literal_tests.cpp
             )
-        skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url)
+        skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test_name)
     endforeach()
 endif()
