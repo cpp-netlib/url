@@ -23,6 +23,7 @@ option(skyr_BUILD_WITHOUT_EXCEPTIONS "Build without exceptions." OFF)
 option(skyr_BUILD_WITHOUT_RTTI "Build without RTTI." OFF)
 option(skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
 option(skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
+option(skyr_ENABLE_JSON_FUNCTIONS "Enable functions to convert URL components to JSON" ON)
 
 set(CMAKE_VERBOSE_MAKEFILE true)
 set(CMAKE_CXX_STANDARD 17)
@@ -30,7 +31,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(tl-expected CONFIG REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
+
+if (skyr_ENABLE_JSON_FUNCTIONS)
+    find_package(nlohmann_json CONFIG REQUIRED)
+endif()
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR
     ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
@@ -70,8 +74,6 @@ elseif(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
             endif(${flag_var} MATCHES "/MD")
         endforeach(flag_var)
     endif(skyr_USE_STATIC_CRT)
-
-    add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
 endif()
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
@@ -105,7 +107,9 @@ endif()
 if (NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     add_library(skyr::skyr-url ALIAS skyr-url)
     add_library(skyr::skyr-filesystem ALIAS skyr-filesystem)
-    add_library(skyr::skyr-json ALIAS skyr-json)
+    if (skyr_ENABLE_JSON_FUNCTIONS)
+        add_library(skyr::skyr-json ALIAS skyr-json)
+    endif()
 endif()
 
 # Install
@@ -122,7 +126,12 @@ write_basic_package_version_file(
         COMPATIBILITY SameMajorVersion
         ARCH_INDEPENDENT)
 
-install(TARGETS skyr-url skyr-filesystem skyr-json
+set(skyr_TARGETS skyr-url skyr-filesystem)
+if (skyr_ENABLE_JSON_FUNCTIONS)
+    list(APPEND skyr_TARGETS skyr-json)
+endif()
+
+install(TARGETS ${skyr_TARGETS}
         EXPORT ${PROJECT_NAME}-targets
         INCLUDES DESTINATION "${CMAKE_INSTALL_DATADIR}"
         ARCHIVE DESTINATION lib

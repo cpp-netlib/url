@@ -78,7 +78,7 @@ class percent_encode_iterator {
     assert(it_);
     auto byte = *it_.value();
     if (byte == '\x20') {
-      percent_encoded_char('+', percent_encoded_char::no_encode());
+      return percent_encoded_char('+', percent_encoded_char::no_encode());
     } else if ((byte == '\x2a') || (byte == '\x2d') || (byte == '\x2e') ||
                ((byte >= '\x30') && (byte <= '\x39')) ||
                ((byte >= '\x41') && (byte <= '\x5a')) || (byte == '\x5f') ||

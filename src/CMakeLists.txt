@@ -92,6 +92,10 @@ target_include_directories(skyr-url
     PRIVATE
         ${PROJECT_SOURCE_DIR}/src)
 
+if(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
+    target_compile_definitions(skyr-url -D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
+endif()
+
 #################################################
 # skyr-filesystem
 #################################################
@@ -113,12 +117,14 @@ target_include_directories(skyr-filesystem
 # skyr-json
 #################################################
 
-add_library(skyr-json INTERFACE)
+if (skyr_ENABLE_JSON_FUNCTIONS)
+    add_library(skyr-json INTERFACE)
 
-target_link_libraries(skyr-json INTERFACE tl::expected nlohmann_json::nlohmann_json)
+    target_link_libraries(skyr-json INTERFACE tl::expected nlohmann_json::nlohmann_json)
 
-target_include_directories(skyr-json
-    INTERFACE
-        $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        )
+    target_include_directories(skyr-json
+        INTERFACE
+            $<INSTALL_INTERFACE:include>
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+            )
+endif()

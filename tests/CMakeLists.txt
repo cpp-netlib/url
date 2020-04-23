@@ -8,12 +8,6 @@ include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-functions.cmake)
 find_package(Catch2 CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 
-if (MSVC)
-    # For json.hpp
-    add_definitions(-D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
-endif(MSVC)
-
-
 function(skyr_create_test file_name output_dir test_name)
     skyr_remove_extension(${file_name} test)
     add_executable(${test})
@@ -41,4 +35,6 @@ add_subdirectory(percent_encoding)
 add_subdirectory(network)
 add_subdirectory(url)
 add_subdirectory(filesystem)
-add_subdirectory(json)
+if (skyr_ENABLE_JSON_FUNCTIONS)
+    add_subdirectory(json)
+endif()
