@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <cerrno>
 #include <skyr/network/ipv4_address.hpp>
+#include <skyr/ranges/string_element_range.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -35,7 +36,7 @@ auto parse_ipv4_number(
     return 0ULL;
   }
 
-  char *pos = const_cast<char*>(input.data()) + input.size();
+  char *pos = const_cast<char *>(input.data()) + input.size();  // NOLINT
   auto number = std::strtoull(input.data(), &pos, base);
   if (errno == ERANGE || (pos != input.data() + input.size())) {
     return tl::make_unexpected(
@@ -52,10 +53,10 @@ auto ipv4_address::serialize() const -> std::string {
 
   auto n = address_;
   for (auto i = 1U; i <= 4U; ++i) {
-    output = std::to_string(n % 256) + output;
+    output = std::to_string(n % 256) + output; // NOLINT
 
     if (i != 4) {
-      output = "." + output;
+      output = "." + output; // NOLINT
     }
 
     n = static_cast<std::uint32_t>(std::floor(n / 256.));
@@ -66,25 +67,23 @@ auto ipv4_address::serialize() const -> std::string {
 
 namespace details {
 namespace {
-auto parse_ipv4_address(std::string_view input) -> std::pair<tl::expected<ipv4_address, std::error_code>, bool> {
+auto parse_ipv4_address(std::string_view input)
+    -> std::pair<tl::expected<ipv4_address, std::error_code>, bool> {
+
   auto validation_error_flag = false;
   auto validation_error = false;
 
-  std::vector<std::string> parts;
-  parts.emplace_back();
-  for (auto ch : input) {
-    if (ch == '.') {
-      parts.emplace_back();
-    } else {
-      parts.back().push_back(ch);
-    }
+  std::vector<std::string_view> parts;
+  constexpr static auto separator = [] (char c) { return c == '.'; };
+  for (auto part : split(input, separator)) {
+    parts.emplace_back(part);
   }
 
-  if (parts.back().empty()) {
-    validation_error_flag = true;
-    if (parts.size() > 1) {
-      parts.pop_back();
-    }
+  if (parts.empty()) {
+    return std::make_pair(
+        tl::make_unexpected(
+            make_error_code(
+                ipv4_address_errc::empty_segment)), true);
   }
 
   if (parts.size() > 4) {
@@ -97,7 +96,7 @@ auto parse_ipv4_address(std::string_view input) -> std::pair<tl::expected<ipv4_a
 
   auto numbers = std::vector<std::uint64_t>();
 
-  for (const auto &part : parts) {
+  for (auto part : parts) {
     if (part.empty()) {
       return
         std::make_pair(
@@ -106,7 +105,7 @@ auto parse_ipv4_address(std::string_view input) -> std::pair<tl::expected<ipv4_a
                     ipv4_address_errc::empty_segment)), true);
     }
 
-    auto number = parse_ipv4_number(std::string_view(part), validation_error_flag);
+    auto number = parse_ipv4_number(part, validation_error_flag);
     if (!number) {
       return
         std::make_pair(
@@ -122,11 +121,11 @@ auto parse_ipv4_address(std::string_view input) -> std::pair<tl::expected<ipv4_a
     validation_error = true;
   }
 
+  constexpr static auto valid_segment = [] (auto number) { return number > 255; };
+
   auto numbers_first = begin(numbers), numbers_last = end(numbers);
 
-  auto numbers_it =
-      std::find_if(numbers_first, numbers_last,
-                   [](auto number) -> bool { return number > 255; });
+  auto numbers_it = std::find_if(numbers_first, numbers_last, valid_segment);
   if (numbers_it != numbers_last) {
     validation_error = true;
   }
@@ -134,8 +133,7 @@ auto parse_ipv4_address(std::string_view input) -> std::pair<tl::expected<ipv4_a
   auto numbers_last_but_one = numbers_last;
   --numbers_last_but_one;
 
-  numbers_it = std::find_if(numbers_first, numbers_last_but_one,
-                            [](auto number) -> bool { return number > 255; });
+  numbers_it = std::find_if(numbers_first, numbers_last_but_one, valid_segment);
   if (numbers_it != numbers_last_but_one) {
     return
       std::make_pair(
