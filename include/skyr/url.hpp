@@ -159,7 +159,14 @@ class url {
   /// Swaps this `url` object with another
   ///
   /// \param other Another `url` object
-  void swap(url &other) noexcept;
+  void swap(url &other) noexcept {
+    using std::swap;
+    swap(url_, other.url_);
+    swap(href_, other.href_);
+    view_ = string_view(href_);
+    other.view_ = string_view(other.href_);
+    swap(parameters_, other.parameters_);
+  }
 
   /// Returns the [serialization of the context object’s url](https://url.spec.whatwg.org/#dom-url-href)
   ///
@@ -167,7 +174,9 @@ class url {
   ///
   /// \returns The serialization of the context object's url
   /// \sa to_json
-  [[nodiscard]] auto href() const -> string_type;
+  [[nodiscard]] auto href() const -> string_type {
+    return href_;
+  }
 
   /// Sets the context object's url according to the
   /// [steps described in the specification](https://url.spec.whatwg.org/#dom-url-href)
@@ -202,7 +211,9 @@ class url {
   ///
   /// \returns The serialization of the context object's url
   /// \sa href()
-  [[nodiscard]] auto to_json() const -> string_type;
+  [[nodiscard]] auto to_json() const -> string_type {
+    return href_;
+  }
 
   /// Returns the [URL origin](https://url.spec.whatwg.org/#origin)
   ///
@@ -212,7 +223,9 @@ class url {
   /// The URL scheme + `":"`
   ///
   /// \returns The [URL protocol](https://url.spec.whatwg.org/#dom-url-protocol)
-  [[nodiscard]] auto protocol() const -> string_type;
+  [[nodiscard]] auto protocol() const -> string_type {
+    return url_.scheme + ":";
+  }
 
   /// Sets the [URL protocol](https://url.spec.whatwg.org/#dom-url-protocol)
   ///
@@ -240,7 +253,9 @@ class url {
   auto set_protocol(string_view protocol) -> std::error_code;
 
   /// \returns The [URL username](https://url.spec.whatwg.org/#dom-url-username)
-  [[nodiscard]] auto username() const -> string_type;
+  [[nodiscard]] auto username() const -> string_type {
+    return url_.username;
+  }
 
   /// Sets the [URL username](https://url.spec.whatwg.org/#dom-url-username)
   ///
@@ -271,7 +286,9 @@ class url {
   /// Equivalent to: `url_.password? url_.password.value() : string_type()`
   ///
   /// \returns The URL password
-  [[nodiscard]] auto password() const -> string_type;
+  [[nodiscard]] auto password() const -> string_type {
+    return url_.password;
+  }
 
   /// Sets the [URL password](https://url.spec.whatwg.org/#dom-url-password)
   ///
@@ -298,7 +315,17 @@ class url {
   auto set_password(string_view password) -> std::error_code;
 
   /// \returns The [URL host](https://url.spec.whatwg.org/#dom-url-host)
-  [[nodiscard]] auto host() const -> string_type;
+  [[nodiscard]] auto host() const -> string_type {
+    if (!url_.host) {
+      return {};
+    }
+
+    if (!url_.port) {
+      return url_.host.value();
+    }
+
+    return url_.host.value() + ":" + std::to_string(url_.port.value());
+  }
 
   /// Sets the [URL host](https://url.spec.whatwg.org/#dom-url-host)
   ///
@@ -325,7 +352,13 @@ class url {
   auto set_host(string_view host) -> std::error_code;
 
   /// \returns The [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
-  [[nodiscard]] auto hostname() const -> string_type;
+  [[nodiscard]] auto hostname() const -> string_type {
+    if (!url_.host) {
+      return {};
+    }
+
+    return url_.host.value();
+  }
 
   /// Sets the [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
   ///
@@ -366,18 +399,28 @@ class url {
   [[nodiscard]] auto ipv6_address() const -> std::optional<skyr::ipv6_address>;
 
   /// Checks if the hostname is a valid domain name
-  [[nodiscard]] auto is_domain() const -> bool;
+  [[nodiscard]] auto is_domain() const -> bool {
+    return url_.is_special() && !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
+  }
 
   /// Returns the decoded domain name
   [[nodiscard]] auto domain() const -> std::optional<string_type>;
 
   /// Checks if the hostname is a valid domain name
-  [[nodiscard]] auto is_opaque() const -> bool;
+  [[nodiscard]] auto is_opaque() const -> bool {
+    return !url_.is_special() && !hostname().empty();
+  }
 
   /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)
   ///
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
-  [[nodiscard]] auto port() const -> string_type;
+  [[nodiscard]] auto port() const -> string_type {
+    if (!url_.port) {
+      return {};
+    }
+
+    return std::to_string(url_.port.value());
+  }
 
   /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)
   ///
@@ -415,7 +458,22 @@ class url {
   /// Returns the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
   ///
   /// \returns The URL pathname
-  [[nodiscard]] auto pathname() const -> string_type;
+  [[nodiscard]] auto pathname() const -> string_type {
+    if (url_.cannot_be_a_base_url) {
+      return url_.path.front();
+    }
+
+    if (url_.path.empty()) {
+      return {};
+    }
+
+    auto pathname = string_type("/");
+    for (const auto &segment : url_.path) {
+      pathname += segment;
+      pathname += "/";
+    }
+    return pathname.substr(0, pathname.length() - 1);
+  }
 
   /// Sets the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
   ///
@@ -444,7 +502,13 @@ class url {
   /// Returns the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
   /// \returns The [URL search string](https://url.spec.whatwg.org/#dom-url-search)
-  [[nodiscard]] auto search() const -> string_type;
+  [[nodiscard]] auto search() const -> string_type {
+    if (!url_.query || url_.query.value().empty()) {
+      return {};
+    }
+
+    return "?" + url_.query.value();
+  }
 
   /// Sets the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
@@ -471,15 +535,25 @@ class url {
   auto set_search(string_view search) -> std::error_code;
 
   /// \returns A reference to the search parameters
-  [[nodiscard]] auto search_parameters() -> url_search_parameters &;
+  [[nodiscard]] auto search_parameters() -> url_search_parameters & {
+    return parameters_;
+  }
 
   /// \returns A reference to the search parameters
-  [[nodiscard]] auto search_parameters() const -> const url_search_parameters &;
+  [[nodiscard]] auto search_parameters() const -> const url_search_parameters & {
+    return parameters_;
+  }
 
   /// Returns the [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
   ///
   /// \returns The [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
-  [[nodiscard]] auto hash() const -> string_type;
+  [[nodiscard]] auto hash() const -> string_type {
+    if (!url_.fragment || url_.fragment.value().empty()) {
+      return {};
+    }
+
+    return "#" + url_.fragment.value();
+  }
 
   /// Sets the [URL hash string](https://url.spec.whatwg.org/#dom-url-hash)
   ///
@@ -585,7 +659,9 @@ class url {
   /// Clears the underlying URL string
   ///
   /// \post `empty() == true`
-  void clear();
+  void clear() {
+    update_record(url_record{});
+  }
 
   /// Returns the underlying byte buffer
   ///
@@ -613,6 +689,7 @@ class url {
   void initialize(
       string_view input,
       const url_record *base=nullptr);
+
   void update_record(url_record &&url);
 
   template<class Source>
@@ -646,7 +723,9 @@ class url {
 ///
 /// \param lhs The first `url` object
 /// \param rhs The second `url` object
-void swap(url &lhs, url &rhs) noexcept;
+inline void swap(url &lhs, url &rhs) noexcept {
+  lhs.swap(rhs);
+}
 
 namespace details {
 auto make_url(

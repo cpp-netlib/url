@@ -394,7 +394,7 @@ TEST_CASE("url_setter_tests_mayfail", "[url][!mayfail]") {
     auto instance = skyr::url{"http://example.net/path"};
 
     auto ec = instance.set_host("example.com:65536");
-    REQUIRE_FALSE(ec);
+    CHECK_FALSE(ec);
     CHECK("http://example.com/path" == instance.href());
     CHECK("example.com" == instance.host());
     CHECK("example.com" == instance.hostname());

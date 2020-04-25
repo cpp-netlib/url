@@ -80,9 +80,10 @@ class ipv6_address {
   /// Constructor
   /// \param address Sets the IPv6 address to `address`
   explicit ipv6_address(std::array<unsigned short, 8> address) {
-    for (auto i = 0UL; i < address.size(); ++i) {
-      address_[i] = to_network_byte_order(address[i]);
-    }
+    std::transform(
+        begin(address), end(address),
+        begin(address_),
+        to_network_byte_order<unsigned short>);
   }
 
   /// The address in bytes in network byte order

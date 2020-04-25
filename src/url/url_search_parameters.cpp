@@ -1,4 +1,4 @@
-// Copyright 2017-19 Glyn Matthews.
+// Copyright 2017-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -12,11 +12,6 @@
 namespace skyr {
 inline namespace v1 {
 url_search_parameters::url_search_parameters(
-    std::string_view query) {
-  initialize(query);
-}
-
-url_search_parameters::url_search_parameters(
     url *url)
     : url_(url) {
   if (url_->record().query) {
@@ -24,49 +19,22 @@ url_search_parameters::url_search_parameters(
   }
 }
 
-url_search_parameters::url_search_parameters(
-    std::initializer_list<value_type> parameters)
-    : parameters_(parameters) {}
-
-void url_search_parameters::swap(url_search_parameters &other) noexcept {
-  std::swap(parameters_, other.parameters_);
-}
-
-void url_search_parameters::append(
-    std::string_view name,
-    std::string_view value) {
-  parameters_.emplace_back(name, value);
-  update();
-}
-
-namespace {
-template<class Iterator>
-inline auto remove_parameter(Iterator first, Iterator last, std::string_view name) {
-  return std::remove_if(
-      first, last,
-      [&name](const auto &parameter) { return name == parameter.first; });
-}
-
-template<class Iterator>
-inline auto find_parameter(Iterator first, Iterator last, std::string_view name) {
-  return std::find_if(
-      first, last,
-      [&name](const auto &parameter) { return name == parameter.first; });
-}
-}  // namespace
-
 void url_search_parameters::remove(
     std::string_view name) {
+  static const auto equals_name = [&name](const auto &parameter) { return name == parameter.first; };
+
   auto first = std::begin(parameters_), last = std::end(parameters_);
-  auto it = remove_parameter(first, last, name);
+  auto it = std::remove_if(first, last, equals_name);
   parameters_.erase(it, last);
   update();
 }
 
 auto url_search_parameters::get(
     std::string_view name) const -> std::optional<string_type> {
+  static const auto equals_name = [&name](const auto &parameter) { return name == parameter.first; };
+
   auto first = std::begin(parameters_), last = std::end(parameters_);
-  auto it = find_parameter(first, last, name);
+  auto it = std::find_if(first, last, equals_name);
   return (it != last) ? std::make_optional(it->second) : std::nullopt;
 }
 
@@ -83,35 +51,26 @@ auto url_search_parameters::get_all(
 }
 
 auto url_search_parameters::contains(std::string_view name) const noexcept -> bool {
+  static const auto equals_name = [&name](const auto &parameter) { return name == parameter.first; };
+
   auto first = std::begin(parameters_), last = std::end(parameters_);
-  return find_parameter(first, last, name) != last;
+  return std::find_if(first, last, equals_name) != last;
 }
 
 void url_search_parameters::set(
     std::string_view name,
     std::string_view value) {
+  static const auto equals_name = [&name](const auto &parameter) { return name == parameter.first; };
+
   auto first = std::begin(parameters_), last = std::end(parameters_);
-  auto it = find_parameter(first, last, name);
+  auto it = std::find_if(first, last, equals_name);
   if (it != last) {
     it->second = value;
-    it = remove_parameter(++it, last, name);
+    it = std::remove_if(++it, last, equals_name);
     parameters_.erase(it, last);
   } else {
     parameters_.emplace_back(name, value);
   }
-  update();
-}
-
-void url_search_parameters::clear() noexcept {
-  parameters_.clear();
-  update();
-}
-
-void url_search_parameters::sort() {
-  auto first = std::begin(parameters_), last = std::end(parameters_);
-  std::sort(
-      first, last,
-      [](const auto &lhs, const auto &rhs) -> bool { return lhs.first < rhs.first; });
   update();
 }
 

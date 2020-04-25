@@ -50,21 +50,29 @@ class url_search_parameters {
 
   /// Constructor
   /// \param query The search string
-  explicit url_search_parameters(std::string_view query);
+  explicit url_search_parameters(std::string_view query) {
+    initialize(query);
+  }
 
   ///
   /// \param parameters
-  url_search_parameters(std::initializer_list<value_type> parameters);
+  url_search_parameters(std::initializer_list<value_type> parameters)
+      : parameters_(parameters) {}
 
   ///
   /// \param other
-  void swap(url_search_parameters &other) noexcept;
+  void swap(url_search_parameters &other) noexcept {
+    std::swap(parameters_, other.parameters_);
+  }
 
   /// Appends a name-value pair to the search string
   ///
   /// \param name The parameter name
   /// \param value The parameter value
-  void append(std::string_view name, std::string_view value);
+  void append(std::string_view name, std::string_view value) {
+    parameters_.emplace_back(name, value);
+    update();
+  }
 
   /// Removes a parameter from the search string
   ///
@@ -95,7 +103,10 @@ class url_search_parameters {
   /// Clears the search parameters
   ///
   /// \post `empty() == true`
-  void clear() noexcept;
+  void clear() noexcept  {
+    parameters_.clear();
+    update();
+  }
 
   /// Sorts the search parameters alphanumerically
   ///
@@ -107,7 +118,12 @@ class url_search_parameters {
   /// url.search_parameters().sort();
   /// assert(url.search() == "?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88");
   /// ```
-  void sort();
+  void sort() {
+    static constexpr auto less_name = [](const auto &lhs, const auto &rhs) { return lhs.first < rhs.first; };
+
+    std::sort(std::begin(parameters_), std::end(parameters_), less_name);
+    update();
+  }
 
   /// \returns An iterator to the first element in the search parameters
   [[nodiscard]] auto begin() const noexcept {

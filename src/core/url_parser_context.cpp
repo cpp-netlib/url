@@ -74,7 +74,7 @@ auto remove_tabs_and_newlines(std::string &input) {
 
 inline auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
   using namespace std::string_view_literals;
-  static const auto forbidden = "\0\t\n\r #%/:?@[\\]"sv;
+  constexpr auto forbidden = "\0\t\n\r #%/:?@[\\]"sv;
   auto first = begin(forbidden), last = end(forbidden);
   return last != std::find(first, last, byte);
 }

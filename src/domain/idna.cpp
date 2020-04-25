@@ -18,7 +18,7 @@ struct code_point_range {
   idna_status status;
 };
 
-const code_point_range statuses[] = {
+constexpr static code_point_range statuses[] = {
   { U'\x0000', U'\x002c', idna_status::disallowed_std3_valid },
   { U'\x002d', U'\x002e', idna_status::valid },
   { U'\x002f', U'\x002f', idna_status::disallowed_std3_valid },
@@ -2842,7 +2842,7 @@ const code_point_range statuses[] = {
 }  // namespace
 
 auto map_idna_status(char32_t code_point) -> idna_status {
-  static const auto less = [] (const auto &range, auto code_point) {
+  constexpr static auto less = [] (const auto &range, auto code_point) {
     return range.last < code_point;
   };
 
@@ -2858,7 +2858,7 @@ struct mapped_code_point {
   char32_t mapped;
 };
 
-const mapped_code_point mapped[] = {
+constexpr static mapped_code_point mapped[] = {
   { U'\x0041', U'\x0061' },
   { U'\x0042', U'\x0062' },
   { U'\x0043', U'\x0063' },
@@ -8674,7 +8674,7 @@ const mapped_code_point mapped[] = {
 }  // namespace
 
 auto map_idna_code_point(char32_t code_point) -> char32_t {
-  static const auto less = [](const auto &mapped, auto code_point) {
+  constexpr static auto less = [](const auto &mapped, auto code_point) {
     return mapped.code_point < code_point;
   };
 

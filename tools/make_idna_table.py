@@ -89,13 +89,13 @@ struct code_point_range {
   idna_status status;
 };
 
-const code_point_range statuses[] = {
+constexpr static code_point_range statuses[] = {
 {% for code_point in entries %}  { U'\\x{{ '%04x' % code_point.range[0] }}', U'\\x{{ '%04x' % code_point.range[1] }}', idna_status::{{ code_point.status.lower() }} },
 {% endfor %}};
 }  // namespace
 
 auto map_idna_status(char32_t code_point) -> idna_status {
-  static const auto less = [] (const auto &range, auto code_point) {
+  constexpr static auto less = [] (const auto &range, auto code_point) {
     return range.last < code_point;
   };
 
@@ -111,13 +111,13 @@ struct mapped_code_point {
   char32_t mapped;
 };
 
-const mapped_code_point mapped[] = {
+constexpr static mapped_code_point mapped[] = {
 {% for code_point in mapped_entries %}{% if code_point.status in ('mapped', 'disallowed_STD3_mapped') %}  { U'\\x{{ '%04x' % code_point.range[0] }}', U'\\x{{ '%04x' % code_point.mapped }}' },
 {% endif %}{% endfor %}};
 }  // namespace
 
 auto map_idna_code_point(char32_t code_point) -> char32_t {
-  static const auto less = [](const auto &mapped, auto code_point) {
+  constexpr static auto less = [](const auto &mapped, auto code_point) {
     return mapped.code_point < code_point;
   };
 
