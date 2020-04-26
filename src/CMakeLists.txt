@@ -32,7 +32,6 @@ target_sources(skyr-url
         string/ascii.hpp
         string/join.hpp
         string/locale.hpp
-        string/split.hpp
         string/starts_with.hpp
         url/url.cpp
         url/url_search_parameters.cpp

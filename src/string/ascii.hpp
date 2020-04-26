@@ -14,9 +14,9 @@ namespace skyr {
 inline namespace v1 {
 template <class charT>
 inline auto is_ascii(std::basic_string_view<charT> input) noexcept {
-  static const auto is_in_ascii_set = [](charT c) { return c > static_cast<charT>(0x7eu); };
+  constexpr static auto is_in_ascii_set = [](charT c) { return c > static_cast<charT>(0x7eu); };
 
-  auto first = begin(input), last = end(input);
+  auto first = cbegin(input), last = cend(input);
   return last == std::find_if(first, last, is_in_ascii_set);
 }
 

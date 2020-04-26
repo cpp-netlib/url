@@ -14,28 +14,7 @@ inline namespace v1 {
 inline auto starts_with(
     std::string_view input,
     std::string_view chars) noexcept {
-  auto first = std::begin(input), last = std::end(input);
-  auto chars_first = std::begin(chars), chars_last = std::end(chars);
-  auto chars_it = chars_first;
-  auto it = first;
-  if (it == last) {
-    return false;
-  }
-
-  while (chars_it != chars_last) {
-    if (*it != *chars_it) {
-      return false;
-    }
-
-    ++it;
-    ++chars_it;
-
-    if (it == last) {
-      return (chars_it == chars_last);
-    }
-  }
-
-  return true;
+  return (input.size() >= chars.size()) && (input.substr(0, chars.size()) == chars);
 }
 }  // namespace v1
 }  // namespace skyr

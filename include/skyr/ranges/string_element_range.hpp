@@ -7,9 +7,9 @@
 #define SKYR_URL_STRING_ELEMENT_RANGE_HPP
 
 #include <string_view>
-#include <optional>
 #include <iterator>
 #include <algorithm>
+#include <cassert>
 
 namespace skyr {
 inline namespace v1 {
@@ -170,7 +170,7 @@ class string_element_range {
 template <class charT>
 inline auto split(std::basic_string_view<charT> s, decltype(s) separators)
     -> string_element_range<charT> {
-  return string_element_range<charT>(s, separators);
+  return { s, separators };
 }
 }  // namespace v1
 }  // namespace skyr
