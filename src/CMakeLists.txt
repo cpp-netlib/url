@@ -69,8 +69,8 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv4_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/ranges/string_element_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/query/query_parameter_range.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/path/path_element_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/platform/endianness.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url_search_parameters.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp)
