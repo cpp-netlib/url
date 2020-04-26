@@ -74,8 +74,7 @@ auto parse_ipv4_address(std::string_view input)
   auto validation_error = false;
 
   std::vector<std::string_view> parts;
-  constexpr static auto separator = [] (char c) { return c == '.'; };
-  for (auto part : split(input, separator)) {
+  for (auto part : split(input, std::string_view("."))) {
     parts.emplace_back(part);
   }
 

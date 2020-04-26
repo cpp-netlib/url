@@ -16,10 +16,6 @@
 
 namespace skyr {
 inline namespace v1 {
-constexpr static auto query_separator = [] (auto c) { return (c == '&') || (c == ';'); };
-using query_element_iterator = string_element_iterator<char, decltype(query_separator)>;
-
-
 ///
 class query_parameter_iterator {
  public:
@@ -40,13 +36,12 @@ class query_parameter_iterator {
   using difference_type = std::ptrdiff_t;
 
   ///
-  query_parameter_iterator()
-      : it_(query_separator) {}
+  query_parameter_iterator() = default;
 
   ///
   /// \param query
   explicit query_parameter_iterator(std::string_view query)
-      : it_(query, query_separator) {}
+      : it_(query, std::string_view("&;")) {}
 
   ///
   /// \return
@@ -66,20 +61,14 @@ class query_parameter_iterator {
   ///
   /// \return
   auto operator*() const noexcept -> const_reference {
-    auto first = std::begin(*it_), last = std::end(*it_);
-
-    auto equal_it = std::find_if(first, last, [](auto c) { return (c == '='); });
-
-    auto name =
-        std::string_view(std::addressof(*first), std::distance(first, equal_it));
-    if (equal_it != last) {
-      ++equal_it;
+    auto element = *it_;
+    auto delim = element.find_first_of("=");
+    if (delim != value_type::first_type::npos) {
+      return { element.substr(0, delim), element.substr(delim + 1) };
     }
-    auto value = (equal_it == last) ?
-                 std::nullopt :
-                 std::make_optional(std::string_view(std::addressof(*equal_it), std::distance(equal_it, last)));
-
-    return {name, value};
+    else {
+      return { element, std::nullopt };
+    }
   }
 
   ///
@@ -98,7 +87,7 @@ class query_parameter_iterator {
 
  private:
 
-  query_element_iterator it_;
+  string_element_iterator<char> it_;
 
 };
 

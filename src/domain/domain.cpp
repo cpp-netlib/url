@@ -17,9 +17,6 @@
 namespace skyr {
 inline namespace v1 {
 namespace {
-constexpr static auto separator = [] (auto c) { return c == '.'; };
-
-
 auto process(
     std::u32string_view domain_name, bool use_std3_ascii_rules,
     bool check_hyphens, bool check_bidi, bool check_joiners,
@@ -89,7 +86,7 @@ auto unicode_to_ascii(
   }
 
   auto labels = std::vector<std::u32string>{};
-  for (auto label : split(std::u32string_view(domain.value()), separator)) {
+  for (auto label : split(std::u32string_view(domain.value()), U".")) {
     if (!is_ascii(label)) {
       auto encoded = punycode_encode(label);
       if (!encoded) {
@@ -146,7 +143,7 @@ auto domain_to_ascii(
 
 auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, std::error_code> {
   auto labels = std::vector<std::string>{};
-  for (auto label : split(ascii, separator)) {
+  for (auto label : split(ascii, ".")) {
     auto encoded = punycode_decode(label);
     if (!encoded) {
       return tl::make_unexpected(encoded.error());
