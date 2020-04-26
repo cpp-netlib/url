@@ -17,7 +17,7 @@ struct is_name {
       : name_(name)
   {}
 
-  bool operator () (const std::pair<std::string, std::string> &parameter) noexcept {
+  auto operator () (const std::pair<std::string, std::string> &parameter) noexcept {
     return name_ == parameter.first;
   }
 

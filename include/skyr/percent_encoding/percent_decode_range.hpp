@@ -125,7 +125,7 @@ class percent_decode_iterator {
   ///
   /// \param other
   /// \return
-  bool operator!=(const percent_decode_iterator &other) const noexcept {
+  auto operator!=(const percent_decode_iterator &other) const noexcept {
     return !(*this == other);
   }
 

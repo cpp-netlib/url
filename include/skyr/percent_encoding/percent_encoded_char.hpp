@@ -31,7 +31,7 @@ inline constexpr auto is_c0_control_byte(char byte) noexcept {
 }
 
 inline auto is_fragment_byte(char byte) {
-  constexpr std::array<char, 5> set = {'\x20', '\x22', '\x3c', '\x3e', '\x60'};
+  constexpr static std::array<char, 5> set = {'\x20', '\x22', '\x3c', '\x3e', '\x60'};
   auto it = std::find(begin(set), end(set), byte);
   return is_c0_control_byte(byte) || (it != set.end());
 }
@@ -41,13 +41,13 @@ inline auto is_query_byte(char byte) {
 }
 
 inline auto is_path_byte(char byte) {
-  constexpr std::array<char, 4> set = {'\x23', '\x3f', '\x7b', '\x7d'};
+  constexpr static std::array<char, 4> set = {'\x23', '\x3f', '\x7b', '\x7d'};
   auto it = std::find(begin(set), end(set), byte);
   return is_fragment_byte(byte) || (it != set.end());
 }
 
 inline auto is_userinfo_byte(char byte) {
-  constexpr std::array<char, 10> set = {
+  constexpr static std::array<char, 10> set = {
       '\x2f', '\x3a', '\x3b', '\x3d', '\x40', '\x5b', '\x5c', '\x5d', '\x5e', '\x7c'};
   auto it = std::find(begin(set), end(set), byte);
   return is_path_byte(byte) || (it != set.end());
@@ -196,28 +196,11 @@ inline auto percent_encode_byte(char byte, encode_set excludes) -> percent_encod
 /// \returns `true` if the input string contains percent encoded
 ///          values, `false` otherwise
 inline auto is_percent_encoded(std::string_view input) noexcept {
-    auto first = begin(input), last = end(input);
-    auto it = first;
-
-    if (it == last) {
-      return false;
-    }
-
-    if (*it == '%') {
-      ++it;
-      if (it != last) {
-        if (std::isxdigit(*it, std::locale::classic())) {
-          ++it;
-          if (it != last) {
-            if (std::isxdigit(*it, std::locale::classic())) {
-              return true;
-            }
-          }
-        }
-      }
-    }
-
-    return false;
+  return
+      (input.size() == 3) &&
+      (input[0] == '%') &&
+      std::isxdigit(input[1], std::locale::classic()) &&
+      std::isxdigit(input[2], std::locale::classic());
 }
 }  // namespace percent_encoding
 }  // namespace v1

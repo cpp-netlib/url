@@ -13,7 +13,7 @@
 
 #define SKYR_VERSION_MAJOR 1
 #define SKYR_VERSION_MINOR 7
-#define SKYR_VERSION_PATCH 3
+#define SKYR_VERSION_PATCH 4
 
 #define SKYR_VERSION_STRING \
   SKYR_PREPROCESSOR_TO_STRING(SKYR_VERSION_MAJOR) "." \
@@ -21,12 +21,12 @@
 
 namespace skyr {
 /// \returns The major, minor and patch version as a tuple
-static constexpr std::tuple<int, int, int> version() noexcept {
+static constexpr auto version() noexcept -> std::tuple<int, int, int> {
   return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR, SKYR_VERSION_PATCH};
 }
 
 /// \returns The version as a string in the form MAJOR.MINOR
-static constexpr const char *version_string() noexcept {
+static constexpr auto version_string() noexcept -> const char * {
   return SKYR_VERSION_STRING;
 }
 }  // namespace skyr
