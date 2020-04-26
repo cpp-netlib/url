@@ -88,8 +88,10 @@ auto url_search_parameters::to_string() const -> string_type {
   bool start = true;
   for (const auto &[name, value] : parameters_) {
     if (start) {
-      result.append("&");
       start = false;
+    }
+    else {
+      result.append("&");
     }
     result.append(percent_encode<string_type>(name));
     result.append("=");
