@@ -31,7 +31,7 @@ constexpr auto schemes = default_port_list{{
 
 
 constexpr auto scheme_less(
-    const std::pair<std::string_view, std::optional<std::uint16_t>> &special_scheme,
+    const default_port_list::value_type &special_scheme,
     std::string_view scheme) {
   return special_scheme.first < scheme;
 };
@@ -40,14 +40,14 @@ constexpr auto scheme_less(
 /// \param scheme
 /// \returns
 inline auto is_special(std::string_view scheme) noexcept {
-  auto it = std::lower_bound(begin(details::schemes), end(details::schemes), scheme, details::scheme_less);
+  auto it = std::lower_bound(cbegin(details::schemes), cend(details::schemes), scheme, details::scheme_less);
   return ((it != end(details::schemes)) && !(scheme < it->first));
 }
 
 /// \param scheme
 /// \returns
 inline auto default_port(std::string_view scheme) noexcept {
-  auto it = std::lower_bound(begin(details::schemes), end(details::schemes), scheme, details::scheme_less);
+  auto it = std::lower_bound(cbegin(details::schemes), cend(details::schemes), scheme, details::scheme_less);
   return ((it != end(details::schemes)) && !(scheme < it->first)) ? it->second : std::nullopt;
 }
 }  // namespace v1

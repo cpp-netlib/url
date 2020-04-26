@@ -72,17 +72,15 @@ auto ipv6_address::serialize() const -> std::string {
   }
 
   if (!sequences.empty()) {
-    stable_sort(std::begin(sequences), std::end(sequences),
-                [](const auto &lhs,
-                   const auto &rhs) -> bool {
-                  return lhs.second > rhs.second;
-                });
+    constexpr static auto greater = [](const auto &lhs, const auto &rhs) -> bool { return lhs.second > rhs.second; };
+
+    std::stable_sort(std::begin(sequences), std::end(sequences), greater);
     compress = sequences.front().first;
   }
 
   auto ignore0 = false;
   for (auto i = 0UL; i <= 7UL; ++i) {
-    if (ignore0 && (address_[i] == 0)) {
+    if (ignore0 && (address_[i] == 0)) { // NOLINT
       continue;
     } else if (ignore0) {
       ignore0 = false;
@@ -96,7 +94,7 @@ auto ipv6_address::serialize() const -> std::string {
     }
 
     std::ostringstream oss;
-    oss << std::hex << address_[i];
+    oss << std::hex << address_[i]; // NOLINT
     output += oss.str();
 
     if (i != 7) {
@@ -242,7 +240,7 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
           ++it;
         }
 
-        address[piece_index] = address[piece_index] * 0x100 + ipv4_piece.value();
+        address[piece_index] = address[piece_index] * 0x100 + ipv4_piece.value(); // NOLINT
         ++numbers_seen;
 
         if ((numbers_seen == 2) || (numbers_seen == 4)) {
@@ -273,7 +271,7 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
               tl::make_unexpected(
                   make_error_code(ipv6_address_errc::invalid_piece)), true);
     }
-    address[piece_index] = value;
+    address[piece_index] = value; // NOLINT
     ++piece_index;
   }
 
@@ -281,7 +279,7 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
     auto swaps = piece_index - compress.value();
     piece_index = 7;
     while ((piece_index != 0) && (swaps > 0)) {
-      std::swap(address[piece_index], address[compress.value() + swaps - 1]);
+      std::swap(address[piece_index], address[compress.value() + swaps - 1]); // NOLINT
       --piece_index;
       --swaps;
     }

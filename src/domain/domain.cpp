@@ -10,13 +10,16 @@
 #include <skyr/domain/domain.hpp>
 #include <skyr/domain/idna.hpp>
 #include <skyr/domain/punycode.hpp>
+#include <skyr/ranges/string_element_range.hpp>
 #include "string/ascii.hpp"
 #include "string/join.hpp"
-#include "string/split.hpp"
 
 namespace skyr {
 inline namespace v1 {
 namespace {
+constexpr static auto separator = [] (auto c) { return c == '.'; };
+
+
 auto process(
     std::u32string_view domain_name, bool use_std3_ascii_rules,
     bool check_hyphens, bool check_bidi, bool check_joiners,
@@ -85,15 +88,17 @@ auto unicode_to_ascii(
     return tl::make_unexpected(domain.error());
   }
 
-  auto labels = split(domain.value(), U'.');
-
-  for (auto &label : labels) {
+  auto labels = std::vector<std::u32string>{};
+  for (auto label : split(std::u32string_view(domain.value()), separator)) {
     if (!is_ascii(label)) {
       auto encoded = punycode_encode(label);
       if (!encoded) {
         return tl::make_unexpected(encoded.error());
       }
-      label.assign(begin(encoded.value()), end(encoded.value()));
+      labels.emplace_back(begin(encoded.value()), end(encoded.value()));
+    }
+    else {
+      labels.emplace_back(begin(label), end(label));
     }
   }
 
@@ -140,18 +145,15 @@ auto domain_to_ascii(
 }
 
 auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, std::error_code> {
-  auto labels = split(ascii, '.');
-
-  for (auto &label : labels) {
+  auto labels = std::vector<std::string>{};
+  for (auto label : split(ascii, separator)) {
     auto encoded = punycode_decode(label);
     if (!encoded) {
       return tl::make_unexpected(encoded.error());
     }
-    label.assign(begin(encoded.value()), end(encoded.value()));
+    labels.emplace_back(begin(encoded.value()), end(encoded.value()));
   }
-
   return join(labels, '.');
 }
-
 }  // namespace v1
 }  // namespace skyr

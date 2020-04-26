@@ -14,49 +14,59 @@
 namespace skyr {
 inline namespace v1 {
 ///
-template <class Pred>
+template <class charT, class Pred>
 class string_element_iterator {
  public:
 
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = std::string_view;
+  using value_type = std::basic_string_view<charT>;
   ///
   using const_reference = value_type;
   ///
   using reference = const_reference;
   ///
-  using const_pointer = std::add_pointer<const value_type>::type;
+  using const_pointer = typename std::add_pointer<const charT>::type;
   ///
   using pointer = const_pointer;
   ///
   using difference_type = std::ptrdiff_t;
 
   ///
+  string_element_iterator() = default;
+
+  ///
   explicit string_element_iterator(Pred &&pred)
       : it_(std::nullopt)
-        , last_(std::nullopt)
-        , pred_(pred)
+      , last_(std::nullopt)
+      , pred_(pred)
   {}
 
   ///
-  /// \param path
-  explicit string_element_iterator(std::string_view s, Pred &&pred)
+  /// \param s
+  explicit string_element_iterator(std::basic_string_view<charT> s)
+      : it_(!s.empty() ? std::make_optional(std::begin(s)) : std::nullopt)
+      , last_(!s.empty() ? std::make_optional(std::end(s)) : std::nullopt)
+      , pred_{} {}
+
+  ///
+  /// \param s
+  string_element_iterator(std::basic_string_view<charT> s, Pred &&pred)
       : it_(!s.empty() ? std::make_optional(std::begin(s)) : std::nullopt)
       , last_(!s.empty() ? std::make_optional(std::end(s)) : std::nullopt)
       , pred_(pred) {}
 
   ///
   /// \return
-  auto &operator++() {
+  auto operator++() -> string_element_iterator & {
     increment();
     return *this;
   }
 
   ///
   /// \return
-  auto operator++(int) {
+  auto operator++(int) -> value_type {
     auto result = *this;
     increment();
     return result;
@@ -67,7 +77,7 @@ class string_element_iterator {
   auto operator*() const noexcept -> const_reference {
     assert(it_);
     auto delimiter = std::find_if(it_.value(), last_.value(), pred_);
-    return std::string_view(
+    return value_type(
         std::addressof(*it_.value()),
         std::distance(it_.value(), delimiter));
   }
@@ -92,28 +102,31 @@ class string_element_iterator {
     assert(it_);
     it_ = std::find_if(it_.value(), last_.value(), pred_);
     if (it_ == last_) {
-      it_ = std::nullopt;
+      it_.reset();
     } else {
       ++it_.value();
     }
   }
 
-  std::optional<value_type::const_iterator> it_, last_;
+  std::optional<typename value_type::const_iterator> it_, last_;
   Pred pred_;
 
 };
 
 ///
-template <class Pred>
+template <class charT, class Pred>
 class string_element_range {
  public:
 
   ///
-  using const_iterator = string_element_iterator<Pred>;
+  using const_iterator = string_element_iterator<charT, Pred>;
   ///
   using iterator = const_iterator;
   ///
   using size_type = std::size_t;
+
+  ///
+  string_element_range() = default;
 
   ///
   explicit string_element_range(Pred &&pred)
@@ -122,7 +135,7 @@ class string_element_range {
 
   ///
   /// \param path
-  string_element_range(std::string_view s, Pred &&pred)
+  string_element_range(std::basic_string_view<charT> s, Pred &&pred)
       : first_(s, pred), last_(pred) {}
 
   ///
@@ -163,13 +176,13 @@ class string_element_range {
 
  private:
 
-  string_element_iterator<Pred> first_, last_;
+  string_element_iterator<charT, Pred> first_, last_;
 
 };
 
-template <class Pred>
-inline string_element_range<Pred> split(std::string_view s, Pred &&pred) {
-  return string_element_range<Pred>(s, pred);
+template <class charT, class Pred>
+inline auto split(std::basic_string_view<charT> s, Pred &&pred) -> string_element_range<charT, Pred> {
+  return string_element_range<charT, Pred>(s, pred);
 }
 }  // namespace v1
 }  // namespace skyr
