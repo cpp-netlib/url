@@ -11,6 +11,20 @@
 
 namespace skyr {
 inline namespace v1 {
+namespace {
+struct is_name {
+  explicit is_name(std::string_view name)
+      : name_(name)
+  {}
+
+  bool operator () (const std::pair<std::string, std::string> &parameter) noexcept {
+    return name_ == parameter.first;
+  }
+
+  std::string_view name_;
+};
+}  // namespace
+
 url_search_parameters::url_search_parameters(
     url *url)
     : url_(url) {
@@ -21,20 +35,16 @@ url_search_parameters::url_search_parameters(
 
 void url_search_parameters::remove(
     std::string_view name) {
-  static const auto equals_name = [&name](const auto &parameter) { return name == parameter.first; };
-
   auto first = std::begin(parameters_), last = std::end(parameters_);
-  auto it = std::remove_if(first, last, equals_name);
+  auto it = std::remove_if(first, last, is_name(name));
   parameters_.erase(it, last);
   update();
 }
 
 auto url_search_parameters::get(
     std::string_view name) const -> std::optional<string_type> {
-  static const auto equals_name = [&name](const auto &parameter) { return name == parameter.first; };
-
   auto first = std::begin(parameters_), last = std::end(parameters_);
-  auto it = std::find_if(first, last, equals_name);
+  auto it = std::find_if(first, last, is_name(name));
   return (it != last) ? std::make_optional(it->second) : std::nullopt;
 }
 
@@ -44,29 +54,27 @@ auto url_search_parameters::get_all(
   result.reserve(parameters_.size());
   for (auto[parameter_name, value] : parameters_) {
     if (parameter_name == name) {
-      result.push_back(value);
+      result.emplace_back(value);
     }
   }
   return result;
 }
 
 auto url_search_parameters::contains(std::string_view name) const noexcept -> bool {
-  static const auto equals_name = [&name](const auto &parameter) { return name == parameter.first; };
-
   auto first = std::begin(parameters_), last = std::end(parameters_);
-  return std::find_if(first, last, equals_name) != last;
+  return std::find_if(first, last, is_name(name)) != last;
 }
 
 void url_search_parameters::set(
     std::string_view name,
     std::string_view value) {
-  static const auto equals_name = [&name](const auto &parameter) { return name == parameter.first; };
-
   auto first = std::begin(parameters_), last = std::end(parameters_);
-  auto it = std::find_if(first, last, equals_name);
+  auto it = std::find_if(first, last, is_name(name));
   if (it != last) {
     it->second = value;
-    it = std::remove_if(++it, last, equals_name);
+
+    ++it;
+    it = std::remove_if(it, last, is_name(name));
     parameters_.erase(it, last);
   } else {
     parameters_.emplace_back(name, value);
@@ -77,17 +85,15 @@ void url_search_parameters::set(
 auto url_search_parameters::to_string() const -> string_type {
   auto result = string_type{};
 
-  auto first = std::begin(parameters_), last = std::end(parameters_);
-  auto it = first;
-  while (it != last) {
-    result.append(percent_encode<string_type>(it->first));
-    result.append("=");
-    result.append(percent_encode<string_type>(it->second));
-
-    ++it;
-    if (it != last) {
+  bool start = true;
+  for (const auto &[name, value] : parameters_) {
+    if (start) {
       result.append("&");
+      start = false;
     }
+    result.append(percent_encode<string_type>(name));
+    result.append("=");
+    result.append(percent_encode<string_type>(value));
   }
 
   return result;
