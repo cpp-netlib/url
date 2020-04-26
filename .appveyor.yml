@@ -50,4 +50,4 @@ matrix:
   fast_finish: true
 
 on_failure:
- - type Testing\Temporary\LastTest.log
+ - type _build\Testing\Temporary\LastTest.log
