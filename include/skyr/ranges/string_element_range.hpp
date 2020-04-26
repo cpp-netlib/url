@@ -117,8 +117,10 @@ class string_element_range {
   ///
   /// \param s
   /// \param delimiters
-  string_element_range(std::basic_string_view<charT> s, std::basic_string_view<charT> delimiters)
-      : first_(s, delimiters), last_() {}
+  string_element_range(
+      string_element_iterator<charT> first,
+      string_element_iterator<charT> last)
+      : first_(first), last_(last) {}
 
   ///
   /// \return
@@ -170,7 +172,7 @@ class string_element_range {
 template <class charT>
 inline auto split(std::basic_string_view<charT> s, decltype(s) separators)
     -> string_element_range<charT> {
-  return { s, separators };
+  return { string_element_iterator<charT>(s, separators), string_element_iterator<charT>() };
 }
 }  // namespace v1
 }  // namespace skyr
