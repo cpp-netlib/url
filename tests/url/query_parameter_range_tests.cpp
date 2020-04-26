@@ -8,60 +8,6 @@
 #include <string_view>
 #include <skyr/query/query_parameter_range.hpp>
 
-TEST_CASE("query_element_iterator_test", "[query_parameter_range]") {
-  using namespace std::string_view_literals;
-
-  SECTION("empty_query") {
-    auto query = ""sv;
-    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
-    CHECK(first == last);
-  }
-
-  SECTION("query_with_single_element") {
-    auto query = "a=b"sv;
-    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
-    CHECK(first != last);
-
-    CHECK("a=b" == *first);
-    ++first;
-    CHECK(first == last);
-  }
-
-  SECTION("query_with_two_elements") {
-    auto query = "a=b&c=d"sv;
-    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
-    CHECK(first != last);
-
-    CHECK("a=b" == *first);
-    ++first;
-    CHECK("c=d" == *first);
-    ++first;
-    CHECK(first == last);
-  }
-
-  SECTION("query_with_two_elements_and_semicolon_separator") {
-    auto query = "a=b;c=d"sv;
-    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
-    CHECK(first != last);
-
-    CHECK("a=b" == *first);
-    ++first;
-    CHECK("c=d" == *first);
-    ++first;
-    CHECK(first == last);
-  }
-  
-  SECTION("query_with_one_parameter") {
-    auto query = "query"sv;
-    auto first = skyr::query_element_iterator(query), last = skyr::query_element_iterator();
-    CHECK(first != last);
-
-    CHECK("query" == *first);
-    ++first;
-    CHECK(first == last);
-  }
-}
-
 TEST_CASE("query_parameter_iterator_test", "[query_parameter_range]") {
   using namespace std::string_view_literals;
 

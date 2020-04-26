@@ -34,10 +34,7 @@ class string_element_iterator {
   using difference_type = std::ptrdiff_t;
 
   ///
-  string_element_iterator() = default;
-
-  ///
-  explicit string_element_iterator(Pred &&pred)
+  explicit string_element_iterator(Pred pred)
       : it_(std::nullopt)
       , last_(std::nullopt)
       , pred_(pred)
@@ -45,14 +42,7 @@ class string_element_iterator {
 
   ///
   /// \param s
-  explicit string_element_iterator(std::basic_string_view<charT> s)
-      : it_(!s.empty() ? std::make_optional(std::begin(s)) : std::nullopt)
-      , last_(!s.empty() ? std::make_optional(std::end(s)) : std::nullopt)
-      , pred_{} {}
-
-  ///
-  /// \param s
-  string_element_iterator(std::basic_string_view<charT> s, Pred &&pred)
+  string_element_iterator(std::basic_string_view<charT> s, Pred pred)
       : it_(!s.empty() ? std::make_optional(std::begin(s)) : std::nullopt)
       , last_(!s.empty() ? std::make_optional(std::end(s)) : std::nullopt)
       , pred_(pred) {}
@@ -129,13 +119,13 @@ class string_element_range {
   string_element_range() = default;
 
   ///
-  explicit string_element_range(Pred &&pred)
+  explicit string_element_range(Pred pred)
       : first_(pred), last_(pred)
   {}
 
   ///
   /// \param path
-  string_element_range(std::basic_string_view<charT> s, Pred &&pred)
+  string_element_range(std::basic_string_view<charT> s, Pred pred)
       : first_(s, pred), last_(pred) {}
 
   ///
@@ -181,7 +171,7 @@ class string_element_range {
 };
 
 template <class charT, class Pred>
-inline auto split(std::basic_string_view<charT> s, Pred &&pred) -> string_element_range<charT, Pred> {
+inline auto split(std::basic_string_view<charT> s, Pred pred) -> string_element_range<charT, Pred> {
   return string_element_range<charT, Pred>(s, pred);
 }
 }  // namespace v1
