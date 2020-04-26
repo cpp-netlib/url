@@ -8,10 +8,10 @@
 #include <skyr/url.hpp>
 #include <skyr/core/parse.hpp>
 #include <skyr/core/serialize.hpp>
+#include <skyr/core/schemes.hpp>
 #include <skyr/percent_encoding/percent_encode_range.hpp>
 #include <skyr/domain/domain.hpp>
 #include "core/url_parse_impl.hpp"
-#include "skyr/core/schemes.hpp"
 
 namespace skyr {
 inline namespace v1 {

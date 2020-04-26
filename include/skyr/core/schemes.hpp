@@ -20,7 +20,7 @@ namespace details {
 using namespace std::string_view_literals;
 
 using default_port_list = std::array<std::pair<std::string_view, std::optional<std::uint16_t>>, 6>;
-constexpr auto schemes = default_port_list{{
+constexpr static auto schemes = default_port_list{{
                                                {"file"sv, std::nullopt},
                                                {"ftp"sv, 21},
                                                {"http"sv, 80},

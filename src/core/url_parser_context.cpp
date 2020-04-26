@@ -5,16 +5,13 @@
 
 #include <iterator>
 #include <limits>
-#include <deque>
-#include <map>
 #include <array>
-#include <locale>
 #include <skyr/network/ipv4_address.hpp>
 #include <skyr/network/ipv6_address.hpp>
 #include <skyr/domain/domain.hpp>
+#include <skyr/core/schemes.hpp>
 #include <skyr/percent_encoding/percent_decode_range.hpp>
 #include "url_parser_context.hpp"
-#include "skyr/core/schemes.hpp"
 #include "string/starts_with.hpp"
 #include "string/locale.hpp"
 
@@ -31,14 +28,17 @@ inline auto contains(
   return last != std::find(first, last, byte);
 }
 
+constexpr static auto is_not_c0_control_or_whitespace = [] (auto byte) {
+  return !is_c0_control_or_whitespace(byte);
+};
+
+constexpr static auto is_tab_or_whitespace = [] (auto byte) {
+  return contains(byte, "\t\r\n"sv);
+};
+
 auto remove_leading_whitespace(std::string &input) {
-  auto view = std::string_view(input);
-  auto first = begin(view), last = end(view);
-  auto it = std::find_if(
-      first, last,
-      [] (auto byte) -> bool {
-        return !is_c0_control_or_whitespace(byte);
-      });
+  auto first = begin(input), last = end(input);
+  auto it = std::find_if(first, last, is_not_c0_control_or_whitespace);
   if (it != first) {
     input.assign(it, last);
   }
@@ -46,28 +46,18 @@ auto remove_leading_whitespace(std::string &input) {
 }
 
 auto remove_trailing_whitespace(std::string &input) {
-  using reverse_iterator =
-  std::reverse_iterator<std::string::const_iterator>;
-
-  auto first = reverse_iterator(end(input)),
-      last = reverse_iterator(begin(input));
-  auto it = std::find_if(
-      first, last,
-      [] (auto byte) -> bool {
-        return !is_c0_control_or_whitespace(byte);
-      });
+  auto first = rbegin(input), last = rend(input);
+  auto it = std::find_if(first, last, is_not_c0_control_or_whitespace);
   if (it != first) {
     input = std::string(it, last);
     std::reverse(begin(input), end(input));
   }
-
   return it == first;
 }
 
 auto remove_tabs_and_newlines(std::string &input) {
   auto first = begin(input), last = end(input);
-  auto it = std::remove_if(
-      first, last, [] (auto byte) -> bool { return contains(byte, "\t\r\n"sv); });
+  auto it = std::remove_if(first, last, is_tab_or_whitespace);
   input.erase(it, end(input));
   return it == last;
 }
@@ -816,12 +806,13 @@ auto url_parser_context::parse_path(char byte) -> tl::expected<url_parse_action,
     buffer.clear();
 
     if ((url.scheme == "file") && (is_eof() || (byte == '?') || (byte == '#'))) {
-      auto path = std::deque<std::string>(begin(url.path), end(url.path));
-      while ((path.size() > 1) && path[0].empty()) {
+      while ((url.path.size() > 1) && url.path[0].empty()) {
         url.validation_error = true;
-        path.pop_front();
+        auto next_it = begin(url.path);
+        ++next_it;
+        std::rotate(begin(url.path), next_it, end(url.path));
+        url.path.pop_back();
       }
-      url.path.assign(begin(path), end(path));
     }
 
     if (byte == '?') {
@@ -857,7 +848,7 @@ auto url_parser_context::parse_cannot_be_a_base_url(char byte) -> tl::expected<u
       url.validation_error = true;
     }
     else if ((byte == '%') && !percent_encoding::is_percent_encoded(
-        std::string_view(std::addressof(*it), std::distance(it, end(view))))) {
+                                  view.substr(std::distance(std::begin(view), it)))) {
       url.validation_error = true;
     }
     if (!is_eof()) {
