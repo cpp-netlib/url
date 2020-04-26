@@ -69,12 +69,13 @@ namespace details {
 namespace {
 auto parse_ipv4_address(std::string_view input)
     -> std::pair<tl::expected<ipv4_address, std::error_code>, bool> {
+  using namespace std::string_view_literals;
 
   auto validation_error_flag = false;
   auto validation_error = false;
 
   std::vector<std::string_view> parts;
-  for (auto part : split(input, std::string_view("."))) {
+  for (auto part : split(input, "."sv)) {
     parts.emplace_back(part);
   }
 

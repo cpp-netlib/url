@@ -83,7 +83,7 @@ class ipv6_address {
     std::transform(
         begin(address), end(address),
         begin(address_),
-        to_network_byte_order<unsigned short>);
+        &to_network_byte_order<unsigned short>);
   }
 
   /// The address in bytes in network byte order
@@ -91,8 +91,8 @@ class ipv6_address {
   [[nodiscard]] auto to_bytes() const noexcept -> std::array<unsigned char, 16> {
     std::array<unsigned char, 16> bytes{};
     for (auto i = 0UL; i < address_.size(); ++i) {
-      bytes[i * 2    ] = static_cast<unsigned char>(address_[i] >> 8u);
-      bytes[i * 2 + 1] = static_cast<unsigned char>(address_[i]);
+      bytes[i * 2    ] = static_cast<unsigned char>(address_[i] >> 8u); // NOLINT
+      bytes[i * 2 + 1] = static_cast<unsigned char>(address_[i]); // NOLINT
     }
     return bytes;
   }

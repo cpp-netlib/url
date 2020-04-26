@@ -12,12 +12,15 @@
 
 namespace skyr {
 inline namespace v1 {
-template <class charT>
+template <
+    class charT,
+    class ElementRange
+    >
 inline auto join(
-    const std::vector<std::basic_string<charT>> &elements, charT separator) {
+    const ElementRange &elements, charT separator) {
   auto result = std::basic_string<charT>();
   for (const auto &element : elements) {
-    result += element + separator;
+    result += std::basic_string<charT>(element) + separator;
   }
   return result.substr(0, result.length() - 1);
 }
