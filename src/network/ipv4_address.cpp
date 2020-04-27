@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <cmath>
 #include <locale>
-#include <vector>
+#include <array>
 #include <algorithm>
 #include <optional>
 #include <cstdlib>
@@ -55,29 +55,32 @@ auto parse_ipv4_address(std::string_view input)
   auto validation_error_flag = false;
   auto validation_error = false;
 
-  std::vector<std::string_view> parts;
+  std::array<std::string_view, 4> parts;
+  auto count = 0UL;
   for (auto part : split(input, "."sv)) {
-    parts.emplace_back(part);
+    if (count >= parts.size()) {
+      return
+          std::make_pair(
+              tl::make_unexpected(
+                  make_error_code(
+                      ipv4_address_errc::too_many_segments)), true);
+    }
+
+    parts[count] = part; // NOLINT
+    ++count;
   }
 
-  if (parts.empty()) {
+  if (count == 0) {
     return std::make_pair(
         tl::make_unexpected(
             make_error_code(
                 ipv4_address_errc::empty_segment)), true);
   }
 
-  if (parts.size() > 4) {
-    return
-      std::make_pair(
-          tl::make_unexpected(
-              make_error_code(
-                  ipv4_address_errc::too_many_segments)), true);
-  }
+  auto numbers = std::array<std::uint64_t, 4>({0, 0, 0, 0});
 
-  auto numbers = std::vector<std::uint64_t>();
-
-  for (auto part : parts) {
+  for (auto i = 0UL; i < count; ++i) {
+    auto part = parts[i]; // NOLINT
     if (part.empty()) {
       return
         std::make_pair(
@@ -95,7 +98,7 @@ auto parse_ipv4_address(std::string_view input)
                     ipv4_address_errc::invalid_segment_number)), validation_error_flag);
     }
 
-    numbers.push_back(number.value());
+    numbers[i] = number.value(); // NOLINT
   }
 
   if (validation_error_flag) {
@@ -104,7 +107,8 @@ auto parse_ipv4_address(std::string_view input)
 
   constexpr static auto invalid_segment = [] (auto number) { return number > 255; };
 
-  auto numbers_first = begin(numbers), numbers_last = end(numbers);
+  auto numbers_first = begin(numbers), numbers_last = begin(numbers);
+  std::advance(numbers_last, count);
 
   auto numbers_it = std::find_if(numbers_first, numbers_last, invalid_segment);
   if (numbers_it != numbers_last) {
@@ -112,7 +116,7 @@ auto parse_ipv4_address(std::string_view input)
   }
 
   auto numbers_last_but_one = numbers_last;
-  --numbers_last_but_one;
+  std::advance(numbers_last_but_one, -1);
 
   numbers_it = std::find_if(numbers_first, numbers_last_but_one, invalid_segment);
   if (numbers_it != numbers_last_but_one) {
@@ -122,21 +126,19 @@ auto parse_ipv4_address(std::string_view input)
               make_error_code(ipv4_address_errc::overflow)), true);
   }
 
-  if (numbers.back() >=
-      static_cast<std::uint64_t>(std::pow(256, 5 - numbers.size()))) {
+  if (numbers[count - 1] >= // NOLINT
+      static_cast<std::uint64_t>(std::pow(256, 5 - count))) {
     return
       std::make_pair(
           tl::make_unexpected(
               make_error_code(ipv4_address_errc::overflow)), true);
   }
 
-  auto ipv4 = numbers.back();
-  numbers.pop_back();
+  auto ipv4 = numbers[count - 1]; // NOLINT
+  --count;
 
-  auto counter = 0UL;
-  for (auto number : numbers) {
-    ipv4 += number * static_cast<std::uint64_t>(std::pow(256, 3 - counter));
-    ++counter;
+  for (auto i = 0UL; i < count; ++i) {
+    ipv4 += numbers[i] * static_cast<std::uint64_t>(std::pow(256, 3 - i)); // NOLINT
   }
 
   return std::make_pair(
