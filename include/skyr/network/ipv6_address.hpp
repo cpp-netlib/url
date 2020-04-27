@@ -9,8 +9,11 @@
 #include <string>
 #include <string_view>
 #include <array>
+#include <vector>
+#include <optional>
 #include <algorithm>
 #include <iterator>
+#include <sstream>
 #include <system_error>
 #include <tl/expected.hpp>
 #include <skyr/platform/endianness.hpp>
@@ -100,8 +103,79 @@ class ipv6_address {
   }
 
    /// \returns The IPv6 address as a string
-  [[nodiscard]] auto serialize() const -> std::string;
+  [[nodiscard]] auto serialize() const -> std::string {
+    using namespace std::string_literals;
 
+    auto output = ""s;
+    auto compress = std::optional<size_t>();
+
+    auto sequences = std::vector<std::pair<size_t, size_t>>();
+    auto in_sequence = false;
+
+    auto first = std::begin(address_), last = std::end(address_);
+    auto it = first;
+    while (true) {
+      if (*it == 0) {
+        auto index = std::distance(first, it);
+
+        if (!in_sequence) {
+          sequences.emplace_back(index, 1);
+          in_sequence = true;
+        } else {
+          ++sequences.back().second;
+        }
+      } else {
+        if (in_sequence) {
+          if (sequences.back().second == 1) {
+            sequences.pop_back();
+          }
+          in_sequence = false;
+        }
+      }
+      ++it;
+
+      if (it == last) {
+        if (!sequences.empty() && (sequences.back().second == 1)) {
+          sequences.pop_back();
+        }
+        in_sequence = false;
+        break;
+      }
+    }
+
+    if (!sequences.empty()) {
+      constexpr static auto greater = [](const auto &lhs, const auto &rhs) -> bool { return lhs.second > rhs.second; };
+
+      std::stable_sort(std::begin(sequences), std::end(sequences), greater);
+      compress = sequences.front().first;
+    }
+
+    auto ignore0 = false;
+    for (auto i = 0UL; i <= 7UL; ++i) {
+      if (ignore0 && (address_[i] == 0)) { // NOLINT
+        continue;
+      } else if (ignore0) {
+        ignore0 = false;
+      }
+
+      if (compress && (compress.value() == i)) {
+        auto separator = (i == 0) ? "::"s : ":"s;
+        output += separator;
+        ignore0 = true;
+        continue;
+      }
+
+      std::ostringstream oss;
+      oss << std::hex << address_[i]; // NOLINT
+      output += oss.str();
+
+      if (i != 7) {
+        output += ":";
+      }
+    }
+
+    return output;
+  }
 };
 
 /// Parses an IPv6 address

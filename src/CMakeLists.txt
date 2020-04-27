@@ -38,12 +38,7 @@ target_sources(skyr-url
 
         ${PROJECT_SOURCE_DIR}/include/skyr/config.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/version.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_record.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/parse.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/serialize.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/schemes.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/core/errors.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/ranges/string_element_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/core.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/traits/iterator_value.hpp
@@ -60,19 +55,25 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/idna.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/punycode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/domain.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/platform/endianness.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv4_address.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_decode_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encoded_char.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_decode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv4_address.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/ranges/string_element_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/query/query_parameter_range.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/platform/endianness.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/url_record.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/parse.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/serialize.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/schemes.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/errors.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url_search_parameters.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp)
+        ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp
+        )
 
 target_link_libraries(skyr-url PUBLIC tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})

@@ -3,13 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <sstream>
-#include <vector>
 #include <cassert>
-#include <cstring>
 #include <locale>
-#include <algorithm>
-#include <optional>
 #include <skyr/network/ipv6_address.hpp>
 #include "string/starts_with.hpp"
 
@@ -30,80 +25,6 @@ inline auto hex_to_dec(char byte) noexcept {
   return static_cast<std::uint16_t>(byte_lower - 'a' + 10);
 }
 }  // namespace
-
-auto ipv6_address::serialize() const -> std::string {
-  using namespace std::string_literals;
-
-  auto output = ""s;
-  auto compress = std::optional<size_t>();
-
-  auto sequences = std::vector<std::pair<size_t, size_t>>();
-  auto in_sequence = false;
-
-  auto first = std::begin(address_), last = std::end(address_);
-  auto it = first;
-  while (true) {
-    if (*it == 0) {
-      auto index = std::distance(first, it);
-
-      if (!in_sequence) {
-        sequences.emplace_back(index, 1);
-        in_sequence = true;
-      } else {
-        ++sequences.back().second;
-      }
-    } else {
-      if (in_sequence) {
-        if (sequences.back().second == 1) {
-          sequences.pop_back();
-        }
-        in_sequence = false;
-      }
-    }
-    ++it;
-
-    if (it == last) {
-      if (!sequences.empty() && (sequences.back().second == 1)) {
-        sequences.pop_back();
-      }
-      in_sequence = false;
-      break;
-    }
-  }
-
-  if (!sequences.empty()) {
-    constexpr static auto greater = [](const auto &lhs, const auto &rhs) -> bool { return lhs.second > rhs.second; };
-
-    std::stable_sort(std::begin(sequences), std::end(sequences), greater);
-    compress = sequences.front().first;
-  }
-
-  auto ignore0 = false;
-  for (auto i = 0UL; i <= 7UL; ++i) {
-    if (ignore0 && (address_[i] == 0)) { // NOLINT
-      continue;
-    } else if (ignore0) {
-      ignore0 = false;
-    }
-
-    if (compress && (compress.value() == i)) {
-      auto separator = (i == 0) ? "::"s : ":"s;
-      output += separator;
-      ignore0 = true;
-      continue;
-    }
-
-    std::ostringstream oss;
-    oss << std::hex << address_[i]; // NOLINT
-    output += oss.str();
-
-    if (i != 7) {
-      output += ":";
-    }
-  }
-
-  return output;
-}
 
 namespace details {
 namespace {
@@ -126,7 +47,7 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
   if (*it == ':') {
     auto next_it = it;
     ++next_it;
-    if (!starts_with(std::string_view(std::addressof(*next_it), std::distance(next_it, last)), ":"sv)) {
+    if (!starts_with(input.substr(std::distance(std::begin(input), next_it)), ":"sv)) {
       return
           std::make_pair(
               tl::make_unexpected(

@@ -11,6 +11,7 @@
 #include <string_view>
 #include <system_error>
 #include <optional>
+#include <cmath>
 #include <tl/expected.hpp>
 #include <skyr/platform/endianness.hpp>
 
@@ -94,8 +95,25 @@ class ipv4_address {
   }
 
   /// \returns The address as a string
-  [[nodiscard]] auto serialize() const -> std::string;
+  [[nodiscard]] auto serialize() const
+      -> std::string {
+    using namespace std::string_literals;
 
+    auto output = ""s;
+
+    auto n = address_;
+    for (auto i = 1U; i <= 4U; ++i) {
+      output = std::to_string(n % 256) + output; // NOLINT
+
+      if (i != 4) {
+        output = "." + output; // NOLINT
+      }
+
+      n = static_cast<std::uint32_t>(std::floor(n / 256.));
+    }
+
+    return output;
+  }
 };
 
 /// Parses an IPv4 address

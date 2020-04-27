@@ -46,25 +46,6 @@ auto parse_ipv4_number(
 }
 }  // namespace
 
-auto ipv4_address::serialize() const -> std::string {
-  using namespace std::string_literals;
-
-  auto output = ""s;
-
-  auto n = address_;
-  for (auto i = 1U; i <= 4U; ++i) {
-    output = std::to_string(n % 256) + output; // NOLINT
-
-    if (i != 4) {
-      output = "." + output; // NOLINT
-    }
-
-    n = static_cast<std::uint32_t>(std::floor(n / 256.));
-  }
-
-  return output;
-}
-
 namespace details {
 namespace {
 auto parse_ipv4_address(std::string_view input)
@@ -121,11 +102,11 @@ auto parse_ipv4_address(std::string_view input)
     validation_error = true;
   }
 
-  constexpr static auto valid_segment = [] (auto number) { return number > 255; };
+  constexpr static auto invalid_segment = [] (auto number) { return number > 255; };
 
   auto numbers_first = begin(numbers), numbers_last = end(numbers);
 
-  auto numbers_it = std::find_if(numbers_first, numbers_last, valid_segment);
+  auto numbers_it = std::find_if(numbers_first, numbers_last, invalid_segment);
   if (numbers_it != numbers_last) {
     validation_error = true;
   }
@@ -133,7 +114,7 @@ auto parse_ipv4_address(std::string_view input)
   auto numbers_last_but_one = numbers_last;
   --numbers_last_but_one;
 
-  numbers_it = std::find_if(numbers_first, numbers_last_but_one, valid_segment);
+  numbers_it = std::find_if(numbers_first, numbers_last_but_one, invalid_segment);
   if (numbers_it != numbers_last_but_one) {
     return
       std::make_pair(

@@ -7,12 +7,7 @@
 #define SKYR_FILESYSTEM_PATH_HPP
 
 
-#if !defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-#if !defined(__clang__) && (defined(__GNUC__) && __GNUC__ < 8)
-#define SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM
-#endif  // !defined(__clang__) && (defined(__GNUC__) && __GNUC__ < 8)
-#endif  // !defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-
+#include <skyr/filesystem/config.hpp>
 
 #if defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
 #define _LIBCPP_NO_EXPERIMENTAL_DEPRECATION_WARNING_FILESYSTEM
@@ -24,7 +19,6 @@ namespace name = std::experimental::filesystem;
 #define SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(name) \
 namespace name = std::filesystem;
 #endif // defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-
 
 #include <system_error>
 #include SKYR_FILESYSTEM_HEADER()
