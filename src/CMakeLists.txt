@@ -3,9 +3,13 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
+include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-git.cmake)
+
+skyr_get_git_sha1(skyr-url_VERSION_SHA1)
+
 configure_file(
         version.hpp.in
-        ${PROJECT_SOURCE_DIR}/include/skyr/version.hpp
+        ${PROJECT_BINARY_DIR}/include/skyr/version.hpp
 )
 
 #################################################
@@ -36,8 +40,8 @@ target_sources(skyr-url
         url/url.cpp
         url/url_search_parameters.cpp
 
+        ${PROJECT_BINARY_DIR}/include/skyr/version.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/config.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/version.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/ranges/string_element_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/unicode/core.hpp
@@ -89,6 +93,7 @@ target_include_directories(skyr-url
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
     PRIVATE
         ${PROJECT_SOURCE_DIR}/src)
 
@@ -102,7 +107,7 @@ endif()
 
 add_library(skyr-filesystem INTERFACE)
 
-target_link_libraries(skyr-filesystem INTERFACE tl::expected)
+target_link_libraries(skyr-filesystem INTERFACE skyr-url)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
     target_link_libraries(skyr-filesystem INTERFACE "stdc++fs")
 endif()
@@ -111,6 +116,7 @@ target_include_directories(skyr-filesystem
         INTERFACE
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         )
 
 #################################################
@@ -120,11 +126,12 @@ target_include_directories(skyr-filesystem
 if (skyr_ENABLE_JSON_FUNCTIONS)
     add_library(skyr-json INTERFACE)
 
-    target_link_libraries(skyr-json INTERFACE tl::expected nlohmann_json::nlohmann_json)
+    target_link_libraries(skyr-json INTERFACE skyr-url nlohmann_json::nlohmann_json)
 
     target_include_directories(skyr-json
         INTERFACE
             $<INSTALL_INTERFACE:include>
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
             )
 endif()

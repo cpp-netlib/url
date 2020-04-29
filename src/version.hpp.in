@@ -9,25 +9,43 @@
 /// \file skyr/version.hpp
 
 #include <tuple>
+#include <string_view>
 #include <skyr/config.hpp>
 
 #define SKYR_VERSION_MAJOR @skyr-url_VERSION_MAJOR@
 #define SKYR_VERSION_MINOR @skyr-url_VERSION_MINOR@
 #define SKYR_VERSION_PATCH @skyr-url_VERSION_PATCH@
+#define SKYR_VERSION_SHA1 "@skyr-url_VERSION_SHA1@"
 
 #define SKYR_VERSION_STRING \
   SKYR_PREPROCESSOR_TO_STRING(SKYR_VERSION_MAJOR) "." \
-  SKYR_PREPROCESSOR_TO_STRING(SKYR_VERSION_MINOR)
+  SKYR_PREPROCESSOR_TO_STRING(SKYR_VERSION_MINOR) "."
+
+#define SKYR_RELEASE_STRING \
+  SKYR_PREPROCESSOR_TO_STRING(SKYR_VERSION_MAJOR) "." \
+  SKYR_PREPROCESSOR_TO_STRING(SKYR_VERSION_MINOR) "." \
+  SKYR_PREPROCESSOR_TO_STRING(SKYR_VERSION_PATCH) "-" \
+  SKYR_VERSION_SHA1
 
 namespace skyr {
 /// \returns The major, minor and patch version as a tuple
-static constexpr auto version() noexcept -> std::tuple<int, int, int> {
-  return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR, SKYR_VERSION_PATCH};
+static constexpr auto version() noexcept -> std::tuple<int, int> {
+  return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR};
+}
+
+/// \returns The major, minor and patch version as a tuple
+static constexpr auto release() noexcept -> std::tuple<int, int, int, std::string_view> {
+  return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR, SKYR_VERSION_PATCH, SKYR_VERSION_SHA1};
 }
 
 /// \returns The version as a string in the form MAJOR.MINOR
-static constexpr auto version_string() noexcept -> const char * {
+static constexpr auto version_string() noexcept -> std::string_view {
   return SKYR_VERSION_STRING;
+}
+
+/// \returns The version as a string in the form MAJOR.MINOR
+static constexpr auto release_string() noexcept -> std::string_view {
+  return SKYR_RELEASE_STRING;
 }
 }  // namespace skyr
 

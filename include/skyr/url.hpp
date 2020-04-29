@@ -12,7 +12,6 @@
 #include <ostream>
 #include <tl/expected.hpp>
 #include <skyr/config.hpp>
-#include <skyr/version.hpp>
 #include <skyr/core/url_record.hpp>
 #include <skyr/core/errors.hpp>
 #include <skyr/url_search_parameters.hpp>

@@ -26,13 +26,13 @@ project = 'Skyr URL'
 copyright = '2018-20, Glyn Matthews'
 author = 'Glyn Matthews'
 
-major, minor, patch = @skyr-url_VERSION_MAJOR@, @skyr-url_VERSION_MINOR@, @skyr-url_VERSION_PATCH@
+major, minor, patch, sha1 = @skyr-url_VERSION_MAJOR@, @skyr-url_VERSION_MINOR@, @skyr-url_VERSION_PATCH@, @skyr-url_VERSION_SHA1@
 
 
 # The short X.Y version
 version = '{}.{}'.format(major, minor)
 # The full version, including alpha/beta/rc tags
-release = '{}.{}'.format(major, minor)
+release = '{}.{}.{}-{}}'.format(major, minor, patch, sha1)
 
 
 # -- General configuration ---------------------------------------------------
