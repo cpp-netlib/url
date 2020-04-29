@@ -678,4 +678,14 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://example.org/test?%GH", base);
     CHECK(instance.search() == "?%GH");
   }
+
+  SECTION("regression_failure_03") {
+    auto instance = skyr::url("http://./");
+    CHECK(instance.href() == "http://./");
+  }
+
+  SECTION("regression_failure_04") {
+    auto instance = skyr::url("http://../");
+    CHECK(instance.href() == "http://../");
+  }
 }

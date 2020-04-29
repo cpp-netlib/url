@@ -36,9 +36,6 @@ class query_parameter_iterator {
   using difference_type = std::ptrdiff_t;
 
   ///
-  query_parameter_iterator() = default;
-
-  ///
   /// \param query
   explicit query_parameter_iterator(std::string_view query)
       : it_(query, std::string_view("&;")) {}
@@ -103,12 +100,9 @@ class query_parameter_range {
   using size_type = std::size_t;
 
   ///
-  query_parameter_range() = default;
-
-  ///
   /// \param query
   explicit query_parameter_range(std::string_view query)
-      : first_(query), last_() {}
+      : first_(query), last_(query.substr(query.size())) {}
 
   ///
   /// \return

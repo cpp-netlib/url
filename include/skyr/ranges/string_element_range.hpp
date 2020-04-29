@@ -34,16 +34,18 @@ class string_element_iterator {
   using difference_type = std::ptrdiff_t;
 
   ///
-  explicit string_element_iterator() = default;
-
-  ///
   /// \param s
   string_element_iterator(
       std::basic_string_view<charT> s, std::basic_string_view<charT> separators)
       : view_(s)
       , separators_(separators)
       , separator_index_(std::min(view_.find_first_of(separators_), view_.size()))
+      , check_last_(0)
   {
+    if (!view_.empty()) {
+      auto index = view_.substr(view_.size() - 1).find_first_of(separators_);
+      check_last_ = (index != std::string_view::npos)? 1 : 0;
+    }
   }
 
   ///
@@ -64,7 +66,7 @@ class string_element_iterator {
   ///
   /// \return
   auto operator*() const noexcept -> const_reference {
-    assert(!view_.empty());
+    assert(!view_.empty() || (check_last_ != 0));
     return view_.substr(0, separator_index_);
   }
 
@@ -72,7 +74,7 @@ class string_element_iterator {
   /// \param other
   /// \return
   auto operator==(const string_element_iterator &other) const noexcept {
-    return view_ == other.view_;
+    return (view_.data() == other.view_.data()) && (check_last_ == other.check_last_);
   }
 
   ///
@@ -85,17 +87,22 @@ class string_element_iterator {
  private:
 
   void increment() {
-    assert(!view_.empty());
-    view_.remove_prefix(separator_index_);
-    if (!view_.empty()) {
-      view_.remove_prefix(1);
+    assert(!view_.empty() || (check_last_ != 0));
+    if (view_.empty()) {
+      --check_last_;
+    } else {
+      view_.remove_prefix(separator_index_);
+      if (!view_.empty()) {
+        view_.remove_prefix(1);
+      }
+      separator_index_ = std::min(view_.find_first_of(separators_), view_.size());
     }
-    separator_index_ = std::min(view_.find_first_of(separators_), view_.size());
   }
 
   value_type view_;
   value_type separators_;
   typename value_type::size_type separator_index_ = 0;
+  int check_last_ = 0;
 
 };
 
@@ -112,15 +119,12 @@ class string_element_range {
   using size_type = std::size_t;
 
   ///
-  string_element_range() = default;
-
-  ///
   /// \param s
-  /// \param delimiters
+  /// \param separators
   string_element_range(
-      string_element_iterator<charT> first,
-      string_element_iterator<charT> last)
-      : first_(first), last_(last) {}
+      std::basic_string_view<charT> s,
+      std::basic_string_view<charT> separators)
+      : first_(s, separators), last_(s.substr(s.size()), separators) {}
 
   ///
   /// \return
@@ -172,7 +176,7 @@ class string_element_range {
 template <class charT>
 inline auto split(std::basic_string_view<charT> s, decltype(s) separators)
     -> string_element_range<charT> {
-  return { string_element_iterator<charT>(s, separators), string_element_iterator<charT>() };
+  return { s, separators };
 }
 }  // namespace v1
 }  // namespace skyr

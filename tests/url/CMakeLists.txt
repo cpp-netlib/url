@@ -4,6 +4,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 foreach (file_name
+        string_tests.cpp
         url_parse_tests.cpp
         url_serialize_tests.cpp
         url_tests.cpp
