@@ -58,7 +58,7 @@ auto parse_ipv4_address(std::string_view input)
   std::array<std::string_view, 4> parts;
   auto count = 0UL;
   for (auto part : split(input, "."sv)) {
-    if (count >= parts.size()) {
+    if (count == parts.size()) {
       return
           std::make_pair(
               tl::make_unexpected(
@@ -70,11 +70,11 @@ auto parse_ipv4_address(std::string_view input)
     ++count;
   }
 
-  if (count == 0) {
-    return std::make_pair(
-        tl::make_unexpected(
-            make_error_code(
-                ipv4_address_errc::empty_segment)), true);
+  if (parts[count - 1].empty()) {  // NOLINT
+    validation_error_flag = true;
+    if (count > 1) {
+      --count;
+    }
   }
 
   auto numbers = std::array<std::uint64_t, 4>({0, 0, 0, 0});
