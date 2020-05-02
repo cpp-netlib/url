@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_VERSION_INC
-#define SKYR_VERSION_INC
+#ifndef SKYR_VERSION_HPP
+#define SKYR_VERSION_HPP
 
 /// \file skyr/version.hpp
 
@@ -49,4 +49,4 @@ static constexpr auto release_string() noexcept -> std::string_view {
 }
 }  // namespace skyr
 
-#endif // SKYR_VERSION_INC
+#endif // SKYR_VERSION_HPP

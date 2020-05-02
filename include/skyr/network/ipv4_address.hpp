@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_IPV4_ADDRESS_INC
-#define SKYR_IPV4_ADDRESS_INC
+#ifndef SKYR_IPV4_ADDRESS_HPP
+#define SKYR_IPV4_ADDRESS_HPP
 
 #include <array>
 #include <string>
@@ -129,4 +129,4 @@ template <>
 struct is_error_code_enum<skyr::v1::ipv4_address_errc> : true_type {};
 }  // namespace std
 
-#endif //SKYR_IPV4_ADDRESS_INC
+#endif //SKYR_IPV4_ADDRESS_HPP

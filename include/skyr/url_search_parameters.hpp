@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_SEARCH_PARAMETERS_INC
-#define SKYR_URL_SEARCH_PARAMETERS_INC
+#ifndef SKYR_URL_SEARCH_PARAMETERS_HPP
+#define SKYR_URL_SEARCH_PARAMETERS_HPP
 
 #include <string>
 #include <string_view>
@@ -180,4 +180,4 @@ inline void swap(url_search_parameters &lhs, url_search_parameters &rhs) noexcep
 }  // namespace v1
 }  // namespace skyr
 
-#endif  // SKYR_URL_SEARCH_PARAMETERS_INC
+#endif  // SKYR_URL_SEARCH_PARAMETERS_HPP

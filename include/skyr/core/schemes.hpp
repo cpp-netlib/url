@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_SCHEMES_INC
-#define SKYR_URL_SCHEMES_INC
+#ifndef SKYR_URL_SCHEMES_HPP
+#define SKYR_URL_SCHEMES_HPP
 
 #include <vector>
 #include <utility>
@@ -54,4 +54,4 @@ inline auto default_port(std::string_view scheme) noexcept {
 }  // namespace skyr
 
 
-#endif  // SKYR_URL_SCHEMES_INC
+#endif  // SKYR_URL_SCHEMES_HPP

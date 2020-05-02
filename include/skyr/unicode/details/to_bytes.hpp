@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_DETAILS_TRANSLATE_INC
-#define SKYR_URL_DETAILS_TRANSLATE_INC
+#ifndef SKYR_URL_DETAILS_TO_BYTES_HPP
+#define SKYR_URL_DETAILS_TO_BYTES_HPP
 
 #include <string>
 #include <skyr/traits/string_traits.hpp>
@@ -58,4 +58,4 @@ inline auto to_bytes(const Source &source) {
 }  // namespace v1
 }  // namespace skyr
 
-#endif  // SKYR_URL_DETAILS_TRANSLATE_INC
+#endif  // SKYR_URL_DETAILS_TO_BYTES_HPP

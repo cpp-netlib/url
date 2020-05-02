@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_INC
-#define SKYR_URL_INC
+#ifndef SKYR_URL_HPP
+#define SKYR_URL_HPP
 
 #include <string>
 #include <string_view>
@@ -870,4 +870,4 @@ inline auto operator "" _url(const char32_t *str, std::size_t length) {
 #pragma warning(pop)
 #endif // defined(SKYR_PLATFORM_MSVC)
 
-#endif  // SKYR_URL_INC
+#endif  // SKYR_URL_HPP

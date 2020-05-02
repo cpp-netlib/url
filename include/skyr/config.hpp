@@ -1,4 +1,4 @@
-// Copyright (c) Glyn Matthews 2012-2019.
+// Copyright (c) Glyn Matthews 2012-2020.
 // Copyright 2012 Dean Michael Berris <dberris@google.com>
 // Copyright 2012 Google, Inc.
 // Distributed under the Boost Software License, Version 1.0.
@@ -11,8 +11,8 @@
  *        workarounds
  */
 
-#ifndef SKYR_CONFIG_INC
-#define SKYR_CONFIG_INC
+#ifndef SKYR_CONFIG_HPP
+#define SKYR_CONFIG_HPP
 
 #if defined(_MSC_VER)
 #define SKYR_PLATFORM_MSVC _MSC_VER
@@ -31,4 +31,4 @@
 #define SKYR_EXCEPTIONS_THROW(e) void(0)
 #endif // __cpp_exceptions
 
-#endif // SKYR_CONFIG_INC
+#endif // SKYR_CONFIG_HPP

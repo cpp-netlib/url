@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_CORE_URL_ERROR_INC
-#define SKYR_CORE_URL_ERROR_INC
+#ifndef SKYR_CORE_URL_ERROR_HPP
+#define SKYR_CORE_URL_ERROR_HPP
 
 #include <system_error>
 
@@ -82,4 +82,4 @@ template <>
 struct is_error_code_enum<skyr::v1::url_parse_errc> : true_type {};
 }  // namespace std
 
-#endif // SKYR_CORE_URL_ERROR_INC
+#endif // SKYR_CORE_URL_ERROR_HPP

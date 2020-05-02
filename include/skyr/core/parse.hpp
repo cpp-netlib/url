@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_CORE_URL_PARSE_INC
-#define SKYR_CORE_URL_PARSE_INC
+#ifndef SKYR_CORE_URL_PARSE_HPP
+#define SKYR_CORE_URL_PARSE_HPP
 
 #include <system_error>
 #include <optional>
@@ -37,4 +37,4 @@ auto parse(
 }  // namespace v1
 }  // namespace skyr
 
-#endif  // SKYR_CORE_URL_PARSE_INC
+#endif  // SKYR_CORE_URL_PARSE_HPP

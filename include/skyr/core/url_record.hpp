@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_CORE_URL_RECORD_INC
-#define SKYR_CORE_URL_RECORD_INC
+#ifndef SKYR_CORE_URL_RECORD_HPP
+#define SKYR_CORE_URL_RECORD_HPP
 
 #include <vector>
 #include <string>
@@ -108,4 +108,4 @@ inline void swap(url_record &lhs, url_record &rhs) noexcept {
 }  // namespace v1
 }  // namespace skyr
 
-#endif // SKYR_CORE_URL_RECORD_INC
+#endif // SKYR_CORE_URL_RECORD_HPP
