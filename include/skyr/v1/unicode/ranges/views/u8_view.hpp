@@ -217,7 +217,7 @@ namespace view {
 template <typename OctetRange>
 inline auto as_u8(
     const OctetRange &range) {
-  static_assert(sizeof(typename traits::range_value<OctetRange>::type) == 1);
+  static_assert(sizeof(typename traits::range_value<OctetRange>::type) >= 1);
   return view_u8_range{range};
 }
 }  // namespace view

@@ -72,8 +72,9 @@ class u16_transform_iterator {
   /// Dereference operator
   /// \return An expected value
   [[nodiscard]] auto operator * () const noexcept -> const_reference {
+    constexpr static auto to_u16 = [](auto value) { return u16_code_point(value); };
     auto code_point = *it_;
-    return code_point.map([](auto value) { return u16_code_point(value); });
+    return code_point.map(to_u16);
   }
 
   /// Equality operator
@@ -155,7 +156,7 @@ class transform_u16_range {
 
   /// Tests if the byte range is empty
   /// \return \c true if the range is empty, \c false otherwise
-  [[nodiscard]] constexpr bool empty() const noexcept {
+  [[nodiscard]] constexpr auto empty() const noexcept {
     return range_.empty();
   }
 //

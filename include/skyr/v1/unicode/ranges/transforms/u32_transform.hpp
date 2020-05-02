@@ -64,7 +64,8 @@ class u32_transform_iterator {
   ///
   /// \return
   [[nodiscard]] auto operator*() const noexcept -> const_reference {
-    return (*it_).and_then([](auto code_point) { return u32_value(code_point); });
+    constexpr static auto to_u32 = [](auto code_point) { return u32_value(code_point); };
+    return (*it_).and_then(to_u32);
   }
 
   ///
@@ -77,7 +78,7 @@ class u32_transform_iterator {
   ///
   /// \param other
   /// \return
-  constexpr bool operator != (const u32_transform_iterator &other) const noexcept {
+  constexpr auto operator != (const u32_transform_iterator &other) const noexcept {
     return !(*this == other);
   }
 
@@ -143,13 +144,13 @@ class transform_u32_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr bool empty() const noexcept {
+  [[nodiscard]] constexpr auto empty() const noexcept {
     return range_.empty();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr size_type size() const noexcept {
+  [[nodiscard]] constexpr auto size() const noexcept -> size_type {
     return range_.size();
   }
 

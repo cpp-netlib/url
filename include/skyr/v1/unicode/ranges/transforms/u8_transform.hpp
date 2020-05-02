@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_UNICODE_RANGES_TRANSFORMS_BYTE_TRANSFORM_HPP
-#define SKYR_V1_UNICODE_RANGES_TRANSFORMS_BYTE_TRANSFORM_HPP
+#ifndef SKYR_V1_UNICODE_RANGES_TRANSFORMS_U8_TRANSFORM_HPP
+#define SKYR_V1_UNICODE_RANGES_TRANSFORMS_U8_TRANSFORM_HPP
 
 #include <iterator>
 #include <optional>
@@ -22,7 +22,7 @@ namespace unicode {
 ///
 /// \tparam CodePointIterator
 template<class CodePointIterator>
-class byte_transform_iterator {
+class u8_transform_iterator {
 
  public:
 
@@ -36,13 +36,13 @@ class byte_transform_iterator {
   using difference_type = std::ptrdiff_t;
 
   /// Constructor
-  byte_transform_iterator() = default;
+  u8_transform_iterator() = default;
   /// Constructs an iterator from an iterator that iterates over
   /// code points
   ///
   /// \param first The first iterator in the code point sequence
   /// \param last The end iterator in the code point sequence
-  byte_transform_iterator(
+  u8_transform_iterator(
       CodePointIterator first,
       CodePointIterator last)
       : it_(first), last_(last) {}
@@ -108,14 +108,14 @@ class byte_transform_iterator {
   /// Equality operator
   /// \param other The other iterator
   /// \return \c true if the iterators are the same, \c false otherwise
-  constexpr auto operator==(const byte_transform_iterator &other) const noexcept -> bool {
+  constexpr auto operator==(const u8_transform_iterator &other) const noexcept -> bool {
     return (it_ == other.it_) && (octet_index_ == other.octet_index_);
   }
 
   /// Inequality operator
   /// \param other The other iterator
   /// \return \c `!(*this == other)`
-  constexpr auto operator!=(const byte_transform_iterator &other) const noexcept -> bool {
+  constexpr auto operator!=(const u8_transform_iterator &other) const noexcept -> bool {
     return !(*this == other);
   }
 
@@ -154,14 +154,13 @@ class byte_transform_iterator {
 /// A range that transforms code point values to a UTF-8 sequence
 /// \tparam CodePointRange
 template<class CodePointRange>
-class transform_byte_range {
+class transform_u8_range {
 
-  using iterator_type =
-      byte_transform_iterator<typename traits::range_iterator<CodePointRange>::type>;
+  using iterator_type = u8_transform_iterator<typename traits::range_iterator<CodePointRange>::type>;
 
  public:
 
-  /// An expected wrapper around a byte value
+  /// An expected wrapper around a UTF-8 value
   using value_type = tl::expected<char, std::error_code>;
   /// \c value_type
   using const_reference = value_type;
@@ -169,7 +168,7 @@ class transform_byte_range {
   using reference = const_reference;
   /// \c value_type*
   using pointer = typename std::add_pointer<value_type>::type;
-  /// \c transform_byte_iterator
+  /// \c transform_u8_iterator
   using const_iterator = iterator_type;
   /// \c const_iterator
   using iterator = const_iterator;
@@ -178,11 +177,11 @@ class transform_byte_range {
 
   /// Default constructor
   /// \post empty()
-  transform_byte_range() = default;
+  transform_u8_range() = default;
 
   /// Constructor
   /// \param range A range of code points
-  explicit transform_byte_range(
+  explicit transform_u8_range(
       const CodePointRange &range)
       : first(iterator_type{std::begin(range), std::end(range)}),
         last(iterator_type{std::end(range), std::end(range)}) {}
@@ -224,7 +223,7 @@ class transform_byte_range {
 };
 
 ///
-struct byte_range_fn {
+struct u8_range_fn {
 
   ///
   /// \tparam CodePointRange
@@ -233,7 +232,7 @@ struct byte_range_fn {
   template<class CodePointRange>
   constexpr auto operator()(
       CodePointRange &&range) const {
-    return transform_byte_range{std::forward<CodePointRange>(range)};
+    return transform_u8_range{std::forward<CodePointRange>(range)};
   }
 
   ///
@@ -243,13 +242,13 @@ struct byte_range_fn {
   template<typename CodePointRange>
   friend constexpr auto operator|(
       CodePointRange &&range,
-      const byte_range_fn &) {
-    return transform_byte_range{std::forward<CodePointRange>(range)};
+      const u8_range_fn &) {
+    return transform_u8_range{std::forward<CodePointRange>(range)};
   }
 };
 
 namespace transform {
-static constexpr byte_range_fn to_bytes;
+static constexpr u8_range_fn to_u8;
 }  // namespace transform
 
 ///
@@ -258,15 +257,14 @@ static constexpr byte_range_fn to_bytes;
 /// \param range
 /// \return
 template <class Output, typename CodePointRange>
-auto as(
-    transform_byte_range<CodePointRange> &&range) -> tl::expected<Output, std::error_code> {
+auto as(transform_u8_range<CodePointRange> &&range) -> tl::expected<Output, std::error_code> {
   auto result = Output{};
-  for (auto &&byte : range) {
-    if (!byte) {
-      return tl::make_unexpected(byte.error());
+  for (auto &&unit : range) {
+    if (!unit) {
+      return tl::make_unexpected(unit.error());
     }
     result.push_back(
-        static_cast<typename Output::value_type>(byte.value()));
+        static_cast<typename Output::value_type>(unit.value()));
   }
   return result;
 }
@@ -274,4 +272,4 @@ auto as(
 }  // namespace v1
 }  // namespace skyr
 
-#endif // SKYR_V1_UNICODE_RANGES_TRANSFORMS_BYTE_TRANSFORM_HPP
+#endif // SKYR_V1_UNICODE_RANGES_TRANSFORMS_U8_TRANSFORM_HPP

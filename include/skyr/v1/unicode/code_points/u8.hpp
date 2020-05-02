@@ -79,7 +79,8 @@ class u8_code_point_view {
   }
 
   [[nodiscard]] auto u32_value() const noexcept {
-    return find_code_point(first).map([] (auto &&state) { return state.value; }).value();
+    constexpr static auto to_u32 = [] (auto &&state) { return state.value; };
+    return find_code_point(first).map(to_u32).value();
   }
 
  private:
@@ -122,7 +123,7 @@ inline auto checked_u8_code_point(
     const OctetRange &range) {
   using result_type = tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, std::error_code>;
 
-  auto check_code_point = [] (auto &&code_point) -> result_type {
+  constexpr static auto check_code_point = [] (auto &&code_point) -> result_type {
     return find_code_point(std::begin(code_point)).map([=] (auto) { return code_point; });
   };
 

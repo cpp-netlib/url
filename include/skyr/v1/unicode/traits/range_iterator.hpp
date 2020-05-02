@@ -21,7 +21,7 @@ class range_iterator {
 /// \tparam T
 /// \tparam N
 template <typename T, std::size_t N>
-class range_iterator<T[N]> {
+class range_iterator<T[N]> { // NOLINT
  public:
   using type = const T *;
 };

@@ -5,10 +5,10 @@
 
 #include <algorithm>
 #include <cassert>
-#include <skyr/v1/unicode/ranges/transforms/byte_transform.hpp>
-#include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/v1/domain/punycode.hpp>
 #include <skyr/v1/domain/errors.hpp>
+#include <skyr/v1/domain/punycode.hpp>
+#include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
+#include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -193,7 +193,7 @@ auto punycode_decode(
     result.insert(i++, 1, n);
   }
 
-  return unicode::as<std::string>(result | unicode::transform::to_bytes)
+  return unicode::as<std::string>(result | unicode::transform::to_u8)
       .or_else([](auto) -> tl::expected<std::string, std::error_code> {
         return tl::make_unexpected(make_error_code(domain_errc::bad_input));
       });
