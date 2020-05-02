@@ -32,7 +32,8 @@ template <typename OctetIterator>
 inline auto u32_value(
     tl::expected<u8_code_point_view<OctetIterator>, std::error_code> code_point) noexcept
     -> tl::expected<char32_t, std::error_code> {
-  return code_point.and_then([] (auto &&code_point) { return u32_value(code_point); });
+  constexpr static auto to_u32 = [] (auto &&code_point) { return u32_value(code_point); };
+  return code_point.and_then(to_u32);
 }
 
 ///
@@ -47,8 +48,10 @@ inline auto u32_value(
 /// \param code_point
 /// \return
 inline auto u32_value(
-    tl::expected<u16_code_point_t, std::error_code> code_point) noexcept -> tl::expected<char32_t, std::error_code> {
-  return code_point.and_then([] (auto code_point) { return code_point.u32_value(); });
+    tl::expected<u16_code_point_t, std::error_code> code_point) noexcept
+    -> tl::expected<char32_t, std::error_code> {
+  constexpr static auto to_u32 = [] (auto code_point) { return code_point.u32_value(); };
+  return code_point.and_then(to_u32);
 }
 
 ///
@@ -84,7 +87,8 @@ inline auto u16_value(
 template <typename OctetIterator>
 inline auto u16_value(
     tl::expected<u8_code_point_view<OctetIterator>, std::error_code> code_point) {
-  return u32_value(code_point).map([] (auto code_point) { return u16_code_point(code_point); });
+  constexpr static auto to_u16 = [] (auto code_point) { return u16_code_point(code_point); };
+  return u32_value(code_point).map(to_u16);
 }
 }  // namespace unicode
 }  // namespace v1

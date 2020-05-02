@@ -6,18 +6,18 @@
 #ifndef SKYR_V1_URL_HPP
 #define SKYR_V1_URL_HPP
 
-#include <string>
-#include <string_view>
-#include <type_traits>
 #include <ostream>
-#include <tl/expected.hpp>
 #include <skyr/config.hpp>
-#include <skyr/v1/core/url_record.hpp>
 #include <skyr/v1/core/errors.hpp>
-#include <skyr/v1/url_search_parameters.hpp>
+#include <skyr/v1/core/url_record.hpp>
 #include <skyr/v1/network/ipv4_address.hpp>
 #include <skyr/v1/network/ipv6_address.hpp>
-#include <skyr/v1/unicode/details/to_bytes.hpp>
+#include <skyr/v1/unicode/details/to_u8.hpp>
+#include <skyr/v1/url_search_parameters.hpp>
+#include <string>
+#include <string_view>
+#include <tl/expected.hpp>
+#include <type_traits>
 
 #if defined(SKYR_PLATFORM_MSVC)
 #pragma warning(push)
@@ -93,7 +93,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(input);
+    auto bytes = details::to_u8(input);
     if (!bytes) {
       SKYR_EXCEPTIONS_THROW(url_parse_error(
           make_error_code(url_parse_errc::invalid_unicode_character)));
@@ -115,7 +115,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(input);
+    auto bytes = details::to_u8(input);
     if (!bytes) {
       SKYR_EXCEPTIONS_THROW(url_parse_error(
           make_error_code(url_parse_errc::invalid_unicode_character)));
@@ -189,7 +189,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(href);
+    auto bytes = details::to_u8(href);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -237,7 +237,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(protocol);
+    auto bytes = details::to_u8(protocol);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -267,7 +267,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(username);
+    auto bytes = details::to_u8(username);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -300,7 +300,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(password);
+    auto bytes = details::to_u8(password);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -337,7 +337,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(host);
+    auto bytes = details::to_u8(host);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -370,7 +370,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(hostname);
+    auto bytes = details::to_u8(hostname);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -485,7 +485,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(pathname);
+    auto bytes = details::to_u8(pathname);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -520,7 +520,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(search);
+    auto bytes = details::to_u8(search);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -565,7 +565,7 @@ class url {
         is_url_convertible<Source>::value,
         "Source is not a valid URL string type");
 
-    auto bytes = details::to_bytes(hash);
+    auto bytes = details::to_u8(hash);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -695,7 +695,7 @@ class url {
   auto set_port_impl(
       const Source &port,
       typename std::enable_if<is_url_convertible<Source>::value>::type * = nullptr) -> std::error_code {
-    auto bytes = details::to_bytes(port);
+    auto bytes = details::to_u8(port);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
     }
@@ -740,7 +740,7 @@ auto make_url(
 template<class Source>
 inline auto make_url(
     const Source &input) -> tl::expected<url, std::error_code> {
-  auto bytes = details::to_bytes(input);
+  auto bytes = details::to_u8(input);
   if (!bytes) {
     return tl::make_unexpected(
         make_error_code(url_parse_errc::invalid_unicode_character));
@@ -758,7 +758,7 @@ inline auto make_url(
 template<class Source>
 inline auto make_url(
     const Source &input, const url &base) -> tl::expected<url, std::error_code> {
-  auto bytes = details::to_bytes(input);
+  auto bytes = details::to_u8(input);
   if (!bytes) {
     return tl::make_unexpected(
         make_error_code(url_parse_errc::invalid_unicode_character));

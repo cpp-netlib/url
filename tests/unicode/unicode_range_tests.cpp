@@ -7,12 +7,11 @@
 #include <string_view>
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/v1/unicode/ranges/views/u8_view.hpp>
-#include <skyr/v1/unicode/ranges/views/u16_view.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u16_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/v1/unicode/ranges/transforms/byte_transform.hpp>
-
+#include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
+#include <skyr/v1/unicode/ranges/views/u16_view.hpp>
+#include <skyr/v1/unicode/ranges/views/u8_view.hpp>
 
 namespace unicode = skyr::unicode;
 
@@ -202,7 +201,7 @@ TEST_CASE("write bytes") {
   SECTION("bytes from u32") {
     const auto input = U"\x1F3F3\xFE0F\x200D\x1F308"s;
     auto bytes = unicode::as<std::string>(
-        input | unicode::transform::to_bytes);
+        input | unicode::transform::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }
@@ -210,14 +209,14 @@ TEST_CASE("write bytes") {
   SECTION("vector of bytes from u32") {
     const auto input = U"\x1F3F3\xFE0F\x200D\x1F308"s;
     auto bytes = unicode::as<std::vector<std::byte>>(
-        input | unicode::transform::to_bytes);
+        input | unicode::transform::to_u8);
     REQUIRE(bytes);
   }
 
   SECTION("bytes from u16") {
     auto input = u"\xD83C\xDFF3\xFE0F\x200D\xD83C\xDF08"s;
     auto bytes = unicode::as<std::string>(
-        unicode::view::as_u16(input) | unicode::transform::to_bytes);
+        unicode::view::as_u16(input) | unicode::transform::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }

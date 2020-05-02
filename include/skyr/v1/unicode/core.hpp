@@ -17,21 +17,21 @@ namespace unicode {
 ///
 /// \param octet
 /// \return
-constexpr auto mask8(char octet) {
-  return static_cast<uint8_t>(0xffu & static_cast<unsigned char>(octet));
+constexpr auto mask8(uint8_t octet) {
+  return static_cast<uint8_t>(0xffu & octet);
 }
 
 ///
 /// \param value
 /// \return
-constexpr auto mask16(char16_t value) -> char16_t {
-  return u'\xffff' & value;
+constexpr auto mask16(char16_t value) {
+  return static_cast<char16_t>(u'\xffff' & value);
 }
 
 ///
 /// \param octet
 /// \return
-constexpr auto is_trail(char octet) {
+constexpr auto is_trail(uint8_t octet) {
   return ((mask8(octet) >> 6u) == 0x2u);
 }
 
@@ -74,7 +74,7 @@ constexpr auto is_valid_code_point(char32_t code_point) {
 /// Returns the size of the sequnce given the lead octet value.
 /// \param lead_value
 /// \return 1, 2, 3 or 4
-constexpr auto sequence_length(char lead_value) {
+constexpr auto sequence_length(uint8_t lead_value) {
   auto lead = mask8(lead_value);
   if (lead < 0x80u) {
     return 1;

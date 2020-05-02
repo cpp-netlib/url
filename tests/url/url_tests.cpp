@@ -521,7 +521,7 @@ TEST_CASE("url_tests", "[url]") {
 
   SECTION("domain_error_test") {
     auto t = std::u32string(U"\xfdD0");
-    auto byte = skyr::details::to_bytes(t);
+    auto byte = skyr::details::to_u8(t);
     CHECK(byte);
 
     auto instance = skyr::make_url(U"http://\xfdD0zyx.com");

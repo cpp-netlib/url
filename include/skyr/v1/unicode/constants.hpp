@@ -27,7 +27,7 @@ namespace code_points {
 constexpr char32_t max = U'\x0010ffff';
 }  // namespace code_points
 
-constexpr std::array<char, 3> bom = {'\xef', '\xbb', '\xbf'};
+constexpr std::array<uint8_t, 3> bom = {0xef, 0xbb, 0xbf};
 }  // namespace unicode::constants
 }  // namespace v1
 }  // namespace skyr

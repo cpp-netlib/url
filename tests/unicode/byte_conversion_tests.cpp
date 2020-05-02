@@ -6,14 +6,14 @@
 #include <string>
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include <skyr/v1/unicode/details/to_bytes.hpp>
+#include <skyr/v1/unicode/details/to_u8.hpp>
 
 TEST_CASE("weird_01", "byte_conversion_tests") {
-  auto bytes = skyr::details::to_bytes(U"http://\xfdD0zyx.com");
+  auto bytes = skyr::details::to_u8(U"http://\xfdD0zyx.com");
   CHECK(bytes);
 }
 
 TEST_CASE("weird_02", "byte_conversion_tests") {
-  auto bytes = skyr::details::to_bytes("/\xf0\x9f\x8d\xa3\xf0\x9f\x8d\xba");
+  auto bytes = skyr::details::to_u8("/\xf0\x9f\x8d\xa3\xf0\x9f\x8d\xba");
   CHECK(bytes);
 }

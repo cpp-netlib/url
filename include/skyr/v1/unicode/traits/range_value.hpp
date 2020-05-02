@@ -21,7 +21,7 @@ class range_value {
 /// \tparam T
 /// \tparam N
 template <typename T, std::size_t N>
-class range_value<T[N]> {
+class range_value<T[N]> { // NOLINT
  public:
   using type = T;
 };

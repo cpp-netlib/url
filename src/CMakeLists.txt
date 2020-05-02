@@ -51,10 +51,10 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/views/u8_view.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/views/unchecked_u8_view.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/views/u16_view.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/byte_transform.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u8_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u16_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u32_transform.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/details/to_bytes.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/details/to_u8.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/idna.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/punycode.hpp

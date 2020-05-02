@@ -5,13 +5,12 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <string>
-#include <skyr/v1/unicode/ranges/views/u8_view.hpp>
-#include <skyr/v1/unicode/ranges/views/u16_view.hpp>
-#include <skyr/v1/unicode/ranges/transforms/byte_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u16_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-
+#include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
+#include <skyr/v1/unicode/ranges/views/u16_view.hpp>
+#include <skyr/v1/unicode/ranges/views/u8_view.hpp>
+#include <string>
 
 TEST_CASE("unicode_tests", "[unicode]") {
   using namespace std::string_literals;
@@ -19,7 +18,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
   SECTION("utf32_to_bytes_poo_emoji_test") {
     const auto input = U"\x1F4A9"s;
     auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::transform::to_bytes);
+        input | skyr::unicode::transform::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x92\xa9" == bytes.value());
   }
@@ -35,7 +34,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
   SECTION("utf16_to_bytes_poo_emoji_test") {
     const auto input = u"\xd83d\xdca9"s;
     auto bytes = skyr::unicode::as<std::string>(
-        skyr::unicode::view::as_u16(input) | skyr::unicode::transform::to_bytes);
+        skyr::unicode::view::as_u16(input) | skyr::unicode::transform::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x92\xa9" == bytes.value());
   }
@@ -51,7 +50,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
   SECTION("wstring_to_bytes_poo_emoji_test") {
     const auto input = L"\xd83d\xdca9"s;
     auto bytes = skyr::unicode::as<std::string>(
-        skyr::unicode::view::as_u16(input) | skyr::unicode::transform::to_bytes);
+        skyr::unicode::view::as_u16(input) | skyr::unicode::transform::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x92\xa9" == bytes.value());
   }
@@ -67,7 +66,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
   SECTION("utf32_rainbow_flag_test") {
     const auto input = U"\x1F3F3\xFE0F\x200D\x1F308"s;
     auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::transform::to_bytes);
+        input | skyr::unicode::transform::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }
