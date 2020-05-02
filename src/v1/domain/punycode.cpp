@@ -16,16 +16,16 @@ namespace {
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
-const char32_t base = 36;
-const char32_t tmin = 1;
-const char32_t tmax = 26;
-const char32_t skew = 38;
-const char32_t damp = 700;
-const char32_t initial_bias = 72;
-const char32_t initial_n = 0x80;
-const char32_t delimiter = 0x2D;
+constexpr auto base = U'\x24';
+constexpr auto tmin = U'\x01';
+constexpr auto tmax = U'\x1a';
+constexpr auto skew = U'\x26';
+constexpr auto damp = U'\x2bc';
+constexpr auto initial_bias = U'\x48';
+constexpr auto initial_n = U'\x80';
+constexpr auto delimiter = U'\x2d';
 
-auto decode_digit(char32_t cp) {
+auto decode_digit(char32_t cp) -> char32_t {
   return ((cp - 48) < 10) ?
          (cp - 22) :
          ((cp - 65) < 26) ? (cp - 65) : ((cp - 97) < 26) ? (cp - 97) : base;
@@ -35,7 +35,7 @@ auto encode_digit(char32_t d, unsigned int flag) {
   return static_cast<char>(d + 22 + 75 * (d < 26) - ((flag != 0u) << 5u));
 }
 
-auto adapt(char32_t delta, char32_t numpoints, bool firsttime) {
+auto adapt(char32_t delta, char32_t numpoints, bool firsttime) -> char32_t {
   delta = firsttime ? delta / damp : delta >> 1u;
   delta += delta / numpoints;
 
@@ -63,7 +63,7 @@ auto punycode_encode(
   result.reserve(256);
 
   auto n = initial_n;
-  auto delta = 0U;
+  auto delta = U'\x00';
   auto bias = initial_bias;
 
   for (auto c : input) {
@@ -115,7 +115,7 @@ auto punycode_encode(
 
         result += encode_digit(q, 0);
         bias = adapt(delta, (h + 1), (h == b));
-        delta = 0;
+        delta = '\x00';
         ++h;
       }
     }
@@ -131,11 +131,10 @@ auto punycode_decode(
   auto result = std::u32string();
   result.reserve(256);
 
-  if (input.substr(0, 4).compare("xn--") == 0) {
-    input.remove_prefix(4);
-  } else {
+  if (input.substr(0, 4) != "xn--"sv) {
     return std::string(input);
   }
+  input.remove_prefix(4);
 
   auto n = initial_n;
   auto bias = initial_bias;
@@ -190,7 +189,7 @@ auto punycode_decode(
     n += i / out;
     i %= out;
 
-    result.insert(i++, 1, n);
+    result.insert(i++, 1, static_cast<char>(n));
   }
 
   return unicode::as<std::string>(result | unicode::transform::to_u8)

@@ -77,6 +77,7 @@ def main():
 #include <algorithm>
 #include <iterator>
 #include <cassert>
+#include <array>
 #include <skyr/v1/domain/idna.hpp>
 
 namespace skyr {
@@ -89,9 +90,9 @@ struct code_point_range {
   idna_status status;
 };
 
-constexpr static code_point_range statuses[] = {
+constexpr static auto statuses = std::array<code_point_range, {{ entries|length }}>{% raw %}{{{% endraw %}
 {% for code_point in entries %}  { U'\\x{{ '%04x' % code_point.range[0] }}', U'\\x{{ '%04x' % code_point.range[1] }}', idna_status::{{ code_point.status.lower() }} },
-{% endfor %}};
+{% endfor %}{% raw %}}}{% endraw %};
 }  // namespace
 
 auto map_idna_status(char32_t code_point) -> idna_status {
@@ -111,9 +112,9 @@ struct mapped_code_point {
   char32_t mapped;
 };
 
-constexpr static mapped_code_point mapped[] = {
+constexpr static auto mapped = std::array<mapped_code_point, {{ mapped_entries|length }}>{% raw %}{{{% endraw %}
 {% for code_point in mapped_entries %}{% if code_point.status in ('mapped', 'disallowed_STD3_mapped') %}  { U'\\x{{ '%04x' % code_point.range[0] }}', U'\\x{{ '%04x' % code_point.mapped }}' },
-{% endif %}{% endfor %}};
+{% endif %}{% endfor %}{% raw %}}}{% endraw %};
 }  // namespace
 
 auto map_idna_code_point(char32_t code_point) -> char32_t {

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iterator>
 #include <cassert>
+#include <array>
 #include <skyr/v1/domain/idna.hpp>
 
 namespace skyr {
@@ -18,7 +19,7 @@ struct code_point_range {
   idna_status status;
 };
 
-constexpr static code_point_range statuses[] = {
+constexpr static auto statuses = std::array<code_point_range, 2819>{{
   { U'\x0000', U'\x002c', idna_status::disallowed_std3_valid },
   { U'\x002d', U'\x002e', idna_status::valid },
   { U'\x002f', U'\x002f', idna_status::disallowed_std3_valid },
@@ -2838,7 +2839,7 @@ constexpr static code_point_range statuses[] = {
   { U'\x2fa1e', U'\xe00ff', idna_status::disallowed },
   { U'\xe0100', U'\xe01ef', idna_status::ignored },
   { U'\xe01f0', U'\x10ffff', idna_status::disallowed },
-};
+}};
 }  // namespace
 
 auto map_idna_status(char32_t code_point) -> idna_status {
@@ -2858,7 +2859,7 @@ struct mapped_code_point {
   char32_t mapped;
 };
 
-constexpr static mapped_code_point mapped[] = {
+constexpr static auto mapped = std::array<mapped_code_point, 5811>{{
   { U'\x0041', U'\x0061' },
   { U'\x0042', U'\x0062' },
   { U'\x0043', U'\x0063' },
@@ -8670,7 +8671,7 @@ constexpr static mapped_code_point mapped[] = {
   { U'\x2fa1b', U'\x9f16' },
   { U'\x2fa1c', U'\x9f3b' },
   { U'\x2fa1d', U'\x2a600' },
-};
+}};
 }  // namespace
 
 auto map_idna_code_point(char32_t code_point) -> char32_t {
