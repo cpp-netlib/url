@@ -16,12 +16,12 @@ namespace {
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
-constexpr auto base = U'\x24';
-constexpr auto tmin = U'\x01';
-constexpr auto tmax = U'\x1a';
-constexpr auto skew = U'\x26';
-constexpr auto damp = U'\x2bc';
-constexpr auto initial_bias = U'\x48';
+constexpr auto base = char32_t(36);
+constexpr auto tmin = char32_t(1);
+constexpr auto tmax = char32_t(26);
+constexpr auto skew = char32_t(38);
+constexpr auto damp = char32_t(700);
+constexpr auto initial_bias = char32_t(72);
 constexpr auto initial_n = U'\x80';
 constexpr auto delimiter = U'\x2d';
 
