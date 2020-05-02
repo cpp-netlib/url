@@ -23,49 +23,67 @@ add_library(
 target_sources(skyr-url
     PRIVATE
 
-        core/url_parser_context.hpp
-        core/url_parser_context.cpp
-        core/parse.cpp
-        core/url_parse_impl.hpp
-        core/serialize.cpp
-        domain/domain.cpp
-        domain/punycode.cpp
-        domain/idna.cpp
-        network/ipv4_address.cpp
-        network/ipv6_address.cpp
-        string/ascii.hpp
-        string/join.hpp
-        string/locale.hpp
-        string/starts_with.hpp
-        url/url.cpp
-        url/url_search_parameters.cpp
+        v1/core/url_parser_context.hpp
+        v1/core/url_parser_context.cpp
+        v1/core/parse.cpp
+        v1/core/url_parse_impl.hpp
+        v1/core/serialize.cpp
+        v1/domain/domain.cpp
+        v1/domain/punycode.cpp
+        v1/domain/idna.cpp
+        v1/network/ipv4_address.cpp
+        v1/network/ipv6_address.cpp
+        v1/string/ascii.hpp
+        v1/string/join.hpp
+        v1/string/locale.hpp
+        v1/string/starts_with.hpp
+        v1/url/url.cpp
+        v1/url/url_search_parameters.cpp
 
         ${PROJECT_BINARY_DIR}/include/skyr/version.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/config.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/ranges/string_element_range.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/errors.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/core.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/traits/iterator_value.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/traits/range_iterator.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/traits/range_value.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/views/u8_view.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/views/unchecked_u8_view.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/views/u16_view.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/byte_transform.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u16_transform.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/ranges/transforms/u32_transform.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/unicode/details/to_bytes.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/ranges/string_element_range.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/errors.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/core.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/traits/iterator_value.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/traits/range_iterator.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/traits/range_value.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/views/u8_view.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/views/unchecked_u8_view.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/views/u16_view.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/byte_transform.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u16_transform.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u32_transform.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/details/to_bytes.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/errors.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/idna.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/punycode.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/domain.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/platform/endianness.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/network/ipv4_address.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/network/ipv6_address.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/errors.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_decode_range.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_encode_range.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_encoded_char.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_decode.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_encode.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/ranges/string_element_range.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/query/query_parameter_range.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/url_record.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/parse.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/serialize.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/schemes.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/errors.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/traits/string_traits.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/url_search_parameters.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/url.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/idna.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/punycode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/domain.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/platform/endianness.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv4_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/errors.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_decode_range.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode_range.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encoded_char.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_decode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/query/query_parameter_range.hpp
@@ -74,8 +92,6 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/core/serialize.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/schemes.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/errors.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/traits/string_traits.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/url_search_parameters.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp
         )
 

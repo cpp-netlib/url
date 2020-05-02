@@ -7,7 +7,7 @@
 #include <memory>
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include <skyr/ranges/string_element_range.hpp>
+#include <skyr/v1/ranges/string_element_range.hpp>
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;

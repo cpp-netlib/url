@@ -7,11 +7,11 @@
 #include <string_view>
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/unicode/ranges/views/u8_view.hpp>
-#include <skyr/unicode/ranges/views/u16_view.hpp>
-#include <skyr/unicode/ranges/transforms/u16_transform.hpp>
-#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/unicode/ranges/transforms/byte_transform.hpp>
+#include <skyr/v1/unicode/ranges/views/u8_view.hpp>
+#include <skyr/v1/unicode/ranges/views/u16_view.hpp>
+#include <skyr/v1/unicode/ranges/transforms/u16_transform.hpp>
+#include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
+#include <skyr/v1/unicode/ranges/transforms/byte_transform.hpp>
 
 
 namespace unicode = skyr::unicode;

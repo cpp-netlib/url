@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include "skyr/domain/idna.hpp"
+#include <skyr/v1/domain/idna.hpp>
 
 TEST_CASE("IDNA character values", "[idna]") {
   using param = std::pair<char32_t, skyr::domain::idna_status>;

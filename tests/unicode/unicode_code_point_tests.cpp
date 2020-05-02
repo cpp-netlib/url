@@ -7,7 +7,7 @@
 #include <string_view>
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/unicode/code_point.hpp>
+#include <skyr/v1/unicode/code_point.hpp>
 
 
 TEST_CASE("u8 code point tests") {

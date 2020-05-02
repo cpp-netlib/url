@@ -5,8 +5,8 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
-#include <skyr/url.hpp>
-#include <skyr/url_search_parameters.hpp>
+#include <skyr/v1/url.hpp>
+#include <skyr/v1/url_search_parameters.hpp>
 
 TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
   SECTION("empty_query") {

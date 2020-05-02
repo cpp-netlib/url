@@ -7,8 +7,7 @@
 #include <catch.hpp>
 #define FMT_HEADER_ONLY
 #include <fmt/format.h>
-#include <skyr/percent_encoding/percent_decode_range.hpp>
-#include <skyr/unicode/ranges/views/u8_view.hpp>
+#include <skyr/v1/percent_encoding/percent_decode_range.hpp>
 
 
 TEST_CASE("percent_decode", "[percent_decode]") {
