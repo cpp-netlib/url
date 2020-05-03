@@ -10,8 +10,6 @@
 #include <skyr/v1/domain/punycode.hpp>
 #include <skyr/v1/ranges/string_element_range.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
-
 #include "v1/string/ascii.hpp"
 #include "v1/string/join.hpp"
 
@@ -86,7 +84,7 @@ auto unicode_to_ascii(
     return tl::make_unexpected(domain.error());
   }
 
-  auto labels = std::vector<std::u32string>{};
+  auto labels = std::vector<std::string>{};
   for (auto label : split(std::u32string_view(domain.value()), U".")) {
     if (!is_ascii(label)) {
       auto encoded = punycode_encode(label);
@@ -114,11 +112,7 @@ auto unicode_to_ascii(
     }
   }
 
-  auto utf32_domain = join(labels, U'.');
-  return unicode::as<std::string>(utf32_domain | unicode::transform::to_u8)
-      .or_else([](auto) -> tl::expected<std::string, std::error_code> {
-        return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
-      });
+  return join(labels, '.');
 }
 }  // namespace
 

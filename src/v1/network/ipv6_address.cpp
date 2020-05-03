@@ -36,28 +36,17 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
   auto first = begin(input), last = end(input);
   auto it = first;
 
-  if (it == last) {
+  if (starts_with(input, "::"sv)) {
+    std::advance(it, 2);
+    ++piece_index;
+    compress = piece_index;
+  }
+  else if (input.empty() || starts_with(input, ":"sv)) {
     return
         std::make_pair(
             tl::make_unexpected(
                 make_error_code(
                     ipv6_address_errc::does_not_start_with_double_colon)), true);
-  }
-
-  if (*it == ':') {
-    auto next_it = it;
-    ++next_it;
-    if (!starts_with(input.substr(std::distance(std::begin(input), next_it)), ":"sv)) {
-      return
-          std::make_pair(
-              tl::make_unexpected(
-                  make_error_code(
-                      ipv6_address_errc::does_not_start_with_double_colon)), true);
-    }
-
-    std::advance(it, 2);
-    ++piece_index;
-    compress = piece_index;
   }
 
   while (it != last) {
