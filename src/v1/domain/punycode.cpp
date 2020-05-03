@@ -16,35 +16,56 @@ namespace {
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
-const char32_t base = 36;
-const char32_t tmin = 1;
-const char32_t tmax = 26;
-const char32_t skew = 38;
-const char32_t damp = 700;
-const char32_t initial_bias = 72;
-const char32_t initial_n = 0x80;
-const char32_t delimiter = 0x2D;
+constexpr auto base = 0x24u;
+constexpr auto tmin = 0x01u;
+constexpr auto tmax = 0x1au;
+constexpr auto skew = 0x26u;
+constexpr auto damp = 0x2bcu;
+constexpr auto initial_bias = 0x48u;
+constexpr auto initial_n = 0x80u;
+constexpr auto delimiter = 0x2du;
 
-auto decode_digit(char32_t cp) {
-  return ((cp - 48) < 10) ?
-         (cp - 22) :
-         ((cp - 65) < 26) ? (cp - 65) : ((cp - 97) < 26) ? (cp - 97) : base;
+// decode_digit(cp) returns the numeric value of a basic code
+// point (for use in representing integers) in the range 0 to
+// base-1, or base if cp is does not represent a value.
+constexpr inline auto decode_digit(uint32_t cp) -> uint32_t {
+  constexpr auto zero = 0x30u;
+  constexpr auto upper_a = 0x41u;
+  constexpr auto lower_a = 0x61u;
+
+  if ((cp - zero) < 0x10u) {
+    return cp - 0x16u;
+  }
+  else if ((cp - upper_a) < 0x1au) {
+    return (cp - upper_a);
+  }
+  else if ((cp - lower_a) < 0x1au) {
+    return (cp - lower_a);
+  }
+  return base;
 }
 
-auto encode_digit(char32_t d, unsigned int flag) {
-  return static_cast<char>(d + 22 + 75 * (d < 26) - ((flag != 0u) << 5u));
+// encode_digit(d,flag) returns the basic code point whose value
+// (when used for representing integers) is d, which needs to be in
+// the range 0 to base-1.  The lowercase form is used unless flag is
+// nonzero, in which case the uppercase form is used.  The behavior
+// is undefined if flag is nonzero and digit d has no uppercase form.
+constexpr inline auto encode_digit(uint32_t d, uint32_t flag) -> uint32_t {
+  return d + 0x16u + (0x4bu * (d < 0x1au)) - ((flag != 0x0u) << 0x5u);
+  //  0..25 map to ASCII a..z or A..Z
+  // 26..35 map to ASCII 0..9
 }
 
-auto adapt(char32_t delta, char32_t numpoints, bool firsttime) {
+auto adapt(uint32_t delta, uint32_t numpoints, bool firsttime) {
   delta = firsttime ? delta / damp : delta >> 1u;
   delta += delta / numpoints;
 
-  auto k = U'\x00';
-  while (delta > ((base - tmin) * tmax) / 2) {
+  auto k = 0x00u;
+  while (delta > ((base - tmin) * tmax) / 2u) {
     delta /= base - tmin;
     k += base;
   }
-  return k + (base - tmin + 1) * delta / (delta + skew);
+  return k + (base - tmin + 1u) * delta / (delta + skew);
 }
 }  // namespace
 
@@ -63,11 +84,11 @@ auto punycode_encode(
   result.reserve(256);
 
   auto n = initial_n;
-  auto delta = 0U;
+  auto delta = 0x00u;
   auto bias = initial_bias;
 
   for (auto c : input) {
-    if (c < 0x80) {
+    if (static_cast<uint32_t>(c) < 0x80u) {
       result += static_cast<char>(c);
     }
   }
@@ -75,32 +96,32 @@ auto punycode_encode(
   auto h = static_cast<char32_t>(result.size());
   auto b = static_cast<char32_t>(result.size());
 
-  if (b > 0) {
-    result += delimiter;
+  if (b > 0x00u) {
+    result += static_cast<char>(delimiter);
   }
 
   while (h < input.size()) {
-    auto m = std::numeric_limits<char32_t>::max();
+    auto m = std::numeric_limits<uint32_t>::max();
     for (auto c : input) {
-      if ((c >= n) && (c < m)) {
+      if ((static_cast<uint32_t>(c) >= n) && (static_cast<uint32_t>(c) < m)) {
         m = c;
       }
     }
 
-    if ((m - n) > ((std::numeric_limits<char32_t>::max() - delta) / (h + 1))) {
+    if ((m - n) > ((std::numeric_limits<uint32_t>::max() - delta) / (h + 1u))) {
       return tl::make_unexpected(make_error_code(domain_errc::overflow));
     }
-    delta += (m - n) * (h + 1);
+    delta += (m - n) * (h + 1u);
     n = m;
 
     for (auto c : input) {
-      if (c < n) {
-        if (++delta == 0) {
+      if (static_cast<uint32_t>(c) < n) {
+        if (++delta == 0u) {
           return tl::make_unexpected(make_error_code(domain_errc::overflow));
         }
       }
 
-      if (c == n) {
+      if (static_cast<uint32_t>(c) == n) {
         auto q = delta;
         auto k = uint32_t(base);
         while (true) {
@@ -108,12 +129,12 @@ auto punycode_encode(
           if (q < t) {
             break;
           }
-          result += encode_digit(t + (q - t) % (base - t), 0);
+          result += static_cast<char>(encode_digit(t + (q - t) % (base - t), 0));
           q = (q - t) / (base - t);
           k += base;
         }
 
-        result += encode_digit(q, 0);
+        result += static_cast<char>(encode_digit(q, 0));
         bias = adapt(delta, (h + 1), (h == b));
         delta = 0;
         ++h;
@@ -131,32 +152,31 @@ auto punycode_decode(
   auto result = std::u32string();
   result.reserve(256);
 
-  if (input.substr(0, 4).compare("xn--") == 0) {
-    input.remove_prefix(4);
-  } else {
+  if (input.substr(0, 4) != "xn--"sv) {
     return std::string(input);
   }
+  input.remove_prefix(4);
 
   auto n = initial_n;
   auto bias = initial_bias;
 
-  auto basic = 0U;
-  for (auto j = 0U; j < input.size(); ++j) {
+  auto basic = 0x0u;
+  for (auto j = 0u; j < input.size(); ++j) {
     if (input[j] == delimiter) {
       basic = j;
     }
   }
 
-  for (auto j = 0U; j < basic; ++j) {
+  for (auto j = 0u; j < basic; ++j) {
     result += input[j];
   }
 
-  auto in = (basic > U'\x00') ? (basic + U'\x01') : U'\x00';
-  auto i = U'\x00';
+  auto in = (basic > 0x0u) ? (basic + 0x01u) : 0x00u;
+  auto i = 0x00u;
   while (in < input.size()) {
     auto oldi = i;
 
-    auto w = U'\x01';
+    auto w = 0x01u;
     auto k = base;
     while (true) {
       if (in >= input.size()) {
@@ -166,7 +186,7 @@ auto punycode_decode(
       if (digit >= base) {
         return tl::make_unexpected(make_error_code(domain_errc::bad_input));
       }
-      if (digit > ((std::numeric_limits<char32_t>::max() - i) / w)) {
+      if (digit > ((std::numeric_limits<uint32_t>::max() - i) / w)) {
         return tl::make_unexpected(make_error_code(domain_errc::overflow));
       }
       i += digit * w;
@@ -174,23 +194,23 @@ auto punycode_decode(
       if (digit < t) {
         break;
       }
-      if (w > (std::numeric_limits<char32_t>::max() / (base - t))) {
+      if (w > (std::numeric_limits<uint32_t>::max() / (base - t))) {
         return tl::make_unexpected(make_error_code(domain_errc::overflow));
       }
       w *= (base - t);
       k += base;
     }
 
-    auto out = static_cast<char32_t>(result.size() + 1U);
+    auto out = result.size() + 1U;
     bias = adapt((i - oldi), out, (oldi == 0U));
 
-    if ((i / out) > (std::numeric_limits<char32_t>::max() - n)) {
+    if ((i / out) > (std::numeric_limits<uint32_t>::max() - n)) {
       return tl::make_unexpected(make_error_code(domain_errc::overflow));
     }
     n += i / out;
     i %= out;
 
-    result.insert(i++, 1, n);
+    result.insert(i++, 1, static_cast<char32_t>(n));
   }
 
   return unicode::as<std::string>(result | unicode::transform::to_u8)
