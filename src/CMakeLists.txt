@@ -12,9 +12,7 @@ configure_file(
 # skyr-url
 #################################################
 
-add_library(
-        skyr-url
-)
+add_library(skyr-url STATIC)
 
 target_sources(skyr-url
     PRIVATE
@@ -124,23 +122,18 @@ elseif(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
     if (skyr_BUILD_WITHOUT_RTTI)
         target_compile_options(skyr-url PRIVATE "/GR-")
     endif()
+
+    target_compile_definitions(skyr-url -D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
 endif()
 
-if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (skyr_BUILD_WITH_LLVM_LIBCXX)
-        target_compile_options(skyr-url PRIVATE "-stdlib=libc++")
-    endif()
+if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})
+    target_compile_options(skyr-url PRIVATE "-stdlib=libc++")
 endif()
 
 target_link_libraries(skyr-url PUBLIC tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})
-    target_link_libraries(skyr-url PUBLIC "c++")
+    target_link_libraries(skyr-url PRIVATE "c++")
 endif()
-
-set_target_properties(skyr-url PROPERTIES
-        VERSION ${PROJECT_VERSION}
-        SOVERSION 1
-        POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(skyr-url
     PUBLIC
@@ -149,10 +142,6 @@ target_include_directories(skyr-url
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
     PRIVATE
         ${PROJECT_SOURCE_DIR}/src)
-
-if(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
-    target_compile_definitions(skyr-url -D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
-endif()
 
 #################################################
 # skyr-filesystem
