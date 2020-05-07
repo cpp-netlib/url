@@ -36,51 +36,11 @@ if (skyr_ENABLE_JSON_FUNCTIONS)
     find_package(nlohmann_json CONFIG REQUIRED)
 endif()
 
-if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR
-    ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (skyr_FULL_WARNINGS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-    endif()
-
-    if (skyr_WARNINGS_AS_ERRORS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-    endif()
-
-    if (skyr_BUILD_WITHOUT_EXCEPTIONS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
-    endif()
-
-    if (skyr_BUILD_WITHOUT_RTTI)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
-    endif()
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wmissing-declarations")
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
-    if(DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1900)
-        message(FATAL_ERROR "Requires VS 2017 or later")
-    endif()
-
-    if (skyr_BUILD_WITHOUT_RTTI)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /GR-")
-    endif()
-
-    if (skyr_USE_STATIC_CRT)
-        # Replace dynamic MSVCRT linker flags with static version.
-        foreach(flag_var
-                CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-                CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-            if(${flag_var} MATCHES "/MD")
-                string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-            endif(${flag_var} MATCHES "/MD")
-        endforeach(flag_var)
-    endif(skyr_USE_STATIC_CRT)
+if (skyr_USE_STATIC_CRT AND ${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
+    include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-functions.cmake)
+    skyr_replace_dynamic_msvcrt_linker_flags()
 endif()
 
-if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (skyr_BUILD_WITH_LLVM_LIBCXX)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-    endif()
-endif()
 
 add_subdirectory(src)
 

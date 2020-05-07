@@ -91,6 +91,47 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp
         )
 
+if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR
+        ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+    if (skyr_FULL_WARNINGS)
+        target_compile_options(skyr-url PRIVATE "-Wall")
+    endif()
+
+    if (skyr_WARNINGS_AS_ERRORS)
+        target_compile_options(skyr-url PRIVATE "-Werror")
+    endif()
+
+    if (skyr_BUILD_WITHOUT_EXCEPTIONS)
+        target_compile_options(skyr-url PRIVATE "-fno-exceptions")
+    endif()
+
+    if (skyr_BUILD_WITHOUT_RTTI)
+        target_compile_options(skyr-url PRIVATE "-fno-rtti")
+    endif()
+elseif(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
+    if (skyr_FULL_WARNINGS)
+        target_compile_options(skyr-url PRIVATE "/W4")
+    endif()
+
+    if (skyr_WARNINGS_AS_ERRORS)
+        target_compile_options(skyr-url PRIVATE "/WX")
+    endif()
+
+    if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
+        target_compile_options(skyr-url PRIVATE "/EHsc")
+    endif()
+
+    if (skyr_BUILD_WITHOUT_RTTI)
+        target_compile_options(skyr-url PRIVATE "/GR-")
+    endif()
+endif()
+
+if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+    if (skyr_BUILD_WITH_LLVM_LIBCXX)
+        target_compile_options(skyr-url PRIVATE "-stdlib=libc++")
+    endif()
+endif()
+
 target_link_libraries(skyr-url PUBLIC tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})
     target_link_libraries(skyr-url PUBLIC "c++")
