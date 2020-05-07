@@ -201,7 +201,7 @@ auto punycode_decode(
       k += base;
     }
 
-    auto out = result.size() + 1U;
+    auto out = static_cast<std::uint32_t>(result.size()) + 1U;
     bias = adapt((i - oldi), out, (oldi == 0U));
 
     if ((i / out) > (std::numeric_limits<uint32_t>::max() - n)) {
