@@ -129,6 +129,12 @@ endif()
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})
     target_compile_options(skyr-url PRIVATE "-stdlib=libc++")
 endif()
+if(${skyr_USE_BOOST_FILESYSTEM})
+    target_compile_definitions(skyr-url PUBLIC
+        SKYR_USE_BOOST_FILESYSTEM=1
+        BOOST_FILESYSTEM_NO_DEPRECATED=1)
+    target_link_libraries(skyr-url PUBLIC Boost::filesystem)
+endif()
 
 target_link_libraries(skyr-url PUBLIC tl::expected)
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})

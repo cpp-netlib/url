@@ -6,7 +6,7 @@
 #ifndef SKYR_V1_FILESYSTEM_CONFIG_HPP
 #define SKYR_V1_FILESYSTEM_CONFIG_HPP
 
-#if !defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
+#if !defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM) && !defined(SKYR_USE_BOOST_FILESYSTEM)
 #if !defined(__clang__) && (defined(__GNUC__) && __GNUC__ < 8)
 #define SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM
 #endif  // !defined(__clang__) && (defined(__GNUC__) && __GNUC__ < 8)

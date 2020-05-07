@@ -14,6 +14,10 @@
 #define SKYR_FILESYSTEM_HEADER() <experimental/filesystem>
 #define SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(name) \
 namespace name = std::experimental::filesystem;
+#elif defined(SKYR_USE_BOOST_FILESYSTEM)
+#define SKYR_FILESYSTEM_HEADER() <boost/filesystem.hpp>
+#define SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(name) \
+namespace name = boost::filesystem;
 #else
 #define SKYR_FILESYSTEM_HEADER() <filesystem>
 #define SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(name) \
@@ -72,7 +76,7 @@ inline auto make_error_code(path_errc error) noexcept -> std::error_code {
 /// \param path A filesystem path
 /// \returns a url object or an error on failure
 inline auto from_path(const stdfs::path &path) -> tl::expected<url, std::error_code> {
-  return make_url("file://" + path.generic_u8string());
+  return make_url("file://" + path.generic_string());
 }
 
 /// Converts a URL pathname to a filesystem path

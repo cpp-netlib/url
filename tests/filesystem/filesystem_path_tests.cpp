@@ -10,6 +10,8 @@
 
 #if defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
 namespace stdfs = std::experimental::filesystem;
+#elif defined(SKYR_USE_BOOST_FILESYSTEM)
+namespace stdfs = boost::filesystem;
 #else
 namespace stdfs = std::filesystem;
 #endif // defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)

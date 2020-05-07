@@ -24,6 +24,7 @@ option(skyr_BUILD_WITHOUT_RTTI "Build without RTTI." OFF)
 option(skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
 option(skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
 option(skyr_ENABLE_JSON_FUNCTIONS "Enable functions to convert URL components to JSON" ON)
+option(skyr_USE_BOOST_FILESYSTEM "Build with boost::filesystem instead of std::filesystem." OFF)
 
 set(CMAKE_VERBOSE_MAKEFILE true)
 set(CMAKE_CXX_STANDARD 17)
@@ -34,6 +35,10 @@ find_package(tl-expected CONFIG REQUIRED)
 
 if (skyr_ENABLE_JSON_FUNCTIONS)
     find_package(nlohmann_json CONFIG REQUIRED)
+endif()
+
+if (skyr_USE_BOOST_FILESYSTEM)
+    find_package(Boost 1.60.0 COMPONENTS filesystem REQUIRED)
 endif()
 
 if (skyr_USE_STATIC_CRT AND ${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
