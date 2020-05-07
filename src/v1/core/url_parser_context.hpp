@@ -26,8 +26,7 @@ class url_parser_context {
 
  private:
 
-  std::string input;
-  std::string_view view;
+  std::string_view input;
 
  public:
 
@@ -52,21 +51,21 @@ class url_parser_context {
       std::optional<url_parse_state> state_override=std::nullopt);
 
   [[nodiscard]] auto is_eof() const noexcept {
-    return it == end(view);
+    return it == end(input);
   }
 
   void increment() noexcept {
-    assert(it != end(view));
+    assert(it != end(input));
     ++it;
   }
 
   void decrement() noexcept {
-    assert(it != begin(view));
+    assert(it != begin(input));
     --it;
   }
 
   void reset() noexcept {
-    it = begin(view);
+    it = begin(input);
   }
 
   void restart_from_buffer() noexcept {

@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <skyr/v1/core/parse.hpp>
+#include <skyr/v1/core/check_input.hpp>
 #include <skyr/v1/core/errors.hpp>
 #include "url_parse_impl.hpp"
 #include "url_parser_context.hpp"
@@ -21,7 +22,7 @@ auto basic_parse(
   using url_parse_func = std::function<return_type(url_parser_context &, char)>;
   using url_parse_funcs = std::vector<url_parse_func>;
 
-  auto parse_funcs = url_parse_funcs{
+  const static auto parse_funcs = url_parse_funcs{
       [](auto &context,
           auto byte) -> tl::expected<url_parse_action, url_parse_errc> {
          return context.parse_scheme_start(byte);
@@ -108,8 +109,13 @@ auto basic_parse(
        }
   };
 
+  input = remove_leading_c0_control_or_space(input);
+  input = remove_trailing_c0_control_or_space(input);
+  auto input_ = std::string(input);
+  remove_tabs_and_newlines(input_);
+
   auto context = url_parser_context(
-      input, base, url, state_override);
+      input_, base, url, state_override);
 
   while (true) {
     auto func = parse_funcs[static_cast<std::size_t>(context.state)];
