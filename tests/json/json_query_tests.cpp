@@ -5,7 +5,7 @@
 
 
 #define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <vector>
 #include <skyr/json/json.hpp>
 

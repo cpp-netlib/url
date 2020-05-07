@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <memory>
 #define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <skyr/v1/ranges/string_element_range.hpp>
 
 using namespace std::string_literals;

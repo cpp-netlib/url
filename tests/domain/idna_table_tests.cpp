@@ -4,7 +4,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 
 #define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <skyr/v1/domain/idna.hpp>
 
 TEST_CASE("IDNA character values", "[idna]") {
@@ -15,7 +15,7 @@ TEST_CASE("IDNA character values", "[idna]") {
           param{0x002d, skyr::domain::idna_status::valid},
           param{0x10fffd, skyr::domain::idna_status::disallowed},
           param{0x10ffff, skyr::domain::idna_status::disallowed});
-  
+
   SECTION("code_point_set") {
     const auto [value, mapped] = code_point;
     REQUIRE(mapped == skyr::domain::map_idna_status(value));

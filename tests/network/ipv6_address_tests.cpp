@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <skyr/network/ipv6_address.hpp>
 
 TEST_CASE("ipv6_address_tests", "[ipv6]") {

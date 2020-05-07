@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <memory>
 #define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <skyr/url.hpp>
 
 TEST_CASE("url_tests", "[url]") {
