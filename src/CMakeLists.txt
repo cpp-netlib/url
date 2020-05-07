@@ -65,6 +65,7 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/query/query_parameter_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/url_record.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/parse.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/check_input.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/serialize.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/schemes.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/errors.hpp

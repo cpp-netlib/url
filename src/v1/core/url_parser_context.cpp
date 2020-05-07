@@ -9,6 +9,7 @@
 #include <skyr/v1/network/ipv4_address.hpp>
 #include <skyr/v1/network/ipv6_address.hpp>
 #include <skyr/v1/domain/domain.hpp>
+#include <skyr/v1/core/check_input.hpp>
 #include <skyr/v1/core/schemes.hpp>
 #include <skyr/v1/percent_encoding/percent_decode_range.hpp>
 #include "v1/string/starts_with.hpp"
@@ -28,39 +29,39 @@ inline auto contains(
   return last != std::find(first, last, byte);
 }
 
-constexpr static auto is_not_c0_control_or_whitespace = [] (auto byte) {
-  return !is_c0_control_or_whitespace(byte);
-};
-
-constexpr static auto is_tab_or_whitespace = [] (auto byte) {
-  return contains(byte, "\t\r\n"sv);
-};
-
-auto remove_leading_whitespace(std::string &input) {
-  auto first = begin(input), last = end(input);
-  auto it = std::find_if(first, last, is_not_c0_control_or_whitespace);
-  if (it != first) {
-    input.assign(it, last);
-  }
-  return it == first;
-}
-
-auto remove_trailing_whitespace(std::string &input) {
-  auto first = rbegin(input), last = rend(input);
-  auto it = std::find_if(first, last, is_not_c0_control_or_whitespace);
-  if (it != first) {
-    input = std::string(it, last);
-    std::reverse(begin(input), end(input));
-  }
-  return it == first;
-}
-
-auto remove_tabs_and_newlines(std::string &input) {
-  auto first = begin(input), last = end(input);
-  auto it = std::remove_if(first, last, is_tab_or_whitespace);
-  input.erase(it, end(input));
-  return it == last;
-}
+//constexpr static auto is_not_c0_control_or_space = [] (auto byte) {
+//  return !is_c0_control_or_whitespace(byte);
+//};
+//
+//constexpr static auto is_tab_or_carriage_return = [] (auto byte) {
+//  return contains(byte, "\t\r\n"sv);
+//};
+//
+//auto remove_leading_whitespace(std::string &input) {
+//  auto first = begin(input), last = end(input);
+//  auto it = std::find_if(first, last, is_not_c0_control_or_space);
+//  if (it != first) {
+//    input.assign(it, last);
+//  }
+//  return it == first;
+//}
+//
+//auto remove_trailing_whitespace(std::string &input) {
+//  auto first = rbegin(input), last = rend(input);
+//  auto it = std::find_if(first, last, is_not_c0_control_or_space);
+//  if (it != first) {
+//    input = std::string(it, last);
+//    std::reverse(begin(input), end(input));
+//  }
+//  return it == first;
+//}
+//
+//auto remove_tabs_and_newlines(std::string &input) {
+//  auto first = begin(input), last = end(input);
+//  auto it = std::remove_if(first, last, is_tab_or_carriage_return);
+//  input.erase(it, end(input));
+//  return it == last;
+//}
 
 inline auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
   using namespace std::string_view_literals;
@@ -246,9 +247,13 @@ url_parser_context::url_parser_context(
     , at_flag(false)
     , square_braces_flag(false)
     , password_token_seen_flag(false) {
-  this->url.validation_error |= !remove_leading_whitespace(this->input);
-  this->url.validation_error |= !remove_trailing_whitespace(this->input);
-  this->url.validation_error |= !remove_tabs_and_newlines(this->input);
+//  this->url.validation_error |= !remove_leading_whitespace(this->input);
+//  this->url.validation_error |= !remove_trailing_whitespace(this->input);
+//  this->url.validation_error |= !remove_tabs_and_newlines(this->input);
+  view = remove_leading_c0_control_or_space(this->input);
+  view = remove_trailing_c0_control_or_space(view);
+  this->input = std::string(view);
+  remove_tabs_and_newlines(this->input);
 
   view = std::string_view(this->input);
   it = begin(view);
