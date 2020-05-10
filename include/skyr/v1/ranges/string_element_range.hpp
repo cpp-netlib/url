@@ -40,7 +40,6 @@ class string_element_iterator {
       : view_(s)
       , separators_(separators)
       , separator_index_(std::min(view_.find_first_of(separators_), view_.size()))
-      , check_last_(0)
   {
     if (!view_.empty()) {
       auto index = view_.substr(view_.size() - 1).find_first_of(separators_);

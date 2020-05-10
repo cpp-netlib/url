@@ -73,7 +73,7 @@ inline auto make_error_code(ipv6_address_errc error) -> std::error_code {
 /// Represents an IPv6 address
 class ipv6_address {
 
-  std::array<unsigned short, 8> address_ = {0, 0, 0, 0, 0, 0, 0, 0};
+  std::array<std::uint16_t, 8> address_ = {0, 0, 0, 0, 0, 0, 0, 0};
 
  public:
 
@@ -82,8 +82,8 @@ class ipv6_address {
 
   /// Constructor
   /// \param address Sets the IPv6 address to `address`
-  explicit ipv6_address(std::array<unsigned short, 8> address) {
-    constexpr static auto network_byte_order = [] (auto v) { return to_network_byte_order<unsigned short>(v); };
+  explicit ipv6_address(std::array<std::uint16_t, 8> address) {
+    constexpr static auto network_byte_order = [] (auto v) { return to_network_byte_order<std::uint16_t>(v); };
 
     std::transform(
         begin(address), end(address),
@@ -93,11 +93,11 @@ class ipv6_address {
 
   /// The address in bytes in network byte order
   /// \returns The address in bytes
-  [[nodiscard]] auto to_bytes() const noexcept -> std::array<unsigned char, 16> {
-    std::array<unsigned char, 16> bytes{};
+  [[nodiscard]] auto to_bytes() const noexcept -> std::array<std::byte, 16> {
+    std::array<std::byte, 16> bytes{};
     for (auto i = 0UL; i < address_.size(); ++i) {
-      bytes[i * 2    ] = static_cast<unsigned char>(address_[i] >> 8u); // NOLINT
-      bytes[i * 2 + 1] = static_cast<unsigned char>(address_[i]); // NOLINT
+      bytes[i * 2    ] = static_cast<std::byte>(address_[i] >> 8u); // NOLINT
+      bytes[i * 2 + 1] = static_cast<std::byte>(address_[i]); // NOLINT
     }
     return bytes;
   }

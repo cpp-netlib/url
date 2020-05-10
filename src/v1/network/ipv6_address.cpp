@@ -29,7 +29,7 @@ inline auto hex_to_dec(char byte) noexcept {
 namespace details {
 namespace {
 auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_address, std::error_code>, bool> {
-  auto address = std::array<unsigned short, 8>{{0, 0, 0, 0, 0, 0, 0, 0}};
+  auto address = std::array<std::uint16_t, 8>{{0, 0, 0, 0, 0, 0, 0, 0}};
   auto piece_index = 0;
   auto compress = std::optional<decltype(piece_index)>();
 

@@ -11,13 +11,13 @@ TEST_CASE("ipv6_address_tests", "[ipv6]") {
   using namespace std::string_literals;
 
   SECTION("zero_test") {
-    auto address = std::array<unsigned short, 8>{{0, 0, 0, 0, 0, 0, 0, 0}};
+    auto address = std::array<std::uint16_t, 8>{{0, 0, 0, 0, 0, 0, 0, 0}};
     auto instance = skyr::ipv6_address(address);
     CHECK("::" == instance.serialize());
   }
 
   SECTION("loopback_test") {
-    auto address = std::array<unsigned short, 8>{{0, 0, 0, 0, 0, 0, 0, 1}};
+    auto address = std::array<std::uint16_t, 8>{{0, 0, 0, 0, 0, 0, 0, 1}};
     auto instance = skyr::ipv6_address(address);
     CHECK("::1" == instance.serialize());
   }
@@ -135,12 +135,14 @@ TEST_CASE("ipv6_address_tests", "[ipv6]") {
   }
 
   SECTION("loopback_test") {
-    auto address = std::array<unsigned short, 8>{{0, 0, 0, 0, 0, 0, 0, 1}};
+    auto address = std::array<std::uint16_t, 8>{{0, 0, 0, 0, 0, 0, 0, 1}};
     auto instance = skyr::ipv6_address(address);
-    std::array<unsigned char, 16> bytes{
-      {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-      }};
+    auto bytes = std::array<std::byte, 16>({
+       std::byte(0x00), std::byte(0x00), std::byte(0x00), std::byte(0x00),
+       std::byte(0x00), std::byte(0x00), std::byte(0x00), std::byte(0x00),
+       std::byte(0x00), std::byte(0x00), std::byte(0x00), std::byte(0x00),
+       std::byte(0x00), std::byte(0x00), std::byte(0x00), std::byte(0x01),
+    });
     CHECK(bytes == instance.to_bytes());
   }
 }

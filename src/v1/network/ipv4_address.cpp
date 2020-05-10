@@ -144,7 +144,7 @@ auto parse_ipv4_address(std::string_view input)
     ++counter;
   }
   return std::make_pair(
-      ipv4_address(static_cast<unsigned int>(ipv4)), validation_error);
+      ipv4_address(static_cast<std::uint32_t>(ipv4)), validation_error);
 }
 }  // namespace
 }  // namespace details

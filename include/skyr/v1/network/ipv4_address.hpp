@@ -65,7 +65,7 @@ inline auto make_error_code(ipv4_address_errc error) -> std::error_code {
 /// Represents an IPv4 address
 class ipv4_address {
 
-  unsigned int address_ = 0;
+  std::int32_t address_ = 0;
 
  public:
 
@@ -74,7 +74,7 @@ class ipv4_address {
 
    /// Constructor
    /// \param address Sets the IPv4 address to `address`
-  explicit ipv4_address(unsigned int address)
+  explicit ipv4_address(std::int32_t address)
       : address_(to_network_byte_order(address)) {}
 
   /// The address value
@@ -85,27 +85,26 @@ class ipv4_address {
 
   /// The address in bytes in network byte order
   /// \returns The address in bytes
-  [[nodiscard]] auto to_bytes() const noexcept -> std::array<unsigned char, 4> {
+  [[nodiscard]] auto to_bytes() const noexcept -> std::array<std::byte, 4> {
     return {{
-      static_cast<unsigned char>(address_ >> 24u),
-      static_cast<unsigned char>(address_ >> 16u),
-      static_cast<unsigned char>(address_ >>  8u),
-      static_cast<unsigned char>(address_)
+      static_cast<std::byte>(address_ >> 24u),
+      static_cast<std::byte>(address_ >> 16u),
+      static_cast<std::byte>(address_ >>  8u),
+      static_cast<std::byte>(address_)
     }};
   }
 
   /// \returns The address as a string
-  [[nodiscard]] auto serialize() const
-      -> std::string {
+  [[nodiscard]] auto serialize() const -> std::string {
     using namespace std::string_literals;
 
     auto output = ""s;
 
     auto n = address_;
     for (auto i = 1U; i <= 4U; ++i) {
-      output = std::to_string(n % 256) + output; // NOLINT
+      output = std::to_string(n % 256u) + output; // NOLINT
 
-      if (i != 4) {
+      if (i != 4u) {
         output = "." + output; // NOLINT
       }
 

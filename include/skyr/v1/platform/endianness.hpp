@@ -13,8 +13,8 @@ namespace skyr {
 inline namespace v1 {
 inline auto is_big_endian() noexcept {
   const auto word = 0x0001;
-  auto bytes = static_cast<const unsigned char *>(static_cast<const void *>(&word));
-  return bytes[0] != 0x01;
+  auto bytes = static_cast<const std::byte *>(static_cast<const void *>(&word));
+  return bytes[0] != std::byte(0x01); // NOLINT
 }
 
 namespace details {
@@ -22,9 +22,9 @@ template <typename intT>
 inline auto swap_endianness(
     intT v, typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) noexcept -> intT {
   constexpr auto byte_count = sizeof(v);
-  std::array<unsigned char, byte_count> bytes{};
+  std::array<std::byte, byte_count> bytes{};
   for (auto i = 0UL; i < byte_count; ++i) {
-    bytes[i] = static_cast<unsigned char>(v >> (i * 8));
+    bytes[i] = static_cast<std::byte>(v >> (i * 8));
   }
   return *static_cast<const intT *>(static_cast<const void *>(bytes.data()));
 }
