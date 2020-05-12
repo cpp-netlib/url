@@ -21,7 +21,6 @@ target_sources(skyr-url
         v1/core/url_parser_context.cpp
         v1/core/parse.cpp
         v1/core/url_parse_impl.hpp
-        v1/core/serialize.cpp
         v1/domain/domain.cpp
         v1/domain/punycode.cpp
         v1/domain/idna.cpp

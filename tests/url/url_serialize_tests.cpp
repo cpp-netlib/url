@@ -10,7 +10,6 @@
 #include <skyr/core/serialize.hpp>
 
 TEST_CASE("url_serialize_tests", "[ipv6]") {
-
   SECTION("url_serialize_1") {
     auto instance = skyr::parse("https:example.org");
     REQUIRE(instance);
@@ -122,5 +121,17 @@ TEST_CASE("url_serialize_tests", "[ipv6]") {
     auto instance = skyr::parse("http://[1080:0:0:0:8:800:200C:417A]/");
     REQUIRE(instance);
     CHECK("http://[1080::8:800:200c:417a]/" == skyr::serialize(instance.value()));
+  }
+
+  SECTION("url_serialize_with_fragment") {
+    auto instance = skyr::parse("https://example.org#horse");
+    REQUIRE(instance);
+    CHECK("https://example.org/#horse" == skyr::serialize(instance.value()));
+  }
+
+  SECTION("url_serialize_excluding_fragment") {
+    auto instance = skyr::parse("https://example.org#horse");
+    REQUIRE(instance);
+    CHECK("https://example.org/" == skyr::serialize_excluding_fragment(instance.value()));
   }
 }
