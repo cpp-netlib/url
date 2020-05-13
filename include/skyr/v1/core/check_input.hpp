@@ -18,7 +18,7 @@ constexpr static auto is_not_c0_control_or_space = [] (auto byte) {
 inline auto remove_leading_c0_control_or_space(std::string_view input, bool *validation_error) {
   auto first = begin(input), last = end(input);
   auto it = std::find_if(first, last, is_not_c0_control_or_space);
-  *validation_error |= (it != last);
+  *validation_error |= (it != first);
   input.remove_prefix(std::distance(first, it));
   return input;
 }
@@ -26,7 +26,7 @@ inline auto remove_leading_c0_control_or_space(std::string_view input, bool *val
 inline auto remove_trailing_c0_control_or_space(std::string_view input, bool *validation_error) {
   auto first = rbegin(input), last = rend(input);
   auto it = std::find_if(first, last, is_not_c0_control_or_space);
-  *validation_error |= (it != last);
+  *validation_error |= (it != first);
   input.remove_suffix(std::distance(first, it));
   return input;
 }

@@ -73,8 +73,10 @@ auto parse_host(
     auto view = std::string_view(input);
     view.remove_prefix(1);
     view.remove_suffix(1);
-    auto ipv6_address = parse_ipv6_address(view, validation_error);
+    bool ipv6_validation_error = false;
+    auto ipv6_address = parse_ipv6_address(view, &ipv6_validation_error);
     if (ipv6_address) {
+      *validation_error = ipv6_validation_error;
       return "[" + ipv6_address.value().serialize() + "]";
     }
     else {
@@ -104,7 +106,8 @@ auto parse_host(
     return tl::make_unexpected(url_parse_errc::domain_error);
   }
 
-  auto host = parse_ipv4_address(ascii_domain.value(), validation_error);
+  bool ipv4_validation_error = false;
+  auto host = parse_ipv4_address(ascii_domain.value(), &ipv4_validation_error);
   if (!host) {
     if (host.error() == make_error_code(ipv4_address_errc::overflow)) {
       return tl::make_unexpected(url_parse_errc::invalid_ipv4_address);
@@ -113,6 +116,7 @@ auto parse_host(
       return ascii_domain.value();
     }
   }
+  *validation_error = ipv4_validation_error;
   return host.value().serialize();
 }
 
