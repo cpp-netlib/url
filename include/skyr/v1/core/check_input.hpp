@@ -39,7 +39,13 @@ constexpr static auto is_tab_or_newline = [] (auto byte) {
 inline auto remove_tabs_and_newlines(std::string &input) {
   auto first = begin(input), last = end(input);
   auto it = std::remove_if(first, last, is_tab_or_newline);
-  input.assign(first, it);
+  input.erase(it, last);
+}
+
+inline auto preprocess_input(std::string_view input) {
+  auto result = std::string(remove_trailing_c0_control_or_space(remove_leading_c0_control_or_space(input)));
+  remove_tabs_and_newlines(result);
+  return result;
 }
 }  // namespace v1
 }  // namespace skyr

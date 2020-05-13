@@ -109,11 +109,7 @@ auto basic_parse(
        }
   };
 
-  input = remove_leading_c0_control_or_space(input);
-  input = remove_trailing_c0_control_or_space(input);
-  auto input_ = std::string(input);
-  remove_tabs_and_newlines(input_);
-
+  auto input_ = preprocess_input(input);
   auto context = url_parser_context(
       input_, base, url, state_override);
 
