@@ -18,15 +18,17 @@ inline namespace v1 {
 namespace {
 auto parse_ipv4_number(
     std::string_view input,
-    bool &validation_error_flag) -> tl::expected<std::uint64_t, std::error_code> {
+    bool *validation_error) -> tl::expected<std::uint64_t, std::error_code> {
   auto base = 10;
 
   if (
     (input.size() >= 2) && (input[0] == '0') &&
     (std::tolower(input[1], std::locale::classic()) == 'x')) {
+    *validation_error |= true;
     input = input.substr(2);
     base = 16;
   } else if ((input.size() >= 2) && (input[0] == '0')) {
+    *validation_error |= true;
     input = input.substr(1);
     base = 8;
   }
@@ -48,8 +50,6 @@ auto parse_ipv4_number(
 auto parse_ipv4_address(std::string_view input, bool *validation_error) -> tl::expected<ipv4_address, std::error_code> {
   using namespace std::string_view_literals;
 
-  auto validation_error_flag = false;
-
   std::vector<std::string> parts;
   parts.emplace_back();
   for (auto ch : input) {
@@ -61,7 +61,7 @@ auto parse_ipv4_address(std::string_view input, bool *validation_error) -> tl::e
   }
 
   if (parts.back().empty()) {
-    validation_error_flag = true;
+    *validation_error |= true;
     if (parts.size() > 1) {
       parts.pop_back();
     }
@@ -80,17 +80,13 @@ auto parse_ipv4_address(std::string_view input, bool *validation_error) -> tl::e
       return tl::make_unexpected(make_error_code(ipv4_address_errc::empty_segment));
     }
 
-    auto number = parse_ipv4_number(std::string_view(part), validation_error_flag);
+    auto number = parse_ipv4_number(std::string_view(part), validation_error);
     if (!number) {
-      *validation_error |= validation_error_flag;
+      *validation_error |= true;
       return tl::make_unexpected(make_error_code(ipv4_address_errc::invalid_segment_number));
     }
 
     numbers.push_back(number.value());
-  }
-
-  if (validation_error_flag) {
-    *validation_error |= true;
   }
 
   auto numbers_first = begin(numbers), numbers_last = end(numbers);

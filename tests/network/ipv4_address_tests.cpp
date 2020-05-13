@@ -67,7 +67,7 @@ TEST_CASE("ipv4 addresses", "[ipv4]") {
     auto instance = skyr::parse_ipv4_address(address, &validation_error);
     REQUIRE(instance);
     CHECK(0x7f00007f == instance.value().address());
-    CHECK(!validation_error);
+    CHECK(validation_error);
   }
 
   SECTION("parse_invalid_address_with_hex") {
@@ -75,7 +75,7 @@ TEST_CASE("ipv4 addresses", "[ipv4]") {
     bool validation_error = false;
     auto instance = skyr::parse_ipv4_address(address, &validation_error);
     REQUIRE_FALSE(instance);
-    CHECK(!validation_error);
+    CHECK(validation_error);
   }
 
   SECTION("loopback_as_bytes") {
