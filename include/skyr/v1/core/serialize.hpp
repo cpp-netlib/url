@@ -30,10 +30,11 @@ inline auto serialize_excluding_fragment(const url_record &url) -> url_record::s
       output += "@";
     }
 
-    if (auto ipv4_address = parse_ipv4_address(url.host.value())) {
+    bool validation_error = false;
+    if (auto ipv4_address = parse_ipv4_address(url.host.value(), &validation_error)) {
       output += ipv4_address.value().serialize();
     }
-    else if (auto ipv6_address = parse_ipv6_address(url.host.value())) {
+    else if (auto ipv6_address = parse_ipv6_address(url.host.value(), &validation_error)) {
       output += ipv6_address.value().serialize();
     }
     else {

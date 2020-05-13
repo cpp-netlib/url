@@ -182,7 +182,7 @@ class ipv6_address {
 /// \param input An input string
 /// \returns An `ipv6_address` object or an error
 auto parse_ipv6_address(
-    std::string_view input) -> tl::expected<ipv6_address, std::error_code>;
+    std::string_view input, bool *validation_error) -> tl::expected<ipv6_address, std::error_code>;
 }  // namespace v1
 }  // namespace skyr
 

@@ -26,9 +26,7 @@ inline auto hex_to_dec(char byte) noexcept {
 }
 }  // namespace
 
-namespace details {
-namespace {
-auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_address, std::error_code>, bool> {
+auto parse_ipv6_address(std::string_view input, bool *validation_error) -> tl::expected<ipv6_address, std::error_code> {
   auto address = std::array<unsigned short, 8>{{0, 0, 0, 0, 0, 0, 0, 0}};
   auto piece_index = 0;
   auto compress = std::optional<decltype(piece_index)>();
@@ -42,27 +40,20 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
     compress = piece_index;
   }
   else if (input.empty() || starts_with(input, ":"sv)) {
-    return
-        std::make_pair(
-            tl::make_unexpected(
-                make_error_code(
-                    ipv6_address_errc::does_not_start_with_double_colon)), true);
+    *validation_error |= true;
+    return tl::make_unexpected(make_error_code(ipv6_address_errc::does_not_start_with_double_colon));
   }
 
   while (it != last) {
     if (piece_index == 8) {
-      return
-          std::make_pair(
-              tl::make_unexpected(
-                  make_error_code(ipv6_address_errc::invalid_piece)), true);
+      *validation_error |= true;
+      return tl::make_unexpected(make_error_code(ipv6_address_errc::invalid_piece));
     }
 
     if (*it == ':') {
       if (compress) {
-        return
-            std::make_pair(
-                tl::make_unexpected(
-                    make_error_code(ipv6_address_errc::compress_expected)), true);
+        *validation_error |= true;
+        return tl::make_unexpected(make_error_code(ipv6_address_errc::compress_expected));
       }
 
       ++it;
@@ -84,20 +75,15 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
 
     if ((it != last) && (*it == '.')) {
       if (length == 0) {
-        return
-            std::make_pair(
-                tl::make_unexpected(
-                    make_error_code(ipv6_address_errc::empty_ipv4_segment)), true);
+        *validation_error |= true;
+        return tl::make_unexpected(make_error_code(ipv6_address_errc::empty_ipv4_segment));
       }
 
       std::advance(it, -length);
 
       if (piece_index > 6) {
-        return
-            std::make_pair(
-                tl::make_unexpected(
-                    make_error_code(
-                        ipv6_address_errc::invalid_ipv4_segment_number)), true);
+        *validation_error |= true;
+        return tl::make_unexpected(make_error_code(ipv6_address_errc::invalid_ipv4_segment_number));
       }
 
       auto numbers_seen = 0;
@@ -109,20 +95,14 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
           if ((*it == '.') && (numbers_seen < 4)) {
             ++it;
           } else {
-            return
-                std::make_pair(
-                    tl::make_unexpected(
-                        make_error_code(
-                            ipv6_address_errc::invalid_ipv4_segment_number)), true);
+            *validation_error |= true;
+            return tl::make_unexpected(make_error_code(ipv6_address_errc::invalid_ipv4_segment_number));
           }
         }
 
         if ((it == last) || !std::isdigit(*it, std::locale::classic())) {
-          return
-              std::make_pair(
-                  tl::make_unexpected(
-                      make_error_code(
-                          ipv6_address_errc::invalid_ipv4_segment_number)), true);
+          *validation_error |= true;
+          return tl::make_unexpected(make_error_code(ipv6_address_errc::invalid_ipv4_segment_number));
         }
 
         while ((it != last) && std::isdigit(*it, std::locale::classic())) {
@@ -130,21 +110,15 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
           if (!ipv4_piece) {
             ipv4_piece = number;
           } else if (ipv4_piece.value() == 0) {
-            return
-                std::make_pair(
-                    tl::make_unexpected(
-                        make_error_code(
-                            ipv6_address_errc::invalid_ipv4_segment_number)), true);
+            *validation_error |= true;
+            return tl::make_unexpected(make_error_code(ipv6_address_errc::invalid_ipv4_segment_number));
           } else {
             ipv4_piece = ipv4_piece.value() * std::uint16_t(10) + number;
           }
 
           if (ipv4_piece.value() > 255) {
-            return
-                std::make_pair(
-                    tl::make_unexpected(
-                        make_error_code(
-                            ipv6_address_errc::invalid_ipv4_segment_number)), true);
+            *validation_error |= true;
+            return tl::make_unexpected(make_error_code(ipv6_address_errc::invalid_ipv4_segment_number));
           }
 
           ++it;
@@ -159,27 +133,20 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
       }
 
       if (numbers_seen != 4) {
-        return
-            std::make_pair(
-                tl::make_unexpected(
-                    make_error_code(
-                        ipv6_address_errc::invalid_ipv4_segment_number)), true);
+        *validation_error |= true;
+        return tl::make_unexpected(make_error_code(ipv6_address_errc::invalid_ipv4_segment_number));
       }
 
       break;
     } else if ((it != last) && (*it == ':')) {
       ++it;
       if (it == last) {
-        return
-            std::make_pair(
-                tl::make_unexpected(
-                    make_error_code(ipv6_address_errc::invalid_piece)), true);
+        *validation_error |= true;
+        return tl::make_unexpected(make_error_code(ipv6_address_errc::invalid_piece));
       }
     } else if (it != last) {
-      return
-          std::make_pair(
-              tl::make_unexpected(
-                  make_error_code(ipv6_address_errc::invalid_piece)), true);
+      *validation_error |= true;
+      return tl::make_unexpected(make_error_code(ipv6_address_errc::invalid_piece));
     }
     address[piece_index] = value; // NOLINT
     ++piece_index;
@@ -194,19 +161,11 @@ auto parse_ipv6_address(std::string_view input) -> std::pair<tl::expected<ipv6_a
       --swaps;
     }
   } else if (!compress && (piece_index != 8)) {
-    return
-        std::make_pair(
-            tl::make_unexpected(
-                make_error_code(ipv6_address_errc::compress_expected)), true);
+    *validation_error |= true;
+    return tl::make_unexpected(make_error_code(ipv6_address_errc::compress_expected));
   }
 
-  return std::make_pair(ipv6_address(address), false);
-}
-}  // namespace
-}  // namespace details
-
-auto parse_ipv6_address(std::string_view input) -> tl::expected<ipv6_address, std::error_code> {
-  return details::parse_ipv6_address(input).first;
+  return ipv6_address(address);
 }
 }  // namespace v1
 }  // namespace skyr

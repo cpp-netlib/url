@@ -109,7 +109,8 @@ auto basic_parse(
        }
   };
 
-  auto input_ = preprocess_input(input);
+  bool validation_error = false;
+  auto input_ = preprocess_input(input, &validation_error);
   auto context = url_parser_context(
       input_, base, url, state_override);
 
