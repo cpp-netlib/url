@@ -69,14 +69,16 @@ namespace details {
 /// \returns A `url_record` on success and an error code on failure
 auto basic_parse(
     std::string_view input,
+    bool *validation_error,
     const url_record *base=nullptr,
     const url_record *url=nullptr,
     std::optional<url_parse_state> state_override=std::nullopt) -> tl::expected<url_record, std::error_code>;
 
 inline auto parse(
     std::string_view input,
+    bool *validation_error,
     const url_record *base=nullptr) -> tl::expected<url_record, std::error_code> {
-  auto url = basic_parse(input, base);
+  auto url = basic_parse(input, validation_error, base);
 
   if (!url) {
     return url;

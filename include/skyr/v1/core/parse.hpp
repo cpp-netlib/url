@@ -27,6 +27,16 @@ auto parse(
 /// [WhatWG specification](https://url.spec.whatwg.org/)
 ///
 /// \param input A UTF-8 encoded input string
+/// \returns An expected ``url_record`` on success, or an
+///          ``error_code`` if parsing ``input`` failed
+auto parse(
+    std::string_view input,
+    bool *validation_error) -> tl::expected<url_record, std::error_code>;
+
+/// Parses a URL is according to the
+/// [WhatWG specification](https://url.spec.whatwg.org/)
+///
+/// \param input A UTF-8 encoded input string
 /// \param base A base ``url_record``
 /// \returns An expected ``url_record`` on success, or an
 ///          ``error_code`` if parsing ``input`` failed
@@ -34,6 +44,17 @@ auto parse(
     std::string_view input,
     const url_record &base) -> tl::expected<url_record, std::error_code>;
 
+/// Parses a URL is according to the
+/// [WhatWG specification](https://url.spec.whatwg.org/)
+///
+/// \param input A UTF-8 encoded input string
+/// \param base A base ``url_record``
+/// \returns An expected ``url_record`` on success, or an
+///          ``error_code`` if parsing ``input`` failed
+auto parse(
+    std::string_view input,
+    bool *validation_error,
+    const url_record &base) -> tl::expected<url_record, std::error_code>;
 }  // namespace v1
 }  // namespace skyr
 

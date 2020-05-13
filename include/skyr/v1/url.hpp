@@ -601,15 +601,6 @@ class url {
     return url_.is_special();
   }
 
-  /// A [validation error](https://url.spec.whatwg.org/#validation-error)
-  /// indicates a mismatch between input and valid input
-  ///
-  /// \returns `true` if there was a validation error during
-  ///          parsing, `false` otherwise
-  [[nodiscard]] auto validation_error() const noexcept {
-    return url_.validation_error;
-  }
-
   /// An iterator to the beginning of the context object's string (`href_`)
   ///
   /// \returns An iterator to the beginning of the context object's string

@@ -48,10 +48,6 @@ class url_record {
   /// base URL
   bool cannot_be_a_base_url = false;
 
-  /// A Boolean value indicating whether a non-fatal validation
-  /// error occurred during parsing
-  bool validation_error = false;
-
   /// Default constructor
   url_record() = default;
 
@@ -92,7 +88,6 @@ class url_record {
     swap(query, other.query);
     swap(fragment, other.fragment);
     swap(cannot_be_a_base_url, other.cannot_be_a_base_url);
-    swap(validation_error, other.validation_error);
   }
 };
 
