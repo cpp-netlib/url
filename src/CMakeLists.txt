@@ -24,8 +24,6 @@ target_sources(skyr-url
         v1/domain/domain.cpp
         v1/domain/punycode.cpp
         v1/domain/idna.cpp
-        v1/network/ipv4_address.cpp
-        v1/network/ipv6_address.cpp
         v1/url/url.cpp
         v1/url/url_search_parameters.cpp
 

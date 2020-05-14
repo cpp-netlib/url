@@ -9,6 +9,7 @@
 #include <string_view>
 #include <iterator>
 #include <algorithm>
+#include <locale>
 
 namespace skyr {
 inline namespace v1 {
@@ -23,6 +24,17 @@ inline auto is_ascii(std::basic_string_view<charT> input) noexcept {
 template <class charT>
 inline auto is_ascii(const std::basic_string<charT> &input) noexcept {
   return is_ascii(std::basic_string_view<charT>(input));
+}
+
+template <class intT, class charT>
+inline auto hex_to_dec(charT byte) noexcept {
+  assert(std::isxdigit(byte, std::locale::classic()));
+
+  if (std::isdigit(byte, std::locale::classic())) {
+    return static_cast<intT>(byte - '0');
+  }
+
+  return static_cast<intT>(std::tolower(byte, std::locale::classic()) - 'a' + 10);
 }
 }  // namespace v1
 }  // namespace skyr
