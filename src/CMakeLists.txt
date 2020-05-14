@@ -26,10 +26,6 @@ target_sources(skyr-url
         v1/domain/idna.cpp
         v1/network/ipv4_address.cpp
         v1/network/ipv6_address.cpp
-        v1/string/ascii.hpp
-        v1/string/join.hpp
-        v1/string/locale.hpp
-        v1/string/starts_with.hpp
         v1/url/url.cpp
         v1/url/url_search_parameters.cpp
 
@@ -48,6 +44,10 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u16_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u32_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/details/to_u8.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/string/ascii.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/string/join.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/string/locale.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/string/starts_with.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/idna.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/punycode.hpp

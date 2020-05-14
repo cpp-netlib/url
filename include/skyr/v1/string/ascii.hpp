@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_ASCII_HPP
-#define SKYR_URL_ASCII_HPP
+#ifndef SKYR_V1_STRING_ASCII_HPP
+#define SKYR_V1_STRING_ASCII_HPP
 
 #include <string_view>
 #include <iterator>
@@ -27,4 +27,4 @@ inline auto is_ascii(const std::basic_string<charT> &input) noexcept {
 }  // namespace v1
 }  // namespace skyr
 
-#endif //SKYR_URL_ASCII_HPP
+#endif // SKYR_V1_STRING_ASCII_HPP

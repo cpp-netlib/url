@@ -10,8 +10,8 @@
 #include <skyr/v1/domain/punycode.hpp>
 #include <skyr/v1/ranges/string_element_range.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include "v1/string/ascii.hpp"
-#include "v1/string/join.hpp"
+#include <skyr/v1/string/ascii.hpp>
+#include <skyr/v1/string/join.hpp>
 
 namespace skyr {
 inline namespace v1 {

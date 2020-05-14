@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_STARTS_WITH_HPP
-#define SKYR_URL_STARTS_WITH_HPP
+#ifndef SKYR_V1_STRING_STARTS_WITH_HPP
+#define SKYR_V1_STRING_STARTS_WITH_HPP
 
 #include <string_view>
 #include <iterator>
@@ -19,4 +19,4 @@ inline auto starts_with(
 }  // namespace v1
 }  // namespace skyr
 
-#endif //SKYR_URL_STARTS_WITH_HPP
+#endif // SKYR_V1_STRING_STARTS_WITH_HPP

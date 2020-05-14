@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_LOCALE_HPP
-#define SKYR_URL_LOCALE_HPP
+#ifndef SKYR_V1_STRING_LOCALE_HPP
+#define SKYR_V1_STRING_LOCALE_HPP
 
 #include <locale>
 
@@ -17,4 +17,4 @@ inline auto is_c0_control_or_whitespace(charT byte) noexcept {
 }  // namespace v1
 }  // namespace skyr
 
-#endif //SKYR_URL_LOCALE_HPP
+#endif // SKYR_V1_STRING_LOCALE_HPP

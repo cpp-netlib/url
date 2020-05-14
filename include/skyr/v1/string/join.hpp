@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_JOIN_HPP
-#define SKYR_URL_JOIN_HPP
+#ifndef SKYR_V1_STRING_JOIN_HPP
+#define SKYR_V1_STRING_JOIN_HPP
 
 #include <string_view>
 #include <string>
@@ -27,4 +27,4 @@ inline auto join(
 }  // namespace v1
 }  // namespace skyr
 
-#endif //SKYR_URL_JOIN_HPP
+#endif // SKYR_V1_STRING_JOIN_HPP
