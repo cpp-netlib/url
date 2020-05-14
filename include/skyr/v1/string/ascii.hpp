@@ -10,6 +10,7 @@
 #include <iterator>
 #include <algorithm>
 #include <locale>
+#include <cassert>
 
 namespace skyr {
 inline namespace v1 {
