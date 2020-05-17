@@ -3,6 +3,8 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
+include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-functions.cmake)
+
 configure_file(
         version.hpp.in
         ${PROJECT_BINARY_DIR}/include/skyr/version.hpp
@@ -86,6 +88,10 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/core/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp
         )
+
+target_compile_features(skyr-url PRIVATE cxx_std_17)
+skyr_check_filesystem(filesystem_definitions)
+target_compile_definitions(skyr-url PUBLIC ${filesystem_definitions})
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR
         ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
