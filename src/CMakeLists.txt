@@ -116,7 +116,7 @@ target_compile_options(
         $<$<AND:${clang},${no_rtti}>:-fno-rtti>
         $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=c++>
 
-        $<$<AND:${msvc},${full_warnings}>:/W4>
+        $<$<AND:${msvc},${full_warnings}>:/W3>
         $<$<AND:${msvc},${warnings_as_errors}>:/WX>
         $<$<AND:${msvc},$<NOT:${no_exceptions}>>:/EHsc>
         $<$<AND:${msvc},${no_rtti}>:/GR->
