@@ -94,7 +94,7 @@ skyr_check_filesystem(filesystem_definitions)
 target_compile_definitions(skyr-url PUBLIC ${filesystem_definitions})
 
 set(full_warnings $<BOOL:${skyr_FULL_WARNINGS}>)
-set(warnings_as_errors $<BOOL:${skyr_FULL_WARNINGS}>)
+set(warnings_as_errors $<BOOL:${skyr_WARNINGS_AS_ERRORS}>)
 set(no_exceptions $<BOOL:${skyr_BUILD_WITHOUT_EXCEPTIONS}>)
 set(no_rtti $<BOOL:${skyr_BUILD_WITHOUT_RTTI}>)
 
@@ -116,7 +116,7 @@ target_compile_options(
         $<$<AND:${clang},${no_rtti}>:-fno-rtti>
         $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=c++>
 
-        $<$<AND:${msvc},${full_warnings}>:/W3>
+        $<$<AND:${msvc},${full_warnings}>:/W4>
         $<$<AND:${msvc},${warnings_as_errors}>:/WX>
         $<$<AND:${msvc},$<NOT:${no_exceptions}>>:/EHsc>
         $<$<AND:${msvc},${no_rtti}>:/GR->
