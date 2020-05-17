@@ -89,63 +89,63 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp
         )
 
-target_compile_features(skyr-url PRIVATE cxx_std_17)
+target_compile_features(skyr-url PUBLIC cxx_std_17)
 skyr_check_filesystem(filesystem_definitions)
 target_compile_definitions(skyr-url PUBLIC ${filesystem_definitions})
 
-if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR
-        ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-    if (skyr_FULL_WARNINGS)
-        target_compile_options(skyr-url PRIVATE "-Wall")
-    endif()
+set(full_warnings $<BOOL:${skyr_FULL_WARNINGS}>)
+set(warnings_as_errors $<BOOL:${skyr_FULL_WARNINGS}>)
+set(no_exceptions $<BOOL:${skyr_BUILD_WITHOUT_EXCEPTIONS}>)
+set(no_rtti $<BOOL:${skyr_BUILD_WITHOUT_RTTI}>)
 
-    if (skyr_WARNINGS_AS_ERRORS)
-        target_compile_options(skyr-url PRIVATE "-Werror")
-    endif()
+set(gnu $<CXX_COMPILER_ID:GNU>)
+set(clang $<CXX_COMPILER_ID:Clang>)
+set(msvc $<CXX_COMPILER_ID:MSVC>)
 
-    if (skyr_BUILD_WITHOUT_EXCEPTIONS)
-        target_compile_options(skyr-url PRIVATE "-fno-exceptions")
-    endif()
+target_compile_options(
+        skyr-url
+        PRIVATE
+        $<$<AND:${gnu},${full_warnings}>:-Wall>
+        $<$<AND:${gnu},${warnings_as_errors}>:-Werror>
+        $<$<AND:${gnu},${no_exceptions}>:-fno-exceptions>
+        $<$<AND:${gnu},${no_rtti}>:-fno-rtti>
 
-    if (skyr_BUILD_WITHOUT_RTTI)
-        target_compile_options(skyr-url PRIVATE "-fno-rtti")
-    endif()
-elseif(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
-    if (skyr_FULL_WARNINGS)
-        target_compile_options(skyr-url PRIVATE "/W4")
-    endif()
+        $<$<AND:${clang},${full_warnings}>:-Wall>
+        $<$<AND:${clang},${warnings_as_errors}>:-Werror>
+        $<$<AND:${clang},${no_exceptions}>:-fno-exceptions>
+        $<$<AND:${clang},${no_rtti}>:-fno-rtti>
+        $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=c++>
 
-    if (skyr_WARNINGS_AS_ERRORS)
-        target_compile_options(skyr-url PRIVATE "/WX")
-    endif()
+        $<$<AND:${msvc},${full_warnings}}>:/W4>
+        $<$<AND:${msvc},${warnings_as_errors}}>:/WX>
+        $<$<AND:${msvc},$<NOT:${no_exceptions}>}>:/EHsc>
+        $<$<AND:${msvc},${no_rtti}}>:/GR->
+)
 
-    if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
-        target_compile_options(skyr-url PRIVATE "/EHsc")
-    endif()
+target_compile_definitions(
+        skyr-url
+        PRIVATE
+        $<${msvc}:/D_SCL_SECURE_NO_WARNINGS>
+        $<${msvc}:/D_CRT_SECURE_NO_DEPRECATE>
+)
 
-    if (skyr_BUILD_WITHOUT_RTTI)
-        target_compile_options(skyr-url PRIVATE "/GR-")
-    endif()
+target_link_libraries(
+        skyr-url
+        PUBLIC
+        tl::expected
+        PRIVATE
+        $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:c++>
+)
 
-    target_compile_definitions(skyr-url -D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
-endif()
-
-if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})
-    target_compile_options(skyr-url PRIVATE "-stdlib=libc++")
-endif()
-
-target_link_libraries(skyr-url PUBLIC tl::expected)
-if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang AND ${skyr_BUILD_WITH_LLVM_LIBCXX})
-    target_link_libraries(skyr-url PRIVATE "c++")
-endif()
-
-target_include_directories(skyr-url
-    PUBLIC
+target_include_directories(
+        skyr-url
+        PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-    PRIVATE
-        ${PROJECT_SOURCE_DIR}/src)
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/src
+)
 
 #################################################
 # skyr-filesystem
@@ -153,10 +153,14 @@ target_include_directories(skyr-url
 
 add_library(skyr-filesystem INTERFACE)
 
-target_link_libraries(skyr-filesystem INTERFACE skyr-url)
-if(${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
-    target_link_libraries(skyr-filesystem INTERFACE "stdc++fs")
-endif()
+target_compile_features(skyr-filesystem INTERFACE cxx_std_17)
+
+target_link_libraries(
+        skyr-filesystem
+        INTERFACE
+        skyr-url
+        $<${gnu}:"stdc++fs">
+)
 
 target_include_directories(skyr-filesystem
         INTERFACE
@@ -172,12 +176,18 @@ target_include_directories(skyr-filesystem
 if (skyr_ENABLE_JSON_FUNCTIONS)
     add_library(skyr-json INTERFACE)
 
-    target_link_libraries(skyr-json INTERFACE skyr-url nlohmann_json::nlohmann_json)
+    target_link_libraries(
+            skyr-json
+            INTERFACE
+            skyr-url
+            nlohmann_json::nlohmann_json
+    )
 
-    target_include_directories(skyr-json
-        INTERFACE
+    target_include_directories(
+            skyr-json
+            INTERFACE
             $<INSTALL_INTERFACE:include>
             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
             $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-            )
+    )
 endif()
