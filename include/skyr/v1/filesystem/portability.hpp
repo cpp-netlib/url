@@ -7,7 +7,6 @@
 #define SKYR_V1_FILESYSTEM_PORTABILITY_HPP
 
 #if defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-#define _LIBCPP_NO_EXPERIMENTAL_DEPRECATION_WARNING_FILESYSTEM
 #include <experimental/filesystem>
 #define SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(name) \
 namespace name = std::experimental::filesystem;
