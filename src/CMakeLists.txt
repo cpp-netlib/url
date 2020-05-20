@@ -89,9 +89,17 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/url.hpp
         )
 
+set(SKYR_DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
+
+set_target_properties(
+        skyr-url
+        PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+        DEBUG_POSTFIX "${SKYR_DEBUG_POSTFIX}"
+)
+
 target_compile_features(skyr-url PUBLIC cxx_std_17)
-skyr_check_filesystem(filesystem_definitions)
-target_compile_definitions(skyr-url PUBLIC ${filesystem_definitions})
 
 set(full_warnings $<BOOL:${skyr_FULL_WARNINGS}>)
 set(warnings_as_errors $<BOOL:${skyr_WARNINGS_AS_ERRORS}>)
@@ -102,31 +110,27 @@ set(gnu $<CXX_COMPILER_ID:GNU>)
 set(clang $<CXX_COMPILER_ID:Clang>)
 set(msvc $<CXX_COMPILER_ID:MSVC>)
 
+target_compile_definitions(
+        skyr-url
+        PRIVATE
+        $<${msvc}:/D_SCL_SECURE_NO_WARNINGS>
+        $<${msvc}:/D_CRT_SECURE_NO_DEPRECATE>
+)
+
 target_compile_options(
         skyr-url
         PRIVATE
-        $<$<AND:${gnu},${full_warnings}>:-Wall>
-        $<$<AND:${gnu},${warnings_as_errors}>:-Werror>
-        $<$<AND:${gnu},${no_exceptions}>:-fno-exceptions>
-        $<$<AND:${gnu},${no_rtti}>:-fno-rtti>
+        $<$<AND:$<OR:${gnu},${clang}>,${full_warnings}>:-Wall>
+        $<$<AND:$<OR:${gnu},${clang}>,${warnings_as_errors}>:-Werror>
+        $<$<AND:$<OR:${gnu},${clang}>,${no_exceptions}>:-fno-exceptions>
+        $<$<AND:$<OR:${gnu},${clang}>,${no_rtti}>:-fno-rtti>
 
-        $<$<AND:${clang},${full_warnings}>:-Wall>
-        $<$<AND:${clang},${warnings_as_errors}>:-Werror>
-        $<$<AND:${clang},${no_exceptions}>:-fno-exceptions>
-        $<$<AND:${clang},${no_rtti}>:-fno-rtti>
         $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=c++>
 
         $<$<AND:${msvc},${full_warnings}>:/W4>
         $<$<AND:${msvc},${warnings_as_errors}>:/WX>
         $<$<AND:${msvc},$<NOT:${no_exceptions}>>:/EHsc>
         $<$<AND:${msvc},${no_rtti}>:/GR->
-)
-
-target_compile_definitions(
-        skyr-url
-        PRIVATE
-        $<${msvc}:/D_SCL_SECURE_NO_WARNINGS>
-        $<${msvc}:/D_CRT_SECURE_NO_DEPRECATE>
 )
 
 target_link_libraries(
@@ -155,6 +159,13 @@ add_library(skyr-filesystem INTERFACE)
 
 target_compile_features(skyr-filesystem INTERFACE cxx_std_17)
 
+skyr_check_filesystem(filesystem_definitions)
+target_compile_definitions(
+        skyr-filesystem
+        INTERFACE
+        ${filesystem_definitions}
+)
+
 target_link_libraries(
         skyr-filesystem
         INTERFACE
@@ -175,6 +186,8 @@ target_include_directories(skyr-filesystem
 
 if (skyr_ENABLE_JSON_FUNCTIONS)
     add_library(skyr-json INTERFACE)
+
+    target_compile_features(skyr-json INTERFACE cxx_std_17)
 
     target_link_libraries(
             skyr-json

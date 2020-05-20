@@ -6,13 +6,6 @@
 #ifndef SKYR_V1_FILESYSTEM_PORTABILITY_HPP
 #define SKYR_V1_FILESYSTEM_PORTABILITY_HPP
 
-//#if !defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-//#if !defined(__clang__) && (defined(__GNUC__) && __GNUC__ < 8)
-//#define SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM
-//#endif  // !defined(__clang__) && (defined(__GNUC__) && __GNUC__ < 8)
-//#endif  // !defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-
-
 #if defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
 #define _LIBCPP_NO_EXPERIMENTAL_DEPRECATION_WARNING_FILESYSTEM
 #include <experimental/filesystem>

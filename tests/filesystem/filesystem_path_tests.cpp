@@ -8,11 +8,7 @@
 #include <skyr/url.hpp>
 #include <skyr/filesystem/path.hpp>
 
-#if defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-namespace stdfs = std::experimental::filesystem;
-#else
-namespace stdfs = std::filesystem;
-#endif // defined(SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
+SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(stdfs)
 
 TEST_CASE("filesystem path", "[filesystem_path]") {
   SECTION("empty_path") {
