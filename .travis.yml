@@ -16,8 +16,6 @@ env:
   jobs:
     - SHARED_LIB=OFF BUILD_TYPE=Debug
     - SHARED_LIB=OFF BUILD_TYPE=Release
-    - SHARED_LIB=ON BUILD_TYPE=Debug
-    - SHARED_LIB=ON BUILD_TYPE=Release
 
 addons:
   apt:
