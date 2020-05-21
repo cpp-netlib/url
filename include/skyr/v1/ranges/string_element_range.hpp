@@ -167,17 +167,6 @@ class string_element_range {
   string_element_iterator<charT> first_, last_;
 
 };
-
-///
-/// \tparam charT
-/// \param s
-/// \param separators
-/// \returns A lazy range of string_views, delimited by any character in `separators`
-template <class charT>
-inline auto split(std::basic_string_view<charT> s, decltype(s) separators)
-    -> string_element_range<charT> {
-  return { s, separators };
-}
 }  // namespace v1
 }  // namespace skyr
 

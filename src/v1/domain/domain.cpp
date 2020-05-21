@@ -12,6 +12,7 @@
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/v1/string/ascii.hpp>
 #include <skyr/v1/string/join.hpp>
+#include <skyr/v1/string/split.hpp>
 
 namespace skyr {
 inline namespace v1 {
