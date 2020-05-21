@@ -5,6 +5,8 @@
 
 include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-functions.cmake)
 
+set(clang $<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>)
+
 foreach(
         file_name
         example_01.cpp
@@ -20,6 +22,7 @@ foreach(
     skyr_remove_extension(${file_name} example)
     add_executable(${example} ${file_name})
     add_dependencies(${example} skyr-url)
+    target_compile_options(${example} PRIVATE $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=libc++>)
     target_link_libraries(
         ${example}
         PRIVATE

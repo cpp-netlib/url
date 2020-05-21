@@ -108,7 +108,7 @@ set(no_exceptions $<BOOL:${skyr_BUILD_WITHOUT_EXCEPTIONS}>)
 set(no_rtti $<BOOL:${skyr_BUILD_WITHOUT_RTTI}>)
 
 set(gnu $<CXX_COMPILER_ID:GNU>)
-set(clang $<CXX_COMPILER_ID:Clang>)
+set(clang $<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>)
 set(msvc $<CXX_COMPILER_ID:MSVC>)
 
 target_compile_definitions(
@@ -126,7 +126,7 @@ target_compile_options(
         $<$<AND:$<OR:${gnu},${clang}>,${no_exceptions}>:-fno-exceptions>
         $<$<AND:$<OR:${gnu},${clang}>,${no_rtti}>:-fno-rtti>
 
-        $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=c++>
+        $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=libc++>
 
         $<$<AND:${msvc},${full_warnings}>:/W4>
         $<$<AND:${msvc},${warnings_as_errors}>:/WX>
