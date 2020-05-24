@@ -54,7 +54,7 @@ class u16_code_point_t {
            0;
   }
 
-  [[nodiscard]] auto u32_value() const noexcept -> tl::expected<char32_t, std::error_code> {
+  [[nodiscard]] auto u32_value() const noexcept -> tl::expected<char32_t, unicode_errc> {
     return code_point_;
   }
 

@@ -9,7 +9,6 @@
 #include <array>
 #include <string>
 #include <string_view>
-#include <system_error>
 #include <optional>
 #include <cmath>
 #include <cerrno>
@@ -31,39 +30,6 @@ enum class ipv4_address_errc {
   /// Overflow
   overflow,
 };
-
-namespace details {
-class ipv4_address_error_category : public std::error_category {
- public:
-  [[nodiscard]] auto name() const noexcept -> const char * override {
-    return "ipv4 address";
-  }
-
-  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
-    switch (static_cast<ipv4_address_errc>(error)) {
-      case ipv4_address_errc::too_many_segments:
-        return "Input contains more than 4 segments";
-      case ipv4_address_errc::empty_segment:
-        return "Empty input";
-      case ipv4_address_errc::invalid_segment_number:
-        return "Invalid segment number";
-      case ipv4_address_errc::overflow:
-        return "Overflow";
-      default:
-        return "(Unknown error)";
-    }
-  }
-};
-}  // namespace details
-
-/// Creates a `std::error_code` given a `skyr::ipv4_address_errc`
-/// value
-/// \param error An IPv4 address error
-/// \returns A `std::error_code` object
-inline auto make_error_code(ipv4_address_errc error) -> std::error_code {
-  static const details::ipv4_address_error_category category{};
-  return std::error_code(static_cast<int>(error), category);
-}
 
 /// Represents an IPv4 address
 class ipv4_address {
@@ -122,7 +88,7 @@ class ipv4_address {
 namespace details {
 inline auto parse_ipv4_number(
     std::string_view input,
-    bool *validation_error) -> tl::expected<std::uint64_t, std::error_code> {
+    bool *validation_error) -> tl::expected<std::uint64_t, ipv4_address_errc> {
   auto base = 10;
 
   if (
@@ -144,8 +110,7 @@ inline auto parse_ipv4_number(
   char *pos = const_cast<char *>(input.data()) + input.size();  // NOLINT
   auto number = std::strtoull(input.data(), &pos, base);
   if (errno == ERANGE || (pos != input.data() + input.size())) {
-    return tl::make_unexpected(
-        make_error_code(ipv4_address_errc::invalid_segment_number));
+    return tl::make_unexpected(ipv4_address_errc::invalid_segment_number);
   }
   return number;
 }
@@ -155,7 +120,7 @@ inline auto parse_ipv4_number(
 /// \param input An input string
 /// \returns An `ipv4_address` object or an error
 inline auto parse_ipv4_address(
-    std::string_view input, bool *validation_error) -> tl::expected<ipv4_address, std::error_code> {
+    std::string_view input, bool *validation_error) -> tl::expected<ipv4_address, ipv4_address_errc> {
   using namespace std::string_view_literals;
 
   std::vector<std::string> parts;
@@ -177,7 +142,7 @@ inline auto parse_ipv4_address(
 
   if (parts.size() > 4) {
     *validation_error |= true;
-    return tl::make_unexpected(make_error_code(ipv4_address_errc::too_many_segments));
+    return tl::make_unexpected(ipv4_address_errc::too_many_segments);
   }
 
   auto numbers = std::vector<std::uint64_t>();
@@ -185,13 +150,13 @@ inline auto parse_ipv4_address(
   for (const auto &part : parts) {
     if (part.empty()) {
       *validation_error |= true;
-      return tl::make_unexpected(make_error_code(ipv4_address_errc::empty_segment));
+      return tl::make_unexpected(ipv4_address_errc::empty_segment);
     }
 
     auto number = details::parse_ipv4_number(std::string_view(part), validation_error);
     if (!number) {
       *validation_error |= true;
-      return tl::make_unexpected(make_error_code(ipv4_address_errc::invalid_segment_number));
+      return tl::make_unexpected(ipv4_address_errc::invalid_segment_number);
     }
 
     numbers.push_back(number.value());
@@ -212,13 +177,13 @@ inline auto parse_ipv4_address(
   numbers_it = std::find_if(numbers_first, numbers_last_but_one,
                             [](auto number) -> bool { return number > 255; });
   if (numbers_it != numbers_last_but_one) {
-    return tl::make_unexpected(make_error_code(ipv4_address_errc::overflow));
+    return tl::make_unexpected(ipv4_address_errc::overflow);
   }
 
   if (numbers.back() >=
       static_cast<std::uint64_t>(std::pow(256, 5 - numbers.size()))) {
     *validation_error |= true;
-    return tl::make_unexpected(make_error_code(ipv4_address_errc::overflow));
+    return tl::make_unexpected(ipv4_address_errc::overflow);
   }
 
   auto ipv4 = numbers.back();
@@ -233,10 +198,5 @@ inline auto parse_ipv4_address(
 }
 }  // namespace v1
 }  // namespace skyr
-
-namespace std {
-template <>
-struct is_error_code_enum<skyr::v1::ipv4_address_errc> : true_type {};
-}  // namespace std
 
 #endif //SKYR_V1_NETWORK_IPV4_ADDRESS_HPP

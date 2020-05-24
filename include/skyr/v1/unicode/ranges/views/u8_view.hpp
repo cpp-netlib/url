@@ -35,7 +35,7 @@ class u8_range_iterator {
   /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
   /// An expected value containing a UTF-8 encoded code point
-  using value_type = tl::expected<typename traits::iterator_value<iterator_type>::type, std::error_code>;
+  using value_type = tl::expected<typename traits::iterator_value<iterator_type>::type, unicode_errc>;
   /// A reference type
   using const_reference = value_type;
   /// A reference type

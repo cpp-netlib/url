@@ -70,16 +70,16 @@ auto adapt(uint32_t delta, uint32_t numpoints, bool firsttime) {
 }  // namespace
 
 auto punycode_encode(
-    std::string_view input) -> tl::expected<std::string, std::error_code> {
+    std::string_view input) -> tl::expected<std::string, domain_errc> {
   auto utf32 = unicode::as<std::u32string>(unicode::view::as_u8(input) | unicode::transform::to_u32);
   if (!utf32) {
-    return tl::make_unexpected(make_error_code(domain_errc::bad_input));
+    return tl::make_unexpected(domain_errc::bad_input);
   }
   return punycode_encode(utf32.value());
 }
 
 auto punycode_encode(
-    std::u32string_view input) -> tl::expected<std::string, std::error_code> {
+    std::u32string_view input) -> tl::expected<std::string, domain_errc> {
   auto result = std::string{};
   result.reserve(256);
 
@@ -109,7 +109,7 @@ auto punycode_encode(
     }
 
     if ((m - n) > ((std::numeric_limits<uint32_t>::max() - delta) / (h + 1u))) {
-      return tl::make_unexpected(make_error_code(domain_errc::overflow));
+      return tl::make_unexpected(domain_errc::overflow);
     }
     delta += (m - n) * (h + 1u);
     n = m;
@@ -117,7 +117,7 @@ auto punycode_encode(
     for (auto c : input) {
       if (static_cast<uint32_t>(c) < n) {
         if (++delta == 0u) {
-          return tl::make_unexpected(make_error_code(domain_errc::overflow));
+          return tl::make_unexpected(domain_errc::overflow);
         }
       }
 
@@ -148,7 +148,7 @@ auto punycode_encode(
 }
 
 auto punycode_decode(
-    std::string_view input) -> tl::expected<std::string, std::error_code> {
+    std::string_view input) -> tl::expected<std::string, domain_errc> {
   auto result = std::u32string();
   result.reserve(256);
 
@@ -180,14 +180,14 @@ auto punycode_decode(
     auto k = base;
     while (true) {
       if (in >= input.size()) {
-        return tl::make_unexpected(make_error_code(domain_errc::bad_input));
+        return tl::make_unexpected(domain_errc::bad_input);
       }
       auto digit = decode_digit(input[in++]);
       if (digit >= base) {
-        return tl::make_unexpected(make_error_code(domain_errc::bad_input));
+        return tl::make_unexpected(domain_errc::bad_input);
       }
       if (digit > ((std::numeric_limits<uint32_t>::max() - i) / w)) {
-        return tl::make_unexpected(make_error_code(domain_errc::overflow));
+        return tl::make_unexpected(domain_errc::overflow);
       }
       i += digit * w;
       auto t = (k <= bias) ? tmin : ((k >= (bias + tmax)) ? tmax : (k - bias));
@@ -195,7 +195,7 @@ auto punycode_decode(
         break;
       }
       if (w > (std::numeric_limits<uint32_t>::max() / (base - t))) {
-        return tl::make_unexpected(make_error_code(domain_errc::overflow));
+        return tl::make_unexpected(domain_errc::overflow);
       }
       w *= (base - t);
       k += base;
@@ -205,7 +205,7 @@ auto punycode_decode(
     bias = adapt((i - oldi), out, (oldi == 0U));
 
     if ((i / out) > (std::numeric_limits<uint32_t>::max() - n)) {
-      return tl::make_unexpected(make_error_code(domain_errc::overflow));
+      return tl::make_unexpected(domain_errc::overflow);
     }
     n += i / out;
     i %= out;
@@ -213,10 +213,11 @@ auto punycode_decode(
     result.insert(i++, 1, static_cast<char32_t>(n));
   }
 
-  return unicode::as<std::string>(result | unicode::transform::to_u8)
-      .or_else([](auto) -> tl::expected<std::string, std::error_code> {
-        return tl::make_unexpected(make_error_code(domain_errc::bad_input));
-      });
+  auto u8_result = unicode::as<std::string>(result | unicode::transform::to_u8);
+  if (!u8_result) {
+    return tl::make_unexpected(domain_errc::bad_input);
+  }
+  return u8_result.value();
 }
 }  // namespace v1
 }  // namespace skyr

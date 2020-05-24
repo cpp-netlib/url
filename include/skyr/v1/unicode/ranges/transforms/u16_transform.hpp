@@ -31,7 +31,7 @@ class u16_transform_iterator {
   /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
   /// An expected wrapper around a UTF-16 encoded code point
-  using value_type = tl::expected<u16_code_point_t, std::error_code>;
+  using value_type = tl::expected<u16_code_point_t, unicode_errc>;
   /// \c value_type
   using const_reference = value_type;
   /// \c const_reference
@@ -208,7 +208,7 @@ static constexpr transform_u16_range_fn to_u16;
 /// \param range
 /// \return
 template <class Output, class CodePointRange>
-auto as(transform_u16_range<CodePointRange> &&range) -> tl::expected<Output, std::error_code> {
+auto as(transform_u16_range<CodePointRange> &&range) -> tl::expected<Output, unicode_errc> {
   auto result = Output{};
   for (auto &&code_point : range) {
     if (!code_point) {

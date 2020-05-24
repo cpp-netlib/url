@@ -31,7 +31,7 @@ class u16_range_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = tl::expected<u16_code_point_t, std::error_code>;
+  using value_type = tl::expected<u16_code_point_t, unicode_errc>;
   ///
   using const_reference = value_type;
   ///
@@ -79,14 +79,12 @@ class u16_range_iterator {
       ++next_it;
       auto trail_value = mask16(*next_it);
       if (!is_trail_surrogate(trail_value)) {
-        return tl::make_unexpected(
-            make_error_code(unicode_errc::invalid_code_point));
+        return tl::make_unexpected(unicode_errc::invalid_code_point);
       }
 
       return u16_code_point(value, trail_value);
     } else if (is_trail_surrogate(value)) {
-      return tl::make_unexpected(
-          make_error_code(unicode_errc::invalid_code_point));
+      return tl::make_unexpected(unicode_errc::invalid_code_point);
     } else {
       return u16_code_point(value);
     }
@@ -131,7 +129,7 @@ class view_u16_range {
  public:
 
   ///
-  using value_type = tl::expected<u16_code_point_t, std::error_code>;
+  using value_type = tl::expected<u16_code_point_t, unicode_errc>;
   ///
   using const_reference = value_type;
   ///

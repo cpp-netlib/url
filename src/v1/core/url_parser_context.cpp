@@ -109,7 +109,7 @@ auto parse_host(
   bool ipv4_validation_error = false;
   auto host = parse_ipv4_address(ascii_domain.value(), &ipv4_validation_error);
   if (!host) {
-    if (host.error() == make_error_code(ipv4_address_errc::overflow)) {
+    if (host.error() == ipv4_address_errc::overflow) {
       return tl::make_unexpected(url_parse_errc::invalid_ipv4_address);
     }
     else {

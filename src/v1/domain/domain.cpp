@@ -20,7 +20,7 @@ namespace {
 auto process(
     std::u32string_view domain_name, bool use_std3_ascii_rules,
     bool check_hyphens, bool check_bidi, bool check_joiners,
-    bool transitional_processing) -> tl::expected<std::u32string, std::error_code> {
+    bool transitional_processing) -> tl::expected<std::u32string, domain_errc> {
   auto result = std::u32string();
   auto error = false;
 
@@ -67,8 +67,7 @@ auto process(
   }
 
   if (error) {
-    return tl::make_unexpected(
-        make_error_code(domain_errc::disallowed_code_point));
+    return tl::make_unexpected(domain_errc::disallowed_code_point);
   }
 
   return result;
@@ -77,7 +76,7 @@ auto process(
 auto unicode_to_ascii(
     std::u32string_view domain_name, bool check_hyphens, bool check_bidi,
     bool check_joiners, bool use_std3_ascii_rules, bool transitional_processing,
-    bool verify_dns_length) -> tl::expected<std::string, std::error_code> {
+    bool verify_dns_length) -> tl::expected<std::string, domain_errc> {
   auto domain = process(domain_name, use_std3_ascii_rules, check_hyphens,
                         check_bidi, check_joiners, transitional_processing);
 
@@ -102,13 +101,13 @@ auto unicode_to_ascii(
   if (verify_dns_length) {
     auto length = domain.value().size();
     if ((length < 1) || (length > 253)) {
-      return tl::make_unexpected(make_error_code(domain_errc::invalid_length));
+      return tl::make_unexpected(domain_errc::invalid_length);
     }
 
     for (const auto &label : labels) {
       auto label_length = label.size();
       if ((label_length < 1) || (label_length > 63)) {
-        return tl::make_unexpected(make_error_code(domain_errc::invalid_length));
+        return tl::make_unexpected(domain_errc::invalid_length);
       }
     }
   }
@@ -118,7 +117,7 @@ auto unicode_to_ascii(
 }  // namespace
 
 auto domain_to_ascii(
-    std::u32string_view domain, bool be_strict) -> tl::expected<std::string, std::error_code> {
+    std::u32string_view domain, bool be_strict) -> tl::expected<std::string, domain_errc> {
   auto result =
       unicode_to_ascii(domain, false, true, true, be_strict, false, be_strict);
   if (!result) {
@@ -129,15 +128,15 @@ auto domain_to_ascii(
 }
 
 auto domain_to_ascii(
-    std::string_view domain, bool be_strict) -> tl::expected<std::string, std::error_code> {
+    std::string_view domain, bool be_strict) -> tl::expected<std::string, domain_errc> {
   auto utf32 = unicode::as<std::u32string>(unicode::view::as_u8(domain) | unicode::transform::to_u32);
   if (!utf32) {
-    return tl::make_unexpected(make_error_code(domain_errc::encoding_error));
+    return tl::make_unexpected(domain_errc::encoding_error);
   }
   return domain_to_ascii(utf32.value(), be_strict);
 }
 
-auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, std::error_code> {
+auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, domain_errc> {
   auto labels = std::vector<std::string>{};
   for (auto label : split(ascii, ".")) {
     auto encoded = punycode_decode(label);

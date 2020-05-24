@@ -8,7 +8,6 @@
 
 #include <string>
 #include <string_view>
-#include <system_error>
 #include <tl/expected.hpp>
 #include <skyr/v1/domain/errors.hpp>
 
@@ -22,7 +21,7 @@ inline namespace v1 {
 /// \returns An ASCII domain, or an error
 auto domain_to_ascii(
     std::u32string_view domain,
-    bool be_strict=false) -> tl::expected<std::string, std::error_code>;
+    bool be_strict=false) -> tl::expected<std::string, domain_errc>;
 
 /// Converts a UTF-8 encoded domain to ASCII using
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
@@ -32,13 +31,13 @@ auto domain_to_ascii(
 /// \returns An ASCII domain, or an error
 auto domain_to_ascii(
     std::string_view domain,
-    bool be_strict=false) -> tl::expected<std::string, std::error_code>;
+    bool be_strict=false) -> tl::expected<std::string, domain_errc>;
 
 /// Converts a Punycode encoded domain to UTF-8
 ///
 /// \param ascii A Punycode encoded domain
 /// \returns A valid UTF-8 encoded domain, or an error
-auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, std::error_code>;
+auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, domain_errc>;
 }  // namespace v1
 }  // namespace skyr
 

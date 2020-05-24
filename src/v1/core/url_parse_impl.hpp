@@ -7,7 +7,6 @@
 #define SKYR_V1_URL_PARSE_IMPL_HPP
 
 #include <string>
-#include <system_error>
 #include <optional>
 #include <tl/expected.hpp>
 #include <skyr/v1/core/url_record.hpp>

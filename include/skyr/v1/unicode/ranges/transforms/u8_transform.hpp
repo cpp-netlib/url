@@ -29,7 +29,7 @@ class u8_transform_iterator {
   /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
   /// An expected wrapper around a \c char
-  using value_type = tl::expected<char, std::error_code>;
+  using value_type = tl::expected<char, unicode_errc>;
   /// A reference
   using reference = value_type;
   /// \c std::ptrdiff_t
@@ -72,7 +72,7 @@ class u8_transform_iterator {
     auto code_point = u32_value(*it_).value();
 
     if (!is_valid_code_point(code_point)) {
-      return tl::make_unexpected(make_error_code(unicode_errc::invalid_code_point));
+      return tl::make_unexpected(unicode_errc::invalid_code_point);
     }
 
     if (code_point < 0x80u) {
@@ -102,7 +102,7 @@ class u8_transform_iterator {
         return static_cast<char>((code_point & 0x3fu) | 0x80u);
       }
     }
-    return tl::make_unexpected(make_error_code(unicode_errc::invalid_code_point));
+    return tl::make_unexpected(unicode_errc::invalid_code_point);
   }
 
   /// Equality operator
@@ -161,7 +161,7 @@ class transform_u8_range {
  public:
 
   /// An expected wrapper around a UTF-8 value
-  using value_type = tl::expected<char, std::error_code>;
+  using value_type = tl::expected<char, unicode_errc>;
   /// \c value_type
   using const_reference = value_type;
   /// \c const_reference
@@ -257,7 +257,7 @@ static constexpr u8_range_fn to_u8;
 /// \param range
 /// \return
 template <class Output, typename CodePointRange>
-auto as(transform_u8_range<CodePointRange> &&range) -> tl::expected<Output, std::error_code> {
+auto as(transform_u8_range<CodePointRange> &&range) -> tl::expected<Output, unicode_errc> {
   auto result = Output{};
   for (auto &&unit : range) {
     if (!unit) {

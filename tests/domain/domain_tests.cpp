@@ -82,6 +82,6 @@ TEST_CASE("invalid domains", "[domain]") {
     auto domain = std::string(300, 'x') + ".com";
     auto instance = skyr::domain_to_ascii(domain, true);
     REQUIRE_FALSE(instance);
-    REQUIRE(static_cast<skyr::domain_errc>(instance.error().value()) == skyr::domain_errc::invalid_length);
+    REQUIRE(static_cast<skyr::domain_errc>(instance.error()) == skyr::domain_errc::invalid_length);
   }
 }

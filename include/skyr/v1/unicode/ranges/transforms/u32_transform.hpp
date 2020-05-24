@@ -27,7 +27,7 @@ class u32_transform_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = tl::expected<char32_t, std::error_code>;
+  using value_type = tl::expected<char32_t, unicode_errc>;
   ///
   using const_reference = value_type;
   ///
@@ -196,7 +196,7 @@ static constexpr transform_u32_range_fn to_u32;
 /// \param range
 /// \return
 template <class Output, class CodePointRange>
-auto as(transform_u32_range<CodePointRange> &&range) -> tl::expected<Output, std::error_code> {
+auto as(transform_u32_range<CodePointRange> &&range) -> tl::expected<Output, unicode_errc> {
   auto result = Output{};
   for (auto &&code_point : range) {
     auto u32_code_point = u32_value(code_point);

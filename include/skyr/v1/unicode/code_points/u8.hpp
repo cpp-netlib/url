@@ -95,11 +95,11 @@ class u8_code_point_view {
 /// \return
 template<typename OctetRange>
 inline auto u8_code_point(
-    const OctetRange &range) -> tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, std::error_code> {
+    const OctetRange &range) -> tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, unicode_errc> {
   auto first = std::begin(range), last = std::end(range);
   auto length = sequence_length(*first);
   if (std::distance(first, last) > length) {
-    return tl::make_unexpected(make_error_code(unicode_errc::overflow));
+    return tl::make_unexpected(unicode_errc::overflow);
   }
   last = first;
   std::advance(last, length);
@@ -121,7 +121,7 @@ inline auto u8_code_point(
 template <typename OctetRange>
 inline auto checked_u8_code_point(
     const OctetRange &range) {
-  using result_type = tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, std::error_code>;
+  using result_type = tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, unicode_errc>;
 
   constexpr static auto check_code_point = [] (auto &&code_point) -> result_type {
     return find_code_point(std::begin(code_point)).map([=] (auto) { return code_point; });

@@ -17,7 +17,7 @@ namespace skyr {
 inline namespace v1 {
 namespace percent_encoding {
 namespace details {
-inline auto letter_to_hex(char byte) noexcept -> tl::expected<char, std::error_code> {
+inline auto letter_to_hex(char byte) noexcept -> tl::expected<char, percent_encode_errc> {
   if ((byte >= '0') && (byte <= '9')) {
     return byte - '0';
   }
@@ -30,8 +30,7 @@ inline auto letter_to_hex(char byte) noexcept -> tl::expected<char, std::error_c
     return static_cast<char>(byte + '\x0a' - 'A');
   }
 
-  return tl::make_unexpected(make_error_code(
-      percent_encoding::percent_encode_errc::non_hex_input));
+  return tl::make_unexpected(percent_encoding::percent_encode_errc::non_hex_input);
 }
 }  // namespace details
 
@@ -45,7 +44,7 @@ class percent_decode_iterator {
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
-  using value_type = tl::expected<char, std::error_code>;
+  using value_type = tl::expected<char, percent_encode_errc>;
   ///
   using const_reference = value_type;
   ///
@@ -97,16 +96,14 @@ class percent_decode_iterator {
     assert(it_);
     if (*it_.value() == '%') {
       if (std::distance(it_.value(), last_.value()) < 3) {
-        return tl::make_unexpected(make_error_code(
-            percent_encoding::percent_encode_errc::overflow));
+        return tl::make_unexpected(percent_encoding::percent_encode_errc::overflow);
       }
       auto it = it_.value();
       auto v0 = details::letter_to_hex(*++it);
       auto v1 = details::letter_to_hex(*++it);
 
       if (!v0 || !v1) {
-        return tl::make_unexpected(make_error_code(
-            percent_encoding::percent_encode_errc::non_hex_input));
+        return tl::make_unexpected(percent_encoding::percent_encode_errc::non_hex_input);
       }
 
       return (0x10u * v0.value()) + v1.value();
@@ -254,7 +251,7 @@ static constexpr percent_decode_fn decode;
 /// \return
 template <class Output, class OctetRange>
 auto as(
-    percent_decode_range<OctetRange> &&range) -> tl::expected<Output, std::error_code> {
+    percent_decode_range<OctetRange> &&range) -> tl::expected<Output, percent_encode_errc> {
   auto result = Output();
   for (auto &&byte : range) {
     if (!byte) {

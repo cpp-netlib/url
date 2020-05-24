@@ -8,7 +8,6 @@
 
 #include <string>
 #include <string_view>
-#include <system_error>
 #include <tl/expected.hpp>
 #include <skyr/v1/domain/errors.hpp>
 
@@ -20,7 +19,7 @@ inline namespace v1 {
 /// \param input A UTF-8 encoded domain to be encoded
 /// \returns The encoded ASCII domain, or an error
 auto punycode_encode(
-    std::string_view input) -> tl::expected<std::string, std::error_code>;
+    std::string_view input) -> tl::expected<std::string, domain_errc>;
 
 /// Performs Punycode encoding based on a reference implementation
 /// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
@@ -28,7 +27,7 @@ auto punycode_encode(
 /// \param input A UTF-32 encoded domain to be encoded
 /// \returns The encoded ASCII domain, or an error
 auto punycode_encode(
-    std::u32string_view input) -> tl::expected<std::string, std::error_code>;
+    std::u32string_view input) -> tl::expected<std::string, domain_errc>;
 
 /// Performs Punycode decoding based on a reference implementation
 /// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
@@ -36,7 +35,7 @@ auto punycode_encode(
 /// \param input An ASCII encoded domain to be decoded
 /// \returns The decoded UTF-8 domain, or an error
 auto punycode_decode(
-    std::string_view input) -> tl::expected<std::string, std::error_code>;
+    std::string_view input) -> tl::expected<std::string, domain_errc>;
 }  // namespace v1
 }  // namespace skyr
 

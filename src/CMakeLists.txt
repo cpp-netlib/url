@@ -125,6 +125,7 @@ target_compile_options(
         $<$<AND:$<OR:${gnu},${clang}>,${warnings_as_errors}>:-Werror>
         $<$<AND:$<OR:${gnu},${clang}>,${no_exceptions}>:-fno-exceptions>
         $<$<AND:$<OR:${gnu},${clang}>,${no_rtti}>:-fno-rtti>
+        $<$<AND:$<OR:${gnu},${clang}>,$<CONFIG:MinSizeRel>>:-flto>
 
         $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=libc++>
 

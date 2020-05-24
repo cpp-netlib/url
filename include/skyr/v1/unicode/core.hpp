@@ -112,7 +112,7 @@ struct sequence_state {
 /// \return A sequence_state with a value of 0, and the iterator
 ///         pointing to the lead value
 template<class OctetIterator>
-inline auto make_state(OctetIterator it) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
+inline auto make_state(OctetIterator it) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   return sequence_state<OctetIterator>(it, 0);
 }
 
@@ -136,11 +136,10 @@ inline auto update_value(
 ///         the sequence isn't valid
 template<typename OctetIterator>
 inline auto
-increment(sequence_state<OctetIterator> state) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
+increment(sequence_state<OctetIterator> state) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   ++state.it;
   if (!is_trail(*state.it)) {
-    return tl::make_unexpected(
-        make_error_code(unicode_errc::illegal_byte_sequence));
+    return tl::make_unexpected(unicode_errc::illegal_byte_sequence);
   }
   return state;
 }
@@ -151,7 +150,7 @@ namespace details {
 /// \param state
 /// \return
 template<typename OctetIterator>
-inline auto mask_byte(sequence_state<OctetIterator> state) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
+inline auto mask_byte(sequence_state<OctetIterator> state) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   return update_value(state, mask8(*state.it));
 }
 
@@ -161,8 +160,8 @@ inline auto mask_byte(sequence_state<OctetIterator> state) -> tl::expected<seque
 /// \param first
 /// \return
 template<typename OctetIterator>
-auto from_two_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
-  using result_type = tl::expected<sequence_state<OctetIterator>, std::error_code>;
+auto from_two_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
+  using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
 
   constexpr static auto set_code_point = [](auto state) -> result_type {
     return update_value(
@@ -183,8 +182,8 @@ auto from_two_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<
 /// \param first
 /// \return
 template<typename OctetIterator>
-auto from_three_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
-  using result_type = tl::expected<sequence_state<OctetIterator>, std::error_code>;
+auto from_three_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
+  using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
 
   constexpr static auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
@@ -212,8 +211,8 @@ auto from_three_byte_sequence(OctetIterator first) -> tl::expected<sequence_stat
 /// \param first
 /// \return
 template<typename OctetIterator>
-auto from_four_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
-  using result_type = tl::expected<sequence_state<OctetIterator>, std::error_code>;
+auto from_four_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
+  using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
 
   constexpr static auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
@@ -253,7 +252,7 @@ auto from_four_byte_sequence(OctetIterator first) -> tl::expected<sequence_state
 /// \return
 template <typename OctetIterator>
 auto find_code_point(
-    OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, std::error_code> {
+    OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   const auto length = sequence_length(*first);
   switch (length) {
     case 1:
@@ -265,7 +264,7 @@ auto find_code_point(
     case 4:
       return details::from_four_byte_sequence(first);
     default:
-      return tl::make_unexpected(make_error_code(unicode_errc::overflow));
+      return tl::make_unexpected(unicode_errc::overflow);
   }
 }
 }  // namespace unicode
