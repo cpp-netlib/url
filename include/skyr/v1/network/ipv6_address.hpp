@@ -13,7 +13,6 @@
 #include <optional>
 #include <algorithm>
 #include <iterator>
-#include <sstream>
 #include <tl/expected.hpp>
 #include <skyr/v1/platform/endianness.hpp>
 #include <skyr/v1/string/ascii.hpp>
@@ -131,9 +130,9 @@ class ipv6_address {
         continue;
       }
 
-      std::ostringstream oss;
-      oss << std::hex << address_[i]; // NOLINT
-      output += oss.str();
+      auto buffer = std::array<char, 8>{};
+      auto chars = std::snprintf(buffer.data(), buffer.size(), "%0x", address_[i]); // NOLINT
+      std::copy(buffer.data(), buffer.data() + chars, std::back_inserter(output)); // NOLINT
 
       if (i != 7) {
         output += ":";
