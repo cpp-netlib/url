@@ -23,6 +23,8 @@ target_sources(skyr-url
         v1/core/url_parser_context.cpp
         v1/core/parse.cpp
         v1/core/url_parse_impl.hpp
+        v1/network/ipv4_address.cpp
+        v1/network/ipv6_address.cpp
         v1/domain/domain.cpp
         v1/domain/punycode.cpp
         v1/domain/idna.cpp

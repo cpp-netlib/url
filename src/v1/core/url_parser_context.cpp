@@ -20,14 +20,12 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 namespace {
-inline auto contains(
-    char byte,
-    std::string_view view) noexcept {
+auto contains(char byte, std::string_view view) noexcept {
   auto first = begin(view), last = end(view);
   return last != std::find(first, last, byte);
 }
 
-inline auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
+auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
   using namespace std::string_view_literals;
   constexpr auto forbidden = "\0\t\n\r #%/:?@[\\]"sv;
   auto first = begin(forbidden), last = end(forbidden);
@@ -37,10 +35,7 @@ inline auto is_forbidden_host_point(std::string_view::value_type byte) noexcept 
 auto remaining_starts_with(
     std::string_view input,
     std::string_view chars) noexcept {
-  if (input.empty()) {
-    return false;
-  }
-  return starts_with(input.substr(1), chars);
+  return !input.empty() && starts_with(input.substr(1), chars);
 }
 
 auto parse_opaque_host(std::string_view input, bool *validation_error) -> tl::expected<std::string, url_parse_errc> {
