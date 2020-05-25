@@ -116,8 +116,8 @@ set(msvc $<CXX_COMPILER_ID:MSVC>)
 target_compile_definitions(
         skyr-url
         PRIVATE
-        $<${msvc}:/D_SCL_SECURE_NO_WARNINGS>
-        $<${msvc}:/D_CRT_SECURE_NO_DEPRECATE>
+        $<${msvc}:_SCL_SECURE_NO_WARNINGS>
+        $<${msvc}:_CRT_SECURE_NO_DEPRECATE>
 )
 
 target_compile_options(
