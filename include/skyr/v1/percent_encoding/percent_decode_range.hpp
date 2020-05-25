@@ -19,7 +19,7 @@ namespace percent_encoding {
 namespace details {
 inline auto letter_to_hex(char byte) noexcept -> tl::expected<char, percent_encode_errc> {
   if ((byte >= '0') && (byte <= '9')) {
-    return byte - '0';
+    return static_cast<char>(byte - '0');
   }
 
   if ((byte >= 'a') && (byte <= 'f')) {
@@ -106,7 +106,7 @@ class percent_decode_iterator {
         return tl::make_unexpected(percent_encoding::percent_encode_errc::non_hex_input);
       }
 
-      return (0x10u * v0.value()) + v1.value();
+      return static_cast<char>((0x10u * v0.value()) + v1.value());
     } else {
       return *it_.value();
     }

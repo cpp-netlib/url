@@ -19,8 +19,9 @@ inline namespace v1 {
 namespace {
 auto process(
     std::u32string_view domain_name, bool use_std3_ascii_rules,
-    bool check_hyphens, bool check_bidi, bool check_joiners,
-    bool transitional_processing) -> tl::expected<std::u32string, domain_errc> {
+    [[maybe_unused]] bool check_hyphens, [[maybe_unused]] bool check_bidi,
+    [[maybe_unused]] bool check_joiners, bool transitional_processing)
+    -> tl::expected<std::u32string, domain_errc> {
   auto result = std::u32string();
   auto error = false;
 

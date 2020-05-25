@@ -149,7 +149,7 @@ auto parse_ipv6_address(
       auto numbers_seen = 0;
 
       while (it != last) {
-        auto ipv4_piece = std::optional<std::uint16_t>();
+        auto ipv4_piece = std::optional<int>();
 
         if (numbers_seen > 0) {
           if ((*it == '.') && (numbers_seen < 4)) {
@@ -166,14 +166,14 @@ auto parse_ipv6_address(
         }
 
         while ((it != last) && std::isdigit(*it, std::locale::classic())) {
-          auto number = static_cast<std::uint16_t>(*it - '0');
+          auto number = *it - '0';
           if (!ipv4_piece) {
             ipv4_piece = number;
           } else if (ipv4_piece.value() == 0) {
             *validation_error |= true;
             return tl::make_unexpected(ipv6_address_errc::invalid_ipv4_segment_number);
           } else {
-            ipv4_piece = ipv4_piece.value() * std::uint16_t(10) + number;
+            ipv4_piece = ipv4_piece.value() * 10 + number;
           }
 
           if (ipv4_piece.value() > 255) {
@@ -184,7 +184,7 @@ auto parse_ipv6_address(
           ++it;
         }
 
-        address[piece_index] = address[piece_index] * 0x100 + ipv4_piece.value(); // NOLINT
+        address[piece_index] = static_cast<std::uint16_t>(address[piece_index] * 0x100 + ipv4_piece.value()); // NOLINT
         ++numbers_seen;
 
         if ((numbers_seen == 2) || (numbers_seen == 4)) {
@@ -208,7 +208,7 @@ auto parse_ipv6_address(
       *validation_error |= true;
       return tl::make_unexpected(ipv6_address_errc::invalid_piece);
     }
-    address[piece_index] = value; // NOLINT
+    address[piece_index] = static_cast<unsigned short>(value); // NOLINT
     ++piece_index;
   }
 

@@ -28,7 +28,7 @@
 #else
 #define SKYR_EXCEPTIONS_TRY() if (true)
 #define SKYR_EXCEPTIONS_CATCH(e) if (false)
-#define SKYR_EXCEPTIONS_THROW(e) void(0)
+#define SKYR_EXCEPTIONS_THROW(e) (void)(e)
 #endif // __cpp_exceptions
 
 #endif // SKYR_CONFIG_HPP

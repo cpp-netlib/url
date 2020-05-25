@@ -123,7 +123,7 @@ target_compile_definitions(
 target_compile_options(
         skyr-url
         PRIVATE
-        $<$<AND:$<OR:${gnu},${clang}>,${full_warnings}>:-Wall>
+        $<$<AND:$<OR:${gnu},${clang}>,${full_warnings}>:-Wall -Wextra>
         $<$<AND:$<OR:${gnu},${clang}>,${warnings_as_errors}>:-Werror>
         $<$<AND:$<OR:${gnu},${clang}>,${no_exceptions}>:-fno-exceptions>
         $<$<AND:$<OR:${gnu},${clang}>,${no_rtti}>:-fno-rtti>

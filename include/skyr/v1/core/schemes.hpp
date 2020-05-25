@@ -22,11 +22,11 @@ using namespace std::string_view_literals;
 using default_port_list = std::array<std::pair<std::string_view, std::optional<std::uint16_t>>, 6>;
 constexpr static auto schemes = default_port_list{{
                                                {"file"sv, std::nullopt},
-                                               {"ftp"sv, 21},
-                                               {"http"sv, 80},
-                                               {"https"sv, 443},
-                                               {"ws"sv, 80},
-                                               {"wss"sv, 443},
+                                               {"ftp"sv, static_cast<std::uint16_t>(21)},
+                                               {"http"sv, static_cast<std::uint16_t>(80)},
+                                               {"https"sv, static_cast<std::uint16_t>(443)},
+                                               {"ws"sv, static_cast<std::uint16_t>(80)},
+                                               {"wss"sv, static_cast<std::uint16_t>(443)},
                                            }};
 
 
