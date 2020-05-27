@@ -187,7 +187,7 @@ TEST_CASE("url_setter_tests", "[url]") {
 
     auto instance = skyr::url{"sc://x/"};
 
-    auto ec = instance.set_host(U"\u0000"sv);
+    auto ec = instance.set_host(U"\x0000"sv);
     CHECK(ec);
     CHECK("sc://x/" == instance.href());
     CHECK("x" == instance.host());
@@ -364,7 +364,7 @@ TEST_CASE("url_setter_tests", "[url]") {
 
     auto instance = skyr::url{"a:/"};
     auto ec = instance.set_pathname(
-        U"\u0000\u0001\t\n\r\u001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\u007f\u0080\u0081Éé"sv);
+        U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081Éé"sv);
     CHECK_FALSE(ec);
     CHECK("a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.href());
     CHECK("/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.pathname());
@@ -399,7 +399,7 @@ TEST_CASE("url_setter_tests", "[url]") {
 
     auto instance = skyr::url{"a:/"};
     auto ec = instance.set_search(
-        U"\u0000\u0001\t\n\r\u001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\u007f\u0080\u0081Éé"sv);
+        U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081Éé"sv);
     CHECK_FALSE(ec);
     CHECK("a:/?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.href());
     CHECK("?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.search());
@@ -426,7 +426,7 @@ TEST_CASE("url_setter_tests", "[url]") {
 
     auto instance = skyr::url{"a:/"};
     auto ec = instance.set_hash(
-        U"\u0000\u0001\t\n\r\u001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\u007f\u0080\u0081Éé"sv);
+        U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081Éé"sv);
     CHECK_FALSE(ec);
     CHECK("a:/#%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.href());
     CHECK("#%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.hash());
