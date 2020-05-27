@@ -70,9 +70,14 @@ auto basic_parse(
     const url_record *base,
     const url_record *url,
     std::optional<url_parse_state> state_override) -> tl::expected<url_record, std::error_code> {
-  auto input_ = preprocess_input(input, validation_error);
-  auto context = url_parser_context(
-      input_, validation_error, base, url, state_override);
+  if (url == nullptr) {
+    input = remove_leading_c0_control_or_space(input, validation_error);
+    input = remove_trailing_c0_control_or_space(input, validation_error);
+  }
+  auto input_ = std::string(input);
+  remove_tabs_and_newlines(input_, validation_error);
+
+  auto context = url_parser_context(input_, validation_error, base, url, state_override);
 
   while (true) {
     auto byte = context.is_eof() ? '\0' : *context.it;

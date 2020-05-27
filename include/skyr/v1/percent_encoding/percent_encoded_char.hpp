@@ -37,7 +37,7 @@ inline auto is_fragment_byte(char byte) {
 }
 
 inline auto is_query_byte(char byte) {
-  return is_fragment_byte(byte) || (byte == '\x27');
+  return is_fragment_byte(byte) || (byte == '\x23');
 }
 
 inline auto is_path_byte(char byte) {
