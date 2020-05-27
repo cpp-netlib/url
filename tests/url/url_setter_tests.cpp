@@ -182,6 +182,39 @@ TEST_CASE("url_setter_tests", "[url]") {
     CHECK("/path/to/helicon/" == instance.pathname());
   }
 
+  SECTION("test_host_non_special_scheme") {
+    using namespace std::string_view_literals;
+
+    auto instance = skyr::url{"sc://x/"};
+
+    auto ec = instance.set_host(U"\u0000"sv);
+    CHECK(ec);
+    CHECK("sc://x/" == instance.href());
+    CHECK("x" == instance.host());
+    CHECK("x" == instance.hostname());
+  }
+
+  SECTION("test_host_non_special_scheme_1") {
+    auto instance = skyr::url{"sc://test@test/"};
+
+    auto ec = instance.set_host("");
+    CHECK_FALSE(ec);
+    CHECK("sc://test@test/" == instance.href());
+    CHECK("test" == instance.username());
+    CHECK("test" == instance.host());
+    CHECK("test" == instance.hostname());
+  }
+
+  SECTION("test_host_port_overflow") {
+    auto instance = skyr::url{"http://example.net/path"};
+
+    auto ec = instance.set_host("example.com:65536");
+    CHECK_FALSE(ec);
+    CHECK("http://example.com/path" == instance.href());
+    CHECK("example.com" == instance.host());
+    CHECK("example.com" == instance.hostname());
+    CHECK("" == instance.port());
+  }
 
   SECTION("test_hostname_http") {
     auto instance = skyr::url{"http://example.com/"};
@@ -397,39 +430,5 @@ TEST_CASE("url_setter_tests", "[url]") {
     CHECK_FALSE(ec);
     CHECK("a:/#%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.href());
     CHECK("#%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.hash());
-  }
-}
-
-TEST_CASE("url_setter_tests_mayfail", "[url][!mayfail]") {
-  SECTION("test_host_non_special_scheme") {
-    auto instance = skyr::url{"sc://x/"};
-
-    auto ec = instance.set_host("\u0000");
-    CHECK_FALSE(ec);
-    CHECK("sc://x/" == instance.href());
-    CHECK("x" == instance.host());
-    CHECK("x" == instance.hostname());
-  }
-
-  SECTION("test_host_non_special_scheme_2") {
-    auto instance = skyr::url{"sc://test@test/"};
-
-    auto ec = instance.set_host("");
-    CHECK_FALSE(ec);
-    CHECK("sc://test@test/" == instance.href());
-    CHECK("test" == instance.username());
-    CHECK("test" == instance.host());
-    CHECK("test" == instance.hostname());
-  }
-
-  SECTION("test_host_port_overflow") {
-    auto instance = skyr::url{"http://example.net/path"};
-
-    auto ec = instance.set_host("example.com:65536");
-    CHECK_FALSE(ec);
-    CHECK("http://example.com/path" == instance.href());
-    CHECK("example.com" == instance.host());
-    CHECK("example.com" == instance.hostname());
-    CHECK("" == instance.port());
   }
 }
