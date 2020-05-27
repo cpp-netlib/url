@@ -14,6 +14,7 @@
 
 TEST_CASE("unicode_tests", "[unicode]") {
   using namespace std::string_literals;
+  using namespace std::string_view_literals;
 
   SECTION("utf32_to_bytes_poo_emoji_test") {
     const auto input = U"\x1F4A9"s;
@@ -69,5 +70,29 @@ TEST_CASE("unicode_tests", "[unicode]") {
         input | skyr::unicode::transform::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
+  }
+
+  SECTION("u32_to_u8_sv") {
+    const auto input = U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081Éé"sv;
+    auto bytes = skyr::unicode::as<std::string>(
+        input | skyr::unicode::transform::to_u8);
+    REQUIRE(bytes);
+    CHECK(
+        "\x00\x01\x09\x0a\x0d\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28"
+        "\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x39\x3a\x3b\x3c\x3d\x3e\x3f"
+        "\x40\x41\x5a\x5b\x5c\x5d\x5e\x5f\x60\x61\x7a\x7b\x7c\x7d\x7e"
+        "\x7f\xc2\x80\xc2\x81\xc3\x89\xc3\xa9"sv == bytes.value());
+  }
+
+  SECTION("u16_to_u8_sv") {
+    const auto input = u"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081Éé"sv;
+    auto bytes = skyr::unicode::as<std::string>(
+        input | skyr::unicode::transform::to_u8);
+    REQUIRE(bytes);
+    CHECK(
+        "\x00\x01\x09\x0a\x0d\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28"
+        "\x29\x2a\x2b\x2c\x2d\x2e\x2f\x30\x39\x3a\x3b\x3c\x3d\x3e\x3f"
+        "\x40\x41\x5a\x5b\x5c\x5d\x5e\x5f\x60\x61\x7a\x7b\x7c\x7d\x7e"
+        "\x7f\xc2\x80\xc2\x81\xc3\x89\xc3\xa9"sv == bytes.value());
   }
 }
