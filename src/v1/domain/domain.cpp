@@ -115,26 +115,26 @@ auto unicode_to_ascii(
 
   return join(labels, '.');
 }
-}  // namespace
 
 auto domain_to_ascii(
-    std::u32string_view domain, bool be_strict) -> tl::expected<std::string, domain_errc> {
+    std::u32string_view domain, bool be_strict, bool *validation_error) -> tl::expected<std::string, domain_errc> {
   auto result =
       unicode_to_ascii(domain, false, true, true, be_strict, false, be_strict);
   if (!result) {
-    // validation error
+    *validation_error |= true;
     return tl::make_unexpected(result.error());
   }
   return result;
 }
+}  // namespace
 
 auto domain_to_ascii(
-    std::string_view domain, bool be_strict) -> tl::expected<std::string, domain_errc> {
+    std::string_view domain, bool be_strict, bool *validation_error) -> tl::expected<std::string, domain_errc> {
   auto utf32 = unicode::as<std::u32string>(unicode::view::as_u8(domain) | unicode::transform::to_u32);
   if (!utf32) {
     return tl::make_unexpected(domain_errc::encoding_error);
   }
-  return domain_to_ascii(utf32.value(), be_strict);
+  return domain_to_ascii(utf32.value(), be_strict, validation_error);
 }
 
 auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, domain_errc> {

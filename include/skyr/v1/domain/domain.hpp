@@ -13,24 +13,17 @@
 
 namespace skyr {
 inline namespace v1 {
-/// Converts a UTF-32 encoded domain to ASCII using
+/// Converts a UTF-8 encoded domain to ASCII using
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
 ///
 /// \param domain A domain
 /// \param be_strict Tells the processor to be strict
+/// \param validation_error
 /// \returns An ASCII domain, or an error
 auto domain_to_ascii(
-    std::u32string_view domain,
-    bool be_strict) -> tl::expected<std::string, domain_errc>;
-
-/// Converts a UTF-32 encoded domain to ASCII using
-/// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
-///
-/// \param domain A domain
-/// \returns An ASCII domain, or an error
-inline auto domain_to_ascii(std::u32string_view domain) {
-  return domain_to_ascii(domain, false);
-}
+    std::string_view domain,
+    bool be_strict,
+    bool *validation_error) -> tl::expected<std::string, domain_errc>;
 
 /// Converts a UTF-8 encoded domain to ASCII using
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
@@ -38,9 +31,22 @@ inline auto domain_to_ascii(std::u32string_view domain) {
 /// \param domain A domain
 /// \param be_strict Tells the processor to be strict
 /// \returns An ASCII domain, or an error
-auto domain_to_ascii(
+inline auto domain_to_ascii(
     std::string_view domain,
-    bool be_strict) -> tl::expected<std::string, domain_errc>;
+    bool be_strict) -> tl::expected<std::string, domain_errc> {
+  [[maybe_unused]] bool validation_error = false;
+  return domain_to_ascii(domain, be_strict, &validation_error);
+}
+
+/// Converts a UTF-8 encoded domain to ASCII using
+/// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
+///
+/// \param domain A domain
+/// \param validation_error
+/// \returns An ASCII domain, or an error
+inline auto domain_to_ascii(std::string_view domain, bool *validation_error) {
+  return domain_to_ascii(domain, false, validation_error);
+}
 
 /// Converts a UTF-8 encoded domain to ASCII using
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
@@ -48,7 +54,8 @@ auto domain_to_ascii(
 /// \param domain A domain
 /// \returns An ASCII domain, or an error
 inline auto domain_to_ascii(std::string_view domain) {
-  return domain_to_ascii(domain, false);
+  [[maybe_unused]] bool validation_error = false;
+  return domain_to_ascii(domain, false, &validation_error);
 }
 
 /// Converts a Punycode encoded domain to UTF-8
