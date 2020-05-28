@@ -73,7 +73,8 @@ TEST_CASE("unicode_tests", "[unicode]") {
   }
 
   SECTION("u32_to_u8_sv_1") {
-    const auto input = U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081Éé"sv;
+    const auto input =
+        U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081\x00c9\x00e9"sv;
     auto bytes = skyr::unicode::as<std::string>(
         input | skyr::unicode::transform::to_u8);
     REQUIRE(bytes);
@@ -85,7 +86,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
   }
 
   SECTION("u32_to_u8_sv_2") {
-    const auto input = U"\x0080\x0081Éé"sv;
+    const auto input = U"\x0080\x0081\x00c9\x00e9"sv;
     auto bytes = skyr::unicode::as<std::string>(
         input | skyr::unicode::transform::to_u8);
     REQUIRE(bytes);
@@ -93,7 +94,8 @@ TEST_CASE("unicode_tests", "[unicode]") {
   }
 
   SECTION("u16_to_u8_sv_1") {
-    const auto input = u"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081Éé"sv;
+    const auto input =
+        u"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081\x00c9\x00e9"sv;
     auto bytes = skyr::unicode::as<std::string>(
         input | skyr::unicode::transform::to_u8);
     REQUIRE(bytes);
@@ -105,7 +107,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
   }
 
   SECTION("u16_to_u8_sv_2") {
-    const auto input = u"\x0080\x0081Éé"sv;
+    const auto input = u"\x0080\x0081\x00c9\x00e9"sv;
     auto bytes = skyr::unicode::as<std::string>(
         input | skyr::unicode::transform::to_u8);
     REQUIRE(bytes);
