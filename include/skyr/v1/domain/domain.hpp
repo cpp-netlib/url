@@ -21,7 +21,16 @@ inline namespace v1 {
 /// \returns An ASCII domain, or an error
 auto domain_to_ascii(
     std::u32string_view domain,
-    bool be_strict=false) -> tl::expected<std::string, domain_errc>;
+    bool be_strict) -> tl::expected<std::string, domain_errc>;
+
+/// Converts a UTF-32 encoded domain to ASCII using
+/// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
+///
+/// \param domain A domain
+/// \returns An ASCII domain, or an error
+inline auto domain_to_ascii(std::u32string_view domain) {
+  return domain_to_ascii(domain, false);
+}
 
 /// Converts a UTF-8 encoded domain to ASCII using
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
@@ -31,7 +40,16 @@ auto domain_to_ascii(
 /// \returns An ASCII domain, or an error
 auto domain_to_ascii(
     std::string_view domain,
-    bool be_strict=false) -> tl::expected<std::string, domain_errc>;
+    bool be_strict) -> tl::expected<std::string, domain_errc>;
+
+/// Converts a UTF-8 encoded domain to ASCII using
+/// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
+///
+/// \param domain A domain
+/// \returns An ASCII domain, or an error
+inline auto domain_to_ascii(std::string_view domain) {
+  return domain_to_ascii(domain, false);
+}
 
 /// Converts a Punycode encoded domain to UTF-8
 ///
