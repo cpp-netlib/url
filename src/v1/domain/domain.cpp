@@ -19,8 +19,7 @@ inline namespace v1 {
 namespace {
 auto process(
     std::u32string_view domain_name, bool use_std3_ascii_rules,
-    [[maybe_unused]] bool check_hyphens, [[maybe_unused]] bool check_bidi,
-    [[maybe_unused]] bool check_joiners, bool transitional_processing)
+    bool transitional_processing)
     -> tl::expected<std::u32string, domain_errc> {
   auto result = std::u32string();
   auto error = false;
@@ -78,8 +77,32 @@ auto unicode_to_ascii(
     std::u32string_view domain_name, bool check_hyphens, bool check_bidi,
     bool check_joiners, bool use_std3_ascii_rules, bool transitional_processing,
     bool verify_dns_length) -> tl::expected<std::string, domain_errc> {
-  auto domain = process(domain_name, use_std3_ascii_rules, check_hyphens,
-                        check_bidi, check_joiners, transitional_processing);
+  // check validity
+  // - check_hyphens
+  // - check_joiners
+  // - check_bidi
+
+  for (auto label : split(std::u32string_view(domain_name), U".")) {
+    if (check_hyphens) {
+      if ((label.size() >= 4) && (label.substr(2, 4) == U"--")) {
+        return tl::make_unexpected(domain_errc::bad_input);
+      }
+
+      if ((label.front() == U'-') || (label.back() == U'-')) {
+        return tl::make_unexpected(domain_errc::bad_input);
+      }
+    }
+
+    if (check_joiners) {
+
+    }
+
+    if (check_bidi) {
+
+    }
+  }
+
+  auto domain = process(domain_name, use_std3_ascii_rules, transitional_processing);
 
   if (!domain) {
     return tl::make_unexpected(domain.error());

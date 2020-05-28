@@ -49,27 +49,27 @@ TEST_CASE("valid domains from ascii", "[domain]") {
 
 TEST_CASE("invalid domains", "[domain]") {
   SECTION("invalid_domain_1") {
-    auto instance = skyr::domain_to_ascii("GOO 　goo.com");
+    auto instance = skyr::domain_to_ascii("GOO\xc2\xa0\xE3\x80\x80goo.com");
     REQUIRE(instance);
   }
 
   SECTION("invalid_domain_1_be strict") {
-    auto instance = skyr::domain_to_ascii("GOO 　goo.com", true);
+    auto instance = skyr::domain_to_ascii("GOO\xc2\xa0\xE3\x80\x80goo.com", true);
     REQUIRE_FALSE(instance);
   }
 
   SECTION("invalid_domain_2") {
-    auto instance = skyr::domain_to_ascii("�");
+    auto instance = skyr::domain_to_ascii("\xef\xbf\xbd");
     REQUIRE_FALSE(instance);
   }
 
   SECTION("invalid_domain_3") {
-    auto instance = skyr::domain_to_ascii("％４１.com");
+    auto instance = skyr::domain_to_ascii("％\xef\xbc\x94\xef\xbc\x91.com");
     REQUIRE(instance);
   }
 
   SECTION("invalid_domain_4_bestrict") {
-    auto instance = skyr::domain_to_ascii("％４１.com", true);
+    auto instance = skyr::domain_to_ascii("％\xef\xbc\x94\xef\xbc\x91.com", true);
     REQUIRE_FALSE(instance);
   }
 
@@ -78,5 +78,45 @@ TEST_CASE("invalid domains", "[domain]") {
     auto instance = skyr::domain_to_ascii(domain, true);
     REQUIRE_FALSE(instance);
     REQUIRE(static_cast<skyr::domain_errc>(instance.error()) == skyr::domain_errc::invalid_length);
+  }
+
+  SECTION("toascii_01") {
+    auto instance = skyr::domain_to_ascii("xn--a");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("toascii_02") {
+    auto instance = skyr::domain_to_ascii("xn--a.xn--nxa");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("toascii_03") {
+    auto instance = skyr::domain_to_ascii("xn--a.β");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("toascii_04") {
+    auto instance = skyr::domain_to_ascii("\xe2\x80\x8d.example");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("toascii_05") {
+    auto instance = skyr::domain_to_ascii("xn--1ug.example");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("toascii_06") {
+    auto instance = skyr::domain_to_ascii("a\xd9\x8a");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("toascii_07") {
+    auto instance = skyr::domain_to_ascii("xn--a-yoc");
+    REQUIRE_FALSE(instance);
+  }
+
+  SECTION("toascii_08") {
+    auto instance = skyr::domain_to_ascii("xn--zn7c.com");
+    REQUIRE_FALSE(instance);
   }
 }
