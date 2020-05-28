@@ -36,10 +36,6 @@ inline auto is_fragment_byte(char byte) {
   return is_c0_control_byte(byte) || (it != set.end());
 }
 
-inline auto is_query_byte(char byte) {
-  return is_fragment_byte(byte) || (byte == '\x23');
-}
-
 inline auto is_path_byte(char byte) {
   constexpr static std::array<char, 4> set = {'\x23', '\x3f', '\x7b', '\x7d'};
   auto it = std::find(begin(set), end(set), byte);
@@ -62,8 +58,6 @@ enum class encode_set {
   c0_control,
   ///
   fragment,
-  ///
-  query,
   ///
   path,
   ///
@@ -173,11 +167,16 @@ inline auto percent_encode_byte(char byte, encode_set excludes) -> percent_encod
       return percent_encode_byte(byte, details::is_userinfo_byte);
     case encode_set::path:
       return percent_encode_byte(byte, details::is_path_byte);
-    case encode_set::query:
-      return percent_encode_byte(byte, details::is_query_byte);
     case encode_set::fragment:
       return percent_encode_byte(byte, details::is_fragment_byte);
   }
+  return percent_encoding::percent_encoded_char(byte);
+}
+
+///
+/// \param byte
+/// \return
+inline auto percent_encode_byte(char byte) -> percent_encoded_char {
   return percent_encoding::percent_encoded_char(byte);
 }
 

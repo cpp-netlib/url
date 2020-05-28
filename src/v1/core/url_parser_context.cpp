@@ -828,7 +828,7 @@ auto url_parser_context::parse_query(char byte) -> tl::expected<url_parse_action
         (byte > '~') ||
         (contains(byte, R"("#<>)"sv)) ||
         ((byte == '\'') && url.is_special())) {
-      auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::query);
+      auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::none);
       url.query.value() += pct_encoded.to_string();
     } else {
       url.query.value().push_back(byte);
