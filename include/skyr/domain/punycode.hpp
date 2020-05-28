@@ -6,6 +6,6 @@
 #ifndef SKYR_DOMAIN_PUNYCODE_HPP
 #define SKYR_DOMAIN_PUNYCODE_HPP
 
-#include <skyr/v1/domain/punycode.hpp>
+#include "../../../src/v1/domain/punycode.hpp"
 
 #endif // SKYR_DOMAIN_PUNYCODE_HPP

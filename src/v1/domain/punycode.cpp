@@ -6,9 +6,9 @@
 #include <algorithm>
 #include <cassert>
 #include <skyr/v1/domain/errors.hpp>
-#include <skyr/v1/domain/punycode.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
+#include <v1/domain/punycode.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -68,15 +68,6 @@ auto adapt(uint32_t delta, uint32_t numpoints, bool firsttime) {
   return k + (base - tmin + 1u) * delta / (delta + skew);
 }
 }  // namespace
-
-auto punycode_encode(
-    std::string_view input) -> tl::expected<std::string, domain_errc> {
-  auto utf32 = unicode::as<std::u32string>(unicode::view::as_u8(input) | unicode::transform::to_u32);
-  if (!utf32) {
-    return tl::make_unexpected(domain_errc::bad_input);
-  }
-  return punycode_encode(utf32.value());
-}
 
 auto punycode_encode(
     std::u32string_view input) -> tl::expected<std::string, domain_errc> {
@@ -218,6 +209,15 @@ auto punycode_decode(
     return tl::make_unexpected(domain_errc::bad_input);
   }
   return u8_result.value();
+}
+
+auto punycode_encode(
+    std::string_view input) -> tl::expected<std::string, domain_errc> {
+  auto utf32 = unicode::as<std::u32string>(unicode::view::as_u8(input) | unicode::transform::to_u32);
+  if (!utf32) {
+    return tl::make_unexpected(domain_errc::bad_input);
+  }
+  return punycode_encode(utf32.value());
 }
 }  // namespace v1
 }  // namespace skyr

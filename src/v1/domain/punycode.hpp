@@ -19,6 +19,14 @@ inline namespace v1 {
 /// \param input A UTF-8 encoded domain to be encoded
 /// \returns The encoded ASCII domain, or an error
 auto punycode_encode(
+    std::u32string_view input) -> tl::expected<std::string, domain_errc>;
+
+/// Performs Punycode encoding based on a reference implementation
+/// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
+///
+/// \param input A UTF-8 encoded domain to be encoded
+/// \returns The encoded ASCII domain, or an error
+auto punycode_encode(
     std::string_view input) -> tl::expected<std::string, domain_errc>;
 
 /// Performs Punycode encoding based on a reference implementation

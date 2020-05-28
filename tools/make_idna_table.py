@@ -78,7 +78,7 @@ def main():
 #include <iterator>
 #include <cassert>
 #include <array>
-#include <skyr/v1/domain/idna.hpp>
+#include "idna.hpp"
 
 namespace skyr {
 inline namespace v1 {

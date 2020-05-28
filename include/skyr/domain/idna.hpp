@@ -6,6 +6,6 @@
 #ifndef SKYR_DOMAIN_IDNA_HPP
 #define SKYR_DOMAIN_IDNA_HPP
 
-#include <skyr/v1/domain/idna.hpp>
+#include "../../../src/v1/domain/idna.hpp"
 
 #endif  // SKYR_DOMAIN_IDNA_HPP
