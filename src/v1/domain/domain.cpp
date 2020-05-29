@@ -94,7 +94,15 @@ auto unicode_to_ascii(
     }
 
     if (check_joiners) {
+      constexpr static auto is_contextj = [] (auto cp) {
+        return (cp == U'\x200c') || (cp == U'\x200d');
+      };
 
+      auto first = begin(label), last = end(label);
+      auto it = std::find_if(first, last, is_contextj);
+      if (it != last) {
+        return tl::make_unexpected(domain_errc::bad_input);
+      }
     }
 
     if (check_bidi) {
