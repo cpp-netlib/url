@@ -281,10 +281,10 @@ auto url::default_port(std::string_view scheme) noexcept -> std::optional<std::u
 namespace details {
 auto make_url(
     url::string_view input,
-    const url_record *base) -> tl::expected<url, std::error_code> {
+    const url_record *base) -> tl::expected<url, url_parse_errc> {
   bool validation_error = false;
   return parse(input, &validation_error, base)
-      .and_then([](auto &&new_url) -> tl::expected<url, std::error_code> {
+      .and_then([](auto &&new_url) -> tl::expected<url, url_parse_errc> {
         return url(std::forward<url_record>(new_url));
       });
 }

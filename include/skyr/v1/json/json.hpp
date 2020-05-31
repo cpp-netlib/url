@@ -24,39 +24,14 @@ enum class json_errc {
   invalid_query = 1,
 };
 
-namespace details {
-class json_error_category : public std::error_category {
- public:
-  [[nodiscard]] auto name() const noexcept -> const char * override {
-    return "url json query";
-  }
-
-  [[nodiscard]] auto message(int error) const noexcept -> std::string override {
-    switch (static_cast<json_errc>(error)) {
-      case json_errc::invalid_query: return "Invalid query object";
-      default: return "(Unknown error)";
-    }
-  }
-};
-}  // namespace details
-
-/// Creates a `std::error_code` given a `skyr::json::json_errc` value
-/// \param error A JSON query error
-/// \returns A `std::error_code` object
-inline auto make_error_code(json_errc error) noexcept -> std::error_code {
-  static const details::json_error_category category{};
-  return std::error_code(static_cast<int>(error), category);
-}
-
-
 inline auto encode_query(const nlohmann::json &json, char separator='&', char equal='=')
-  -> tl::expected<std::string, std::error_code> {
+  -> tl::expected<std::string, json_errc> {
   using namespace std::string_literals;
 
   auto result = ""s;
 
   if (!json.is_object()) {
-    return tl::make_unexpected(make_error_code(json_errc::invalid_query));
+    return tl::make_unexpected(json_errc::invalid_query);
   }
 
   for (auto &[key, value] : json.items()) {

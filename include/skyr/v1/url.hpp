@@ -719,7 +719,7 @@ inline void swap(url &lhs, url &rhs) noexcept {
 
 namespace details {
 auto make_url(
-    url::string_view input, const url_record *base) -> tl::expected<url, std::error_code>;
+    url::string_view input, const url_record *base) -> tl::expected<url, url_parse_errc>;
 }  // namespace details
 
 /// Parses a URL string and constructs a `url` object on success,
@@ -730,11 +730,10 @@ auto make_url(
 /// \returns A `url` object on success, an error on failure
 template<class Source>
 inline auto make_url(
-    const Source &input) -> tl::expected<url, std::error_code> {
+    const Source &input) -> tl::expected<url, url_parse_errc> {
   auto bytes = details::to_u8(input);
   if (!bytes) {
-    return tl::make_unexpected(
-        make_error_code(url_parse_errc::invalid_unicode_character));
+    return tl::make_unexpected(url_parse_errc::invalid_unicode_character);
   }
   return details::make_url(bytes.value(), nullptr);
 }
@@ -748,11 +747,10 @@ inline auto make_url(
 /// \returns A `url` object on success, an error on failure
 template<class Source>
 inline auto make_url(
-    const Source &input, const url &base) -> tl::expected<url, std::error_code> {
+    const Source &input, const url &base) -> tl::expected<url, url_parse_errc> {
   auto bytes = details::to_u8(input);
   if (!bytes) {
-    return tl::make_unexpected(
-        make_error_code(url_parse_errc::invalid_unicode_character));
+    return tl::make_unexpected(url_parse_errc::invalid_unicode_character);
   }
   const auto &base_record = base.record();
   return details::make_url(bytes.value(), &base_record);
