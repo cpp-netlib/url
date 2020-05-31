@@ -81,7 +81,9 @@ TEST_CASE("invalid domains", "[domain]") {
     REQUIRE_FALSE(instance);
     REQUIRE(static_cast<skyr::domain_errc>(instance.error()) == skyr::domain_errc::invalid_length);
   }
+}
 
+TEST_CASE("web platform tests", "[domain][!mayfail]") {
   SECTION("toascii_01") {
     auto instance = skyr::domain_to_ascii("xn--a");
     REQUIRE_FALSE(instance);

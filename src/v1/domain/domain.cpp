@@ -11,13 +11,13 @@
 #include <skyr/v1/string/join.hpp>
 #include <skyr/v1/string/split.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include <v1/domain/idna.hpp>
 #include <v1/domain/punycode.hpp>
+#include "idna.hpp"
 
 namespace skyr {
 inline namespace v1 {
 namespace {
-auto process(
+auto map_code_points(
     std::u32string_view domain_name, bool use_std3_ascii_rules,
     bool transitional_processing)
     -> tl::expected<std::u32string, domain_errc> {
@@ -74,15 +74,14 @@ auto process(
 }
 
 auto unicode_to_ascii(
-    std::u32string_view domain_name, bool check_hyphens, bool check_bidi,
+    std::u32string_view domain_name, bool check_hyphens, [[maybe_unused]] bool check_bidi,
     bool check_joiners, bool use_std3_ascii_rules, bool transitional_processing,
     bool verify_dns_length) -> tl::expected<std::string, domain_errc> {
-  // check validity
-  // - check_hyphens
-  // - check_joiners
-  // - check_bidi
+  constexpr static auto is_contextj = [] (auto cp) {
+    return (cp == U'\x200c') || (cp == U'\x200d');
+  };
 
-  for (auto label : split(std::u32string_view(domain_name), U".")) {
+  for (auto label : split(std::u32string_view(domain_name), U"\x002e\xff0e\x3002\0xff61")) {
     if (check_hyphens) {
       if ((label.size() >= 4) && (label.substr(2, 4) == U"--")) {
         return tl::make_unexpected(domain_errc::bad_input);
@@ -94,23 +93,15 @@ auto unicode_to_ascii(
     }
 
     if (check_joiners) {
-      constexpr static auto is_contextj = [] (auto cp) {
-        return (cp == U'\x200c') || (cp == U'\x200d');
-      };
-
       auto first = begin(label), last = end(label);
       auto it = std::find_if(first, last, is_contextj);
       if (it != last) {
         return tl::make_unexpected(domain_errc::bad_input);
       }
     }
-
-    if (check_bidi) {
-
-    }
   }
 
-  auto domain = process(domain_name, use_std3_ascii_rules, transitional_processing);
+  auto domain = map_code_points(domain_name, use_std3_ascii_rules, transitional_processing);
 
   if (!domain) {
     return tl::make_unexpected(domain.error());
@@ -123,7 +114,7 @@ auto unicode_to_ascii(
       if (!encoded) {
         return tl::make_unexpected(encoded.error());
       }
-      labels.emplace_back(begin(encoded.value()), end(encoded.value()));
+      labels.emplace_back("xn--" + encoded.value());
     }
     else {
       labels.emplace_back(begin(label), end(label));
@@ -171,11 +162,17 @@ auto domain_to_ascii(
 auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, domain_errc> {
   auto labels = std::vector<std::string>{};
   for (auto label : split(ascii, ".")) {
-    auto encoded = punycode_decode(label);
-    if (!encoded) {
-      return tl::make_unexpected(encoded.error());
+    if (label.substr(0, 4) == "xn--") {
+      label.remove_prefix(4);
+      auto encoded = punycode_decode(label);
+      if (!encoded) {
+        return tl::make_unexpected(encoded.error());
+      }
+      labels.emplace_back(encoded.value());
     }
-    labels.emplace_back(begin(encoded.value()), end(encoded.value()));
+    else {
+      labels.emplace_back(begin(label), end(label));
+    }
   }
   return join(labels, '.');
 }

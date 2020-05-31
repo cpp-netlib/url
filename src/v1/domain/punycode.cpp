@@ -135,18 +135,13 @@ auto punycode_encode(
     ++delta, ++n;
   }
 
-  return "xn--"s + result;
+  return result;
 }
 
 auto punycode_decode(
     std::string_view input) -> tl::expected<std::string, domain_errc> {
   auto result = std::u32string();
   result.reserve(256);
-
-  if (input.substr(0, 4) != "xn--"sv) {
-    return std::string(input);
-  }
-  input.remove_prefix(4);
 
   auto n = initial_n;
   auto bias = initial_bias;

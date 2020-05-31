@@ -76,8 +76,6 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/url_search_parameters.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/url.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/errors.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/domain/idna.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/domain/punycode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/domain/domain.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv4_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
