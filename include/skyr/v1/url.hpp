@@ -678,14 +678,17 @@ class url {
 
   void initialize(
       string_view input,
-      const url_record *base=nullptr);
+      const url_record *base);
+
+  void initialize(
+      string_view input);
 
   void update_record(url_record &&url);
 
   template<class Source>
   auto set_port_impl(
       const Source &port,
-      typename std::enable_if<is_url_convertible<Source>::value>::type * = nullptr) -> std::error_code {
+      typename std::enable_if<is_url_convertible<Source>::value>::type * =nullptr) -> std::error_code {
     auto bytes = details::to_u8(port);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);

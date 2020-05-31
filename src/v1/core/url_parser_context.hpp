@@ -50,8 +50,8 @@ class url_parser_context {
       std::string_view input,
       bool *validation_error,
       const url_record *base,
-      const url_record *url=nullptr,
-      std::optional<url_parse_state> state_override=std::nullopt);
+      const url_record *url,
+      std::optional<url_parse_state> state_override);
 
   [[nodiscard]] auto is_eof() const noexcept {
     return it == end(input);

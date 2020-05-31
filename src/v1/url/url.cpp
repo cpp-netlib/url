@@ -29,9 +29,13 @@ void url::initialize(string_view input, const url_record *base) {
       });
 }
 
+void url::initialize(string_view input) {
+  initialize(input, nullptr);
+}
+
 auto url::set_href(string_view href) -> std::error_code {
   bool validation_error = false;
-  auto new_url = details::basic_parse(href, &validation_error);
+  auto new_url = details::basic_parse(href, &validation_error, nullptr, nullptr, std::nullopt);
   if (!new_url) {
     return new_url.error();
   }

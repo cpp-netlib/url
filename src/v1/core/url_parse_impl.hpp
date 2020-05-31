@@ -62,22 +62,25 @@ enum class url_parse_state {
 
 namespace details {
 /// \param input The input string that will be parsed
+/// \param validation_error This value is set if there was a
+///                         validation error during parsing
 /// \param base An optional base URL
 /// \param url An optional `url_record`
-/// \param state_override
+/// \param state_override An optional parameter to override the
+///                       parser state
 /// \returns A `url_record` on success and an error code on failure
 auto basic_parse(
     std::string_view input,
     bool *validation_error,
-    const url_record *base=nullptr,
-    const url_record *url=nullptr,
-    std::optional<url_parse_state> state_override=std::nullopt) -> tl::expected<url_record, url_parse_errc>;
+    const url_record *base,
+    const url_record *url,
+    std::optional<url_parse_state> state_override) -> tl::expected<url_record, url_parse_errc>;
 
 inline auto parse(
     std::string_view input,
     bool *validation_error,
-    const url_record *base=nullptr) -> tl::expected<url_record, url_parse_errc> {
-  auto url = basic_parse(input, validation_error, base);
+    const url_record *base) -> tl::expected<url_record, url_parse_errc> {
+  auto url = basic_parse(input, validation_error, base, nullptr, std::nullopt);
 
   if (!url) {
     return url;
@@ -92,6 +95,12 @@ inline auto parse(
   }
 
   return url;
+}
+
+inline auto parse(
+    std::string_view input,
+    bool *validation_error) -> tl::expected<url_record, url_parse_errc> {
+  return parse(input, validation_error, nullptr);
 }
 }  // namespace details
 }  // namespace v1
