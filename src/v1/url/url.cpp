@@ -118,7 +118,7 @@ auto url::set_host(string_view host) -> std::error_code {
   auto new_url = details::basic_parse(
       host, &validation_error, nullptr, &url_, url_parse_state::host);
   if (!new_url) {
-    if (static_cast<url_parse_errc>(new_url.error().value()) == url_parse_errc::invalid_port) {
+    if (new_url.error() == url_parse_errc::invalid_port) {
       new_url = details::basic_parse(
           host, &validation_error, nullptr, &url_, url_parse_state::hostname);
       if (!new_url) {

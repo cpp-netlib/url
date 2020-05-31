@@ -18,43 +18,43 @@ inline namespace v1 {
 /// [WhatWG specification](https://url.spec.whatwg.org/)
 ///
 /// \param input A UTF-8 encoded input string
-/// \returns An expected ``url_record`` on success, or an
-///          ``error_code`` if parsing ``input`` failed
+/// \returns An expected ``url_record`` on success, or a
+///          ``url_parse_errc`` if parsing ``input`` failed
 auto parse(
-    std::string_view input) -> tl::expected<url_record, std::error_code>;
+    std::string_view input) -> tl::expected<url_record, url_parse_errc>;
 
 /// Parses a URL is according to the
 /// [WhatWG specification](https://url.spec.whatwg.org/)
 ///
 /// \param input A UTF-8 encoded input string
-/// \returns An expected ``url_record`` on success, or an
-///          ``error_code`` if parsing ``input`` failed
+/// \returns An expected ``url_record`` on success, or a
+///          ``url_parse_errc`` if parsing ``input`` failed
 auto parse(
     std::string_view input,
-    bool *validation_error) -> tl::expected<url_record, std::error_code>;
+    bool *validation_error) -> tl::expected<url_record, url_parse_errc>;
 
 /// Parses a URL is according to the
 /// [WhatWG specification](https://url.spec.whatwg.org/)
 ///
 /// \param input A UTF-8 encoded input string
 /// \param base A base ``url_record``
-/// \returns An expected ``url_record`` on success, or an
-///          ``error_code`` if parsing ``input`` failed
+/// \returns An expected ``url_record`` on success, or a
+///          ``url_parse_errc`` if parsing ``input`` failed
 auto parse(
     std::string_view input,
-    const url_record &base) -> tl::expected<url_record, std::error_code>;
+    const url_record &base) -> tl::expected<url_record, url_parse_errc>;
 
 /// Parses a URL is according to the
 /// [WhatWG specification](https://url.spec.whatwg.org/)
 ///
 /// \param input A UTF-8 encoded input string
 /// \param base A base ``url_record``
-/// \returns An expected ``url_record`` on success, or an
-///          ``error_code`` if parsing ``input`` failed
+/// \returns An expected ``url_record`` on success, or a
+///          ``url_parse_errc`` if parsing ``input`` failed
 auto parse(
     std::string_view input,
     const url_record &base,
-    bool *validation_error) -> tl::expected<url_record, std::error_code>;
+    bool *validation_error) -> tl::expected<url_record, url_parse_errc>;
 }  // namespace v1
 }  // namespace skyr
 

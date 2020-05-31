@@ -69,7 +69,7 @@ auto basic_parse(
     bool *validation_error,
     const url_record *base,
     const url_record *url,
-    std::optional<url_parse_state> state_override) -> tl::expected<url_record, std::error_code> {
+    std::optional<url_parse_state> state_override) -> tl::expected<url_record, url_parse_errc> {
   if (url == nullptr) {
     input = remove_leading_c0_control_or_space(input, validation_error);
     input = remove_trailing_c0_control_or_space(input, validation_error);
@@ -83,7 +83,7 @@ auto basic_parse(
     auto byte = context.is_eof() ? '\0' : *context.it;
     auto action = parse_next(context, byte);
     if (!action) {
-      return tl::make_unexpected(make_error_code(action.error()));
+      return tl::make_unexpected(action.error());
     }
 
     switch (action.value()) {
@@ -106,20 +106,20 @@ auto basic_parse(
 }  // namespace details
 
 auto parse(
-    std::string_view input) -> tl::expected<url_record, std::error_code> {
+    std::string_view input) -> tl::expected<url_record, url_parse_errc> {
   bool validation_error = false;
   return details::parse(input, &validation_error, nullptr);
 }
 
 auto parse(
     std::string_view input,
-    bool *validation_error) -> tl::expected<url_record, std::error_code> {
+    bool *validation_error) -> tl::expected<url_record, url_parse_errc> {
   return details::parse(input, validation_error, nullptr);
 }
 
 auto parse(
     std::string_view input,
-    const url_record &base) -> tl::expected<url_record, std::error_code> {
+    const url_record &base) -> tl::expected<url_record, url_parse_errc> {
   bool validation_error = false;
   return details::parse(input, &validation_error, &base);
 }
@@ -127,7 +127,7 @@ auto parse(
 auto parse(
     std::string_view input,
     const url_record &base,
-    bool *validation_error) -> tl::expected<url_record, std::error_code> {
+    bool *validation_error) -> tl::expected<url_record, url_parse_errc> {
   return details::parse(input, validation_error, &base);
 }
 }  // namespace v1

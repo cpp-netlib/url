@@ -71,12 +71,12 @@ auto basic_parse(
     bool *validation_error,
     const url_record *base=nullptr,
     const url_record *url=nullptr,
-    std::optional<url_parse_state> state_override=std::nullopt) -> tl::expected<url_record, std::error_code>;
+    std::optional<url_parse_state> state_override=std::nullopt) -> tl::expected<url_record, url_parse_errc>;
 
 inline auto parse(
     std::string_view input,
     bool *validation_error,
-    const url_record *base=nullptr) -> tl::expected<url_record, std::error_code> {
+    const url_record *base=nullptr) -> tl::expected<url_record, url_parse_errc> {
   auto url = basic_parse(input, validation_error, base);
 
   if (!url) {

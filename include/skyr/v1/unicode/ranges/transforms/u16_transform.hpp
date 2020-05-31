@@ -109,7 +109,7 @@ class transform_u16_range {
  public:
 
   ///
-  using value_type = tl::expected<u16_code_point_t, std::error_code>;
+  using value_type = tl::expected<u16_code_point_t, unicode_errc>;
   ///
   using const_reference = value_type;
   ///

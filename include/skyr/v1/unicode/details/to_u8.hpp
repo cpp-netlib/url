@@ -9,6 +9,7 @@
 #include <skyr/v1/traits/string_traits.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
 #include <skyr/v1/unicode/ranges/views/u16_view.hpp>
+#include <skyr/v1/unicode/errors.hpp>
 #include <string>
 
 namespace skyr {
@@ -20,7 +21,7 @@ struct to_u8_impl;
 template<class Source>
 struct to_u8_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char>::value>::type> {
-  auto operator()(const Source &source) -> tl::expected<std::string, std::error_code> {
+  auto operator()(const Source &source) -> tl::expected<std::string, unicode::unicode_errc> {
     return std::string(source);
   }
 };
