@@ -688,4 +688,10 @@ TEST_CASE("url_tests", "[url]") {
     auto instance = skyr::url("http://../");
     CHECK(instance.href() == "http://../");
   }
+
+  SECTION("null_code_point_in_fragment") {
+    auto instance = skyr::url(U"http://example.org/test?a#b\u0000c");
+    CHECK(instance.href() == "http://example.org/test?a#b%00c");
+    CHECK(instance.hash() == "#b%00c");
+  }
 }

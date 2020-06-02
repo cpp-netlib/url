@@ -838,9 +838,15 @@ auto url_parser_context::parse_query(char byte) -> tl::expected<url_parse_action
 }
 
 auto url_parser_context::parse_fragment(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
-  if (byte == '\0') {
-    *validation_error |= true;
-  } else {
+  if (!is_eof()) {
+    if (!is_url_code_point(byte) && (byte != '%')) {
+      *validation_error |= true;
+    }
+
+    if ((byte == '%') && !percent_encoding::is_percent_encoded(input.substr(std::distance(std::begin(input), it)))) {
+      *validation_error |= true;
+    }
+
     auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::fragment);
     url.fragment.value() += pct_encoded.to_string();
   }
