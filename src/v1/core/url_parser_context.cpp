@@ -6,10 +6,9 @@
 #include <iterator>
 #include <limits>
 #include <array>
-#include <skyr/v1/network/ipv4_address.hpp>
-#include <skyr/v1/network/ipv6_address.hpp>
 #include <skyr/v1/domain/domain.hpp>
 #include <skyr/v1/core/schemes.hpp>
+#include <skyr/v1/core/parse_host.hpp>
 #include <skyr/v1/percent_encoding/percent_decode_range.hpp>
 #include <skyr/v1/string/starts_with.hpp>
 #include "url_parser_context.hpp"
@@ -25,94 +24,35 @@ auto contains(char byte, std::string_view view) noexcept {
   return last != std::find(first, last, byte);
 }
 
-auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
-  using namespace std::string_view_literals;
-  constexpr auto forbidden = "\0\t\n\r #%/:<>?@[\\]^"sv;
-  auto first = begin(forbidden), last = end(forbidden);
-  return last != std::find(first, last, byte);
-}
-
 auto remaining_starts_with(
     std::string_view input,
     std::string_view chars) noexcept {
   return !input.empty() && starts_with(input.substr(1), chars);
 }
 
-auto parse_opaque_host(std::string_view input, bool *validation_error) -> tl::expected<std::string, url_parse_errc> {
-  auto first = begin(input), last = end(input);
-  auto it = std::find_if(
-      first, last, [] (auto byte) -> bool {
-        return (byte != '%') && is_forbidden_host_point(byte);
-      });
-  if (it != last) {
-    *validation_error |= true;
-    return tl::make_unexpected(url_parse_errc::forbidden_host_point);
-  }
+auto parse_host_impl(
+    std::string_view input,
+    bool is_not_special,
+    bool *validation_error) -> tl::expected<std::string, url_parse_errc> {
+  constexpr static auto to_string = [] (auto &&host) {
+      using T = std::decay_t<decltype(host)>;
 
-  auto output = std::string();
-  for (auto c : input) {
-    auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::c0_control);
-    output += pct_encoded.to_string();
-  }
-  return output;
-}
+      if constexpr (std::is_same_v<T, std::string>) {
+        return host;
+      }
+      else if constexpr (std::is_same_v<T, ipv4_address>) {
+        return host.serialize();
+      }
+      else if constexpr (std::is_same_v<T, ipv6_address>) {
+        return "[" + host.serialize() + "]";
+      }
+    };
 
-auto parse_host(
-    std::string_view input, bool is_not_special, bool *validation_error) -> tl::expected<std::string, url_parse_errc> {
-  if (!input.empty() && (input.front() == '[')) {
-    if (input.back() != ']') {
-      *validation_error |= true;
-      return tl::make_unexpected(url_parse_errc::invalid_ipv6_address);
-    }
-
-    auto view = std::string_view(input);
-    view.remove_prefix(1);
-    view.remove_suffix(1);
-    bool ipv6_validation_error = false;
-    auto ipv6_address = parse_ipv6_address(view, &ipv6_validation_error);
-    if (ipv6_address) {
-      *validation_error = ipv6_validation_error;
-      return "[" + ipv6_address.value().serialize() + "]";
-    }
-    else {
-      return tl::make_unexpected(url_parse_errc::invalid_ipv6_address);
-    }
+  auto host = parse_host(input, is_not_special, validation_error);
+  if (host) {
+    return std::visit(to_string, host.value());
   }
-
-  if (is_not_special) {
-    return parse_opaque_host(input, validation_error);
-  }
-
-  auto domain = percent_encoding::as<std::string>(
-      input | percent_encoding::view::decode);
-  if (!domain) {
-    return tl::make_unexpected(url_parse_errc::cannot_decode_host_point);
-  }
-
-  auto ascii_domain = domain_to_ascii(domain.value());
-  if (!ascii_domain) {
-    return tl::make_unexpected(url_parse_errc::domain_error);
-  }
-
-  auto it = std::find_if(
-      begin(ascii_domain.value()), end(ascii_domain.value()), is_forbidden_host_point);
-  if (it != end(ascii_domain.value())) {
-    *validation_error |= true;
-    return tl::make_unexpected(url_parse_errc::domain_error);
-  }
-
-  bool ipv4_validation_error = false;
-  auto host = parse_ipv4_address(ascii_domain.value(), &ipv4_validation_error);
-  if (!host) {
-    if (host.error() == ipv4_address_errc::overflow) {
-      return tl::make_unexpected(url_parse_errc::invalid_ipv4_address);
-    }
-    else {
-      return ascii_domain.value();
-    }
-  }
-  *validation_error = ipv4_validation_error;
-  return host.value().serialize();
+  return tl::make_unexpected(host.error());
 }
 
 auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {
@@ -493,7 +433,7 @@ auto url_parser_context::parse_hostname(char byte) -> tl::expected<url_parse_act
       return tl::make_unexpected(url_parse_errc::empty_hostname);
     }
 
-    auto host = parse_host(buffer, !url.is_special(), validation_error);
+    auto host = parse_host_impl(buffer, !url.is_special(), validation_error);
     if (!host) {
       return tl::make_unexpected(host.error());
     }
@@ -523,7 +463,7 @@ auto url_parser_context::parse_hostname(char byte) -> tl::expected<url_parse_act
       return url_parse_action::success;
     }
 
-    auto host = parse_host(buffer, !url.is_special(), validation_error);
+    auto host = parse_host_impl(buffer, !url.is_special(), validation_error);
     if (!host) {
       return tl::make_unexpected(host.error());
     }
@@ -677,7 +617,7 @@ auto url_parser_context::parse_file_host(char byte) -> tl::expected<url_parse_ac
 
       state = url_parse_state::path_start;
     } else {
-      auto host = parse_host(buffer, !url.is_special(), validation_error);
+      auto host = parse_host_impl(buffer, !url.is_special(), validation_error);
       if (!host) {
         return tl::make_unexpected(host.error());
       }

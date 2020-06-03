@@ -129,6 +129,7 @@ auto parse(
     const url_record &base,
     bool *validation_error) -> tl::expected<url_record, url_parse_errc> {
   return details::parse(input, validation_error, &base);
+  return details::parse(input, validation_error, &base);
 }
 }  // namespace v1
 }  // namespace skyr
