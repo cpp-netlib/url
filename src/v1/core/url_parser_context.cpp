@@ -27,7 +27,7 @@ auto contains(char byte, std::string_view view) noexcept {
 
 auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
   using namespace std::string_view_literals;
-  constexpr auto forbidden = "\0\t\n\r #%/:?@[\\]"sv;
+  constexpr auto forbidden = "\0\t\n\r #%/:<>?@[\\]^"sv;
   auto first = begin(forbidden), last = end(forbidden);
   return last != std::find(first, last, byte);
 }
