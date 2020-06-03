@@ -55,19 +55,6 @@ auto parse(
     std::string_view input,
     const url_record &base,
     bool *validation_error) -> tl::expected<url_record, url_parse_errc>;
-
-//auto parse_host(
-//    std::string_view input,
-//    bool is_not_special,
-//    bool *validation_error) -> tl::expected<std::string, url_parse_errc>;
-//
-//auto parse_host(
-//    std::string_view input,
-//    bool is_not_special) -> tl::expected<std::string, url_parse_errc>;
-//
-//auto parse_host(
-//    std::string_view input) -> tl::expected<std::string, url_parse_errc>;
-
 }  // namespace v1
 }  // namespace skyr
 

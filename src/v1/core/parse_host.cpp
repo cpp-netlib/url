@@ -21,11 +21,12 @@ auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
 }
 
 auto parse_opaque_host(std::string_view input, bool *validation_error) -> tl::expected<std::string, url_parse_errc> {
+  constexpr static auto is_forbidden = [] (auto byte) -> bool {
+    return (byte != '%') && is_forbidden_host_point(byte);
+  };
+
   auto first = begin(input), last = end(input);
-  auto it = std::find_if(
-      first, last, [] (auto byte) -> bool {
-        return (byte != '%') && is_forbidden_host_point(byte);
-      });
+  auto it = std::find_if(first, last, is_forbidden);
   if (it != last) {
     *validation_error |= true;
     return tl::make_unexpected(url_parse_errc::forbidden_host_point);
