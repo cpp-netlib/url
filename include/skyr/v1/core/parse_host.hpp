@@ -16,12 +16,15 @@
 
 namespace skyr {
 inline namespace v1 {
+/// \typedef host_types
+/// One of a string (for domains), an IPv4 address or an IPv6 address.
 using host_types = std::variant<
     std::string,
     ipv4_address,
     ipv6_address>;
 
-/// Parses a string to either a domain, IPv4 address or IPv6 addess
+/// Parses a string to either a domain, IPv4 address or IPv6 address according to
+/// https://url.spec.whatwg.org/#host-parsing
 /// \param input An input string
 /// \param is_not_special \c true to process only non-special hosts, \c false otherwise
 /// \param validation_error Set to \c true if there was a validation error
@@ -31,6 +34,8 @@ auto parse_host(
     bool is_not_special,
     bool *validation_error) -> tl::expected<host_types, url_parse_errc>;
 
+/// Parses a string to either a domain, IPv4 address or IPv6 address according to
+/// https://url.spec.whatwg.org/#host-parsing
 /// Parses a string to either a domain, IPv4 address or IPv6 addess
 /// \param input An input string
 /// \param is_not_special \c true to process only non-special hosts, \c false otherwise

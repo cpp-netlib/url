@@ -5,6 +5,7 @@
 
 foreach (file_name
         string_tests.cpp
+        parse_host_tests.cpp
         url_parse_tests.cpp
         url_serialize_tests.cpp
         url_tests.cpp

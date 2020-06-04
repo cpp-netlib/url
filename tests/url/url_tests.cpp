@@ -27,7 +27,7 @@ TEST_CASE("url_tests", "[url]") {
   }
 
   SECTION("construct_url_starting_with_ipv4_like_glued_make") {
-    REQUIRE(skyr::make_url("http://198.51.100.0example.com/"));
+    CHECK(skyr::make_url("http://198.51.100.0example.com/"));
   }
 
   SECTION("construct_url_like_short_ipv4_make") {
