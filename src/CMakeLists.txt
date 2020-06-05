@@ -110,6 +110,7 @@ set(no_rtti $<BOOL:${skyr_BUILD_WITHOUT_RTTI}>)
 
 set(gnu $<CXX_COMPILER_ID:GNU>)
 set(clang $<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>)
+set(libcxx $<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>)
 set(msvc $<CXX_COMPILER_ID:MSVC>)
 
 target_compile_definitions(
@@ -128,7 +129,7 @@ target_compile_options(
         $<$<AND:$<OR:${gnu},${clang}>,${no_rtti}>:-fno-rtti>
         $<$<AND:$<OR:${gnu},${clang}>,$<CONFIG:MinSizeRel>>:-flto>
 
-        $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=libc++>
+        $<${libcxx}:-stdlib=libc++>
 
         $<$<AND:${msvc},${full_warnings}>:/W4>
         $<$<AND:${msvc},${warnings_as_errors}>:/WX>

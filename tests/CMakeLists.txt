@@ -9,12 +9,13 @@ find_package(Catch2 CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 
 set(clang $<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>)
+set(libcxx $<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>)
 
 function(skyr_create_test file_name output_dir test_name)
     skyr_remove_extension(${file_name} test)
     add_executable(${test})
     target_sources(${test} PRIVATE ${test}.cpp)
-    target_compile_options(${test} PRIVATE $<$<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>:-stdlib=libc++>)
+    target_compile_options(${test} PRIVATE $<${libcxx}:-stdlib=libc++>)
     add_dependencies(${test} skyr-url)
     target_link_libraries(
         ${test}

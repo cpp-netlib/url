@@ -27,22 +27,22 @@
 
 namespace skyr {
 /// \returns The majo, minor version as a tuple
-static constexpr auto version() noexcept -> std::tuple<int, int> {
+[[maybe_unused]] static constexpr auto version() noexcept -> std::tuple<int, int> {
   return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR};
 }
 
 /// \returns The major, minor, patch as a tuple
-static constexpr auto release() noexcept -> std::tuple<int, int, int> {
+[[maybe_unused]] static constexpr auto release() noexcept -> std::tuple<int, int, int> {
   return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR, SKYR_VERSION_PATCH};
 }
 
 /// \returns The version as a string in the form MAJOR.MINOR
-static constexpr auto version_string() noexcept -> std::string_view {
+[[maybe_unused]] static constexpr auto version_string() noexcept -> std::string_view {
   return SKYR_VERSION_STRING;
 }
 
 /// \returns The version as a string in the form MAJOR.MINOR.PATCH
-static constexpr auto release_string() noexcept -> std::string_view {
+[[maybe_unused]] static constexpr auto release_string() noexcept -> std::string_view {
   return SKYR_RELEASE_STRING;
 }
 }  // namespace skyr
