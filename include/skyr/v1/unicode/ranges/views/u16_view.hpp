@@ -42,6 +42,8 @@ class u16_range_iterator {
   using pointer = const_reference;
   ///
   using difference_type = std::ptrdiff_t;
+  ///
+  using size_type = std::size_t;
 
   /// \brief Constructor
   u16_range_iterator() = default;
@@ -56,7 +58,7 @@ class u16_range_iterator {
 
   ///
   /// \return
-  auto operator ++ (int) noexcept {
+  auto operator ++ (int) noexcept -> u16_range_iterator {
     auto result = *this;
     increment();
     return result;
@@ -64,7 +66,7 @@ class u16_range_iterator {
 
   ///
   /// \return
-  auto &operator ++ () noexcept {
+  auto operator ++ () noexcept -> u16_range_iterator & {
     increment();
     return *this;
   }

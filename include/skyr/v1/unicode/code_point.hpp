@@ -21,7 +21,8 @@ namespace unicode {
 template <typename OctetIterator>
 inline auto u32_value(
     u8_code_point_view<OctetIterator> code_point) noexcept -> tl::expected<char32_t, unicode_errc> {
-  return find_code_point(code_point.begin()).map([] (auto &&state) { return state.value; });
+  constexpr static auto to_value = [] (auto &&state) { return state.value; };
+  return find_code_point(code_point.begin()).map(to_value);
 }
 
 ///

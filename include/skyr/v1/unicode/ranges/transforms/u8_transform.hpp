@@ -31,9 +31,17 @@ class u8_transform_iterator {
   /// An expected wrapper around a \c char
   using value_type = tl::expected<char, unicode_errc>;
   /// A reference
-  using reference = value_type;
+  using const_reference = value_type;
+  /// A reference
+  using reference = const_reference;
+  /// A pointer
+  using const_pointer = const typename std::add_pointer<value_type>::type;
+  /// A pointer
+  using pointer = const_pointer;
   /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
+  /// \c std::size_t
+  using size_type = std::size_t;
 
   /// Constructor
   u8_transform_iterator() = default;
@@ -49,14 +57,14 @@ class u8_transform_iterator {
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  auto &operator++() noexcept {
+  auto operator++() noexcept -> u8_transform_iterator & {
     increment();
     return *this;
   }
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  auto operator++(int) noexcept {
+  auto operator++(int) noexcept -> u8_transform_iterator {
     auto result = *this;
     increment();
     return result;

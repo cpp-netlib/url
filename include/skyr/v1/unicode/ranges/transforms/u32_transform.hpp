@@ -38,6 +38,8 @@ class u32_transform_iterator {
   using pointer = const_pointer;
   ///
   using difference_type = std::ptrdiff_t;
+  ///
+  using size_type = std::size_t;
 
   ///
   constexpr u32_transform_iterator() = default;
@@ -48,7 +50,7 @@ class u32_transform_iterator {
 
   ///
   /// \return
-  auto operator ++ (int) noexcept {
+  auto operator ++ (int) noexcept -> u32_transform_iterator {
     auto result = *this;
     ++it_;
     return result;
@@ -56,7 +58,7 @@ class u32_transform_iterator {
 
   ///
   /// \return
-  auto &operator ++ () noexcept {
+  auto operator ++ () noexcept -> u32_transform_iterator & {
     ++it_;
     return *this;
   }

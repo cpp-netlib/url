@@ -42,6 +42,8 @@ class u16_transform_iterator {
   using pointer = const_pointer;
   /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
+  /// \c std::size_t
+  using size_type = std::size_t;
 
   /// Default constructor
   u16_transform_iterator() = default;
@@ -56,14 +58,14 @@ class u16_transform_iterator {
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  auto &operator ++ () noexcept {
+  auto operator ++ () noexcept -> u16_transform_iterator & {
     ++it_;
     return *this;
   }
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  auto operator ++ (int) noexcept {
+  auto operator ++ (int) noexcept -> u16_transform_iterator {
     auto result = *this;
     ++it_;
     return result;

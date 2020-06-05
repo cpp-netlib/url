@@ -46,6 +46,8 @@ class u8_range_iterator {
   using pointer = const_pointer;
   /// \c std::ptrdiff_t
   using difference_type = std::ptrdiff_t;
+  /// \c std::size_t
+  using size_type = std::size_t;
 
   /// \brief Constructs an end range iterator
   constexpr u8_range_iterator() = default;
@@ -64,7 +66,7 @@ class u8_range_iterator {
   /// Increments through a code point
   ///
   /// \return The previous iterator value
-  auto operator ++ (int) noexcept {
+  auto operator ++ (int) noexcept -> u8_range_iterator {
     assert(it_);
     auto result = *this;
     increment();
@@ -76,7 +78,7 @@ class u8_range_iterator {
   /// Increments through a code point
   ///
   /// \return \c *this
-  auto &operator ++ () noexcept {
+  auto operator ++ () noexcept -> u8_range_iterator & {
     assert(it_);
     increment();
     return *this;
@@ -215,8 +217,7 @@ namespace view {
 /// \param range
 /// \return
 template <typename OctetRange>
-inline auto as_u8(
-    const OctetRange &range) {
+inline auto as_u8(const OctetRange &range) {
   static_assert(sizeof(typename traits::range_value<OctetRange>::type) >= 1);
   return view_u8_range{range};
 }
