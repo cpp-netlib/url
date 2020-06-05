@@ -158,30 +158,32 @@ target_include_directories(
 # skyr-filesystem
 #################################################
 
-add_library(skyr-filesystem INTERFACE)
+if (skyr_ENABLE_JSON_FUNCTIONS)
+    add_library(skyr-filesystem INTERFACE)
 
-target_compile_features(skyr-filesystem INTERFACE cxx_std_17)
+    target_compile_features(skyr-filesystem INTERFACE cxx_std_17)
 
-skyr_check_filesystem(filesystem_definitions)
-target_compile_definitions(
-        skyr-filesystem
-        INTERFACE
-        ${filesystem_definitions}
-)
+    skyr_check_filesystem(filesystem_definitions)
+    target_compile_definitions(
+            skyr-filesystem
+            INTERFACE
+            ${filesystem_definitions}
+    )
 
-target_link_libraries(
-        skyr-filesystem
-        INTERFACE
-        skyr-url
-        $<${gnu}:"stdc++fs">
-)
+    target_link_libraries(
+            skyr-filesystem
+            INTERFACE
+            skyr-url
+            $<${gnu}:"stdc++fs">
+    )
 
-target_include_directories(skyr-filesystem
-        INTERFACE
-        $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-        )
+    target_include_directories(skyr-filesystem
+            INTERFACE
+            $<INSTALL_INTERFACE:include>
+            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+            )
+endif()
 
 #################################################
 # skyr-json
