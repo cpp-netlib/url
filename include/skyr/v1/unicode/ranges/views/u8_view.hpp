@@ -9,6 +9,8 @@
 #include <cassert>
 #include <iterator>
 #include <optional>
+#include <type_traits>
+#include <tl/expected.hpp>
 #include <skyr/v1/unicode/code_point.hpp>
 #include <skyr/v1/unicode/core.hpp>
 #include <skyr/v1/unicode/errors.hpp>
@@ -16,8 +18,6 @@
 #include <skyr/v1/unicode/traits/iterator_value.hpp>
 #include <skyr/v1/unicode/traits/range_iterator.hpp>
 #include <skyr/v1/unicode/traits/range_value.hpp>
-#include <tl/expected.hpp>
-#include <type_traits>
 
 namespace skyr {
 inline namespace v1 {
@@ -41,7 +41,7 @@ class u8_range_iterator {
   /// A reference type
   using reference = const_reference;
   /// A pointer type
-  using const_pointer = const typename std::add_pointer<value_type>::type;
+  using const_pointer = const value_type *;
   /// A pointer type
   using pointer = const_pointer;
   /// \c std::ptrdiff_t
@@ -58,8 +58,7 @@ class u8_range_iterator {
   constexpr u8_range_iterator(
       OctetIterator first,
       OctetIterator last)
-      : it_(iterator_type(first, last))
-      , last_(iterator_type()) {}
+      : it_(iterator_type(first, last)) {}
 
   /// \brief Post-increment operator
   ///
@@ -110,12 +109,27 @@ class u8_range_iterator {
     return !(*this == other);
   }
 
+  ///
+  /// \param sentinel
+  /// \return
+  [[maybe_unused]] constexpr auto operator == (sentinel sentinel) const noexcept {
+    return it_ == sentinel;
+  }
+
+  ///
+  /// \param sentinel
+  /// \return
+  [[maybe_unused]] constexpr auto operator != (sentinel sentinel) const noexcept {
+    return !(*this == sentinel);
+  }
+
+
  private:
 
   void increment() {
     if (**this) {
       ++it_.value();
-      if (it_ == last_) {
+      if (it_ == sentinel()) {
         it_ = std::nullopt;
       }
     } else {
@@ -123,7 +137,7 @@ class u8_range_iterator {
     }
   }
 
-  std::optional<iterator_type> it_, last_;
+  std::optional<iterator_type> it_;
 
 };
 

@@ -30,9 +30,13 @@ class percent_encode_iterator {
   ///
   using reference = const_reference;
   ///
-  using pointer = typename std::add_pointer<value_type>::type;
+  using const_pointer = const value_type *;
+  ///
+  using pointer = const_pointer;
   ///
   using difference_type = std::ptrdiff_t;
+  ///
+  using size_type = std::size_t;
 
   ///
   percent_encode_iterator() = default;

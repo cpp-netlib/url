@@ -8,12 +8,13 @@
 
 #include <iterator>
 #include <optional>
+#include <type_traits>
+#include <tl/expected.hpp>
 #include <skyr/v1/unicode/code_point.hpp>
 #include <skyr/v1/unicode/core.hpp>
 #include <skyr/v1/unicode/errors.hpp>
 #include <skyr/v1/unicode/traits/range_iterator.hpp>
-#include <tl/expected.hpp>
-#include <type_traits>
+#include <skyr/v1/unicode/ranges/sentinel.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -33,7 +34,7 @@ class unchecked_u8_range_iterator {
   ///
   using reference = const_reference;
   ///
-  using const_pointer = const typename std::add_pointer<value_type>::type;
+  using const_pointer = const value_type *;
   ///
   using pointer = const_reference;
   ///
@@ -87,6 +88,20 @@ class unchecked_u8_range_iterator {
   /// \return
   constexpr auto operator != (const unchecked_u8_range_iterator &other) const noexcept {
     return !(*this == other);
+  }
+
+  ///
+  /// \param sentinel
+  /// \return
+  [[maybe_unused]] constexpr auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
+    return !it_;
+  }
+
+  ///
+  /// \param sentinel
+  /// \return
+  [[maybe_unused]] constexpr auto operator != (sentinel sentinel) const noexcept {
+    return !(*this == sentinel);
   }
 
  private:

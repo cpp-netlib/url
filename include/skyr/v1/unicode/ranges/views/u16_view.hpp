@@ -9,14 +9,15 @@
 #include <cassert>
 #include <iterator>
 #include <optional>
+#include <type_traits>
+#include <tl/expected.hpp>
 #include <skyr/v1/unicode/core.hpp>
 #include <skyr/v1/unicode/errors.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/v1/unicode/ranges/views/u8_view.hpp>
+#include <skyr/v1/unicode/ranges/sentinel.hpp>
 #include <skyr/v1/unicode/traits/range_iterator.hpp>
 #include <skyr/v1/unicode/traits/range_value.hpp>
-#include <tl/expected.hpp>
-#include <type_traits>
 
 namespace skyr {
 inline namespace v1 {
@@ -37,7 +38,7 @@ class u16_range_iterator {
   ///
   using reference = const_reference;
   ///
-  using const_pointer = const typename std::add_pointer<value_type>::type;
+  using const_pointer = const value_type *;
   ///
   using pointer = const_reference;
   ///
@@ -104,6 +105,20 @@ class u16_range_iterator {
   /// \return
   auto operator != (const u16_range_iterator &other) const noexcept {
     return !(*this == other);
+  }
+
+  ///
+  /// \param sentinel
+  /// \return
+  [[maybe_unused]] auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
+    return !it_;
+  }
+
+  ///
+  /// \param sentinel
+  /// \return
+  [[maybe_unused]] auto operator != ([[maybe_unused]] sentinel sentinel) const noexcept {
+    return !(*this == sentinel);
   }
 
  private:

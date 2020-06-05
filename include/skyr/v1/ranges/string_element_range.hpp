@@ -27,11 +27,13 @@ class string_element_iterator {
   ///
   using reference = const_reference;
   ///
-  using const_pointer = typename std::add_pointer<const charT>::type;
+  using const_pointer = const value_type *;
   ///
   using pointer = const_pointer;
   ///
   using difference_type = std::ptrdiff_t;
+  ///
+  using size_type = std::size_t;
 
   ///
   /// \param s

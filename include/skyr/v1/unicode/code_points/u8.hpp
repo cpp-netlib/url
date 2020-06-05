@@ -32,6 +32,12 @@ class u8_code_point_view {
   ///
   using reference = const_reference;
   ///
+  using const_pointer = const value_type *;
+  ///
+  using pointer = const_pointer;
+  ///
+  using difference_type = std::ptrdiff_t;
+  ///
   using size_type = std::size_t;
 
   /// \brief Constructor
@@ -78,6 +84,8 @@ class u8_code_point_view {
     return sequence_length(*first);
   }
 
+  ///
+  /// \return
   [[nodiscard]] auto u32_value() const noexcept {
     constexpr static auto to_u32 = [] (auto &&state) { return state.value; };
     return find_code_point(first).map(to_u32).value();
@@ -94,8 +102,8 @@ class u8_code_point_view {
 /// \param range
 /// \return
 template<typename OctetRange>
-inline auto u8_code_point(
-    const OctetRange &range) -> tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, unicode_errc> {
+inline auto u8_code_point(const OctetRange &range)
+    -> tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, unicode_errc> {
   auto first = std::begin(range), last = std::end(range);
   auto length = sequence_length(*first);
   if (std::distance(first, last) > length) {
@@ -105,14 +113,6 @@ inline auto u8_code_point(
   std::advance(last, length);
   return u8_code_point_view<typename OctetRange::const_iterator>(first, last);
 }
-
-//
-///// Tests if the code point value is valid.
-///// \returns \c true if the value is a valid code point, \c false otherwise
-//template <typename OctetIterator>
-//inline bool is_valid(const u8_code_point_t<OctetIterator> &code_point) {
-//  return static_cast<bool>(find_code_point(std::begin(code_point)));
-//}
 
 ///
 /// \tparam OctetRange

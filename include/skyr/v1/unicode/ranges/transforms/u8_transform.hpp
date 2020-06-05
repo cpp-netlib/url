@@ -8,11 +8,11 @@
 
 #include <iterator>
 #include <optional>
+#include <tl/expected.hpp>
 #include <skyr/v1/unicode/constants.hpp>
 #include <skyr/v1/unicode/errors.hpp>
 #include <skyr/v1/unicode/ranges/views/u16_view.hpp>
 #include <skyr/v1/unicode/traits/range_iterator.hpp>
-#include <tl/expected.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -35,7 +35,7 @@ class u8_transform_iterator {
   /// A reference
   using reference = const_reference;
   /// A pointer
-  using const_pointer = const typename std::add_pointer<value_type>::type;
+  using const_pointer = const value_type *;
   /// A pointer
   using pointer = const_pointer;
   /// \c std::ptrdiff_t
@@ -174,8 +174,10 @@ class transform_u8_range {
   using const_reference = value_type;
   /// \c const_reference
   using reference = const_reference;
-  /// \c value_type*
-  using pointer = typename std::add_pointer<value_type>::type;
+  /// \c const value_type*
+  using const_pointer = const value_type *;
+  /// \c const value_type*
+  using pointer = const_pointer;
   /// \c transform_u8_iterator
   using const_iterator = iterator_type;
   /// \c const_iterator
