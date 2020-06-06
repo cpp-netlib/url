@@ -97,7 +97,7 @@ class u32_transform_iterator {
 template <class CodePointRange>
 class transform_u32_range {
 
-  using iterator_type = typename traits::range_iterator<CodePointRange>::type;
+  using iterator_type = traits::range_iterator_t<CodePointRange>;
 
  public:
 

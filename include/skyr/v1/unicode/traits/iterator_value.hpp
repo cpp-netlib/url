@@ -25,6 +25,9 @@ class iterator_value<T*> {
  public:
   using type = T;
 };
+
+template <class Range>
+using iterator_value_t = typename iterator_value<Range>::type;
 }  // namespace unicode::traits
 }  // namespace v1
 }  // namespace skyr

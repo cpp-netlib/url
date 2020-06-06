@@ -164,7 +164,7 @@ class u8_transform_iterator {
 template<class CodePointRange>
 class transform_u8_range {
 
-  using iterator_type = u8_transform_iterator<typename traits::range_iterator<CodePointRange>::type>;
+  using iterator_type = u8_transform_iterator<traits::range_iterator_t<CodePointRange>>;
 
  public:
 

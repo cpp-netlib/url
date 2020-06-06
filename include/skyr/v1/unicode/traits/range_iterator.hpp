@@ -25,6 +25,9 @@ class range_iterator<T[N]> { // NOLINT
  public:
   using type = const T *;
 };
+
+template <class Range>
+using range_iterator_t = typename range_iterator<Range>::type;
 }  // namespace unicode::traits
 }  // namespace v1
 }  // namespace skyr

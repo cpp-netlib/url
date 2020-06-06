@@ -38,7 +38,7 @@ class u8_range_iterator {
   /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
   /// An expected value containing a UTF-8 encoded code point
-  using value_type = tl::expected<typename traits::iterator_value<iterator_type>::type, unicode_errc>;
+  using value_type = tl::expected<traits::iterator_value_t<iterator_type>, unicode_errc>;
   /// A reference type
   using const_reference = value_type;
   /// A reference type
@@ -150,7 +150,7 @@ class u8_range_iterator {
 template <class OctetRange>
 class view_u8_range {
 
-  using octet_iterator_type = typename traits::range_iterator<OctetRange>::type;
+  using octet_iterator_type = traits::range_iterator_t<OctetRange>;
   using iterator_type = u8_range_iterator<octet_iterator_type>;
 
  public:
@@ -236,7 +236,7 @@ namespace views {
 /// \return
 template <typename OctetRange>
 inline auto as_u8(const OctetRange &range) {
-  static_assert(sizeof(typename traits::range_value<OctetRange>::type) >= 1);
+  static_assert(sizeof(traits::range_value_t<OctetRange>) >= 1);
   return view_u8_range{range};
 }
 }  // namespace views

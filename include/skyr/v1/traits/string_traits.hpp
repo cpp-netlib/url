@@ -17,7 +17,7 @@ inline namespace v1 {
 template <class T, class charT>
 using is_basic_string =
   std::is_same<
-      typename std::remove_cv<T>::type,
+      std::remove_cv_t<T>,
       std::basic_string<charT>>;
 
 /// Meta-function to test if the type is of the form
@@ -25,7 +25,7 @@ using is_basic_string =
 template <class T, class charT>
 using is_basic_string_view =
   std::is_same<
-      typename std::remove_cv<T>::type,
+      std::remove_cv_t<T>,
       std::basic_string_view<charT>>;
 
 /// Meta-function to test if the type is of the form charT[]
@@ -34,7 +34,7 @@ using is_char_array =
   std::conjunction<
     std::is_array<T>,
     std::is_same<
-        typename std::remove_cv<typename std::remove_extent<T>::type>::type,
+        std::remove_cv_t<std::remove_extent_t<T>>,
         charT>>;
 
 /// Meta-function to test if the type is of the form charT*
@@ -43,7 +43,7 @@ using is_char_pointer =
   std::conjunction<
     std::is_pointer<T>,
     std::is_same<
-        typename std::remove_pointer<T>::type,
+        std::remove_pointer_t<T>,
         charT>>;
 
 /// Meta-function to test if the type can be converted to a
@@ -57,6 +57,9 @@ using is_string_convertible =
       is_char_pointer<T, charT>>
   ;
 
+template <class T, class charT>
+inline constexpr auto is_string_convertible_v = is_string_convertible<T, charT>::value;
+
 /// Meta-function to test if it can be used to construct a url
 template <class T>
 using is_url_convertible =
@@ -65,6 +68,9 @@ using is_url_convertible =
       is_string_convertible<T, wchar_t>,
       is_string_convertible<T, char16_t>,
       is_string_convertible<T, char32_t>>;
+
+template <class T>
+inline constexpr auto is_url_convertible_v = is_url_convertible<T>::value;
 }  // namespace v1
 }  // namespace skyr
 

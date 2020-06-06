@@ -9,6 +9,7 @@
 #include <skyr/v1/unicode/constants.hpp>
 #include <skyr/v1/unicode/core.hpp>
 #include <skyr/v1/unicode/errors.hpp>
+#include <skyr/v1/unicode/traits/range_iterator.hpp>
 #include <tl/expected.hpp>
 
 namespace skyr {
@@ -103,7 +104,7 @@ class u8_code_point_view {
 /// \return
 template<typename OctetRange>
 inline auto u8_code_point(const OctetRange &range)
-    -> tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, unicode_errc> {
+    -> tl::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc> {
   auto first = std::begin(range), last = std::end(range);
   auto length = sequence_length(*first);
   if (std::distance(first, last) > length) {
@@ -111,7 +112,7 @@ inline auto u8_code_point(const OctetRange &range)
   }
   last = first;
   std::advance(last, length);
-  return u8_code_point_view<typename OctetRange::const_iterator>(first, last);
+  return u8_code_point_view<traits::range_iterator_t<OctetRange>>(first, last);
 }
 
 ///
@@ -121,7 +122,7 @@ inline auto u8_code_point(const OctetRange &range)
 template <typename OctetRange>
 inline auto checked_u8_code_point(
     const OctetRange &range) {
-  using result_type = tl::expected<u8_code_point_view<typename OctetRange::const_iterator>, unicode_errc>;
+  using result_type = tl::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc>;
 
   constexpr static auto check_code_point = [] (auto &&code_point) -> result_type {
     return find_code_point(std::begin(code_point)).map([=] (auto) { return code_point; });

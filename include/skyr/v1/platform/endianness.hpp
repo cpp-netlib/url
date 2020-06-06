@@ -20,7 +20,7 @@ inline auto is_big_endian() noexcept {
 namespace details {
 template <typename intT>
 inline auto swap_endianness(
-    intT v, typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) noexcept -> intT {
+    intT v, std::enable_if_t<std::is_integral_v<intT>> * = nullptr) noexcept -> intT {
   constexpr auto byte_count = sizeof(v);
   std::array<unsigned char, byte_count> bytes{};
   for (auto i = 0UL; i < byte_count; ++i) {

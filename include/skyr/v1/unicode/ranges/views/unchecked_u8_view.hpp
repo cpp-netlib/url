@@ -125,7 +125,7 @@ class unchecked_u8_range_iterator {
 template <class OctetRange>
 class view_unchecked_u8_range {
 
-  using octet_iterator_type = typename traits::range_iterator<OctetRange>::type;
+  using octet_iterator_type = traits::range_iterator_t<OctetRange>;
   using iterator_type = unchecked_u8_range_iterator<octet_iterator_type>;
 
  public:

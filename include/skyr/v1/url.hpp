@@ -90,7 +90,7 @@ class url {
   explicit url(const Source &input)
       : url() {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(input);
@@ -112,7 +112,7 @@ class url {
   url(const Source &input, const url &base)
       : url() {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(input);
@@ -186,7 +186,7 @@ class url {
   template<class Source>
   auto set_href(const Source &href) -> std::error_code {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(href);
@@ -234,7 +234,7 @@ class url {
   template<class Source>
   auto set_protocol(const Source &protocol) -> std::error_code {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(protocol);
@@ -264,7 +264,7 @@ class url {
   template<class Source>
   auto set_username(const Source &username) -> std::error_code {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(username);
@@ -297,7 +297,7 @@ class url {
   template<class Source>
   auto set_password(const Source &password) -> std::error_code {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(password);
@@ -334,7 +334,7 @@ class url {
   template<class Source>
   auto set_host(const Source &host) -> std::error_code {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(host);
@@ -367,7 +367,7 @@ class url {
   template<class Source>
   auto set_hostname(const Source &hostname) -> std::error_code {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(hostname);
@@ -426,7 +426,7 @@ class url {
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
   template<typename intT>
   [[nodiscard]] auto port(
-      typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) const -> std::optional<intT> {
+      std::enable_if_t<std::is_integral_v<intT>> * = nullptr) const -> std::optional<intT> {
     auto p = port();
     if (p.empty()) {
       return std::nullopt;
@@ -482,7 +482,7 @@ class url {
   template<class Source>
   auto set_pathname(const Source &pathname) -> std::error_code {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(pathname);
@@ -517,7 +517,7 @@ class url {
   template<class Source>
   auto set_search(const Source &search) -> std::error_code {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(search);
@@ -562,7 +562,7 @@ class url {
   template<class Source>
   auto set_hash(const Source &hash) -> std::error_code {
     static_assert(
-        is_url_convertible<Source>::value,
+        is_url_convertible_v<Source>,
         "Source is not a valid URL string type");
 
     auto bytes = details::to_u8(hash);
@@ -688,7 +688,7 @@ class url {
   template<class Source>
   auto set_port_impl(
       const Source &port,
-      typename std::enable_if<is_url_convertible<Source>::value>::type * =nullptr) -> std::error_code {
+      typename std::enable_if_t<is_url_convertible_v<Source>> * = nullptr) -> std::error_code {
     auto bytes = details::to_u8(port);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -699,7 +699,7 @@ class url {
   template<typename intT>
   auto set_port_impl(
       intT port,
-      typename std::enable_if<std::is_integral<intT>::value>::type * = nullptr) -> std::error_code {
+      std::enable_if_t<std::is_integral_v<intT>> * = nullptr) -> std::error_code {
     return set_port(string_view(std::to_string(port)));
   }
 

@@ -25,6 +25,9 @@ class range_value<T[N]> { // NOLINT
  public:
   using type = T;
 };
+
+template <class Range>
+using range_value_t = typename range_value<Range>::type;
 }  // namespace unicode::traits
 }  // namespace v1
 }  // namespace skyr

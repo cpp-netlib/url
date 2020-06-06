@@ -20,7 +20,7 @@ struct to_u8_impl;
 
 template<class Source>
 struct to_u8_impl<
-    Source, typename std::enable_if<is_string_convertible<Source, char>::value>::type> {
+    Source, std::enable_if_t<is_string_convertible_v<Source, char>>> {
   auto operator()(const Source &source) -> tl::expected<std::string, unicode::unicode_errc> {
     return std::string(source);
   }
@@ -28,7 +28,7 @@ struct to_u8_impl<
 
 template<class Source>
 struct to_u8_impl<
-    Source, typename std::enable_if<is_string_convertible<Source, wchar_t>::value>::type> {
+    Source, std::enable_if_t<is_string_convertible_v<Source, wchar_t>>> {
   auto operator()(const Source &source) const {
     return unicode::as<std::string>(unicode::views::as_u16(source) | unicode::transforms::to_u8);
   }
@@ -36,7 +36,7 @@ struct to_u8_impl<
 
 template<class Source>
 struct to_u8_impl<
-    Source, typename std::enable_if<is_string_convertible<Source, char16_t>::value>::type> {
+    Source, std::enable_if_t<is_string_convertible_v<Source, char16_t>>> {
   auto operator()(const Source &source) const {
     return unicode::as<std::string>(unicode::views::as_u16(source) | unicode::transforms::to_u8);
   }
@@ -44,7 +44,7 @@ struct to_u8_impl<
 
 template<class Source>
 struct to_u8_impl<
-    Source, typename std::enable_if<is_string_convertible<Source, char32_t>::value>::type> {
+    Source, std::enable_if_t<is_string_convertible_v<Source, char32_t>>> {
   auto operator()(const Source &source) const {
     return unicode::as<std::string>(source | unicode::transforms::to_u8);
   }

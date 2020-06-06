@@ -141,7 +141,7 @@ class u16_range_iterator {
 template <class U16Range>
 class view_u16_range {
 
-  using iterator_type = u16_range_iterator<typename traits::range_iterator<U16Range>::type>;
+  using iterator_type = u16_range_iterator<traits::range_iterator_t<U16Range>>;
 
  public:
 
@@ -216,7 +216,7 @@ namespace views {
 /// \return
 template <typename U16Range>
 inline auto as_u16(const U16Range &range) {
-  static_assert(sizeof(typename traits::range_value<U16Range>::type) >= 2);
+  static_assert(sizeof(traits::range_value_t<U16Range>) >= 2);
   return view_u16_range{range};
 }
 }  // namespace views
