@@ -213,9 +213,9 @@ struct percent_encode_fn {
   }
 };
 
-namespace view {
+namespace views {
 static constexpr percent_encode_fn encode;
-}  // namespace view
+}  // namespace views
 
 ///
 /// \tparam Output

@@ -6,10 +6,10 @@
 #ifndef SKYR_V1_UNICODE_CODE_POINT_HPP
 #define SKYR_V1_UNICODE_CODE_POINT_HPP
 
+#include <tl/expected.hpp>
 #include <skyr/v1/unicode/code_points/u16.hpp>
 #include <skyr/v1/unicode/code_points/u8.hpp>
 #include <skyr/v1/unicode/errors.hpp>
-#include <tl/expected.hpp>
 
 namespace skyr {
 inline namespace v1 {

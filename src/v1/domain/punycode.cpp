@@ -199,7 +199,7 @@ auto punycode_decode(
     result.insert(i++, 1, static_cast<char32_t>(n));
   }
 
-  auto u8_result = unicode::as<std::string>(result | unicode::transform::to_u8);
+  auto u8_result = unicode::as<std::string>(result | unicode::transforms::to_u8);
   if (!u8_result) {
     return tl::make_unexpected(domain_errc::bad_input);
   }
@@ -208,7 +208,7 @@ auto punycode_decode(
 
 auto punycode_encode(
     std::string_view input) -> tl::expected<std::string, domain_errc> {
-  auto utf32 = unicode::as<std::u32string>(unicode::view::as_u8(input) | unicode::transform::to_u32);
+  auto utf32 = unicode::as<std::u32string>(unicode::views::as_u8(input) | unicode::transforms::to_u32);
   if (!utf32) {
     return tl::make_unexpected(domain_errc::bad_input);
   }

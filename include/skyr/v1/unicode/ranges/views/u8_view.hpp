@@ -25,10 +25,13 @@ namespace unicode {
 /// \brief
 ///
 /// \tparam OctetIterator
-template <typename OctetIterator>
+template <
+    class OctetIterator,
+    class Sentinel=OctetIterator
+    >
 class u8_range_iterator {
 
-  using iterator_type = unchecked_u8_range_iterator<OctetIterator>;
+  using iterator_type = unchecked_u8_range_iterator<OctetIterator, Sentinel>;
 
  public:
 
@@ -51,14 +54,15 @@ class u8_range_iterator {
 
   /// \brief Constructs an end range iterator
   constexpr u8_range_iterator() = default;
+
   /// \brief Constructs a \c u8_range_iterator from a range of octets
   ///
   /// \param first
   /// \param last
   constexpr u8_range_iterator(
       OctetIterator first,
-      OctetIterator last)
-      : it_(iterator_type(first, last)) {}
+      Sentinel sentinel)
+      : it_(iterator_type(first, sentinel)) {}
 
   /// \brief Post-increment operator
   ///
@@ -225,7 +229,7 @@ class view_u8_range {
 
 };
 
-namespace view {
+namespace views {
 ///
 /// \tparam OctetRange
 /// \param range
@@ -235,7 +239,7 @@ inline auto as_u8(const OctetRange &range) {
   static_assert(sizeof(typename traits::range_value<OctetRange>::type) >= 1);
   return view_u8_range{range};
 }
-}  // namespace view
+}  // namespace views
 }  // namespace unicode
 }  // namespace v1
 }  // namespace skyr

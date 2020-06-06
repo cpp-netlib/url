@@ -6,10 +6,10 @@
 #ifndef SKYR_V1_UNICODE_CORE_HPP
 #define SKYR_V1_UNICODE_CORE_HPP
 
-#include <skyr/v1/unicode/constants.hpp>
-#include <skyr/v1/unicode/errors.hpp>
 #include <string>
 #include <tl/expected.hpp>
+#include <skyr/v1/unicode/constants.hpp>
+#include <skyr/v1/unicode/errors.hpp>
 
 namespace skyr {
 inline namespace v1 {

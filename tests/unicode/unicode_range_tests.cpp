@@ -146,21 +146,21 @@ TEST_CASE("u8 range") {
 
   SECTION("pipe syntax") {
     const auto bytes = "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88"sv;
-    auto view = unicode::view::as_u8(bytes);
+    auto view = unicode::views::as_u8(bytes);
     CHECK(4 == view.size());
     CHECK(!view.empty());
   }
 
   SECTION("pipe syntax with string_view") {
     const auto bytes = "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88"sv;
-    auto view = unicode::view::as_u8(std::string_view(bytes));
+    auto view = unicode::views::as_u8(std::string_view(bytes));
     CHECK(4 == view.size());
     CHECK(!view.empty());
   }
 
   SECTION("pipe syntax invalid") {
     const auto bytes = "\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88"sv;
-    auto view = unicode::view::as_u8(bytes);
+    auto view = unicode::views::as_u8(bytes);
     auto it = std::begin(view), last = std::end(view);
     CHECK(!*it++);
     CHECK(it == last);
@@ -170,27 +170,27 @@ TEST_CASE("u8 range") {
 
   SECTION("pipe syntax with u16 string") {
     const auto bytes = "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88"sv;
-    auto u16 = unicode::as<std::u16string>(unicode::view::as_u8(bytes) | unicode::transform::to_u16);
+    auto u16 = unicode::as<std::u16string>(unicode::views::as_u8(bytes) | unicode::transforms::to_u16);
     REQUIRE(u16);
     CHECK(u"\xD83C\xDFF3\xFE0F\x200D\xD83C\xDF08" == u16.value());
   }
 
   SECTION("pipe syntax with u32 string") {
     const auto bytes = "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88"sv;
-    auto u32 = unicode::as<std::u32string>(unicode::view::as_u8(bytes) | unicode::transform::to_u32);
+    auto u32 = unicode::as<std::u32string>(unicode::views::as_u8(bytes) | unicode::transforms::to_u32);
     REQUIRE(u32);
     CHECK(U"\x1F3F3\xFE0F\x200D\x1F308" == u32.value());
   }
 
   SECTION("pipe syntax with u16 string invalid") {
     const auto bytes = "\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88"sv;
-    auto u16 = unicode::as<std::u16string>(unicode::view::as_u8(bytes) | unicode::transform::to_u16);
+    auto u16 = unicode::as<std::u16string>(unicode::views::as_u8(bytes) | unicode::transforms::to_u16);
     CHECK(!u16);
   }
 
   SECTION("pipe syntax with u32 string invalid") {
     const auto bytes = "\xf0\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88"sv;
-    auto u32 = unicode::as<std::u32string>(unicode::view::as_u8(bytes) | unicode::transform::to_u32);
+    auto u32 = unicode::as<std::u32string>(unicode::views::as_u8(bytes) | unicode::transforms::to_u32);
     CHECK(!u32);
   }
 }
@@ -201,7 +201,7 @@ TEST_CASE("write bytes") {
   SECTION("bytes from u32") {
     const auto input = U"\x1F3F3\xFE0F\x200D\x1F308"s;
     auto bytes = unicode::as<std::string>(
-        input | unicode::transform::to_u8);
+        input | unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }
@@ -209,14 +209,14 @@ TEST_CASE("write bytes") {
   SECTION("vector of bytes from u32") {
     const auto input = U"\x1F3F3\xFE0F\x200D\x1F308"s;
     auto bytes = unicode::as<std::vector<std::byte>>(
-        input | unicode::transform::to_u8);
+        input | unicode::transforms::to_u8);
     REQUIRE(bytes);
   }
 
   SECTION("bytes from u16") {
     auto input = u"\xD83C\xDFF3\xFE0F\x200D\xD83C\xDF08"s;
     auto bytes = unicode::as<std::string>(
-        unicode::view::as_u16(input) | unicode::transform::to_u8);
+        unicode::views::as_u16(input) | unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }

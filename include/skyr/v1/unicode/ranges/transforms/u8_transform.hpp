@@ -257,9 +257,9 @@ struct u8_range_fn {
   }
 };
 
-namespace transform {
+namespace transforms {
 static constexpr u8_range_fn to_u8;
-}  // namespace transform
+}  // namespace transforms
 
 ///
 /// \tparam Output

@@ -208,7 +208,7 @@ class view_u16_range {
 
 };
 
-namespace view {
+namespace views {
 ///
 ///
 /// \tparam U16Range
@@ -219,7 +219,7 @@ inline auto as_u16(const U16Range &range) {
   static_assert(sizeof(typename traits::range_value<U16Range>::type) >= 2);
   return view_u16_range{range};
 }
-}  // namespace view
+}  // namespace views
 }  // namespace unicode
 }  // namespace v1
 }  // namespace skyr

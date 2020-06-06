@@ -44,6 +44,7 @@ class u32_transform_iterator {
 
   ///
   constexpr u32_transform_iterator() = default;
+
   ///
   /// \param it
   explicit constexpr u32_transform_iterator(CodePointIterator it)
@@ -188,10 +189,10 @@ struct transform_u32_range_fn {
 
 };
 
-namespace transform {
+namespace transforms {
 ///
 static constexpr transform_u32_range_fn to_u32;
-}  // namespace transform
+}  // namespace transforms
 
 ///
 /// \tparam Output

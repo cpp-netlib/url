@@ -8,7 +8,6 @@
 
 #include <iterator>
 #include <optional>
-#include <type_traits>
 #include <tl/expected.hpp>
 #include <skyr/v1/unicode/code_point.hpp>
 #include <skyr/v1/unicode/core.hpp>
@@ -21,7 +20,10 @@ inline namespace v1 {
 namespace unicode {
 ///
 /// \tparam OctetIterator
-template <typename OctetIterator>
+template <
+    class OctetIterator,
+    class Sentinel=OctetIterator
+    >
 class unchecked_u8_range_iterator {
  public:
 
@@ -47,8 +49,8 @@ class unchecked_u8_range_iterator {
   ///
   /// \param it
   /// \param last
-  constexpr unchecked_u8_range_iterator(OctetIterator it, OctetIterator last)
-      : it_(it), last_(last) {}
+  constexpr unchecked_u8_range_iterator(OctetIterator it, Sentinel sentinel)
+      : it_(it), sentinel_(sentinel) {}
 
   ///
   /// \return
@@ -108,12 +110,13 @@ class unchecked_u8_range_iterator {
 
   void increment() {
     std::advance(it_.value(), sequence_length(*it_.value()));
-    if (it_ == last_) {
+    if (it_ == sentinel_) {
       it_ = std::nullopt;
     }
   }
 
-  std::optional<OctetIterator> it_, last_;
+  std::optional<OctetIterator> it_;
+  Sentinel sentinel_;
 
 };
 
@@ -122,7 +125,7 @@ class unchecked_u8_range_iterator {
 template <class OctetRange>
 class view_unchecked_u8_range {
 
-  using octet_iterator_type = typename traits::range_iterator<OctetRange>::type ;
+  using octet_iterator_type = typename traits::range_iterator<OctetRange>::type;
   using iterator_type = unchecked_u8_range_iterator<octet_iterator_type>;
 
  public:
@@ -202,7 +205,7 @@ class view_unchecked_u8_range {
 
 };
 
-namespace view {
+namespace views {
 ///
 /// \tparam OctetRange
 /// \param range
@@ -212,7 +215,7 @@ template <typename OctetRange>
     const OctetRange &range) {
   return view_unchecked_u8_range{range};
 }
-}  // namespace view
+}  // namespace views
 }  // namespace unicode
 }  // namespace v1
 }  // namespace skyr

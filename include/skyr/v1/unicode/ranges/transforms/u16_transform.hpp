@@ -198,10 +198,10 @@ struct transform_u16_range_fn {
 
 };
 
-namespace transform {
+namespace transforms {
 ///
 static constexpr transform_u16_range_fn to_u16;
-}  // namespace transform
+}  // namespace transforms
 
 /// A sink that converts a U16 range to  string.
 /// \tparam Output

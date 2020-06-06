@@ -18,7 +18,7 @@ inline namespace v1 {
 template <class Output>
 inline auto percent_decode(std::string_view input) {
   using namespace v1::percent_encoding;
-  return as<Output>(input | view::decode);
+  return as<Output>(input | views::decode);
 }
 }  // namespace v1
 }  // namespace skyr

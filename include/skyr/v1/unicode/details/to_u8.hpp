@@ -6,11 +6,11 @@
 #ifndef SKYR_V1_UNICODE_DETAILS_TO_U8_HPP
 #define SKYR_V1_UNICODE_DETAILS_TO_U8_HPP
 
+#include <string>
 #include <skyr/v1/traits/string_traits.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
 #include <skyr/v1/unicode/ranges/views/u16_view.hpp>
 #include <skyr/v1/unicode/errors.hpp>
-#include <string>
 
 namespace skyr {
 inline namespace v1 {
@@ -30,7 +30,7 @@ template<class Source>
 struct to_u8_impl<
     Source, typename std::enable_if<is_string_convertible<Source, wchar_t>::value>::type> {
   auto operator()(const Source &source) const {
-    return unicode::as<std::string>(unicode::view::as_u16(source) | unicode::transform::to_u8);
+    return unicode::as<std::string>(unicode::views::as_u16(source) | unicode::transforms::to_u8);
   }
 };
 
@@ -38,7 +38,7 @@ template<class Source>
 struct to_u8_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char16_t>::value>::type> {
   auto operator()(const Source &source) const {
-    return unicode::as<std::string>(unicode::view::as_u16(source) | unicode::transform::to_u8);
+    return unicode::as<std::string>(unicode::views::as_u16(source) | unicode::transforms::to_u8);
   }
 };
 
@@ -46,7 +46,7 @@ template<class Source>
 struct to_u8_impl<
     Source, typename std::enable_if<is_string_convertible<Source, char32_t>::value>::type> {
   auto operator()(const Source &source) const {
-    return unicode::as<std::string>(source | unicode::transform::to_u8);
+    return unicode::as<std::string>(source | unicode::transforms::to_u8);
   }
 };
 

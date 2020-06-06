@@ -152,7 +152,7 @@ auto domain_to_ascii(
 
 auto domain_to_ascii(
     std::string_view domain, bool be_strict, bool *validation_error) -> tl::expected<std::string, domain_errc> {
-  auto utf32 = unicode::as<std::u32string>(unicode::view::as_u8(domain) | unicode::transform::to_u32);
+  auto utf32 = unicode::as<std::u32string>(unicode::views::as_u8(domain) | unicode::transforms::to_u32);
   if (!utf32) {
     return tl::make_unexpected(domain_errc::encoding_error);
   }

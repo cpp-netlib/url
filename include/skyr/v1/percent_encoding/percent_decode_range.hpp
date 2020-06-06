@@ -242,9 +242,9 @@ struct percent_decode_fn {
 
 };
 
-namespace view {
+namespace views {
 static constexpr percent_decode_fn decode;
-}  // namespace view
+}  // namespace views
 
 ///
 /// \tparam Output
