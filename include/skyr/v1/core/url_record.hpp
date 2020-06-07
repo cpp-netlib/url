@@ -10,9 +10,8 @@
 #include <string>
 #include <cstdint>
 #include <optional>
-#include <skyr/v1/network/ipv4_address.hpp>
-#include <skyr/v1/network/ipv6_address.hpp>
 #include <skyr/v1/core/schemes.hpp>
+#include <skyr/v1/core/hosts.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -33,7 +32,8 @@ class url_record {
   string_type password;
   /// An optional URL host, either a domain, IPv4 or IPv6 address,
   /// an opaque host, or empty
-  std::optional<string_type> host;
+//  std::optional<string_type> host;
+  std::optional<host_types> host;
   /// An optional network port
   std::optional<std::uint16_t> port;
   /// A list of zero or more ASCII strings, used to identify a
@@ -70,7 +70,7 @@ class url_record {
   ///          or port
   [[nodiscard]] auto cannot_have_a_username_password_or_port() const noexcept -> bool {
     return
-        (!host || host.value().empty()) ||
+        (!host || host_is_empty(host.value())) ||
             cannot_be_a_base_url ||
             (scheme == "file");
   }

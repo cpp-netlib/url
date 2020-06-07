@@ -6,7 +6,7 @@
 #ifndef SKYR_V1_CORE_URL_SCHEMES_HPP
 #define SKYR_V1_CORE_URL_SCHEMES_HPP
 
-#include <vector>
+#include <array>
 #include <utility>
 #include <string>
 #include <string_view>

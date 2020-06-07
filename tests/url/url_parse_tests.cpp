@@ -16,7 +16,7 @@ TEST_CASE("url_parsing_example_tests", "[parse]") {
   SECTION("url_host_0") {
     auto instance = skyr::parse("https://example.org/");
     REQUIRE(instance);
-    CHECK(instance.value().host.value() == "example.org");
+    CHECK(skyr::host_string(instance.value().host.value()) == "example.org");
   }
 
   SECTION("url_host_0_with_validation_error") {
@@ -24,13 +24,13 @@ TEST_CASE("url_parsing_example_tests", "[parse]") {
     auto instance = skyr::parse("https://example.org/", &validation_error);
     REQUIRE(instance);
     CHECK_FALSE(validation_error);
-    CHECK(instance.value().host.value() == "example.org");
+    CHECK(skyr::host_string(instance.value().host.value()) == "example.org");
   }
 
   SECTION("url_host_1") {
     auto instance = skyr::parse("https:example.org");
     REQUIRE(instance);
-    CHECK(instance.value().host.value() == "example.org");
+    CHECK(skyr::host_string(instance.value().host.value()) == "example.org");
   }
 
   SECTION("url_host_1_with_validation_error") {
@@ -38,7 +38,7 @@ TEST_CASE("url_parsing_example_tests", "[parse]") {
     auto instance = skyr::parse("https:example.org", &validation_error);
     REQUIRE(instance);
     CHECK(validation_error);
-    CHECK(instance.value().host.value() == "example.org");
+    CHECK(skyr::host_string(instance.value().host.value()) == "example.org");
   }
 
   SECTION("url_host_1") {

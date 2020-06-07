@@ -6,23 +6,14 @@
 #ifndef SKYR_V1_CORE_PARSE_HOST_HPP
 #define SKYR_V1_CORE_PARSE_HOST_HPP
 
-#include <variant>
 #include <string>
 #include <string_view>
 #include <tl/expected.hpp>
 #include <skyr/v1/core/errors.hpp>
-#include <skyr/v1/network/ipv4_address.hpp>
-#include <skyr/v1/network/ipv6_address.hpp>
+#include <skyr/v1/core/hosts.hpp>
 
 namespace skyr {
 inline namespace v1 {
-/// \typedef host_types
-/// One of a string (for domains), an IPv4 address or an IPv6 address.
-using host_types = std::variant<
-    std::string,
-    ipv4_address,
-    ipv6_address>;
-
 /// Parses a string to either a domain, IPv4 address or IPv6 address according to
 /// https://url.spec.whatwg.org/#host-parsing
 /// \param input An input string

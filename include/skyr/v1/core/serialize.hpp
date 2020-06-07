@@ -8,6 +8,8 @@
 
 #include <skyr/v1/core/url_record.hpp>
 #include <skyr/v1/core/errors.hpp>
+#include <skyr/v1/network/ipv4_address.hpp>
+#include <skyr/v1/network/ipv6_address.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -30,16 +32,7 @@ inline auto serialize_excluding_fragment(const url_record &url) -> url_record::s
       output += "@";
     }
 
-    bool validation_error = false;
-    if (auto ipv4_address = parse_ipv4_address(url.host.value(), &validation_error)) {
-      output += ipv4_address.value().serialize();
-    }
-    else if (auto ipv6_address = parse_ipv6_address(url.host.value(), &validation_error)) {
-      output += ipv6_address.value().serialize();
-    }
-    else {
-      output += url.host.value();
-    }
+    output += host_string(url.host.value());
 
     if (url.port) {
       output += ":";
