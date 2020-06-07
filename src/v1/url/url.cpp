@@ -154,25 +154,25 @@ auto url::set_hostname(string_view hostname) -> std::error_code {
 }
 
 auto url::is_ipv4_address() const -> bool {
-  return (url_.host && std::holds_alternative<skyr::ipv4_address>(url_.host.value()));
+  return (url_.host && url_.host.value().is_ipv4_address());
 }
 
 auto url::ipv4_address() const -> std::optional<skyr::ipv4_address> {
   if (!is_ipv4_address()) {
     return std::nullopt;
   }
-  return std::get<skyr::ipv4_address>(url_.host.value());
+  return url_.host.value().ipv4_address();
 }
 
 auto url::is_ipv6_address() const -> bool {
-  return (url_.host && std::holds_alternative<skyr::ipv6_address>(url_.host.value()));
+  return (url_.host && url_.host.value().is_ipv6_address());
 }
 
 auto url::ipv6_address() const -> std::optional<skyr::ipv6_address> {
   if (!is_ipv6_address()) {
     return std::nullopt;
   }
-  return std::get<skyr::ipv6_address>(url_.host.value());
+  return url_.host.value().ipv6_address();
 }
 
 [[nodiscard]] auto url::domain() const -> std::optional<string_type> {

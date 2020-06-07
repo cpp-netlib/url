@@ -7,7 +7,7 @@
 #include <variant>
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/v1/core/parse_host.hpp>
+#include <skyr/v1/core/host.hpp>
 
 TEST_CASE("parse_host_tests", "url.parse_host") {
   using namespace std::string_view_literals;
@@ -16,19 +16,19 @@ TEST_CASE("parse_host_tests", "url.parse_host") {
     SECTION("parse domain name") {
       auto host = skyr::v1::parse_host("example.com"sv, false);
       REQUIRE(host);
-      CHECK_NOTHROW(std::get<std::string>(host.value()));
+      CHECK_NOTHROW(host.value().to_string());
     }
 
     SECTION("parse IPv4 address name") {
       auto host = skyr::v1::parse_host("127.0.0.1"sv, false);
       REQUIRE(host);
-      CHECK_NOTHROW(std::get<skyr::v1::ipv4_address>(host.value()));
+      CHECK_NOTHROW(host.value().ipv4_address());
     }
 
     SECTION("parse IPv6 address name") {
       auto host = skyr::v1::parse_host("[1080:0:0:0:8:800:200C:417A]"sv, false);
       REQUIRE(host);
-      CHECK_NOTHROW(std::get<skyr::v1::ipv6_address>(host.value()));
+      CHECK_NOTHROW(host.value().ipv6_address());
     }
 
     SECTION("parse invalid IPv4 address") {
@@ -46,19 +46,19 @@ TEST_CASE("parse_host_tests", "url.parse_host") {
     SECTION("parse IPv4 address that is not special that is treated like an opaque host") {
       auto host = skyr::v1::parse_host("127.0.0.1"sv, true);
       REQUIRE(host);
-      CHECK_NOTHROW(std::get<std::string>(host.value()));
+      CHECK_NOTHROW(host.value().to_string());
     }
 
     SECTION("parse invalid IPv4 address that is not special that is treated like an opaque host") {
       auto host = skyr::v1::parse_host("127.0.0.266"sv, true);
       REQUIRE(host);
-      CHECK_NOTHROW(std::get<std::string>(host.value()));
+      CHECK_NOTHROW(host.value().to_string());
     }
 
     SECTION("parse IPv6 address name") {
       auto host = skyr::v1::parse_host("[1080:0:0:0:8:800:200C:417A]"sv, true);
       REQUIRE(host);
-      CHECK_NOTHROW(std::get<skyr::v1::ipv6_address>(host.value()));
+      CHECK_NOTHROW(host->ipv6_address());
     }
   }
 }

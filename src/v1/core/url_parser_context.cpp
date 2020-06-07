@@ -8,7 +8,7 @@
 #include <array>
 #include <skyr/v1/domain/domain.hpp>
 #include <skyr/v1/core/schemes.hpp>
-#include <skyr/v1/core/parse_host.hpp>
+#include <skyr/v1/core/host.hpp>
 #include <skyr/v1/percent_encoding/percent_decode_range.hpp>
 #include <skyr/v1/string/starts_with.hpp>
 #include "url_parser_context.hpp"
@@ -160,7 +160,7 @@ auto url_parser_context::parse_scheme(char byte) -> tl::expected<url_parse_actio
         return tl::make_unexpected(url_parse_errc::cannot_override_scheme);
       }
 
-      if ((url.scheme == "file") && (!url.host || host_is_empty(url.host.value()))) {
+      if ((url.scheme == "file") && (!url.host || url.host.value().is_empty())) {
         return tl::make_unexpected(url_parse_errc::cannot_override_scheme);
       }
     }
@@ -580,7 +580,7 @@ auto url_parser_context::parse_file_host(char byte) -> tl::expected<url_parse_ac
       *validation_error |= true;
       state = url_parse_state::path;
     } else if (buffer.empty()) {
-      url.host = std::string();
+      url.host = skyr::host{std::string()};
 
       if (state_override) {
         return url_parse_action::success;
@@ -593,9 +593,8 @@ auto url_parser_context::parse_file_host(char byte) -> tl::expected<url_parse_ac
         return tl::make_unexpected(host.error());
       }
 
-      if (std::holds_alternative<std::string>(host.value()) &&
-          std::get<std::string>(host.value()) == "localhost") {
-        host.value() = "";
+      if (host.value().to_string() == "localhost") {
+        host.value() = skyr::host{""};
       }
       url.host = host.value();
 
@@ -665,9 +664,9 @@ auto url_parser_context::parse_path(char byte) -> tl::expected<url_parse_action,
     } else if (!is_single_dot_path_segment(buffer)) {
       if ((url.scheme == "file") &&
           url.path.empty() && is_windows_drive_letter(buffer)) {
-        if (!url.host || !host_is_empty(url.host.value())) {
+        if (!url.host || !url.host.value().is_empty()) {
           *validation_error |= true;
-          url.host = std::string();
+          url.host = skyr::host{std::string()};
         }
         buffer[1] = ':';
       }

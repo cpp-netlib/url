@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
-#include <skyr/v1/core/parse_host.hpp>
+#include <skyr/v1/core/host.hpp>
 #include <skyr/v1/core/errors.hpp>
 #include <skyr/v1/percent_encoding/percent_encoded_char.hpp>
 #include <skyr/v1/percent_encoding/percent_decode.hpp>
@@ -42,7 +42,7 @@ auto parse_opaque_host(std::string_view input, bool *validation_error) -> tl::ex
 }  // namespace
 
 auto parse_host(
-    std::string_view input, bool is_not_special, bool *validation_error) -> tl::expected<host_types, url_parse_errc> {
+    std::string_view input, bool is_not_special, bool *validation_error) -> tl::expected<host, url_parse_errc> {
   if (!input.empty() && (input.front() == '[')) {
     if (input.back() != ']') {
       *validation_error |= true;
@@ -56,7 +56,7 @@ auto parse_host(
     auto ipv6_address = parse_ipv6_address(view, &ipv6_validation_error);
     if (ipv6_address) {
       *validation_error = ipv6_validation_error;
-      return ipv6_address.value();
+      return skyr::v1::host{ipv6_address.value()};
     }
     else {
       return tl::make_unexpected(url_parse_errc::invalid_ipv6_address);
@@ -64,7 +64,8 @@ auto parse_host(
   }
 
   if (is_not_special) {
-    return parse_opaque_host(input, validation_error);
+    return parse_opaque_host(input, validation_error).and_then(
+        [] (auto &&h) -> tl::expected<host, url_parse_errc> { return host{h}; });
   }
 
   auto domain = percent_decode<std::string>(input);
@@ -91,16 +92,16 @@ auto parse_host(
       return tl::make_unexpected(url_parse_errc::invalid_ipv4_address);
     }
     else {
-      return ascii_domain.value();
+      return skyr::v1::host{ascii_domain.value()};
     }
   }
   *validation_error = ipv4_validation_error;
-  return host.value();
+  return skyr::v1::host{host.value()};
 }
 
 auto parse_host(
     std::string_view input,
-    bool is_not_special) -> tl::expected<host_types, url_parse_errc> {
+    bool is_not_special) -> tl::expected<host, url_parse_errc> {
   [[maybe_unused]] bool validation_error = false;
   return parse_host(input, is_not_special, &validation_error);
 }

@@ -320,10 +320,10 @@ class url {
     }
 
     if (!url_.port) {
-      return host_string(url_.host.value());
+      return url_.host.value().to_string();
     }
 
-    return host_string(url_.host.value()) + ":" + std::to_string(url_.port.value());
+    return url_.host.value().to_string() + ":" + std::to_string(url_.port.value());
   }
 
   /// Sets the [URL host](https://url.spec.whatwg.org/#dom-url-host)
@@ -356,7 +356,7 @@ class url {
       return {};
     }
 
-    return host_string(url_.host.value());
+    return url_.host.value().to_string();
   }
 
   /// Sets the [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
