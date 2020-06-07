@@ -4,9 +4,9 @@ URL
 Description
 -----------
 
-The `skyr::url` class parses a URL in the constructor and provides
+The ``skyr::url`` class parses a URL in the constructor and provides
 a rich interface to access and process the URL components. The
-`skyr::url` constructor throws a `skyr::url_parse_error` on failure.
+``skyr::url`` constructor throws a ``skyr::url_parse_error`` on failure.
 
 Headers
 -------
@@ -41,14 +41,14 @@ Example
 API
 ---
 
-`skyr::url` class
-^^^^^^^^^^^^^^^^^
+``skyr::url`` class
+^^^^^^^^^^^^^^^^^^^
 
 .. doxygenclass:: skyr::v1::url
     :members:
 
-`skyr::url` functions
-^^^^^^^^^^^^^^^^^^^^^
+``skyr::url`` functions
+^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: skyr::swap(url&, url&)
 
@@ -56,16 +56,16 @@ API
 
 .. doxygenfunction:: skyr::make_url(const Source&, const url&)
 
-`skyr::url` error codes
-^^^^^^^^^^^^^^^^^^^^^^^
+``skyr::url`` error codes
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. doxygenenum:: skyr::url_parse_errc
+.. doxygenenum:: skyr::v1::url_parse_errc
 
 .. doxygenclass:: skyr::v1::url_parse_error
     :members:
 
-`skyr::url_search_parameters` class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``skyr::url_search_parameters`` class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenclass:: skyr::v1::url_search_parameters
     :members:

@@ -40,13 +40,6 @@ Example
 API
 ---
 
-Punycode
-^^^^^^^^
-
-.. doxygenfunction:: skyr::punycode_encode(std::string_view)
-
-.. doxygenfunction:: skyr::punycode_decode(std::string_view)
-
 Domain to ASCII
 ^^^^^^^^^^^^^^^
 

@@ -28,7 +28,7 @@ Example
 
      auto url = "http://[1080:0:0:0:8:800:200C:417A]:8090/"_url;
      assert(url.is_ipv6_address());
-     std::cout << "IPv6 Host: " << url.ipv6_address().to_string() << std::endl;
+     std::cout << "IPv6 Host: " << urlhostname() << std::endl;
    }
 
 API

@@ -58,7 +58,7 @@ and standard library.
        std::cout << "Protocol: " << url.protocol() << std::endl;
 
        std::cout << "Domain?   " << std::boolalpha << url.is_domain() << std::endl;
-       std::cout << "Domain:   " << url.domain().value() << std::endl;
+       std::cout << "Domain:   " << url.hostname() << std::endl;
 
        std::cout << "Pathname: " <<
            skyr::percent_decode<std::string>(url.pathname()).value() << std::endl;
