@@ -593,7 +593,7 @@ auto url_parser_context::parse_file_host(char byte) -> tl::expected<url_parse_ac
         return tl::make_unexpected(host.error());
       }
 
-      if (host.value().to_string() == "localhost") {
+      if (host.value().serialize() == "localhost") {
         host.value() = skyr::host{""};
       }
       url.host = host.value();

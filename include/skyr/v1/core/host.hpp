@@ -61,8 +61,8 @@ class host {
 
   ///
   /// \return The host as a string
-  [[nodiscard]] auto to_string() const {
-    constexpr static auto to_string = [] (auto &&host) {
+  [[nodiscard]] auto serialize() const {
+    constexpr static auto serialize = [] (auto &&host) {
       using T = std::decay_t<decltype(host)>;
 
       if constexpr (std::is_same_v<T, std::string>) {
@@ -76,7 +76,7 @@ class host {
       }
     };
 
-    return std::visit(to_string, host_);
+    return std::visit(serialize, host_);
   }
 
   ///

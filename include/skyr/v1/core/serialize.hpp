@@ -32,7 +32,7 @@ inline auto serialize_excluding_fragment(const url_record &url) -> url_record::s
       output += "@";
     }
 
-    output += url.host.value().to_string();
+    output += url.host.value().serialize();
 
     if (url.port) {
       output += ":";

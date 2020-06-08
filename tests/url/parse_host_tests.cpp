@@ -16,7 +16,7 @@ TEST_CASE("parse_host_tests", "url.parse_host") {
     SECTION("parse domain name") {
       auto host = skyr::v1::parse_host("example.com"sv, false);
       REQUIRE(host);
-      CHECK_NOTHROW(host.value().to_string());
+      CHECK_NOTHROW(host.value().serialize());
     }
 
     SECTION("parse IPv4 address name") {
@@ -46,13 +46,13 @@ TEST_CASE("parse_host_tests", "url.parse_host") {
     SECTION("parse IPv4 address that is not special that is treated like an opaque host") {
       auto host = skyr::v1::parse_host("127.0.0.1"sv, true);
       REQUIRE(host);
-      CHECK_NOTHROW(host.value().to_string());
+      CHECK_NOTHROW(host.value().serialize());
     }
 
     SECTION("parse invalid IPv4 address that is not special that is treated like an opaque host") {
       auto host = skyr::v1::parse_host("127.0.0.266"sv, true);
       REQUIRE(host);
-      CHECK_NOTHROW(host.value().to_string());
+      CHECK_NOTHROW(host.value().serialize());
     }
 
     SECTION("parse IPv6 address name") {
