@@ -176,7 +176,7 @@ auto url::ipv6_address() const -> std::optional<skyr::ipv6_address> {
 }
 
 [[nodiscard]] auto url::domain() const -> std::optional<string_type> {
-  return is_domain()? std::make_optional(skyr::domain_to_unicode(hostname()).value()) : std::nullopt;
+  return is_domain()? std::make_optional(skyr::domain_to_u8(hostname()).value()) : std::nullopt;
 }
 
 auto url::set_port(string_view port) -> std::error_code {

@@ -59,11 +59,13 @@ and standard library.
 
        std::cout << "Domain?   " << std::boolalpha << url.is_domain() << std::endl;
        std::cout << "Domain:   " << url.hostname() << std::endl;
-
-       std::cout << "Pathname: " <<
-           skyr::percent_decode<std::string>(url.pathname()).value() << std::endl;
+       std::cout << "Domain:   "
+                 << skyr::domain_to_u8(url.hostname()).value() << std::endl;
 
        std::cout << "Port:     " << url.port<std::uint16_t>().value() << std::endl;
+
+       std::cout << "Pathname: "
+                 << skyr::percent_decode<std::string>(url.pathname()).value() << std::endl;
 
        std::cout << "Search parameters" << std::endl;
        const auto &search = url.search_parameters();

@@ -159,7 +159,7 @@ auto domain_to_ascii(
   return domain_to_ascii(utf32.value(), be_strict, validation_error);
 }
 
-auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, domain_errc> {
+auto domain_to_u8(std::string_view ascii) -> tl::expected<std::string, domain_errc> {
   auto labels = std::vector<std::string>{};
   for (auto label : split(ascii, ".")) {
     if (label.substr(0, 4) == "xn--") {

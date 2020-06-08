@@ -62,7 +62,7 @@ inline auto domain_to_ascii(std::string_view domain) {
 ///
 /// \param ascii A Punycode encoded domain
 /// \returns A valid UTF-8 encoded domain, or an error
-auto domain_to_unicode(std::string_view ascii) -> tl::expected<std::string, domain_errc>;
+auto domain_to_u8(std::string_view ascii) -> tl::expected<std::string, domain_errc>;
 }  // namespace v1
 }  // namespace skyr
 
