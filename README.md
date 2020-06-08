@@ -11,7 +11,6 @@
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/1iblsi5apka29dmg?svg=true)](
     https://ci.appveyor.com/project/glynos/url-3aeqd)
 
-
 ## Introduction
 
 This library provides:
@@ -90,75 +89,6 @@ To install the library:
 > cmake --build _build --target install
 ```
 
-## Examples
-
-These examples are based on the
-[WhatWG API specification](https://url.spec.whatwg.org/#example-5434421b)
-
-To build the examples with the sources, run `cmake` as follows:
-
-```bash
-> cmake .. \
-    -G "Ninja" \
-    -DSkyr_BUILD_EXAMPLES=ON \
-    -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/vcpkg/scripts/buildsystems/vcpkg.cmake
-```
-
-### Creating a URL without a base URL
-
-[This example](examples/example_01.md) parses a string,
-"https://example.org/💩", without using a base URL:
-
-```c++
-#include <skyr/url.hpp>
-#include <iostream>
-
-int main(int argc, char *argv[]) {
-  auto url = skyr::url("http://example.org/\xf0\x9f\x92\xa9");
-  std::cout << url.pathname() << std::endl;
-}
-```
-
-Gives the output: `/%F0%9F%92%A9`
-
-### Creating a non-absolute URL without a base URL
-
-[This example](examples/example_02.md)  gives an error if
-the input, "/🍣🍺", is not an *absolute-URL-with-fragment-string*:
-
-```c++
-#include <skyr/url.hpp>
-#include <iostream>
-
-int main(int argc, char *argv[]) {
-  auto url = skyr::make_url("\xf0\x9f\x8d\xa3\xf0\x9f\x8d\xba");
-  if (!url) {
-    std::cerr << "Parsing failed: " << url.error().message() << std::endl;
-  }
-}
-```
-
-This gives the output: `Parsing failed: Not an absolute URL with fragment`
-
-### Creating a non-absolute URL with a base URL
-
-[This example](examples/example_03.md) parses a string,
-"🏳️‍🌈", using a base URL, "https://example.org/":
-
-```c++
-#include <skyr/url.hpp>
-#include <iostream>
-
-int main(int argc, char *argv[]) {
-  auto base = skyr::url("https://example.org/");
-  auto url = skyr::url(
-    "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88", base);
-  std::cout << url.href() << std::endl;
-}
-```
-
-This gives the output: `https://example.org/%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88`
-
 ## Testing and installation
 
 ### Installing with `CMake` and `Ninja`
@@ -176,6 +106,82 @@ This gives the output: `https://example.org/%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F
 Where `$PREFIX` is the location where you want to install the
 library. Depending on the location of `$PREFIX`, you may need to run
 the install command as an administrator (e.g. on Linux as `sudo`).
+
+
+## Example
+
+### Source code
+
+Here is an example of how to use the ``skyr::url`` class to parse a
+URL string and to process the components:
+
+```c++
+// url_parts.cpp
+
+#include <skyr/url.hpp>
+#include <skyr/percent_encoding/percent_decode.hpp>
+#include <iostream>
+
+int main() {
+  using namespace skyr::literals;
+
+  auto url =
+      "http://sub.example.إختبار:8090/\xcf\x80?a=1&c=2&b=\xe2\x80\x8d\xf0\x9f\x8c\x88"_url;
+
+  std::cout << "Protocol: " << url.protocol() << std::endl;
+
+  std::cout << "Domain?   " << std::boolalpha << url.is_domain() << std::endl;
+  std::cout << "Domain:   " << url.hostname() << std::endl;
+  std::cout << "Domain:   "
+            << skyr::domain_to_unicode(url.hostname()).value() << std::endl;
+
+  std::cout << "Pathname: "
+            << skyr::percent_decode<std::string>(url.pathname()).value() << std::endl;
+
+  std::cout << "Port:     " << url.port<std::uint16_t>().value() << std::endl;
+
+  std::cout << "Search parameters:" << std::endl;
+  const auto &search = url.search_parameters();
+  for (const auto &[key, value] : search) {
+    std::cout << "  " << "key: " << key << ", value = " << value << std::endl;
+  }
+}
+```
+
+### Build script
+
+Here is the ``CMake`` script to build the example:
+
+```cmake
+# CMakeLists.txt
+
+project(my_project)
+
+find_package(tl-expected CONFIG REQUIRED)
+find_package(skyr-url CONFIG REQUIRED)
+
+set(CMAKE_CXX_STANDARD 17)
+
+add_executable(url_parts url_parts.cpp)
+target_link_libraries(url_test PRIVATE skyr::skyr-url)
+```
+
+### Output
+
+The output of this program is:
+
+```bash
+Protocol: http:
+Domain?   true
+Domain:   sub.example.xn--kgbechtv
+Domain:   sub.example.إختبار
+Pathname: /π
+Port:     8090
+Search parameters:
+  key: a, value = 1
+  key: c, value = 2
+  key: b, value = ‍🌈
+```
 
 ## Dependencies
 
