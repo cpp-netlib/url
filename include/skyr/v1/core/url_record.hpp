@@ -6,12 +6,12 @@
 #ifndef SKYR_V1_CORE_URL_RECORD_HPP
 #define SKYR_V1_CORE_URL_RECORD_HPP
 
+#include <vector>
+#include <string>
 #include <cstdint>
 #include <optional>
 #include <skyr/v1/core/host.hpp>
 #include <skyr/v1/core/schemes.hpp>
-#include <string>
-#include <vector>
 
 namespace skyr {
 inline namespace v1 {
@@ -32,7 +32,6 @@ class url_record {
   string_type password;
   /// An optional URL host, either a domain, IPv4 or IPv6 address,
   /// an opaque host, or empty
-//  std::optional<skyr::v1::host> host;
   std::optional<skyr::v1::host> host;
   /// An optional network port
   std::optional<std::uint16_t> port;

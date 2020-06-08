@@ -694,4 +694,16 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(instance.href() == "http://example.org/test?a#b%00c");
     CHECK(instance.hash() == "#b%00c");
   }
+
+  SECTION("windows_drive_letter_quirk_01") {
+    auto instance = skyr::url("file://1.2.3.4/C:/");
+    CHECK(instance.href() == "file:///C:/");
+    CHECK(instance.pathname() == "/C:/");
+  }
+
+  SECTION("windows_drive_letter_quirk_02") {
+    auto instance = skyr::url("file://[1::8]/C:/");
+    CHECK(instance.href() == "file:///C:/");
+    CHECK(instance.pathname() == "/C:/");
+  }
 }

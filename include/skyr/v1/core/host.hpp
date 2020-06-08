@@ -52,7 +52,7 @@ class host {
         return host.empty();
       }
       else {
-        return true;
+        return host.serialize().empty();
       }
     };
 
