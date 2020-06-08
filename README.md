@@ -61,7 +61,7 @@ Using `vcpkg`, install the library dependencies:
 > ./vcpkg install tl-expected catch2 nlohmann-json fmt
 ```
 
-### Building with `CMake` and `Ninja`
+### Building the project with `CMake` and `Ninja`
 
 From a terminal, execute the following sequence of commands:
 
@@ -81,7 +81,11 @@ To run the tests:
 > cmake --build _build --target test
 ```
 
-On Windows, replace the target with ``RUN_TESTS``.
+On Windows, replace the target with ``RUN_TESTS``:
+
+```powershell
+> cmake --build _build --target RUN_TESTS
+```
 
 To install the library:
 
@@ -89,7 +93,7 @@ To install the library:
 > cmake --build _build --target install
 ```
 
-## Testing and installation
+## Testing and installing the project
 
 ### Installing with `CMake` and `Ninja`
 
@@ -108,7 +112,7 @@ library. Depending on the location of `$PREFIX`, you may need to run
 the install command as an administrator (e.g. on Linux as `sudo`).
 
 
-## Example
+## Example usage
 
 ### Source code
 
@@ -135,10 +139,10 @@ int main() {
   std::cout << "Domain:   "
             << skyr::domain_to_unicode(url.hostname()).value() << std::endl;
 
+  std::cout << "Port:     " << url.port<std::uint16_t>().value() << std::endl;
+
   std::cout << "Pathname: "
             << skyr::percent_decode<std::string>(url.pathname()).value() << std::endl;
-
-  std::cout << "Port:     " << url.port<std::uint16_t>().value() << std::endl;
 
   std::cout << "Search parameters:" << std::endl;
   const auto &search = url.search_parameters();
@@ -175,8 +179,8 @@ Protocol: http:
 Domain?   true
 Domain:   sub.example.xn--kgbechtv
 Domain:   sub.example.إختبار
-Pathname: /π
 Port:     8090
+Pathname: /π
 Search parameters:
   key: a, value = 1
   key: c, value = 2
