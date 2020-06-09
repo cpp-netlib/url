@@ -74,8 +74,7 @@ auto map_code_points(
 }
 
 auto validate(std::u32string_view label, bool use_std3_ascii_rules, bool check_hyphens,
-                               [[maybe_unused]] bool check_bidi, bool check_joiners,
-                               bool transitional_processing)
+              [[maybe_unused]] bool check_bidi, bool check_joiners, bool transitional_processing)
     -> tl::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#Validity_Criteria
 
@@ -168,13 +167,18 @@ auto idna_process(std::u32string_view domain_name, bool use_std3_ascii_rules, bo
 }
 
 auto domain_to_ascii(
-    std::u32string_view domain_name, bool check_hyphens, bool check_bidi,
+    std::string_view domain_name, bool check_hyphens, bool check_bidi,
     bool check_joiners, bool use_std3_ascii_rules, bool transitional_processing,
     bool verify_dns_length) -> tl::expected<std::string, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#ToASCII
 
+  auto utf32 = unicode::as<std::u32string>(unicode::views::as_u8(domain_name) | unicode::transforms::to_u32);
+  if (!utf32) {
+    return tl::make_unexpected(domain_errc::encoding_error);
+  }
+
   auto domain = idna_process(
-      domain_name, use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, transitional_processing);
+      utf32.value(), use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, transitional_processing);
   if (!domain) {
     return tl::make_unexpected(domain.error());
   }
@@ -209,10 +213,11 @@ auto domain_to_ascii(
 
   return join(labels, '.');
 }
+}  // namespace
 
 auto domain_to_ascii(
-    std::u32string_view domain, bool be_strict, bool *validation_error) -> tl::expected<std::string, domain_errc> {
-  auto result = domain_to_ascii(domain, false, true, true, be_strict, false, be_strict);
+    std::string_view domain_name, bool be_strict, bool *validation_error) -> tl::expected<std::string, domain_errc> {
+  auto result = domain_to_ascii(domain_name, false, true, true, be_strict, false, be_strict);
   if (!result) {
     *validation_error |= true;
     return tl::make_unexpected(result.error());
@@ -222,16 +227,6 @@ auto domain_to_ascii(
     return tl::make_unexpected(domain_errc::empty_string);
   }
   return result;
-}
-}  // namespace
-
-auto domain_to_ascii(
-    std::string_view domain_name, bool be_strict, bool *validation_error) -> tl::expected<std::string, domain_errc> {
-  auto utf32 = unicode::as<std::u32string>(unicode::views::as_u8(domain_name) | unicode::transforms::to_u32);
-  if (!utf32) {
-    return tl::make_unexpected(domain_errc::encoding_error);
-  }
-  return domain_to_ascii(utf32.value(), be_strict, validation_error);
 }
 
 namespace {
