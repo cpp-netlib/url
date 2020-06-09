@@ -11,9 +11,10 @@
 
 namespace skyr {
 inline namespace v1 {
+template <class charT>
 inline auto starts_with(
-    std::string_view input,
-    std::string_view chars) noexcept {
+    std::basic_string_view<charT> input,
+    decltype(input) chars) noexcept {
   return (input.size() >= chars.size()) && (input.substr(0, chars.size()) == chars);
 }
 }  // namespace v1

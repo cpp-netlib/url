@@ -21,6 +21,8 @@ enum class domain_errc {
   encoding_error,
   /// Invalid domain name length
   invalid_length,
+  /// Empty domain
+  empty_string,
 };
 }  // namespace v1
 }  // namespace skyr

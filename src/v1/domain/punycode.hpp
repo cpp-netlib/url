@@ -44,6 +44,14 @@ auto punycode_encode(
 /// \returns The decoded UTF-8 domain, or an error
 auto punycode_decode(
     std::string_view input) -> tl::expected<std::string, domain_errc>;
+
+/// Performs Punycode decoding based on a reference implementation
+/// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
+///
+/// \param input An ASCII encoded domain to be decoded
+/// \returns The decoded UTF-8 domain, or an error
+auto punycode_decode(
+    std::u32string_view input) -> tl::expected<std::u32string, domain_errc>;
 }  // namespace v1
 }  // namespace skyr
 

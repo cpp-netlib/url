@@ -206,6 +206,15 @@ auto punycode_decode(
   return u8_result.value();
 }
 
+auto punycode_decode(
+    std::u32string_view input) -> tl::expected<std::u32string, domain_errc> {
+  auto u8input = unicode::as<std::string>(input | unicode::transforms::to_u8).value();
+  return punycode_decode(std::string_view(u8input))
+      .and_then([] (auto &&output) -> tl::expected<std::u32string, domain_errc> {
+        return unicode::as<std::u32string>(unicode::views::as_u8(output) | unicode::transforms::to_u32).value();
+      });
+}
+
 auto punycode_encode(
     std::string_view input) -> tl::expected<std::string, domain_errc> {
   auto utf32 = unicode::as<std::u32string>(unicode::views::as_u8(input) | unicode::transforms::to_u32);
