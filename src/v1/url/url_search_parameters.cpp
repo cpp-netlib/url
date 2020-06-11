@@ -93,9 +93,9 @@ auto url_search_parameters::to_string() const -> string_type {
     else {
       result.append("&");
     }
-    result.append(percent_encode<string_type>(name));
+    result.append(percent_encode(name));
     result.append("=");
-    result.append(percent_encode<string_type>(value));
+    result.append(percent_encode(value));
   }
 
   return result;
@@ -107,8 +107,8 @@ void url_search_parameters::initialize(std::string_view query) {
   }
 
   for (auto [name, value] : query_parameter_range(query)) {
-    auto name_ = percent_decode<std::string>(name).value_or(std::string(name));
-    auto value_ = value? percent_decode<std::string>(value.value()).value_or(std::string(value.value())) : std::string();
+    auto name_ = percent_decode(name).value_or(std::string(name));
+    auto value_ = value? percent_decode(value.value()).value_or(std::string(value.value())) : std::string();
     parameters_.emplace_back(name_, value_);
   }
 }

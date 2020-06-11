@@ -15,10 +15,9 @@ namespace skyr {
 inline namespace v1 {
 /// Percent encodes the input
 /// \returns The percent encoded output when successful, an error otherwise.
-template <class Output>
 inline auto percent_encode(std::string_view input) {
   using namespace v1::percent_encoding;
-  return as<Output>(input | views::encode);
+  return as<std::string>(input | views::encode);
 }
 }  // namespace v1
 }  // namespace skyr

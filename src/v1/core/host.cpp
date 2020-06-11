@@ -68,7 +68,7 @@ auto parse_host(
         [] (auto &&h) -> tl::expected<host, url_parse_errc> { return host{h}; });
   }
 
-  auto domain = percent_decode<std::string>(input);
+  auto domain = percent_decode(input);
   if (!domain) {
     return tl::make_unexpected(url_parse_errc::cannot_decode_host_point);
   }

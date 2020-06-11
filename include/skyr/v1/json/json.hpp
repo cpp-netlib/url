@@ -37,21 +37,21 @@ inline auto encode_query(const nlohmann::json &json, char separator='&', char eq
   for (auto &[key, value] : json.items()) {
 
     if (value.is_string()) {
-      result += percent_encode<std::string>(key);
+      result += percent_encode(key);
       result += equal;
-      result += percent_encode<std::string>(value.get<std::string>());
+      result += percent_encode(value.get<std::string>());
       result += separator;
     }
     else if (value.is_array()) {
       for (auto &element : value.items()) {
-        result += percent_encode<std::string>(key);
+        result += percent_encode(key);
         result += equal;
-        result += percent_encode<std::string>(element.value().get<std::string>());
+        result += percent_encode(element.value().get<std::string>());
         result += separator;
       }
     }
     else {
-      result += percent_encode<std::string>(key);
+      result += percent_encode(key);
       result += equal;
       result += separator;
     }
@@ -67,8 +67,8 @@ inline auto decode_query(std::string_view query, char separator='&', char equal=
 
   nlohmann::json object;
   for (auto [key, value] : query_parameter_range(query)) {
-    const auto key_ = skyr::percent_decode<std::string>(key).value();
-    const auto value_ = value? skyr::percent_decode<std::string>(value.value()).value() : std::string();
+    const auto key_ = skyr::percent_decode(key).value();
+    const auto value_ = value? skyr::percent_decode(value.value()).value() : std::string();
 
     if (object.contains(key_)) {
       auto current_value = object[key_];

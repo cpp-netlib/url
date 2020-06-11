@@ -40,7 +40,7 @@ inline auto from_path(const stdfs::path &path) -> tl::expected<url, url_parse_er
 /// \returns a path object or an error on failure
 inline auto to_path(const url &input) -> tl::expected<stdfs::path, path_errc> {
   auto pathname = input.pathname();
-  auto decoded = skyr::percent_decode<std::string>(pathname);
+  auto decoded = skyr::percent_decode(pathname);
   if (!decoded) {
     return tl::make_unexpected(path_errc::percent_decoding_error);
   }

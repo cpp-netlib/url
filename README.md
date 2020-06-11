@@ -142,7 +142,7 @@ int main() {
   std::cout << "Port:     " << url.port<std::uint16_t>().value() << std::endl;
 
   std::cout << "Pathname: "
-            << skyr::percent_decode<std::string>(url.pathname()).value() << std::endl;
+            << skyr::percent_decode(url.pathname()).value() << std::endl;
 
   std::cout << "Search parameters:" << std::endl;
   const auto &search = url.search_parameters();
