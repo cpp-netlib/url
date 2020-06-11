@@ -121,11 +121,10 @@ before_script:
   - cmake
     -B_build
     -GNinja
-    -DSkyr_WARNINGS_AS_ERRORS=OFF
-    -DSkyr_BUILD_TESTS=ON
-    -DSkyr_BUILD_WPT_TESTS=ON
-    -DSkyr_BUILD_DOCS=OFF
-    -DSkyr_BUILD_EXAMPLES=OFF
+    -Dskyr_WARNINGS_AS_ERRORS=OFF
+    -Dskyr_BUILD_TESTS=ON
+    -Dskyr_BUILD_DOCS=OFF
+    -Dskyr_BUILD_EXAMPLES=OFF
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
     -DBUILD_SHARED_LIBS=${SHARED_LIB}
     -DCMAKE_TOOLCHAIN_FILE=${DEPS_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
