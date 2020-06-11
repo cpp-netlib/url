@@ -73,8 +73,8 @@ auto map_code_points(
   return result;
 }
 
-auto validate(std::u32string_view label, bool use_std3_ascii_rules, bool check_hyphens,
-              [[maybe_unused]] bool check_bidi, bool check_joiners, bool transitional_processing)
+auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules, bool check_hyphens,
+                    [[maybe_unused]] bool check_bidi, bool check_joiners, [[maybe_unused]] bool transitional_processing)
     -> tl::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#Validity_Criteria
 
@@ -88,34 +88,6 @@ auto validate(std::u32string_view label, bool use_std3_ascii_rules, bool check_h
 
     /// Criterion 3
     if ((label.front() == U'-') || (label.back() == U'-')) {
-      return tl::make_unexpected(domain_errc::bad_input);
-    }
-  }
-
-  /// Criterion 4
-  {
-    auto it = std::find(first, last, U'.');
-    if (it != last) {
-      return tl::make_unexpected(domain_errc::bad_input);
-    }
-  }
-
-  {
-    /// Criterion 6
-    static const auto is_not_valid_idna_code_point = [&use_std3_ascii_rules, &transitional_processing](auto cp) {
-      auto status = domain::map_idna_status(cp);
-      if (use_std3_ascii_rules || (cp > 0x7eu)) {
-        if (transitional_processing) {
-          return status != domain::idna_status::valid;
-        } else {
-          return (status != domain::idna_status::valid) && (status != domain::idna_status::deviation);
-        }
-      }
-      return false;
-    };
-
-    auto it = std::find_if(first, last, is_not_valid_idna_code_point);
-    if (it != last) {
       return tl::make_unexpected(domain_errc::bad_input);
     }
   }
@@ -149,14 +121,14 @@ auto idna_process(std::u32string_view domain_name, bool use_std3_ascii_rules, bo
           return tl::make_unexpected(decoded.error());
         }
 
-        auto validated = validate(
-            decoded.value(), use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, false);
+        auto validated =
+            validate_label(decoded.value(), use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, false);
         if (!validated) {
           return tl::make_unexpected(validated.error());
         }
       } else {
-        auto validated = validate(
-            label, use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, transitional_processing);
+        auto validated = validate_label(label, use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners,
+                                        transitional_processing);
         if (!validated) {
           return tl::make_unexpected(validated.error());
         }
@@ -229,14 +201,8 @@ auto domain_to_ascii(
   return result;
 }
 
-namespace {
-auto domain_to_unicode(std::string_view domain_name, [[maybe_unused]] bool check_hyphens,
-                       [[maybe_unused]] bool check_bidi, [[maybe_unused]] bool check_joiners,
-                       [[maybe_unused]] bool use_std3_ascii_rules,
-                       [[maybe_unused]] bool transitional_processing,
-                       [[maybe_unused]] bool *validation_error) -> tl::expected<std::string, domain_errc> {
-  /// https://www.unicode.org/reports/tr46/#ToUnicode
-
+auto domain_to_u8(std::string_view domain_name, [[maybe_unused]] bool *validation_error)
+    -> tl::expected<std::string, domain_errc> {
   auto labels = std::vector<std::string>{};
   for (auto label : split(domain_name, ".")) {
     if (label.substr(0, 4) == "xn--") {
@@ -252,11 +218,6 @@ auto domain_to_unicode(std::string_view domain_name, [[maybe_unused]] bool check
     }
   }
   return join(labels, '.');
-}
-}  // namespace
-
-auto domain_to_u8(std::string_view domain_name, bool *validation_error) -> tl::expected<std::string, domain_errc> {
-  return domain_to_unicode(domain_name, false, true, true, false, false, validation_error);
 }
 }  // namespace v1
 }  // namespace skyr
