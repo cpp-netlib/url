@@ -20,7 +20,8 @@ auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
   return last != std::find(first, last, byte);
 }
 
-auto parse_opaque_host(std::string_view input, bool *validation_error) -> tl::expected<std::string, url_parse_errc> {
+auto parse_opaque_host(std::string_view input,
+                       bool *validation_error) -> tl::expected<skyr::v1::opaque_host, url_parse_errc> {
   constexpr static auto is_forbidden = [] (auto byte) -> bool {
     return (byte != '%') && is_forbidden_host_point(byte);
   };
@@ -37,7 +38,7 @@ auto parse_opaque_host(std::string_view input, bool *validation_error) -> tl::ex
     auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::c0_control);
     output += pct_encoded.to_string();
   }
-  return output;
+  return skyr::v1::opaque_host{output};
 }
 }  // namespace
 
@@ -92,18 +93,11 @@ auto parse_host(
       return tl::make_unexpected(url_parse_errc::invalid_ipv4_address);
     }
     else {
-      return skyr::v1::host{ascii_domain.value()};
+      return skyr::v1::host{skyr::v1::domain{ascii_domain.value()}};
     }
   }
   *validation_error = ipv4_validation_error;
   return skyr::v1::host{host.value()};
-}
-
-auto parse_host(
-    std::string_view input,
-    bool is_not_special) -> tl::expected<host, url_parse_errc> {
-  [[maybe_unused]] bool validation_error = false;
-  return parse_host(input, is_not_special, &validation_error);
 }
 }  // namespace v1
 }  // namespace skyr

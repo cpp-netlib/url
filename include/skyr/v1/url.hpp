@@ -383,6 +383,18 @@ class url {
   /// \returns An error on failure to parse the new URL
   auto set_hostname(string_view hostname) -> std::error_code;
 
+  /// Checks if the hostname is a valid domain name
+  [[nodiscard]] auto is_domain() const -> bool {
+    return url_.is_special() && !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
+  }
+
+  /// Returns an optional domain name
+  [[nodiscard]] auto domain() const -> std::optional<string_type>;
+
+  /// Returns an optional domain after decoding as a UTF-8 string
+  /// \returns
+  [[nodiscard]] auto u8domain() const -> std::optional<std::string>;
+
   /// Checks if the hostname is a valid IPv4 address
   [[nodiscard]] auto is_ipv4_address() const -> bool;
 
@@ -397,17 +409,14 @@ class url {
   /// valid IPv6 address
   [[nodiscard]] auto ipv6_address() const -> std::optional<skyr::ipv6_address>;
 
-  /// Checks if the hostname is a valid domain name
-  [[nodiscard]] auto is_domain() const -> bool {
-    return url_.is_special() && !hostname().empty() && !is_ipv4_address() && !is_ipv6_address();
+  /// Checks if the hostname is a valid opaque host
+  [[nodiscard]] auto is_opaque_host() const -> bool {
+    return url_.host && url_.host.value().is_opaque_host();
   }
 
-  /// Returns the decoded domain name
-  [[nodiscard]] auto domain() const -> std::optional<string_type>;
-
   /// Checks if the hostname is a valid domain name
-  [[nodiscard]] auto is_opaque() const -> bool {
-    return !url_.is_special() && !hostname().empty();
+  [[nodiscard]] auto is_empty_host() const -> bool {
+    return url_.host && url_.host.value().is_empty();
   }
 
   /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)

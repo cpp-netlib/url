@@ -580,7 +580,7 @@ auto url_parser_context::parse_file_host(char byte) -> tl::expected<url_parse_ac
       *validation_error |= true;
       state = url_parse_state::path;
     } else if (buffer.empty()) {
-      url.host = skyr::host{std::string()};
+      url.host = skyr::host{skyr::v1::empty_host{}};
 
       if (state_override) {
         return url_parse_action::success;
@@ -594,7 +594,7 @@ auto url_parser_context::parse_file_host(char byte) -> tl::expected<url_parse_ac
       }
 
       if (host.value().serialize() == "localhost") {
-        host.value() = skyr::host{""};
+        host.value() = skyr::host{skyr::v1::empty_host{}};
       }
       url.host = host.value();
 
@@ -666,7 +666,7 @@ auto url_parser_context::parse_path(char byte) -> tl::expected<url_parse_action,
           url.path.empty() && is_windows_drive_letter(buffer)) {
         if (!url.host || !url.host.value().is_empty()) {
           *validation_error |= true;
-          url.host = skyr::host{std::string()};
+          url.host = skyr::host{skyr::v1::empty_host{}};
         }
         buffer[1] = ':';
       }

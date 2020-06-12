@@ -602,7 +602,7 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(instance.is_ipv4_address());
     CHECK(!instance.is_ipv6_address());
     CHECK(!instance.is_domain());
-    CHECK(!instance.is_opaque());
+    CHECK(!instance.is_opaque_host());
   }
 
   SECTION("is_ipv4_accessor_like_long_ipv4_issue_51") {
@@ -610,7 +610,7 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(!instance.is_ipv4_address());
     CHECK(!instance.is_ipv6_address());
     CHECK(instance.is_domain());
-    CHECK(!instance.is_opaque());
+    CHECK(!instance.is_opaque_host());
   }
 
   SECTION("is_ipv4_accessor_like_short_ipv4_issue_51") {
@@ -618,7 +618,7 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(instance.is_ipv4_address());
     CHECK(!instance.is_ipv6_address());
     CHECK(!instance.is_domain());
-    CHECK(!instance.is_opaque());
+    CHECK(!instance.is_opaque_host());
   }
 
   SECTION("is_domain_issue_51") {
@@ -626,7 +626,7 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(!instance.is_ipv4_address());
     CHECK(!instance.is_ipv6_address());
     CHECK(instance.is_domain());
-    CHECK(!instance.is_opaque());
+    CHECK(!instance.is_opaque_host());
   }
 
   SECTION("is_opaque_issue_5") {
@@ -634,7 +634,7 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(!instance.is_ipv4_address());
     CHECK(!instance.is_ipv6_address());
     CHECK(!instance.is_domain());
-    CHECK(instance.is_opaque());
+    CHECK(instance.is_opaque_host());
   }
 
   SECTION("is_opaque_ipv6_issue_5") {
@@ -642,7 +642,15 @@ TEST_CASE("url_tests", "[url]") {
     CHECK(!instance.is_ipv4_address());
     CHECK(instance.is_ipv6_address());
     CHECK(!instance.is_domain());
-    CHECK(instance.is_opaque());
+    CHECK(!instance.is_opaque_host());
+  }
+
+  SECTION("is_opaque_ipv6_issue_6") {
+    auto instance = skyr::url("non-special://example.com/");
+    CHECK(!instance.is_ipv4_address());
+    CHECK(!instance.is_ipv6_address());
+    CHECK(!instance.is_domain());
+    CHECK(instance.is_opaque_host());
   }
 
   SECTION("url_origin_01") {
@@ -663,7 +671,8 @@ TEST_CASE("url_tests", "[url]") {
   SECTION("url_domain") {
     auto instance = skyr::url("https://xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g/path/");
     CHECK(instance.is_domain());
-    CHECK(instance.domain().value() == "उदाहरण.परीक्षा");
+    CHECK(instance.domain().value() == "xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g");
+    CHECK(instance.u8domain().value() == "उदाहरण.परीक्षा");
   }
 
   SECTION("regression_failure_01") {
