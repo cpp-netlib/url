@@ -731,7 +731,7 @@ inline void swap(url &lhs, url &rhs) noexcept {
 
 namespace details {
 auto make_url(
-    url::string_view input, const url_record *base) -> tl::expected<url, url_parse_errc>;
+    std::string_view input, const url_record *base) -> tl::expected<url, url_parse_errc>;
 }  // namespace details
 
 /// Parses a URL string and constructs a `url` object on success,

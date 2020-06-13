@@ -112,8 +112,7 @@ class host {
   ///
   /// \return
   [[nodiscard]] auto ipv4_address() const noexcept {
-    assert(is_ipv4_address());
-    return std::get<skyr::v1::ipv4_address>(host_);
+    return is_ipv4_address() ? std::make_optional(std::get<skyr::v1::ipv4_address>(host_)) : std::nullopt;
   }
 
   ///
@@ -125,8 +124,7 @@ class host {
   ///
   /// \return
   [[nodiscard]] auto ipv6_address() const noexcept {
-    assert(is_ipv6_address());
-    return std::get<skyr::v1::ipv6_address>(host_);
+    return is_ipv6_address() ? std::make_optional(std::get<skyr::v1::ipv6_address>(host_)) : std::nullopt;
   }
 
   ///
@@ -138,7 +136,7 @@ class host {
   ///
   /// \return
   [[nodiscard]] auto opaque_host() const noexcept {
-    return std::get<skyr::v1::opaque_host>(host_).name;
+    return is_opaque_host() ? std::make_optional(std::get<skyr::v1::opaque_host>(host_).name) : std::nullopt;
   }
 
   ///

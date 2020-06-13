@@ -85,6 +85,7 @@ struct percent_encoded_char {
 
   ///
   percent_encoded_char() = default;
+
   ///
   /// \param byte
   percent_encoded_char(char byte, no_encode)
@@ -170,13 +171,6 @@ inline auto percent_encode_byte(char byte, encode_set excludes) -> percent_encod
     case encode_set::fragment:
       return percent_encode_byte(byte, details::is_fragment_byte);
   }
-  return percent_encoding::percent_encoded_char(byte);
-}
-
-///
-/// \param byte
-/// \return
-inline auto percent_encode_byte(char byte) -> percent_encoded_char {
   return percent_encoding::percent_encoded_char(byte);
 }
 

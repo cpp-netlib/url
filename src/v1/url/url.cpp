@@ -274,7 +274,7 @@ auto url::default_port(std::string_view scheme) noexcept -> std::optional<std::u
 
 namespace details {
 auto make_url(
-    url::string_view input,
+    std::string_view input,
     const url_record *base) -> tl::expected<url, url_parse_errc> {
   bool validation_error = false;
   return parse(input, &validation_error, base)
