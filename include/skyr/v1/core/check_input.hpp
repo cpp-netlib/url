@@ -12,24 +12,24 @@
 namespace skyr {
 inline namespace v1 {
 inline auto remove_leading_c0_control_or_space(std::string_view input, bool *validation_error) {
-  constexpr static auto is_not_c0_control_or_space = [] (auto byte) {
-    return !std::iscntrl(byte, std::locale::classic()) && !std::isspace(byte, std::locale::classic());
+  constexpr static auto is_c0_control_or_space = [] (auto byte) {
+    return std::iscntrl(byte, std::locale::classic()) || std::isspace(byte, std::locale::classic());
   };
 
   auto first = begin(input), last = end(input);
-  auto it = std::find_if(first, last, is_not_c0_control_or_space);
+  auto it = std::find_if_not(first, last, is_c0_control_or_space);
   *validation_error |= (it != first);
   input.remove_prefix(std::distance(first, it));
   return input;
 }
 
 inline auto remove_trailing_c0_control_or_space(std::string_view input, bool *validation_error) {
-  constexpr static auto is_not_c0_control_or_space = [] (auto byte) {
-    return !std::iscntrl(byte, std::locale::classic()) && !std::isspace(byte, std::locale::classic());
+  constexpr static auto is_c0_control_or_space = [] (auto byte) {
+    return std::iscntrl(byte, std::locale::classic()) || std::isspace(byte, std::locale::classic());
   };
 
   auto first = rbegin(input), last = rend(input);
-  auto it = std::find_if(first, last, is_not_c0_control_or_space);
+  auto it = std::find_if_not(first, last, is_c0_control_or_space);
   *validation_error |= (it != first);
   input.remove_suffix(std::distance(first, it));
   return input;

@@ -96,7 +96,7 @@ auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_as
   if (transitional_processing) {
     static constexpr auto is_valid = [](auto cp) {
       auto status = domain::map_idna_status(cp);
-      return (status == domain::idna_status::valid);
+      return (cp <= U'\x7e') || (status == domain::idna_status::valid);
     };
 
     auto it = std::find_if_not(first, last, is_valid);
@@ -107,7 +107,7 @@ auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_as
   else {
     static constexpr auto is_valid_or_deviation = [](auto cp) {
       auto status = domain::map_idna_status(cp);
-      return (status == domain::idna_status::valid) || (status == domain::idna_status::deviation);
+      return (cp <= U'\x7e') || (status == domain::idna_status::valid) || (status == domain::idna_status::deviation);
     };
 
     auto it = std::find_if_not(first, last, is_valid_or_deviation);
