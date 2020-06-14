@@ -80,11 +80,12 @@ TEST_CASE("invalid domains", "[domain]") {
     auto domain = std::string(300, 'x') + ".com";
     auto instance = skyr::domain_to_ascii(domain, true);
     REQUIRE_FALSE(instance);
-    REQUIRE(static_cast<skyr::domain_errc>(instance.error()) == skyr::domain_errc::invalid_length);
+    REQUIRE(instance.error() == skyr::domain_errc::invalid_length);
   }
 }
 
 TEST_CASE("web platform tests", "[domain][!mayfail]") {
+  /// Invalid Punycode
   SECTION("toascii_01") {
     auto instance = skyr::domain_to_ascii("xn--a");
     REQUIRE_FALSE(instance);
@@ -100,6 +101,7 @@ TEST_CASE("web platform tests", "[domain][!mayfail]") {
     REQUIRE_FALSE(instance);
   }
 
+  /// CheckJoiners
   SECTION("toascii_04") {
     auto instance = skyr::domain_to_ascii("\xe2\x80\x8d.example");
     REQUIRE_FALSE(instance);
@@ -110,6 +112,7 @@ TEST_CASE("web platform tests", "[domain][!mayfail]") {
     REQUIRE_FALSE(instance);
   }
 
+  /// CheckBidi
   SECTION("toascii_06") {
     auto instance = skyr::domain_to_ascii("a\xd9\x8a");
     REQUIRE_FALSE(instance);
@@ -120,7 +123,21 @@ TEST_CASE("web platform tests", "[domain][!mayfail]") {
     REQUIRE_FALSE(instance);
   }
 
+  /// ProcessingOptions is non-transtional
   SECTION("toascii_08") {
+    auto instance = skyr::domain_to_ascii("ශ්‍රී");
+    REQUIRE(instance);
+    CHECK("xn--10cl1a0b660p" == instance.value());
+  }
+
+  SECTION("toascii_09") {
+    auto instance = skyr::domain_to_ascii("نامه‌ای");
+    REQUIRE(instance);
+    CHECK("xn--mgba3gch31f060k" == instance.value());
+  }
+
+  /// U+FFFD character encoded in Punycode
+  SECTION("toascii_10") {
     auto instance = skyr::domain_to_ascii("xn--zn7c.com");
     REQUIRE_FALSE(instance);
   }
