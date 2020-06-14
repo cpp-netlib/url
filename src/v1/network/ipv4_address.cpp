@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <cmath>
-#include <cerrno>
+#include <climits>
 #include <locale>
 #include <vector>
 #include <skyr/v1/network/ipv4_address.hpp>
@@ -35,9 +35,8 @@ inline auto parse_ipv4_number(
     bool *validation_error) -> tl::expected<std::uint64_t, ipv4_address_errc> {
   auto base = 10;
 
-  if (
-      (input.size() >= 2) && (input[0] == '0') &&
-          (std::tolower(input[1], std::locale::classic()) == 'x')) {
+  if ((input.size() >= 2) && (input[0] == '0') &&
+      (std::tolower(input[1], std::locale::classic()) == 'x')) {
     *validation_error |= true;
     input = input.substr(2);
     base = 16;
@@ -53,7 +52,7 @@ inline auto parse_ipv4_number(
 
   char *pos = const_cast<char *>(input.data()) + input.size();  // NOLINT
   auto number = std::strtoull(input.data(), &pos, base);
-  if (errno == ERANGE || (pos != input.data() + input.size())) {
+  if ((number == ULLONG_MAX) || (pos != input.data() + input.size())) {
     return tl::make_unexpected(ipv4_address_errc::invalid_segment_number);
   }
   return number;
@@ -103,11 +102,11 @@ auto parse_ipv4_address(
     numbers.push_back(number.value());
   }
 
+  constexpr static auto greater_than_255 = [] (auto number) { return number> 255; };
+
   auto numbers_first = begin(numbers), numbers_last = end(numbers);
 
-  auto numbers_it =
-      std::find_if(numbers_first, numbers_last,
-                   [](auto number) -> bool { return number > 255; });
+  auto numbers_it = std::find_if(numbers_first, numbers_last, greater_than_255);
   if (numbers_it != numbers_last) {
     *validation_error |= true;
   }
@@ -115,14 +114,12 @@ auto parse_ipv4_address(
   auto numbers_last_but_one = numbers_last;
   --numbers_last_but_one;
 
-  numbers_it = std::find_if(numbers_first, numbers_last_but_one,
-                            [](auto number) -> bool { return number > 255; });
+  numbers_it = std::find_if(numbers_first, numbers_last_but_one, greater_than_255);
   if (numbers_it != numbers_last_but_one) {
     return tl::make_unexpected(ipv4_address_errc::overflow);
   }
 
-  if (numbers.back() >=
-      static_cast<std::uint64_t>(std::pow(256, 5 - numbers.size()))) {
+  if (numbers.back() >= static_cast<std::uint64_t>(std::pow(256, 5 - numbers.size()))) {
     *validation_error |= true;
     return tl::make_unexpected(ipv4_address_errc::overflow);
   }

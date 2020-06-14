@@ -125,9 +125,8 @@ auto parse_ipv6_address(
     auto value = 0;
     auto length = 0;
 
-    while (
-        (it != last) &&
-            ((length < 4) && std::isxdigit(*it, std::locale::classic()))) {
+    while ((it != last) &&
+           ((length < 4) && std::isxdigit(*it, std::locale::classic()))) {
       value = value * 0x10 + hex_to_dec<decltype(value)>(*it);
       ++it;
       ++length;
