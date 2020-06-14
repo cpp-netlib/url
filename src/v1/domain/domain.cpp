@@ -74,7 +74,7 @@ auto map_code_points(
 }
 
 auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules, bool check_hyphens,
-                    [[maybe_unused]] bool check_bidi, bool check_joiners, [[maybe_unused]] bool transitional_processing)
+                    [[maybe_unused]] bool check_bidi, [[maybe_unused]] bool check_joiners, bool transitional_processing)
     -> tl::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#Validity_Criteria
 
@@ -92,13 +92,25 @@ auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_as
     }
   }
 
-  if (check_joiners) {
-    /// Criterion 7
-    constexpr static auto is_not_contextj = [] (auto cp) {
-      return (cp == U'\x200c') || (cp == U'\x200d');
+  /// Criterion 6
+  if (transitional_processing) {
+    static constexpr auto is_valid = [](auto cp) {
+      auto status = domain::map_idna_status(cp);
+      return (status == domain::idna_status::valid);
     };
 
-    auto it = std::find_if(first, last, is_not_contextj);
+    auto it = std::find_if_not(first, last, is_valid);
+    if (it != last) {
+      return tl::make_unexpected(domain_errc::bad_input);
+    }
+  }
+  else {
+    static constexpr auto is_valid_or_deviation = [](auto cp) {
+      auto status = domain::map_idna_status(cp);
+      return (status == domain::idna_status::valid) || (status == domain::idna_status::deviation);
+    };
+
+    auto it = std::find_if_not(first, last, is_valid_or_deviation);
     if (it != last) {
       return tl::make_unexpected(domain_errc::bad_input);
     }

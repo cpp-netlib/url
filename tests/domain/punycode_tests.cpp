@@ -3,9 +3,11 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 
+#include <string>
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <string>
+#include <skyr/v1/unicode/ranges/views/u8_view.hpp>
+#include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include "../../src/v1/domain/punycode.hpp"
 
 
@@ -43,5 +45,13 @@ TEST_CASE("encode_test", "[punycode]") {
     auto decoded = skyr::punycode_decode(input);
     REQUIRE(decoded);
     CHECK(expected == decoded.value());
+  }
+}
+
+TEST_CASE("special_strings") {
+  SECTION("U+FFFD") {
+    auto decoded = skyr::punycode_decode("zn7c");
+    REQUIRE(decoded);
+    CHECK("\xef\xbf\xbd" == decoded.value());
   }
 }
