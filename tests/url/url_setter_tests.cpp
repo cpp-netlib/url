@@ -110,6 +110,12 @@ TEST_CASE("url_setter_tests", "[url]") {
     CHECK("file://example.com/" == instance.href());
   }
 
+  SECTION("set_username_with_empty_host") {
+    auto instance = skyr::url{"sc:///"};
+    auto ec = instance.set_username("x");
+    CHECK("sc:///" == instance.href());
+  }
+
   SECTION("test_password") {
     auto instance = skyr::url{"http://example.com/"};
 
@@ -407,7 +413,6 @@ TEST_CASE("url_setter_tests", "[url]") {
 
   SECTION("test_hash_1") {
     auto instance = skyr::url{"http://example.com/"};
-
     auto ec = instance.set_hash("#fragment");
     CHECK_FALSE(ec);
     CHECK("http://example.com/#fragment" == instance.href());
@@ -415,7 +420,6 @@ TEST_CASE("url_setter_tests", "[url]") {
 
   SECTION("test_hash_2") {
     auto instance = skyr::url{"http://example.com/"};
-
     auto ec = instance.set_hash("fragment");
     CHECK_FALSE(ec);
     CHECK("http://example.com/#fragment" == instance.href());

@@ -44,7 +44,11 @@ auto parse_opaque_host(std::string_view input,
 
 auto parse_host(
     std::string_view input, bool is_not_special, bool *validation_error) -> tl::expected<host, url_parse_errc> {
-  if (!input.empty() && (input.front() == '[')) {
+  if (input.empty()) {
+    return host{empty_host{}};
+  }
+
+  if (input.front() == '[') {
     if (input.back() != ']') {
       *validation_error |= true;
       return tl::make_unexpected(url_parse_errc::invalid_ipv6_address);
