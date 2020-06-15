@@ -68,6 +68,7 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/ranges/string_element_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/query/query_parameter_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/url_record.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/host.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/parse.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/check_input.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/core/serialize.hpp
@@ -84,6 +85,7 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/query/query_parameter_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_record.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/core/host.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/parse.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/serialize.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/schemes.hpp

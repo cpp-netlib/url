@@ -9,7 +9,7 @@ The example is equivalent to one described in the
 #include <iostream>
 #include <skyr/url.hpp>
 
-int main(int argc, char *argv[]) {
+int main() {
   auto url = skyr::url("http://example.org/\xf0\x9f\x92\xa9");
   std::cout << url << std::endl;
   std::cout << url.pathname() << std::endl;

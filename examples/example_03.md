@@ -9,7 +9,7 @@ The example is equivalent to one described in the
 #include <iostream>
 #include <skyr/url.hpp>
 
-int main(int argc, char *argv[]) {
+int main() {
   auto base = skyr::url("https://example.org/");
   auto url = skyr::url(
       "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88", base);

@@ -172,7 +172,31 @@ inline auto parse_host(
     bool is_not_special) -> tl::expected<host, url_parse_errc> {
   [[maybe_unused]] bool validation_error = false;
   return parse_host(input, is_not_special, &validation_error);
-}}  // namespace v1
+}
+
+/// Parses a string to either a domain, IPv4 address or IPv6 address according to
+/// https://url.spec.whatwg.org/#host-parsing
+/// Parses a string to either a domain, IPv4 address or IPv6 addess
+/// \param input An input string
+/// \return A host as a domain (std::string), ipv4_address or ipv6_address, or an error code
+inline auto parse_host(
+    std::string_view input) -> tl::expected<host, url_parse_errc> {
+  [[maybe_unused]] bool validation_error = false;
+  return parse_host(input, false, &validation_error);
+}
+
+/// Parses a string to either a domain, IPv4 address or IPv6 address according to
+/// https://url.spec.whatwg.org/#host-parsing
+/// Parses a string to either a domain, IPv4 address or IPv6 addess
+/// \param input An input string
+/// \param validation_error Set to \c true if there was a validation error
+/// \return A host as a domain (std::string), ipv4_address or ipv6_address, or an error code
+inline auto parse_host(
+    std::string_view input,
+    bool *validation_error) -> tl::expected<host, url_parse_errc> {
+  return parse_host(input, false, validation_error);
+}
+}  // namespace v1
 }  // namespace skyr
 
 #endif  // SKYR_V1_CORE_HOST_HPP
