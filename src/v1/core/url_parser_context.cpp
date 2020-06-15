@@ -72,17 +72,18 @@ inline auto is_windows_drive_letter(std::string_view segment) noexcept {
   return result;
 }
 
-constexpr static auto to_lower = [] (auto byte) -> decltype(byte) {
-    return std::tolower(byte, std::locale::classic());
-};
-
 inline auto is_single_dot_path_segment(std::string_view segment) noexcept {
-  auto lower = std::string(segment);
-  std::transform(begin(lower), end(lower), begin(lower), to_lower);
-  return ((lower == ".") || (lower == "%2e"));
+    return
+      (segment == ".") ||
+      (segment == "%2e") ||
+      (segment == "%2E");
 }
 
 auto is_double_dot_path_segment(std::string_view segment) noexcept {
+  constexpr static auto to_lower = [] (auto byte) -> decltype(byte) {
+    return std::tolower(byte, std::locale::classic());
+  };
+
   auto lower = std::string(segment);
   std::transform(begin(lower), end(lower), begin(lower), to_lower);
   return (
@@ -156,7 +157,7 @@ auto url_parser_context::parse_scheme(char byte) -> tl::expected<url_parse_actio
         return tl::make_unexpected(url_parse_errc::cannot_override_scheme);
       }
 
-      if ((url.includes_credentials() || url.port) &&(buffer == "file")) {
+      if ((url.includes_credentials() || url.port) && (buffer == "file")) {
         return tl::make_unexpected(url_parse_errc::cannot_override_scheme);
       }
 
@@ -175,8 +176,10 @@ auto url_parser_context::parse_scheme(char byte) -> tl::expected<url_parse_actio
     }
     buffer.clear();
 
+    auto substr = input.substr(std::distance(std::begin(input), it));
+
     if (url.scheme == "file") {
-      if (!remaining_starts_with(input.substr(std::distance(std::begin(input), it)), "//"sv)) {
+      if (!remaining_starts_with(substr, "//"sv)) {
         *validation_error |= true;
       }
       state = url_parse_state::file;
@@ -184,7 +187,7 @@ auto url_parser_context::parse_scheme(char byte) -> tl::expected<url_parse_actio
       state = url_parse_state::special_relative_or_authority;
     } else if (url.is_special()) {
       state = url_parse_state::special_authority_slashes;
-    } else if (remaining_starts_with(input.substr(std::distance(std::begin(input), it)), "/"sv)) {
+    } else if (remaining_starts_with(substr, "/"sv)) {
       state = url_parse_state::path_or_authority;
       increment();
     } else {
@@ -229,8 +232,10 @@ auto url_parser_context::parse_no_scheme(char byte) -> tl::expected<url_parse_ac
   return url_parse_action::increment;
 }
 
-auto url_parser_context::parse_special_relative_or_authority(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
-  if ((byte == '/') && remaining_starts_with(input.substr(std::distance(std::begin(input), it)), "/"sv)) {
+auto url_parser_context::parse_special_relative_or_authority(char byte)
+    -> tl::expected<url_parse_action, url_parse_errc> {
+  auto substr = input.substr(std::distance(std::begin(input), it));
+  if ((byte == '/') && remaining_starts_with(substr, "/"sv)) {
     increment();
     state = url_parse_state::special_authority_ignore_slashes;
   } else {
@@ -329,7 +334,8 @@ auto url_parser_context::parse_relative_slash(char byte) -> tl::expected<url_par
 }
 
 auto url_parser_context::parse_special_authority_slashes(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
-  if ((byte == '/') && remaining_starts_with(input.substr(std::distance(std::begin(input), it)), "/"sv)) {
+  auto substr = input.substr(std::distance(std::begin(input), it));
+  if ((byte == '/') && remaining_starts_with(substr, "/"sv)) {
     increment();
     state = url_parse_state::special_authority_ignore_slashes;
   } else {
@@ -553,8 +559,9 @@ auto url_parser_context::parse_file_slash(char byte) -> tl::expected<url_parse_a
     }
     state = url_parse_state::file_host;
   } else {
+    auto substr = input.substr(std::distance(begin(input), it));
     if (base &&
-            ((base->scheme == "file") && !is_windows_drive_letter(input.substr(std::distance(begin(input), it))))) {
+            ((base->scheme == "file") && !is_windows_drive_letter(substr))) {
       if (!base->path.empty() && is_windows_drive_letter(base->path[0])) {
         url.path.push_back(base->path[0]);
       } else {
@@ -715,11 +722,11 @@ auto url_parser_context::parse_cannot_be_a_base_url(char byte) -> tl::expected<u
     url.fragment = std::string();
     state = url_parse_state::fragment;
   } else {
+    auto substr = input.substr(std::distance(std::begin(input), it));
     if (!is_eof() && (!is_url_code_point(byte) && (byte != '%'))) {
       *validation_error |= true;
     }
-    else if ((byte == '%') && !percent_encoding::is_percent_encoded(
-                                  input.substr(std::distance(std::begin(input), it)))) {
+    else if ((byte == '%') && !percent_encoding::is_percent_encoded(substr)) {
       *validation_error |= true;
     }
     if (!is_eof()) {
@@ -754,7 +761,8 @@ auto url_parser_context::parse_fragment(char byte) -> tl::expected<url_parse_act
       *validation_error |= true;
     }
 
-    if ((byte == '%') && !percent_encoding::is_percent_encoded(input.substr(std::distance(std::begin(input), it)))) {
+    auto substr = input.substr(std::distance(std::begin(input), it));
+    if ((byte == '%') && !percent_encoding::is_percent_encoded(substr)) {
       *validation_error |= true;
     }
 

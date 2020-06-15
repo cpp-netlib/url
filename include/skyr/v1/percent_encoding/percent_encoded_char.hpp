@@ -7,7 +7,6 @@
 #define SKYR_V1_PERCENT_ENCODING_PERCENT_ENCODED_CHAR_HPP
 
 #include <string>
-#include <array>
 #include <locale>
 
 namespace skyr {
@@ -30,23 +29,38 @@ inline constexpr auto is_c0_control_byte(char byte) noexcept {
   return (byte <= '\x1f') || (byte > '\x7e');
 }
 
-inline auto is_fragment_byte(char byte) {
-  constexpr static std::array<char, 5> set = {'\x20', '\x22', '\x3c', '\x3e', '\x60'};
-  auto it = std::find(begin(set), end(set), byte);
-  return is_c0_control_byte(byte) || (it != set.end());
+inline constexpr auto is_fragment_byte(char byte) {
+  return
+      is_c0_control_byte(byte) ||
+      (byte == '\x20') ||
+      (byte == '\x22') ||
+      (byte == '\x3c') ||
+      (byte == '\x3e') ||
+      (byte == '\x60');
 }
 
-inline auto is_path_byte(char byte) {
-  constexpr static std::array<char, 4> set = {'\x23', '\x3f', '\x7b', '\x7d'};
-  auto it = std::find(begin(set), end(set), byte);
-  return is_fragment_byte(byte) || (it != set.end());
+inline constexpr auto is_path_byte(char byte) {
+  return
+      is_fragment_byte(byte) ||
+      (byte == '\x23') ||
+      (byte == '\x3f') ||
+      (byte == '\x7b') ||
+      (byte == '\x7d');
 }
 
-inline auto is_userinfo_byte(char byte) {
-  constexpr static std::array<char, 10> set = {
-      '\x2f', '\x3a', '\x3b', '\x3d', '\x40', '\x5b', '\x5c', '\x5d', '\x5e', '\x7c'};
-  auto it = std::find(begin(set), end(set), byte);
-  return is_path_byte(byte) || (it != set.end());
+inline constexpr auto is_userinfo_byte(char byte) {
+  return
+      is_path_byte(byte) ||
+      (byte == '\x2f') ||
+      (byte == '\x3a') ||
+      (byte == '\x3b') ||
+      (byte == '\x3d') ||
+      (byte == '\x40') ||
+      (byte == '\x5b') ||
+      (byte == '\x5c') ||
+      (byte == '\x5d') ||
+      (byte == '\x5e') ||
+      (byte == '\x7c');
 }
 }  // namespace details
 
@@ -96,7 +110,7 @@ struct percent_encoded_char {
       : impl_{
       '%',
       details::hex_to_letter(static_cast<char>((static_cast<unsigned>(byte) >> 4u) & 0x0fu)),
-      details::hex_to_letter(static_cast<char>(static_cast<unsigned >(byte) & 0x0fu))} {}
+      details::hex_to_letter(static_cast<char>(static_cast<unsigned>(byte) & 0x0fu))} {}
 
   ///
   /// \return

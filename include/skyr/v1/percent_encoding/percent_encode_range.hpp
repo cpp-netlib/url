@@ -48,20 +48,10 @@ class percent_encode_iterator {
       OctetIterator last)
   : it_(it)
   , last_(last) {}
-  ///
-  percent_encode_iterator(const percent_encode_iterator &) = default;
-  ///
-  percent_encode_iterator(percent_encode_iterator &&) noexcept = default;
-  ///
-  percent_encode_iterator &operator=(const percent_encode_iterator &) = default;
-  ///
-  percent_encode_iterator &operator=(percent_encode_iterator &&) noexcept = default;
-  ///
-  ~percent_encode_iterator() = default;
 
   ///
   /// \return
-  auto &operator++() noexcept {
+  auto operator++() noexcept -> percent_encode_iterator & {
     assert(it_);
     increment();
     return *this;
@@ -227,10 +217,7 @@ auto as(
     percent_encode_range<OctetRange> &&range) {
   auto result = Output();
   for (auto &&byte : range) {
-    std::copy(
-        std::begin(byte),
-        std::end(byte),
-        std::back_inserter(result));
+    result += Output(std::cbegin(byte), std::cend(byte));
   }
   return result;
 }

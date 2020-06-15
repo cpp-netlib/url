@@ -13,12 +13,12 @@
 namespace skyr {
 inline namespace v1 {
 namespace {
-auto is_forbidden_host_point(std::string_view::value_type byte) noexcept {
-  using namespace std::string_view_literals;
-  constexpr static auto forbidden = "\0\t\n\r #%/:<>?@[\\]^"sv;
-  auto first = begin(forbidden), last = end(forbidden);
-  return last != std::find(first, last, byte);
-}
+constexpr static auto is_forbidden_host_point = [](auto byte) {
+  return
+      (byte == '\0') || (byte == '\t') || (byte == '\n') || (byte == '\r') || (byte == ' ') || (byte == '#') ||
+      (byte == '%') || (byte == '/') || (byte == ':') || (byte == '<') || (byte == '>') || (byte == '?') ||
+      (byte == '@') || (byte == '[') || (byte == '\\') || (byte == ']') || (byte == '^');
+};
 
 auto parse_opaque_host(std::string_view input,
                        bool *validation_error) -> tl::expected<skyr::v1::opaque_host, url_parse_errc> {
