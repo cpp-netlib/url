@@ -11,7 +11,7 @@
 
 namespace skyr {
 inline namespace v1 {
-namespace domain {
+namespace idna {
 namespace {
 struct code_point_range {
   char32_t first;
@@ -2842,7 +2842,7 @@ constexpr static auto statuses = std::array<code_point_range, 2819>{{
 }};
 }  // namespace
 
-auto map_idna_status(char32_t code_point) -> idna_status {
+auto code_point_status(char32_t code_point) -> idna_status {
   constexpr static auto less = [] (const auto &range, auto code_point) {
     return range.last < code_point;
   };
@@ -8674,7 +8674,7 @@ constexpr static auto mapped = std::array<mapped_code_point, 5811>{{
 }};
 }  // namespace
 
-auto map_idna_code_point(char32_t code_point) -> char32_t {
+auto map_code_point(char32_t code_point) -> char32_t {
   constexpr static auto less = [](const auto &mapped, auto code_point) {
     return mapped.code_point < code_point;
   };
@@ -8683,6 +8683,6 @@ auto map_idna_code_point(char32_t code_point) -> char32_t {
   auto it = std::lower_bound(first, last, code_point, less);
   return (it != last) ? it->mapped : code_point;
 }
-}  // namespace domain
+}  // namespace idna
 }  // namespace v1
 }  // namespace skyr

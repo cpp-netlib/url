@@ -28,37 +28,37 @@ auto map_code_points(
   auto it = first;
 
   while (it != last) {
-    switch (domain::map_idna_status(*it)) {
-      case domain::idna_status::disallowed:
+    switch (idna::code_point_status(*it)) {
+      case idna::idna_status::disallowed:
         error = true;
         break;
-      case domain::idna_status::disallowed_std3_valid:
+      case idna::idna_status::disallowed_std3_valid:
         if (use_std3_ascii_rules) {
           error = true;
         } else {
           result += *it;
         }
         break;
-      case domain::idna_status::disallowed_std3_mapped:
+      case idna::idna_status::disallowed_std3_mapped:
         if (use_std3_ascii_rules) {
           error = true;
         } else {
-          result += domain::map_idna_code_point(*it);
+          result += idna::map_code_point(*it);
         }
         break;
-      case domain::idna_status::ignored:
+      case idna::idna_status::ignored:
         break;
-      case domain::idna_status::mapped:
-        result += domain::map_idna_code_point(*it);
+      case idna::idna_status::mapped:
+        result += idna::map_code_point(*it);
         break;
-      case domain::idna_status::deviation:
+      case idna::idna_status::deviation:
         if (transitional_processing) {
-          result += domain::map_idna_code_point(*it);
+          result += idna::map_code_point(*it);
         } else {
           result += *it;
         }
         break;
-      case domain::idna_status::valid:
+      case idna::idna_status::valid:
         result += *it;
         break;
     }
@@ -95,8 +95,8 @@ auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_as
   /// Criterion 6
   if (transitional_processing) {
     static constexpr auto is_valid = [](auto cp) {
-      auto status = domain::map_idna_status(cp);
-      return (cp <= U'\x7e') || (status == domain::idna_status::valid);
+      auto status = idna::code_point_status(cp);
+      return (cp <= U'\x7e') || (status == idna::idna_status::valid);
     };
 
     auto it = std::find_if_not(first, last, is_valid);
@@ -106,8 +106,8 @@ auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_as
   }
   else {
     static constexpr auto is_valid_or_deviation = [](auto cp) {
-      auto status = domain::map_idna_status(cp);
-      return (cp <= U'\x7e') || (status == domain::idna_status::valid) || (status == domain::idna_status::deviation);
+      auto status = idna::code_point_status(cp);
+      return (cp <= U'\x7e') || (status == idna::idna_status::valid) || (status == idna::idna_status::deviation);
     };
 
     auto it = std::find_if_not(first, last, is_valid_or_deviation);

@@ -8,7 +8,7 @@
 
 namespace skyr {
 inline namespace v1 {
-namespace domain {
+namespace idna {
 /// \enum idna_status
 /// The status values come from the IDNA mapping table in domain TR46:
 ///
@@ -38,14 +38,14 @@ enum class idna_status {
 ///
 /// \param code_point A code point value
 /// \return The status of the code point
-auto map_idna_status(char32_t code_point) -> idna_status;
+auto code_point_status(char32_t code_point) -> idna_status;
 
 ///
 /// \param code_point A code point value
 /// \return The code point or mapped value, depending on the status of the code
 /// point
-auto map_idna_code_point(char32_t code_point) -> char32_t;
-}  // namespace domain
+auto map_code_point(char32_t code_point) -> char32_t;
+}  // namespace idna
 }  // namespace v1
 }  // namespace skyr
 
