@@ -47,6 +47,10 @@ class CodePointRange(object):
         return self.status in ('mapped', 'disallowed_STD3_mapped')
 
     @property
+    def is_valid(self):
+        return self.status == 'valid'
+
+    @property
     def can_be_16_bit(self):
         return self.range[0] <= 0xffff and self.mapped is not None and self.mapped <= 0xffff
 
@@ -72,18 +76,13 @@ def main():
                 code_points.append(CodePointRange(
                     code_point[0], code_point[1], code_point[2] if len(code_point) > 2 else None))
 
-        mapped_code_points_16 = [
-            code_point for code_point in code_points if code_point.is_mapped and code_point.can_be_16_bit]
+        # Store code point mappings as std::char16_t if they can, otherwise store them as std::char32_t
+        mapped_code_points_16, mapped_code_points_32 = [], []
+        for code_point in filter(lambda cp: cp.is_mapped, code_points):
+            (mapped_code_points_32, mapped_code_points_16)[code_point.can_be_16_bit].append(code_point)
 
-        mapped_code_points_32 = [
-            code_point for code_point in code_points if code_point.is_mapped and not code_point.can_be_16_bit]
-
-        code_points = squeeze(code_points)
-        code_points = [code_point for code_point in code_points if code_point.status != 'valid']
-
-        # print(mapped_code_points[-1].range[0])
-        # print(mapped_code_points[-1].range[0] < 0xffff)
-        # print(len(mapped_code_points))
+        # Squeeze code points to reduce table size, and remove all valid code points as they will be handled by default
+        code_points = [code_point for code_point in code_points if not code_point.is_valid]
 
         template = jinja2.Template(
             """// Auto-generated.
