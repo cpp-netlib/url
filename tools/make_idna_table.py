@@ -67,6 +67,7 @@ def main():
         mapped_code_points = [
             entry for entry in code_points if entry.status in ('mapped', 'disallowed_STD3_mapped')]
         code_points = squeeze(code_points)
+        code_points = [code_point for code_point in code_points if code_point.status != 'valid']
 
         template = jinja2.Template(
             """// Auto-generated.
@@ -102,8 +103,7 @@ auto code_point_status(char32_t code_point) -> idna_status {
 
   auto first = std::begin(statuses), last = std::end(statuses);
   auto it = std::lower_bound(first, last, code_point, less);
-  assert(it != last);
-  return it->status;
+  return (it == last) || !((code_point >= (*it).first) && (code_point <= (*it).last)) ? idna_status::valid : it->status;
 }
 
 namespace {
@@ -129,6 +129,7 @@ auto map_code_point(char32_t code_point) -> char32_t {
 }  // namespace idna
 }  // namespace v1
 }  // namespace skyr
+
 """)
 
         template.stream(

@@ -18,7 +18,8 @@ TEST_CASE("IDNA character values", "[idna]") {
           param{0x10ffff, skyr::idna::idna_status::disallowed});
 
   SECTION("code_point_set") {
-    const auto [value, mapped] = code_point;
-    REQUIRE(mapped == skyr::idna::code_point_status(value));
+    const auto [value, status] = code_point;
+    INFO("0x" << std::hex << value << ", " << static_cast<int>(status));
+    REQUIRE(status == skyr::idna::code_point_status(value));
   }
 }
