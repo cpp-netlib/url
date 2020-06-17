@@ -1628,12 +1628,12 @@ auto code_point_status(char32_t code_point) -> idna_status {
 }
 
 namespace {
-struct mapped_code_point {
-  char32_t code_point;
-  char32_t mapped;
+struct mapped_16_code_point {
+  char16_t code_point;
+  char16_t mapped;
 };
 
-constexpr static auto mapped = std::array<mapped_code_point, 5811>{{
+constexpr static auto mapped_16 = std::array<mapped_16_code_point, 3773>{{
   { U'\x0041', U'\x0061' },
   { U'\x0042', U'\x0062' },
   { U'\x0043', U'\x0063' },
@@ -4436,7 +4436,6 @@ constexpr static auto mapped = std::array<mapped_code_point, 5811>{{
   { U'\xfa69', U'\x97ff' },
   { U'\xfa6a', U'\x983b' },
   { U'\xfa6b', U'\x6075' },
-  { U'\xfa6c', U'\x242ee' },
   { U'\xfa6d', U'\x8218' },
   { U'\xfa70', U'\x4e26' },
   { U'\xfa71', U'\x51b5' },
@@ -4533,15 +4532,9 @@ constexpr static auto mapped = std::array<mapped_code_point, 5811>{{
   { U'\xfacc', U'\x983b' },
   { U'\xfacd', U'\x9b12' },
   { U'\xface', U'\x9f9c' },
-  { U'\xfacf', U'\x2284a' },
-  { U'\xfad0', U'\x22844' },
-  { U'\xfad1', U'\x233d5' },
   { U'\xfad2', U'\x3b9d' },
   { U'\xfad3', U'\x4018' },
   { U'\xfad4', U'\x4039' },
-  { U'\xfad5', U'\x25249' },
-  { U'\xfad6', U'\x25cd0' },
-  { U'\xfad7', U'\x27ed3' },
   { U'\xfad8', U'\x9f43' },
   { U'\xfad9', U'\x9f8e' },
   { U'\xfb00', U'\x0066' },
@@ -5414,6 +5407,31 @@ constexpr static auto mapped = std::array<mapped_code_point, 5811>{{
   { U'\xffec', U'\x2193' },
   { U'\xffed', U'\x25a0' },
   { U'\xffee', U'\x25cb' },
+}};
+
+auto map_code_point_16(char16_t code_point) -> char16_t {
+  constexpr static auto less = [](const auto &lhs, auto rhs) {
+    return lhs.code_point < rhs;
+  };
+
+  auto first = std::begin(mapped_16), last = std::end(mapped_16);
+  auto it = std::lower_bound(first, last, code_point, less);
+  return (it != last) ? it->mapped : code_point;
+}
+
+struct mapped_32_code_point {
+  char32_t code_point;
+  char32_t mapped;
+};
+
+constexpr static auto mapped_32 = std::array<mapped_32_code_point, 2038>{{
+  { U'\xfa6c', U'\x242ee' },
+  { U'\xfacf', U'\x2284a' },
+  { U'\xfad0', U'\x22844' },
+  { U'\xfad1', U'\x233d5' },
+  { U'\xfad5', U'\x25249' },
+  { U'\xfad6', U'\x25cd0' },
+  { U'\xfad7', U'\x27ed3' },
   { U'\x10400', U'\x10428' },
   { U'\x10401', U'\x10429' },
   { U'\x10402', U'\x1042a' },
@@ -7449,11 +7467,15 @@ constexpr static auto mapped = std::array<mapped_code_point, 5811>{{
 }  // namespace
 
 auto map_code_point(char32_t code_point) -> char32_t {
-  constexpr static auto less = [](const auto &mapped, auto code_point) {
-    return mapped.code_point < code_point;
+  constexpr static auto less = [](const auto &lhs, auto rhs) {
+    return lhs.code_point < rhs;
   };
+  
+  if (code_point <= U'\xffff') {
+    return static_cast<char32_t>(map_code_point_16(static_cast<char16_t>(code_point)));
+  }
 
-  auto first = std::begin(mapped), last = std::end(mapped);
+  auto first = std::begin(mapped_32), last = std::end(mapped_32);
   auto it = std::lower_bound(first, last, code_point, less);
   return (it != last) ? it->mapped : code_point;
 }
