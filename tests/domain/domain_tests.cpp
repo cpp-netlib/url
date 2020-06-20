@@ -14,6 +14,7 @@ TEST_CASE("valid domains to ascii", "[domain]") {
 
   auto domain = GENERATE(
       param{"example.com", "example.com"},
+      param{"sub.example.com", "sub.example.com"},
       param{"⌘.ws", "xn--bih.ws"},
       param{"你好你好", "xn--6qqa088eba"},
       param{"你好你好.com", "xn--6qqa088eba.com"},

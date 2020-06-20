@@ -19,6 +19,20 @@
 #include "punycode.hpp"
 #include "idna.hpp"
 
+#if !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
+#define SKYR_DOMAIN_MAX_DOMAIN_LENGTH 253
+#endif // !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
+
+#if !defined(SKYR_DOMAIN_MAX_LABEL_LENGTH)
+#define SKYR_DOMAIN_MAX_LABEL_LENGTH 63
+#endif // !defined(SKYR_LABEL_MAX_DOMAIN_LENGTH)
+
+/// How many labels can be in a domain?
+/// https://www.farsightsecurity.com/blog/txt-record/rrlabel-20171013/
+#if !defined(SKYR_DOMAIN_MAX_NUM_LABELS)
+#define SKYR_DOMAIN_MAX_NUM_LABELS 32
+#endif // !defined(SKYR_DOMAIN_MAX_NUM_LABELS)
+
 namespace skyr {
 inline namespace v1 {
 namespace {
@@ -193,8 +207,12 @@ auto domain_to_ascii(
     return std::u32string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
-  auto labels = static_vector<std::string, 16>{};
+  auto labels = static_vector<std::string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
   for (auto &&label : domain.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
+    if (labels.size() == labels.max_size()) {
+      return tl::make_unexpected(domain_errc::too_many_labels);
+    }
+
     if (!is_ascii(label)) {
       auto encoded = punycode_encode(label);
       if (!encoded) {
@@ -245,13 +263,17 @@ auto domain_to_ascii(
 
 auto domain_to_u8(std::string_view domain_name, [[maybe_unused]] bool *validation_error)
     -> tl::expected<std::string, domain_errc> {
-  auto labels = std::vector<std::string>{};
 
   static constexpr auto to_string_view = [] (auto &&label) {
     return std::string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
+  auto labels = static_vector<std::string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
   for (auto &&label : domain_name | ranges::views::split('.') | ranges::views::transform(to_string_view)) {
+    if (labels.size() == labels.max_size()) {
+      return tl::make_unexpected(domain_errc::too_many_labels);
+    }
+
     if (label.substr(0, 4) == "xn--") {
       label.remove_prefix(4);
       auto decoded = punycode_decode(label);

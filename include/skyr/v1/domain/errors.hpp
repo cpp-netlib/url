@@ -23,6 +23,8 @@ enum class domain_errc {
   invalid_length,
   /// Empty domain
   empty_string,
+  /// The number of labels in the domain is too large
+  too_many_labels,
 };
 }  // namespace v1
 }  // namespace skyr
