@@ -5,7 +5,6 @@
 
 #include <algorithm>
 #include <iterator>
-#include <cassert>
 #include <array>
 #include "idna.hpp"
 

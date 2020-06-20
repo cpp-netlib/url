@@ -6,8 +6,9 @@
 #include <cmath>
 #include <climits>
 #include <locale>
-#include <vector>
 #include <skyr/v1/network/ipv4_address.hpp>
+#include <skyr/v1/string/split.hpp>
+#include <skyr/v1/containers/static_vector.hpp>
 
 namespace skyr { inline namespace v1 {
 auto ipv4_address::serialize() const -> std::string  {
@@ -63,14 +64,9 @@ auto parse_ipv4_address(
     std::string_view input, bool *validation_error) -> tl::expected<ipv4_address, ipv4_address_errc> {
   using namespace std::string_view_literals;
 
-  std::vector<std::string> parts;
-  parts.emplace_back();
-  for (auto ch : input) {
-    if (ch == '.') {
-      parts.emplace_back();
-    } else {
-      parts.back().push_back(ch);
-    }
+  static_vector<std::string_view, 8> parts;
+  for (auto &&part : split(input, ".")) {
+    parts.emplace_back(part);
   }
 
   if (parts.back().empty()) {
@@ -85,7 +81,7 @@ auto parse_ipv4_address(
     return tl::make_unexpected(ipv4_address_errc::too_many_segments);
   }
 
-  auto numbers = std::vector<std::uint64_t>();
+  auto numbers = static_vector<std::uint64_t, 4>{};
 
   for (const auto &part : parts) {
     if (part.empty()) {
@@ -104,7 +100,7 @@ auto parse_ipv4_address(
 
   constexpr static auto greater_than_255 = [] (auto number) { return number> 255; };
 
-  auto numbers_first = begin(numbers), numbers_last = end(numbers);
+  auto numbers_first = std::begin(numbers), numbers_last = std::end(numbers);
 
   auto numbers_it = std::find_if(numbers_first, numbers_last, greater_than_255);
   if (numbers_it != numbers_last) {
@@ -128,10 +124,11 @@ auto parse_ipv4_address(
   numbers.pop_back();
 
   auto counter = 0UL;
-  for (auto number : numbers) {
+  for (auto &&number : numbers) {
     ipv4 += number * static_cast<std::uint64_t>(std::pow(256, 3 - counter));
     ++counter;
   }
   return ipv4_address(static_cast<unsigned int>(ipv4));
 }
-}}
+}  // namespace v1
+}  // namespace skyr

@@ -55,16 +55,6 @@ class CodePointRange(object):
         return self.range[0] <= 0xffff and self.mapped is not None and self.mapped <= 0xffff
 
 
-def squeeze(code_points):
-    code_points_copy = [code_points[0]]
-    for code_point in code_points[1:]:
-        if code_points_copy[-1].status == code_point.status:
-            code_points_copy[-1].range[1] = code_point.range[1]
-        else:
-            code_points_copy.append(code_point)
-    return code_points_copy
-
-
 def main():
     input, output = sys.argv[1], sys.argv[2]
 
@@ -92,7 +82,6 @@ def main():
 
 #include <algorithm>
 #include <iterator>
-#include <cassert>
 #include <array>
 #include "idna.hpp"
 

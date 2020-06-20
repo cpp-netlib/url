@@ -3,20 +3,20 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <vector>
 #include <locale>
 #include <cassert>
 #include <skyr/v1/network/ipv6_address.hpp>
 #include <skyr/v1/string/starts_with.hpp>
+#include <skyr/v1/containers/static_vector.hpp>
 
 namespace skyr { inline namespace v1 {
 [[nodiscard]] auto ipv6_address::serialize() const -> std::string {
   using namespace std::string_literals;
 
   auto output = ""s;
-  auto compress = std::optional<size_t>();
+  auto compress = std::optional<std::size_t>();
 
-  auto sequences = std::vector<std::pair<size_t, size_t>>();
+  auto sequences = static_vector<std::pair<std::size_t, std::size_t>, 8>{};
   auto in_sequence = false;
 
   auto first = std::begin(address_), last = std::end(address_);
@@ -240,4 +240,5 @@ auto parse_ipv6_address(
 
   return ipv6_address(address);
 }
-}}
+}  // namespace v1
+}  // namespace skyr

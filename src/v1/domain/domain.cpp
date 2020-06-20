@@ -13,24 +13,34 @@
 #include <skyr/v1/domain/errors.hpp>
 #include <skyr/v1/unicode/ranges/views/u8_view.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include <v1/domain/punycode.hpp>
+#include <skyr/v1/domain/domain.hpp>
+#include <skyr/v1/domain/errors.hpp>
+#include <skyr/v1/containers/static_vector.hpp>
+#include "punycode.hpp"
 #include "idna.hpp"
 
 namespace skyr {
 inline namespace v1 {
 namespace {
+template <class U32Range>
 auto map_code_points(
-    std::u32string_view domain_name, bool use_std3_ascii_rules,
+    U32Range &&domain_name, bool use_std3_ascii_rules,
     bool transitional_processing)
     -> tl::expected<std::u32string, domain_errc> {
+
   auto result = std::u32string();
   auto error = false;
 
-  auto first = begin(domain_name), last = end(domain_name);
+  auto first = std::begin(domain_name), last = std::end(domain_name);
   auto it = first;
 
   while (it != last) {
-    switch (idna::code_point_status(*it)) {
+    if (!*it) {
+      return tl::make_unexpected(domain_errc::encoding_error);
+    }
+
+    auto code_point = (*it).value().u32_value();
+    switch (idna::code_point_status(code_point)) {
       case idna::idna_status::disallowed:
         error = true;
         break;
@@ -38,30 +48,30 @@ auto map_code_points(
         if (use_std3_ascii_rules) {
           error = true;
         } else {
-          result += *it;
+          result += code_point;
         }
         break;
       case idna::idna_status::disallowed_std3_mapped:
         if (use_std3_ascii_rules) {
           error = true;
         } else {
-          result += idna::map_code_point(*it);
+          result += idna::map_code_point(code_point);
         }
         break;
       case idna::idna_status::ignored:
         break;
       case idna::idna_status::mapped:
-        result += idna::map_code_point(*it);
+        result += idna::map_code_point(code_point);
         break;
       case idna::idna_status::deviation:
         if (transitional_processing) {
-          result += idna::map_code_point(*it);
+          result += idna::map_code_point(code_point);
         } else {
-          result += *it;
+          result += code_point;
         }
         break;
       case idna::idna_status::valid:
-        result += *it;
+        result += code_point;
         break;
     }
 
@@ -121,7 +131,8 @@ auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_as
   return {};
 }
 
-auto idna_process(std::u32string_view domain_name, bool use_std3_ascii_rules, bool check_hyphens,
+template <class U32Range>
+auto idna_process(U32Range &&domain_name, bool use_std3_ascii_rules, bool check_hyphens,
                   bool check_bidi, bool check_joiners, bool transitional_processing)
     -> tl::expected<std::u32string, domain_errc> {
   using namespace std::string_view_literals;
@@ -171,13 +182,9 @@ auto domain_to_ascii(
     bool verify_dns_length) -> tl::expected<std::string, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#ToASCII
 
-  auto utf32 = unicode::as<std::u32string>(unicode::views::as_u8(domain_name) | unicode::transforms::to_u32);
-  if (!utf32) {
-    return tl::make_unexpected(domain_errc::encoding_error);
-  }
-
+  auto u32domain_name = unicode::views::as_u8(domain_name) | unicode::transforms::to_u32;
   auto domain = idna_process(
-      utf32.value(), use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, transitional_processing);
+      u32domain_name, use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, transitional_processing);
   if (!domain) {
     return tl::make_unexpected(domain.error());
   }
@@ -186,7 +193,7 @@ auto domain_to_ascii(
     return std::u32string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
-  auto labels = std::vector<std::string>{};
+  auto labels = static_vector<std::string, 16>{};
   for (auto &&label : domain.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
     if (!is_ascii(label)) {
       auto encoded = punycode_encode(label);
