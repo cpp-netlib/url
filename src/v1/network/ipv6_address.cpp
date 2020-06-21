@@ -4,8 +4,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <vector>
+#include <locale>
 #include <skyr/v1/network/ipv6_address.hpp>
-#include <skyr/v1/string/ascii.hpp>
 #include <skyr/v1/string/starts_with.hpp>
 
 namespace skyr { inline namespace v1 {
@@ -82,6 +82,19 @@ namespace skyr { inline namespace v1 {
 
   return output;
 }
+
+namespace {
+template <class intT, class charT>
+auto hex_to_dec(charT byte) noexcept {
+  assert(std::isxdigit(byte, std::locale::classic()));
+
+  if (std::isdigit(byte, std::locale::classic())) {
+    return static_cast<intT>(byte - '0');
+  }
+
+  return static_cast<intT>(std::tolower(byte, std::locale::classic()) - 'a' + 10);
+}
+} // namespace
 
 auto parse_ipv6_address(
     std::string_view input, bool *validation_error) -> tl::expected<ipv6_address, ipv6_address_errc> {

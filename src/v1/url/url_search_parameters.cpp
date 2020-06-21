@@ -3,11 +3,12 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include <range/v3/view/split_when.hpp>
+#include <range/v3/view/transform.hpp>
 #include <skyr/v1/url_search_parameters.hpp>
 #include <skyr/v1/percent_encoding/percent_encode.hpp>
 #include <skyr/v1/percent_encoding/percent_decode.hpp>
 #include <skyr/v1/url.hpp>
-#include <skyr/query/query_parameter_range.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -106,7 +107,22 @@ void url_search_parameters::initialize(std::string_view query) {
     query.remove_prefix(1);
   }
 
-  for (auto [name, value] : query_parameter_range(query)) {
+  static constexpr auto is_separator = [] (auto &&c) {
+    return c == '&' || c == ';';
+  };
+
+  static constexpr auto to_nvp = [] (auto &&param) -> std::pair<std::string_view, std::optional<std::string_view>> {
+    auto element = std::string_view(std::addressof(*std::begin(param)), ranges::distance(param));
+    auto delim = element.find_first_of("=");
+    if (delim != std::string_view::npos) {
+      return { element.substr(0, delim), element.substr(delim + 1) };
+    }
+    else {
+      return { element, std::nullopt };
+    }
+  };
+
+  for (auto [name, value] : query | ranges::views::split_when(is_separator) | ranges::views::transform(to_nvp)) {
     auto name_ = percent_decode(name).value_or(std::string(name));
     auto value_ = value? percent_decode(value.value()).value_or(std::string(value.value())) : std::string();
     parameters_.emplace_back(name_, value_);

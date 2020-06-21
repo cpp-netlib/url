@@ -32,6 +32,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(tl-expected CONFIG REQUIRED)
+find_package(range-v3 CONFIG REQUIRED)
 
 if (skyr_ENABLE_JSON_FUNCTIONS)
     find_package(nlohmann_json CONFIG REQUIRED)

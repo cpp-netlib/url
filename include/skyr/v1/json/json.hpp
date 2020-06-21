@@ -10,8 +10,9 @@
 #include <system_error>
 #include <vector>
 #include <tl/expected.hpp>
+#include <range/v3/view/split_when.hpp>
+#include <range/v3/view/transform.hpp>
 #include <nlohmann/json.hpp>
-#include <skyr/v1/query/query_parameter_range.hpp>
 #include <skyr/v1/percent_encoding/percent_encode.hpp>
 #include <skyr/v1/percent_encoding/percent_decode.hpp>
 
@@ -65,25 +66,40 @@ inline auto decode_query(std::string_view query, char separator='&', char equal=
     query.remove_prefix(1);
   }
 
+  static constexpr auto is_separator = [] (auto &&c) {
+    return c == '&' || c == ';';
+  };
+
+  static constexpr auto to_nvp = [] (auto &&param) -> std::pair<std::string_view, std::optional<std::string_view>> {
+    auto element = std::string_view(std::addressof(*std::begin(param)), ranges::distance(param));
+    auto delim = element.find_first_of("=");
+    if (delim != std::string_view::npos) {
+      return { element.substr(0, delim), element.substr(delim + 1) };
+    }
+    else {
+      return { element, std::nullopt };
+    }
+  };
+
   nlohmann::json object;
-  for (auto [key, value] : query_parameter_range(query)) {
-    const auto key_ = skyr::percent_decode(key).value();
+  for (auto [name, value] : query | ranges::views::split_when(is_separator) | ranges::views::transform(to_nvp)) {
+    const auto name_ = skyr::percent_decode(name).value();
     const auto value_ = value? skyr::percent_decode(value.value()).value() : std::string();
 
-    if (object.contains(key_)) {
-      auto current_value = object[key_];
+    if (object.contains(name_)) {
+      auto current_value = object[name_];
       if (current_value.is_string()) {
         auto prev_value = current_value.get<std::string>();
-        object[key_] = std::vector<std::string>{prev_value, value_};
+        object[name_] = std::vector<std::string>{prev_value, value_};
       }
       else if (current_value.is_array()) {
         auto values = current_value.get<std::vector<std::string>>();
         values.emplace_back(value_);
-        object[key_] = values;
+        object[name_] = values;
       }
     }
     else {
-      object[key_] = value_;
+      object[name_] = value_;
     }
   }
   return object;

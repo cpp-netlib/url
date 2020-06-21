@@ -4,12 +4,12 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
+#include <vector>
+#include <range/v3/view/join.hpp>
+#include <range/v3/view/split.hpp>
+#include <range/v3/view/transform.hpp>
 #include <skyr/v1/domain/domain.hpp>
 #include <skyr/v1/domain/errors.hpp>
-#include <skyr/v1/ranges/string_element_range.hpp>
-#include <skyr/v1/string/ascii.hpp>
-#include <skyr/v1/string/join.hpp>
-#include <skyr/v1/string/split.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include <v1/domain/punycode.hpp>
 #include "idna.hpp"
@@ -124,9 +124,13 @@ auto idna_process(std::u32string_view domain_name, bool use_std3_ascii_rules, bo
     -> tl::expected<std::u32string, domain_errc> {
   using namespace std::string_view_literals;
 
+  static constexpr auto to_string_view = [] (auto &&label) {
+    return std::u32string_view(std::addressof(*std::begin(label)), ranges::distance(label));
+  };
+
   auto result = map_code_points(domain_name, use_std3_ascii_rules, transitional_processing);
   if (result) {
-    for (auto label : split(std::u32string_view(result.value()), U"."sv)) {
+    for (auto &&label : result.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
       if ((label.size() >= 4) && (label.substr(0, 4) == U"xn--")) {
         auto decoded = punycode_decode(label.substr(4));
         if (!decoded) {
@@ -150,6 +154,15 @@ auto idna_process(std::u32string_view domain_name, bool use_std3_ascii_rules, bo
   return result;
 }
 
+namespace {
+inline auto is_ascii(std::u32string_view input) noexcept {
+  constexpr static auto is_in_ascii_set = [](auto c) { return static_cast<unsigned>(c) <= 0x7eu; };
+
+  auto first = cbegin(input), last = cend(input);
+  return last == std::find_if_not(first, last, is_in_ascii_set);
+}
+} // namespace
+
 auto domain_to_ascii(
     std::string_view domain_name, bool check_hyphens, bool check_bidi,
     bool check_joiners, bool use_std3_ascii_rules, bool transitional_processing,
@@ -167,8 +180,12 @@ auto domain_to_ascii(
     return tl::make_unexpected(domain.error());
   }
 
+  static constexpr auto to_string_view = [] (auto &&label) {
+    return std::u32string_view(std::addressof(*std::begin(label)), ranges::distance(label));
+  };
+
   auto labels = std::vector<std::string>{};
-  for (auto label : split(std::u32string_view(domain.value()), U".")) {
+  for (auto &&label : domain.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
     if (!is_ascii(label)) {
       auto encoded = punycode_encode(label);
       if (!encoded) {
@@ -179,6 +196,10 @@ auto domain_to_ascii(
     else {
       labels.emplace_back(begin(label), end(label));
     }
+  }
+
+  if (domain.value().back() == U'.') {
+    labels.emplace_back();
   }
 
   if (verify_dns_length) {
@@ -195,7 +216,7 @@ auto domain_to_ascii(
     }
   }
 
-  return join(labels, '.');
+  return labels | ranges::views::join('.') | ranges::to<std::string>();
 }
 }  // namespace
 
@@ -216,7 +237,12 @@ auto domain_to_ascii(
 auto domain_to_u8(std::string_view domain_name, [[maybe_unused]] bool *validation_error)
     -> tl::expected<std::string, domain_errc> {
   auto labels = std::vector<std::string>{};
-  for (auto label : split(domain_name, ".")) {
+
+  static constexpr auto to_string_view = [] (auto &&label) {
+    return std::string_view(std::addressof(*std::begin(label)), ranges::distance(label));
+  };
+
+  for (auto &&label : domain_name | ranges::views::split('.') | ranges::views::transform(to_string_view)) {
     if (label.substr(0, 4) == "xn--") {
       label.remove_prefix(4);
       auto decoded = punycode_decode(label);
@@ -229,7 +255,12 @@ auto domain_to_u8(std::string_view domain_name, [[maybe_unused]] bool *validatio
       labels.emplace_back(begin(label), end(label));
     }
   }
-  return join(labels, '.');
+
+  if (domain_name.back() == U'.') {
+    labels.emplace_back();
+  }
+
+  return labels | ranges::views::join('.') | ranges::to<std::string>();
 }
 }  // namespace v1
 }  // namespace skyr
