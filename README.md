@@ -226,8 +226,9 @@ MacOS:
 
 Windows:
 
-* Microsoft Visual C++ 2017
 * Microsoft Visual C++ 2019
+
+Microsoft Visual C++ 2017 is supported below version 0.11.
 
 ## License
 

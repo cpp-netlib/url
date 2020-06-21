@@ -6,7 +6,7 @@
 #include <skyr/v1/url.hpp>
 #include <skyr/v1/core/parse.hpp>
 #include <skyr/v1/core/serialize.hpp>
-#include <skyr/v1/percent_encoding/percent_encode_range.hpp>
+#include <skyr/v1/percent_encoding/percent_encoded_char.hpp>
 #include <skyr/v1/domain/domain.hpp>
 #include "v1/core/url_parse_impl.hpp"
 

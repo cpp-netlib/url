@@ -15,9 +15,17 @@ namespace skyr {
 inline namespace v1 {
 /// Percent decodes the input
 /// \returns The percent decoded output when successful, an error otherwise.
-inline auto percent_decode(std::string_view input) {
-  using namespace v1::percent_encoding;
-  return as<std::string>(input | views::decode);
+inline auto percent_decode(std::string_view input) -> tl::expected<std::string, percent_encoding::percent_encode_errc> {
+  auto result = std::string{};
+
+  auto range = percent_encoding::percent_decode_range{input};
+  for (auto it = std::cbegin(range); it != std::cend(range); ++it) {
+    if (!*it) {
+      return tl::make_unexpected((*it).error());
+    }
+    result.push_back((*it).value());
+  }
+  return result;
 }
 }  // namespace v1
 }  // namespace skyr

@@ -7,11 +7,11 @@
 #define SKYR_V1_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP
 
 #include <iterator>
+#include <string_view>
 #include <cassert>
-#include <optional>
 #include <tl/expected.hpp>
 #include <skyr/v1/percent_encoding/errors.hpp>
-#include <skyr/v1/percent_encoding/percent_encoded_char.hpp>
+#include <skyr/v1/percent_encoding/sentinel.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -35,8 +35,6 @@ inline auto letter_to_hex(char byte) noexcept -> tl::expected<char, percent_enco
 }  // namespace details
 
 ///
-/// \tparam OctetIterator
-template <class OctetIterator>
 class percent_decode_iterator {
 
  public:
@@ -59,26 +57,13 @@ class percent_decode_iterator {
   using size_type = std::size_t;
 
   ///
-  percent_decode_iterator() = default;
-  ///
-  percent_decode_iterator(OctetIterator it, OctetIterator last)
-  : it_(it)
-  , last_(last) {}
-  ///
-  percent_decode_iterator(const percent_decode_iterator&) = default;
-  ///
-  percent_decode_iterator(percent_decode_iterator&&) noexcept = default;
-  ///
-  percent_decode_iterator &operator=(const percent_decode_iterator&) = default;
-  ///
-  percent_decode_iterator &operator=(percent_decode_iterator&&) noexcept = default;
-  ///
-  ~percent_decode_iterator() = default;
+  explicit percent_decode_iterator(std::string_view s)
+  : remainder_(s) {}
 
   ///
   /// \return
-  auto operator++(int) noexcept {
-    assert(it_);
+  auto operator++(int) noexcept -> percent_decode_iterator {
+    assert(!remainder_.empty());
     auto result = *this;
     increment();
     return result;
@@ -86,8 +71,8 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  auto &operator++() noexcept {
-    assert(it_);
+  auto operator++() noexcept -> percent_decode_iterator & {
+    assert(!remainder_.empty());
     increment();
     return *this;
   }
@@ -95,14 +80,14 @@ class percent_decode_iterator {
   ///
   /// \return
   [[nodiscard]] auto operator * () const noexcept -> const_reference {
-    assert(it_);
-    if (*it_.value() == '%') {
-      if (std::distance(it_.value(), last_.value()) < 3) {
+    assert(!remainder_.empty());
+
+    if (remainder_[0] == '%') {
+      if (remainder_.size() < 3) {
         return tl::make_unexpected(percent_encoding::percent_encode_errc::overflow);
       }
-      auto it = it_.value();
-      auto v0 = details::letter_to_hex(*++it);
-      auto v1 = details::letter_to_hex(*++it);
+      auto v0 = details::letter_to_hex(remainder_[1]);
+      auto v1 = details::letter_to_hex(remainder_[2]);
 
       if (!v0 || !v1) {
         return tl::make_unexpected(percent_encoding::percent_encode_errc::non_hex_input);
@@ -110,45 +95,39 @@ class percent_decode_iterator {
 
       return static_cast<char>((0x10u * v0.value()) + v1.value());
     } else {
-      return *it_.value();
+      return remainder_[0];
     }
   }
 
   ///
-  /// \param other
+  /// \param sentinel
   /// \return
-  auto operator==(const percent_decode_iterator &other) const noexcept {
-    return it_ == other.it_;
+  auto operator==([[maybe_unused]] sentinel sentinel) const noexcept -> bool {
+    return remainder_.empty();
   }
 
   ///
-  /// \param other
+  /// \param sentinel
   /// \return
-  auto operator!=(const percent_decode_iterator &other) const noexcept {
-    return !(*this == other);
+  auto operator!=(sentinel sentinel) const noexcept -> bool {
+    return !(*this == sentinel);
   }
 
  private:
 
   void increment() {
-    assert(**this);
-    std::advance(it_.value(), (((*it_.value() == '%')? 3 : 1)));
-    if (it_ == last_) {
-      it_ = std::nullopt;
-    }
+    auto step = (remainder_[0] == '%') ? 3u : 1u;
+    remainder_.remove_prefix(step);
   }
 
-  std::optional<OctetIterator> it_, last_;
+  std::string_view remainder_;
 
 };
 
 ///
-/// \tparam OctetRange
-template <class OctetRange>
 class percent_decode_range {
 
-  using octet_iterator_type = typename OctetRange::const_iterator;
-  using iterator_type = percent_decode_iterator<octet_iterator_type>;
+  using iterator_type = percent_decode_iterator;
 
  public:
 
@@ -160,23 +139,20 @@ class percent_decode_range {
   using size_type = std::size_t;
 
   ///
-  percent_decode_range() = default;
-  ///
   /// \param range
-  percent_decode_range(const OctetRange &range)
-      : impl_(impl(std::begin(range), std::end(range))) {}
+  explicit percent_decode_range(std::string_view s)
+      : it_(s) {}
 
   ///
   /// \return
   [[nodiscard]] auto begin() const noexcept {
-    return impl_?
-           ((impl_.value().first != impl_.value().last)? impl_.value().first : iterator_type()) : iterator_type();
+    return it_;
   }
 
   ///
   /// \return
   [[nodiscard]] auto end() const noexcept {
-    return iterator_type();
+    return sentinel{};
   }
 
   ///
@@ -197,72 +173,11 @@ class percent_decode_range {
     return begin() == end();
   }
 
-  ///
-  /// \return
-  [[nodiscard]] auto size() const noexcept {
-    return static_cast<size_type>(std::distance(begin(), end()));
-  }
-
  private:
 
-  struct impl {
-    constexpr impl(
-        octet_iterator_type first,
-        octet_iterator_type last)
-        : first(first, last)
-        , last(last, last) {}
-    iterator_type first, last;
-  };
-
-  std::optional<impl> impl_;
+  iterator_type it_;
 
 };
-
-struct percent_decode_fn {
-  ///
-  /// \tparam OctetRange
-  /// \param range
-  /// \return
-  template <typename OctetRange>
-  constexpr auto operator()(
-      const OctetRange &range) const {
-    return percent_decode_range{range};
-  }
-
-  ///
-  /// \tparam OctetRange
-  /// \param range
-  /// \return
-  template <typename OctetRange>
-  friend constexpr auto operator|(
-      const OctetRange &range,
-      const percent_decode_fn&) {
-    return percent_decode_range{range};
-  }
-
-};
-
-namespace views {
-static constexpr percent_decode_fn decode;
-}  // namespace views
-
-///
-/// \tparam Output
-/// \tparam OctetRange
-/// \param range
-/// \return
-template <class Output, class OctetRange>
-auto as(
-    percent_decode_range<OctetRange> &&range) -> tl::expected<Output, percent_encode_errc> {
-  auto result = Output();
-  for (auto &&byte : range) {
-    if (!byte) {
-      return tl::make_unexpected(byte.error());
-    }
-    result.push_back(byte.value());
-  }
-  return result;
-}
 }  // namespace percent_encoding
 }  // namespace v1
 }  // namespace skyr

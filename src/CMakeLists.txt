@@ -47,6 +47,7 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u8_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u16_transform.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/transforms/u32_transform.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/ranges/sentinel.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode/details/to_u8.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/string/starts_with.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/errors.hpp
@@ -55,8 +56,8 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/network/ipv4_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/network/ipv6_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/errors.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/sentinel.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_decode_range.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_encode_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_encoded_char.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_decode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding/percent_encode.hpp
