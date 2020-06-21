@@ -7,7 +7,7 @@
 #define SKYR_V1_JSON_JSON_HPP
 
 #include <string>
-#include <system_error>
+#include <optional>
 #include <vector>
 #include <tl/expected.hpp>
 #include <range/v3/view/split_when.hpp>
