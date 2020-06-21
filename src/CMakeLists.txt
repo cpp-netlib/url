@@ -76,7 +76,6 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/network/ipv6_address.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_decode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding/percent_encode.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/query/query_parameter_range.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/url_record.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/host.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/core/parse.hpp

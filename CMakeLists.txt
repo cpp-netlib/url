@@ -120,7 +120,6 @@ install(
         "${PROJECT_SOURCE_DIR}/include/skyr/domain"
         "${PROJECT_SOURCE_DIR}/include/skyr/network"
         "${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding"
-        "${PROJECT_SOURCE_DIR}/include/skyr/query"
         DESTINATION
         include/skyr
 )
@@ -132,8 +131,6 @@ install(
         "${PROJECT_SOURCE_DIR}/include/skyr/v1/network"
         "${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding"
         "${PROJECT_SOURCE_DIR}/include/skyr/v1/platform"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/query"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/ranges"
         "${PROJECT_SOURCE_DIR}/include/skyr/v1/string"
         "${PROJECT_SOURCE_DIR}/include/skyr/v1/traits"
         "${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode"
