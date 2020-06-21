@@ -130,6 +130,7 @@ target_compile_options(
         $<$<AND:${msvc},${warnings_as_errors}>:/WX>
         $<$<AND:${msvc},$<NOT:${no_exceptions}>>:/EHsc>
         $<$<AND:${msvc},${no_rtti}>:/GR->
+        $<${msvc}:/permissive->
 )
 
 target_link_libraries(

@@ -109,7 +109,7 @@ install:
   - git checkout -b master origin/master
   - export
   - ./bootstrap-vcpkg.sh
-  - ./vcpkg install tl-expected catch2 nlohmann-json fmt
+  - ./vcpkg install tl-expected range-v3 catch2 nlohmann-json fmt
   - popd
 
 cache:

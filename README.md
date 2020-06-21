@@ -63,7 +63,7 @@ Using `vcpkg`, install the library dependencies:
 > git fetch origin master
 > git checkout -b master origin/master
 > ./bootstrap-vcpkg.sh
-> ./vcpkg install tl-expected catch2 nlohmann-json fmt
+> ./vcpkg install tl-expected range-v3 catch2 nlohmann-json fmt
 ```
 
 ### Building the project with `CMake` and `Ninja`
@@ -166,6 +166,7 @@ Here is the ``CMake`` script to build the example:
 project(my_project)
 
 find_package(tl-expected CONFIG REQUIRED)
+find_package(range-v3 CONFIG REQUIRED)
 find_package(skyr-url CONFIG REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -193,7 +194,8 @@ Search parameters:
 
 ## Dependencies
 
-This library uses [expected](https://github.com/TartanLlama/expected).
+This library uses [expected](https://github.com/TartanLlama/expected)
+and [Range v3](https://github.com/ericniebler/range-v3).
 
 The tests use [Catch2](https://github.com/catchorg/catch2),
 [nlohmann-json](https://github.com/nlohmann/json) and

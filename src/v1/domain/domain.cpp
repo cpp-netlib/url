@@ -8,6 +8,7 @@
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/split.hpp>
 #include <range/v3/view/transform.hpp>
+#include <range/v3/to_container.hpp>
 #include <skyr/v1/domain/domain.hpp>
 #include <skyr/v1/domain/errors.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>

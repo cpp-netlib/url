@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <locale>
+#include <cassert>
 #include <skyr/v1/network/ipv6_address.hpp>
 #include <skyr/v1/string/starts_with.hpp>
 
