@@ -38,11 +38,9 @@ inline namespace v1 {
 namespace {
 template <class U32Range>
 auto map_code_points(
-    U32Range &&domain_name, bool use_std3_ascii_rules,
-    bool transitional_processing)
-    -> tl::expected<std::u32string, domain_errc> {
+    U32Range &&domain_name, bool use_std3_ascii_rules, bool transitional_processing, std::u32string *result)
+    -> tl::expected<void, domain_errc> {
 
-  auto result = std::u32string();
   auto error = false;
 
   auto first = std::begin(domain_name), last = std::end(domain_name);
@@ -62,30 +60,30 @@ auto map_code_points(
         if (use_std3_ascii_rules) {
           error = true;
         } else {
-          result += code_point;
+          *result += code_point;
         }
         break;
       case idna::idna_status::disallowed_std3_mapped:
         if (use_std3_ascii_rules) {
           error = true;
         } else {
-          result += idna::map_code_point(code_point);
+          *result += idna::map_code_point(code_point);
         }
         break;
       case idna::idna_status::ignored:
         break;
       case idna::idna_status::mapped:
-        result += idna::map_code_point(code_point);
+        *result += idna::map_code_point(code_point);
         break;
       case idna::idna_status::deviation:
         if (transitional_processing) {
-          result += idna::map_code_point(code_point);
+          *result += idna::map_code_point(code_point);
         } else {
-          result += code_point;
+          *result += code_point;
         }
         break;
       case idna::idna_status::valid:
-        result += code_point;
+        *result += code_point;
         break;
     }
 
@@ -96,7 +94,8 @@ auto map_code_points(
     return tl::make_unexpected(domain_errc::disallowed_code_point);
   }
 
-  return result;
+//  return result;
+  return {};
 }
 
 auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules, bool check_hyphens,
@@ -147,15 +146,15 @@ auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_as
 
 template <class U32Range>
 auto idna_process(U32Range &&domain_name, bool use_std3_ascii_rules, bool check_hyphens,
-                  bool check_bidi, bool check_joiners, bool transitional_processing)
-    -> tl::expected<std::u32string, domain_errc> {
+                  bool check_bidi, bool check_joiners, bool transitional_processing, std::u32string *mapped_domain_name)
+    -> tl::expected<void, domain_errc> {
   using namespace std::string_view_literals;
 
   static constexpr auto to_string_view = [] (auto &&label) {
     return std::u32string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
-  auto result = map_code_points(domain_name, use_std3_ascii_rules, transitional_processing);
+  auto result = map_code_points(domain_name, use_std3_ascii_rules, transitional_processing, mapped_domain_name);
   if (result) {
     for (auto &&label : result.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
       if ((label.size() >= 4) && (label.substr(0, 4) == U"xn--")) {
@@ -196,17 +195,21 @@ auto domain_to_ascii(
     bool verify_dns_length) -> tl::expected<std::string, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#ToASCII
 
+  /// TODO: try this without allocating
   auto u32domain_name = unicode::views::as_u8(domain_name) | unicode::transforms::to_u32;
-  auto domain = idna_process(
-      u32domain_name, use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, transitional_processing);
-  if (!domain) {
-    return tl::make_unexpected(domain.error());
+  auto mapped_domain_name = std::u32string();
+  auto result = idna_process(
+      u32domain_name, use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, transitional_processing,
+      &mapped_domain_name);
+  if (!result) {
+    return tl::make_unexpected(result.error());
   }
 
   static constexpr auto to_string_view = [] (auto &&label) {
     return std::u32string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
+  /// TODO: try this without allocating strings (e.g. for large strings that don't use SBO)
   auto labels = static_vector<std::string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
   for (auto &&label : domain.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
     if (labels.size() == labels.max_size()) {
@@ -230,7 +233,7 @@ auto domain_to_ascii(
   }
 
   if (verify_dns_length) {
-    auto length = domain.value().size();
+    auto length = mapped_domain_name.size();
     if ((length < 1) || (length > 253)) {
       return tl::make_unexpected(domain_errc::invalid_length);
     }
@@ -243,6 +246,7 @@ auto domain_to_ascii(
     }
   }
 
+  /// TODO: try this without allocating
   return labels | ranges::views::join('.') | ranges::to<std::string>();
 }
 }  // namespace

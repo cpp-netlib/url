@@ -33,6 +33,7 @@ auto parse_opaque_host(std::string_view input,
     return tl::make_unexpected(url_parse_errc::forbidden_host_point);
   }
 
+  /// TODO: try this without allocating
   auto output = std::string();
   for (auto c : input) {
     auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::c0_control);
@@ -73,6 +74,7 @@ auto parse_host(
         [] (auto &&h) -> tl::expected<host, url_parse_errc> { return host{h}; });
   }
 
+  /// TODO: try this without allocating
   auto domain = percent_decode(input);
   if (!domain) {
     return tl::make_unexpected(url_parse_errc::cannot_decode_host_point);

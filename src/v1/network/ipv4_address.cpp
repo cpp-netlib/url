@@ -66,6 +66,10 @@ auto parse_ipv4_address(
 
   static_vector<std::string_view, 8> parts;
   for (auto &&part : split(input, ".")) {
+    if (parts.size() == parts.max_size()) {
+      *validation_error |= true;
+      return tl::make_unexpected(ipv4_address_errc::too_many_segments);
+    }
     parts.emplace_back(part);
   }
 
