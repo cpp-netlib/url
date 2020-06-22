@@ -48,7 +48,7 @@ class u8_transform_iterator {
   ///
   /// \param first The first iterator in the code point sequence
   /// \param last The end iterator in the code point sequence
-  u8_transform_iterator(
+  constexpr u8_transform_iterator(
       CodePointIterator first,
       Sentinel last)
       : it_(first), last_(last) {}
@@ -62,7 +62,7 @@ class u8_transform_iterator {
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  auto operator++(int) noexcept -> u8_transform_iterator {
+  constexpr auto operator++(int) noexcept -> u8_transform_iterator {
     auto result = *this;
     increment();
     return result;
@@ -74,12 +74,8 @@ class u8_transform_iterator {
   /// UTF-8 encoded sequence.
   ///
   /// \return An expected wrapper
-  [[nodiscard]] auto operator*() const noexcept -> reference {
-    constexpr static auto u8_code_unit = [] (auto code_point, auto octet_index) -> tl::expected<char, unicode_errc> {
-      if (!is_valid_code_point(code_point)) {
-        return tl::make_unexpected(unicode_errc::invalid_code_point);
-      }
-
+  [[nodiscard]] constexpr auto operator*() const noexcept -> reference {
+    constexpr auto u8_code_unit = [] (auto code_point, auto octet_index) -> tl::expected<char, unicode_errc> {
       if (code_point < 0x80u) {
         return static_cast<char>(code_point);
       } else if (code_point < 0x800u) {
@@ -129,8 +125,8 @@ class u8_transform_iterator {
 
  private:
 
-  void increment() {
-    constexpr static auto octet_count = [] (char32_t code_point) {
+  constexpr void increment() {
+    constexpr auto octet_count = [] (char32_t code_point) {
       if (code_point < 0x80u) {
         return 1;
       } else if (code_point < 0x800u) {
@@ -187,37 +183,37 @@ class transform_u8_range {
 
   /// Constructor
   /// \param range A range of code points
-  explicit transform_u8_range(
+  explicit constexpr transform_u8_range(
       const CodePointRange &range)
       : first_(std::cbegin(range), std::cend(range)) {}
 
   /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] auto begin() const noexcept {
+  [[nodiscard]] auto cbegin() const noexcept {
     return first_;
   }
 
   /// Returns an iterator to the last element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] auto end() const noexcept {
+  [[nodiscard]] auto cend() const noexcept {
     return sentinel{};
   }
 
   /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] auto cbegin() const noexcept {
-    return begin();
+  [[nodiscard]] constexpr auto begin() const noexcept {
+    return cbegin();
   }
 
   /// Returns an iterator to the last element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] auto cend() const noexcept {
-    return end();
+  [[nodiscard]] constexpr auto end() const noexcept {
+    return cend();
   }
 
   /// Tests if the byte range is empty
   /// \return \c true if the range is empty, \c false otherwise
-  [[nodiscard]] auto empty() const noexcept {
+  [[nodiscard]] constexpr auto empty() const noexcept {
     return begin() == end();
   }
 

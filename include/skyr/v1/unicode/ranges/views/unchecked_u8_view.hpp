@@ -49,7 +49,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  auto operator ++ (int) noexcept -> unchecked_u8_range_iterator {
+  constexpr auto operator ++ (int) noexcept -> unchecked_u8_range_iterator {
     assert(it_ != last_);
     auto result = *this;
     increment();
@@ -58,7 +58,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  auto operator ++ () noexcept -> unchecked_u8_range_iterator & {
+  constexpr auto operator ++ () noexcept -> unchecked_u8_range_iterator & {
     assert(it_ != last_);
     increment();
     return *this;
@@ -66,7 +66,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  constexpr auto operator * () const noexcept -> const_reference {
+  [[nodiscard]] constexpr auto operator * () const noexcept -> const_reference {
     assert(it_ != last_);
     auto last = it_;
     std::advance(last, sequence_length(*it_));
@@ -76,20 +76,20 @@ class unchecked_u8_range_iterator {
   ///
   /// \param sentinel
   /// \return
-  [[maybe_unused]] constexpr auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
     return it_ == last_;
   }
 
   ///
   /// \param sentinel
   /// \return
-  [[maybe_unused]] constexpr auto operator != (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator != (sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
  private:
 
-  void increment() {
+  constexpr void increment() {
     std::advance(it_, sequence_length(*it_));
   }
 
@@ -128,26 +128,26 @@ class view_unchecked_u8_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto begin() const noexcept {
+  [[nodiscard]] constexpr auto cbegin() const noexcept {
     return it_;
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto end() const noexcept {
+  [[nodiscard]] constexpr auto cend() const noexcept {
     return sentinel{};
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cbegin() const noexcept {
-    return begin();
+  [[nodiscard]] constexpr auto begin() const noexcept {
+    return cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cend() const noexcept {
-    return end();
+  [[nodiscard]] constexpr auto end() const noexcept {
+    return cend();
   }
 
   ///
@@ -168,7 +168,7 @@ namespace views {
 /// \param range
 /// \return
 template <typename OctetRange>
-[[maybe_unused]] inline auto unchecked_u8(
+[[maybe_unused]] constexpr inline auto unchecked_u8(
     const OctetRange &range) {
   return view_unchecked_u8_range{range};
 }

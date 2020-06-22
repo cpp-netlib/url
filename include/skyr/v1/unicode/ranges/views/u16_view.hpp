@@ -49,7 +49,7 @@ class u16_range_iterator {
   ///
   /// \param first
   /// \param last
-  explicit u16_range_iterator(
+  explicit constexpr u16_range_iterator(
       U16Iterator first,
       U16Iterator last)
       : it_(first)
@@ -57,7 +57,7 @@ class u16_range_iterator {
 
   ///
   /// \return
-  auto operator ++ (int) noexcept -> u16_range_iterator {
+  constexpr auto operator ++ (int) noexcept -> u16_range_iterator {
     auto result = *this;
     increment();
     return result;
@@ -65,14 +65,14 @@ class u16_range_iterator {
 
   ///
   /// \return
-  auto operator ++ () noexcept -> u16_range_iterator & {
+  constexpr auto operator ++ () noexcept -> u16_range_iterator & {
     increment();
     return *this;
   }
 
   ///
   /// \return
-  auto operator * () const noexcept -> const_reference {
+  [[nodiscard]] constexpr auto operator * () const noexcept -> const_reference {
     assert(it_ != last_);
 
     auto value = mask16(*it_);
@@ -95,20 +95,20 @@ class u16_range_iterator {
   ///
   /// \param sentinel
   /// \return
-  [[maybe_unused]] auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
     return it_ == last_;
   }
 
   ///
   /// \param sentinel
   /// \return
-  [[maybe_unused]] auto operator != ([[maybe_unused]] sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator != ([[maybe_unused]] sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
  private:
 
-  void increment() {
+  constexpr void increment() {
     assert(it_ != last_);
     auto step = is_lead_surrogate(mask16(*it_)) ? 2u : 1u;
     std::advance(it_, step);
@@ -147,26 +147,26 @@ class view_u16_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto begin() const noexcept {
+  [[nodiscard]] constexpr auto cbegin() const noexcept {
     return iterator_type(std::cbegin(range_), std::cend(range_));
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto end() const noexcept {
+  [[nodiscard]] constexpr auto cend() const noexcept {
     return sentinel{};
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cbegin() const noexcept {
-    return begin();
+  [[nodiscard]] constexpr auto begin() const noexcept {
+    return cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cend() const noexcept {
-    return end();
+  [[nodiscard]] constexpr auto end() const noexcept {
+    return cend();
   }
 
   ///
@@ -188,7 +188,7 @@ namespace views {
 /// \param range
 /// \return
 template <typename U16Range>
-inline auto as_u16(const U16Range &range) {
+constexpr inline auto as_u16(const U16Range &range) {
   static_assert(sizeof(traits::range_value_t<U16Range>) >= 2);
   return view_u16_range{range};
 }

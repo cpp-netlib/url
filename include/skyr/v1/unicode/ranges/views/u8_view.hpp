@@ -63,7 +63,7 @@ class u8_range_iterator {
   /// Increments through a code point
   ///
   /// \return The previous iterator value
-  auto operator ++ (int) noexcept -> u8_range_iterator {
+  constexpr auto operator ++ (int) noexcept -> u8_range_iterator {
     auto result = *this;
     ++it_;
     return result;
@@ -74,7 +74,7 @@ class u8_range_iterator {
   /// Increments through a code point
   ///
   /// \return \c *this
-  auto operator ++ () noexcept -> u8_range_iterator & {
+  constexpr auto operator ++ () noexcept -> u8_range_iterator & {
     ++it_;
     return *this;
   }
@@ -138,26 +138,26 @@ class view_u8_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto begin() const noexcept {
+  [[nodiscard]] constexpr auto cbegin() const noexcept {
     return it_;
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto end() const noexcept {
+  [[nodiscard]] constexpr auto cend() const noexcept {
     return sentinel{};
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cbegin() const noexcept {
-    return begin();
+  [[nodiscard]] constexpr auto begin() const noexcept {
+    return cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cend() const noexcept {
-    return end();
+  [[nodiscard]] constexpr auto end() const noexcept {
+    return cend();
   }
 
   ///
@@ -178,7 +178,7 @@ namespace views {
 /// \param range
 /// \return
 template <typename OctetRange>
-inline auto as_u8(const OctetRange &range) {
+constexpr inline auto as_u8(const OctetRange &range) {
   static_assert(sizeof(traits::range_value_t<OctetRange>) >= 1);
   return view_u8_range{range};
 }

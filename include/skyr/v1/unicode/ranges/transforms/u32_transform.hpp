@@ -49,7 +49,7 @@ class u32_transform_iterator {
 
   ///
   /// \return
-  auto operator ++ (int) noexcept -> u32_transform_iterator {
+  constexpr auto operator ++ (int) noexcept -> u32_transform_iterator {
     auto result = *this;
     ++it_;
     return result;
@@ -57,23 +57,23 @@ class u32_transform_iterator {
 
   ///
   /// \return
-  auto operator ++ () noexcept -> u32_transform_iterator & {
+  constexpr auto operator ++ () noexcept -> u32_transform_iterator & {
     ++it_;
     return *this;
   }
 
   ///
   /// \return
-  [[nodiscard]] auto operator*() const noexcept -> const_reference {
-    constexpr static auto to_u32 = [](auto code_point) { return u32_value(code_point); };
+  [[nodiscard]] constexpr auto operator*() const noexcept -> const_reference {
+    constexpr auto to_u32 = [](auto code_point) { return u32_value(code_point); };
     return (*it_).and_then(to_u32);
   }
 
-  constexpr auto operator == (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator == (sentinel sentinel) const noexcept {
     return (it_ == sentinel);
   }
 
-  constexpr auto operator != (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator != (sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
@@ -112,26 +112,26 @@ class transform_u32_range {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto begin() const noexcept {
+  [[nodiscard]] constexpr auto cbegin() const noexcept {
     return const_iterator(std::cbegin(range_));
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto end() const noexcept {
+  [[nodiscard]] constexpr auto cend() const noexcept {
     return sentinel{};
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cbegin() const noexcept {
-    return begin();
+  [[nodiscard]] constexpr auto begin() const noexcept {
+    return cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cend() const noexcept {
-    return end();
+  [[nodiscard]] constexpr auto end() const noexcept {
+    return cend();
   }
 
   ///

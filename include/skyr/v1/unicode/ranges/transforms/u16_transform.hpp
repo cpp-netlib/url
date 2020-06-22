@@ -54,14 +54,14 @@ class u16_transform_iterator {
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  auto operator ++ () noexcept -> u16_transform_iterator & {
+  constexpr auto operator ++ () noexcept -> u16_transform_iterator & {
     ++it_;
     return *this;
   }
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  auto operator ++ (int) noexcept -> u16_transform_iterator {
+  constexpr auto operator ++ (int) noexcept -> u16_transform_iterator {
     auto result = *this;
     ++it_;
     return result;
@@ -69,17 +69,17 @@ class u16_transform_iterator {
 
   /// Dereference operator
   /// \return An expected value
-  [[nodiscard]] auto operator * () const noexcept -> const_reference {
-    constexpr static auto to_u16 = [](auto value) { return u16_code_point(value); };
+  [[nodiscard]] constexpr auto operator * () const noexcept -> const_reference {
+    constexpr auto to_u16 = [](auto value) { return u16_code_point(value); };
     auto code_point = *it_;
     return code_point.map(to_u16);
   }
 
-  constexpr auto operator == (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator == (sentinel sentinel) const noexcept {
     return it_ == sentinel;
   }
 
-  constexpr auto operator != (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator != (sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
@@ -121,26 +121,26 @@ class transform_u16_range {
 
   /// Returns an iterator to the beginning
   /// \return \c const_iterator
-  [[nodiscard]] auto begin() const noexcept {
-    return const_iterator(std::begin(range_));
-  }
-
-  /// Returns an iterator to the end
-  /// \return \c const_iterator
-  [[nodiscard]] auto end() const noexcept {
-    return sentinel{};
-  }
-
-  /// Returns an iterator to the beginning
-  /// \return \c const_iterator
   [[nodiscard]] constexpr auto cbegin() const noexcept {
-    return begin();
+    return const_iterator(std::cbegin(range_));
   }
 
   /// Returns an iterator to the end
   /// \return \c const_iterator
   [[nodiscard]] constexpr auto cend() const noexcept {
-    return end();
+    return sentinel{};
+  }
+
+  /// Returns an iterator to the beginning
+  /// \return \c const_iterator
+  [[nodiscard]] constexpr auto begin() const noexcept {
+    return cbegin();
+  }
+
+  /// Returns an iterator to the end
+  /// \return \c const_iterator
+  [[nodiscard]] constexpr auto end() const noexcept {
+    return cend();
   }
 
   /// Tests if the byte range is empty
