@@ -7,7 +7,8 @@
 #include <climits>
 #include <locale>
 #include <skyr/v1/network/ipv4_address.hpp>
-#include <skyr/v1/string/split.hpp>
+#include <range/v3/view/split.hpp>
+#include <range/v3/view/transform.hpp>
 #include <skyr/v1/containers/static_vector.hpp>
 
 namespace skyr { inline namespace v1 {
@@ -64,8 +65,12 @@ auto parse_ipv4_address(
     std::string_view input, bool *validation_error) -> tl::expected<ipv4_address, ipv4_address_errc> {
   using namespace std::string_view_literals;
 
+  static constexpr auto to_string_view = [] (auto &&part) {
+    return std::string_view(std::addressof(*std::begin(part)), ranges::distance(part));
+  };
+
   static_vector<std::string_view, 8> parts;
-  for (auto &&part : split(input, ".")) {
+  for (auto &&part : input | ranges::views::split('.') | ranges::views::transform(to_string_view)) {
     if (parts.size() == parts.max_size()) {
       *validation_error |= true;
       return tl::make_unexpected(ipv4_address_errc::too_many_segments);

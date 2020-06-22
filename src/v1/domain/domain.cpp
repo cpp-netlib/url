@@ -13,8 +13,6 @@
 #include <skyr/v1/domain/errors.hpp>
 #include <skyr/v1/unicode/ranges/views/u8_view.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/v1/domain/domain.hpp>
-#include <skyr/v1/domain/errors.hpp>
 #include <skyr/v1/containers/static_vector.hpp>
 #include "punycode.hpp"
 #include "idna.hpp"
@@ -43,7 +41,8 @@ auto map_code_points(
 
   auto error = false;
 
-  auto first = std::begin(domain_name), last = std::end(domain_name);
+  auto first = std::begin(domain_name);
+  auto last = std::end(domain_name);
   auto it = first;
 
   while (it != last) {
@@ -156,7 +155,7 @@ auto idna_process(U32Range &&domain_name, bool use_std3_ascii_rules, bool check_
 
   auto result = map_code_points(domain_name, use_std3_ascii_rules, transitional_processing, mapped_domain_name);
   if (result) {
-    for (auto &&label : result.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
+    for (auto &&label : *mapped_domain_name | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
       if ((label.size() >= 4) && (label.substr(0, 4) == U"xn--")) {
         auto decoded = punycode_decode(label.substr(4));
         if (!decoded) {
@@ -211,7 +210,7 @@ auto domain_to_ascii(
 
   /// TODO: try this without allocating strings (e.g. for large strings that don't use SBO)
   auto labels = static_vector<std::string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
-  for (auto &&label : domain.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
+  for (auto &&label : mapped_domain_name | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
     if (labels.size() == labels.max_size()) {
       return tl::make_unexpected(domain_errc::too_many_labels);
     }
@@ -228,7 +227,7 @@ auto domain_to_ascii(
     }
   }
 
-  if (domain.value().back() == U'.') {
+  if (mapped_domain_name.back() == U'.') {
     labels.emplace_back();
   }
 
