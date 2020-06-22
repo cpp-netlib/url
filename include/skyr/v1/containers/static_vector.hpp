@@ -111,6 +111,12 @@ class static_vector {
 
   ///
   /// \return
+  [[nodiscard]] constexpr auto data() const noexcept -> const value_type * {
+    return impl_.data();
+  }
+
+  ///
+  /// \return
   [[nodiscard]] constexpr auto size() const noexcept -> size_type {
     return size_;
   }

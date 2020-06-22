@@ -13,12 +13,12 @@ using namespace std::string_view_literals;
 
 int main() {
   const auto host_strings = std::vector<std::string_view>{
-//      "example.com"sv,
-      "192.168.0.1"sv
-//      "[2001:0db8:0:0::1428:57ab]"sv,
-//      "localhost"sv,
-//      "a.b.c.d.e.f.g.h.i.j.k.l.example.com"sv,
-//      "sub.llanfairpwllgwyngyllgogerychwndrwbwllllantysiliogogogoch.com"sv
+      "example.com"sv,
+      "192.168.0.1"sv,
+      "[2001:0db8:0:0::1428:57ab]"sv,
+      "localhost"sv,
+      "a.b.c.d.e.f.g.h.i.j.k.l.example.com"sv,
+      "sub.llanfairpwllgwyngyllgogerychwndrwbwllllantysiliogogogoch.com"sv
   };
 
   for (auto &&host_string : host_strings) {

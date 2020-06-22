@@ -14,7 +14,7 @@ namespace unicode::traits {
 template <class Range>
 class range_iterator {
  public:
-  using type = typename Range::const_iterator;
+  using type = typename std::decay_t<Range>::const_iterator;
 };
 
 ///

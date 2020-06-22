@@ -8,7 +8,12 @@
 #include <skyr/v1/core/errors.hpp>
 #include <skyr/v1/percent_encoding/percent_encoded_char.hpp>
 #include <skyr/v1/percent_encoding/percent_decode.hpp>
+#include <skyr/v1/containers/static_vector.hpp>
 #include <skyr/v1/domain/domain.hpp>
+
+#if !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
+#define SKYR_DOMAIN_MAX_DOMAIN_LENGTH 253
+#endif // !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
 
 namespace skyr {
 inline namespace v1 {
@@ -33,7 +38,6 @@ auto parse_opaque_host(std::string_view input,
     return tl::make_unexpected(url_parse_errc::forbidden_host_point);
   }
 
-  /// TODO: try this without allocating
   auto output = std::string();
   for (auto c : input) {
     auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::c0_control);
@@ -74,13 +78,16 @@ auto parse_host(
         [] (auto &&h) -> tl::expected<host, url_parse_errc> { return host{h}; });
   }
 
-  /// TODO: try this without allocating
-  auto domain = percent_decode(input);
-  if (!domain) {
-    return tl::make_unexpected(url_parse_errc::cannot_decode_host_point);
+  auto domain = static_vector<char, SKYR_DOMAIN_MAX_DOMAIN_LENGTH>{};
+  auto range = percent_encoding::percent_decode_range{input};
+  for (auto it = std::cbegin(range); it != std::cend(range); ++it) {
+    if ((domain.size() == domain.max_size()) || !*it) {
+      return tl::make_unexpected(url_parse_errc::cannot_decode_host_point);
+    }
+    domain.push_back((*it).value());
   }
 
-  auto ascii_domain = domain_to_ascii(domain.value());
+  auto ascii_domain = domain_to_ascii(std::string_view(domain.data(), domain.size()));
   if (!ascii_domain) {
     return tl::make_unexpected(url_parse_errc::domain_error);
   }
