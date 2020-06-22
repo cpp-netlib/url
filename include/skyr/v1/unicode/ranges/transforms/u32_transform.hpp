@@ -7,12 +7,10 @@
 #define SKYR_V1_UNICODE_RANGES_TRANSFORMS_U32_TRANSFORM_HPP
 
 #include <iterator>
-#include <optional>
 #include <type_traits>
 #include <tl/expected.hpp>
 #include <skyr/v1/unicode/core.hpp>
 #include <skyr/v1/unicode/errors.hpp>
-#include <skyr/v1/unicode/ranges/views/u8_view.hpp>
 #include <skyr/v1/unicode/ranges/sentinel.hpp>
 #include <skyr/v1/unicode/traits/range_iterator.hpp>
 

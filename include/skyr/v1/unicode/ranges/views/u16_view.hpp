@@ -8,13 +8,11 @@
 
 #include <cassert>
 #include <iterator>
-#include <optional>
 #include <type_traits>
 #include <tl/expected.hpp>
 #include <skyr/v1/unicode/core.hpp>
 #include <skyr/v1/unicode/errors.hpp>
-#include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/v1/unicode/ranges/views/u8_view.hpp>
+#include <skyr/v1/unicode/code_points/u16.hpp>
 #include <skyr/v1/unicode/ranges/sentinel.hpp>
 #include <skyr/v1/unicode/traits/range_iterator.hpp>
 #include <skyr/v1/unicode/traits/range_value.hpp>
@@ -75,20 +73,20 @@ class u16_range_iterator {
   [[nodiscard]] constexpr auto operator * () const noexcept -> const_reference {
     assert(it_ != last_);
 
-    auto value = mask16(*it_);
+    auto value = mask16(static_cast<std::uint16_t>(*it_));
     if (is_lead_surrogate(value)) {
       auto next_it = it_;
       ++next_it;
-      auto trail_value = mask16(*next_it);
+      auto trail_value = mask16(static_cast<std::uint16_t>(*next_it));
       if (!is_trail_surrogate(trail_value)) {
         return tl::make_unexpected(unicode_errc::invalid_code_point);
       }
 
-      return u16_code_point(value, trail_value);
+      return u16_code_point(static_cast<char16_t>(value), static_cast<char16_t>(trail_value));
     } else if (is_trail_surrogate(value)) {
       return tl::make_unexpected(unicode_errc::invalid_code_point);
     } else {
-      return u16_code_point(value);
+      return u16_code_point(static_cast<char16_t>(value));
     }
   }
 
@@ -110,7 +108,7 @@ class u16_range_iterator {
 
   constexpr void increment() {
     assert(it_ != last_);
-    auto step = is_lead_surrogate(mask16(*it_)) ? 2u : 1u;
+    auto step = is_lead_surrogate(static_cast<char16_t>(mask16(static_cast<std::uint16_t>(*it_)))) ? 2u : 1u;
     std::advance(it_, step);
   }
 

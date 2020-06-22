@@ -7,6 +7,7 @@
 #define SKYR_V1_UNICODE_CORE_HPP
 
 #include <string>
+#include <type_traits>
 #include <tl/expected.hpp>
 #include <skyr/v1/unicode/constants.hpp>
 #include <skyr/v1/unicode/errors.hpp>
@@ -17,15 +18,19 @@ namespace unicode {
 ///
 /// \param octet
 /// \return
-constexpr inline auto mask8(uint8_t octet) {
-  return static_cast<uint8_t>(0xffu & octet);
+template <class uintT>
+constexpr inline auto mask8(uintT value) {
+  static_assert(std::is_unsigned_v<uintT>, "unsigned integral types only");
+  return static_cast<uintT>(0xffu & value);
 }
 
 ///
 /// \param value
 /// \return
-constexpr inline auto mask16(char16_t value) {
-  return static_cast<char16_t>(u'\xffff' & value);
+template <class uintT>
+constexpr inline auto mask16(uintT value) {
+  static_assert(std::is_unsigned_v<uintT>, "unsigned integral types only");
+  return static_cast<uintT>(0xffffu & value);
 }
 
 ///
@@ -151,7 +156,7 @@ namespace details {
 /// \return
 template<typename OctetIterator>
 inline auto mask_byte(sequence_state<OctetIterator> state) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
-  return update_value(state, mask8(*state.it));
+  return update_value(state, static_cast<char32_t>(mask8(static_cast<std::uint8_t>(*state.it))));
 }
 
 /// Converts a two byte code octet sequence to a code point value.
@@ -188,7 +193,7 @@ auto from_three_byte_sequence(OctetIterator first) -> tl::expected<sequence_stat
   constexpr static auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
         state,
-        ((state.value << 12) & 0xffff) + ((mask8(*state.it) << 6) & 0xfff));
+        ((state.value << 12) & 0xffff) + ((mask8(static_cast<std::uint8_t>(*state.it)) << 6) & 0xfff));
   };
 
   constexpr static auto set_code_point = [](auto state) -> result_type {
@@ -217,13 +222,13 @@ auto from_four_byte_sequence(OctetIterator first) -> tl::expected<sequence_state
   constexpr static auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
         state,
-        ((state.value << 18) & 0x1fffff) + ((mask8(*state.it) << 12) & 0x3ffff));
+        ((state.value << 18) & 0x1fffff) + ((mask8(static_cast<std::uint8_t>(*state.it)) << 12) & 0x3ffff));
   };
 
   constexpr static auto update_code_point_from_third_byte = [](auto state) -> result_type {
     return update_value(
         state,
-        state.value + ((mask8(*state.it) << 6) & 0xfff));
+        state.value + ((mask8(static_cast<std::uint8_t>(*state.it)) << 6) & 0xfff));
   };
 
   constexpr static auto set_code_point = [](auto state) -> result_type {

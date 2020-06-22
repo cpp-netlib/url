@@ -7,7 +7,8 @@
 #define SKYR_V1_UNICODE_RANGES_VIEWS_UNCHECKED_U8_VIEW_HPP
 
 #include <iterator>
-#include <optional>
+#include <algorithm>
+#include <cassert>
 #include <tl/expected.hpp>
 #include <skyr/v1/unicode/code_point.hpp>
 #include <skyr/v1/unicode/core.hpp>

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cassert>
 #include <skyr/v1/domain/errors.hpp>
+#include <skyr/v1/unicode/ranges/views//u8_view.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
 #include <v1/domain/punycode.hpp>

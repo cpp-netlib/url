@@ -7,11 +7,11 @@
 #define SKYR_V1_UNICODE_RANGES_TRANSFORMS_U8_TRANSFORM_HPP
 
 #include <iterator>
-#include <optional>
 #include <tl/expected.hpp>
 #include <skyr/v1/unicode/constants.hpp>
 #include <skyr/v1/unicode/errors.hpp>
-#include <skyr/v1/unicode/ranges/views/u16_view.hpp>
+#include <skyr/v1/unicode/code_point.hpp>
+#include <skyr/v1/unicode/ranges/sentinel.hpp>
 #include <skyr/v1/unicode/traits/range_iterator.hpp>
 
 namespace skyr {
