@@ -43,9 +43,6 @@ class u32_transform_iterator {
   using size_type = std::size_t;
 
   ///
-  constexpr u32_transform_iterator() = default;
-
-  ///
   /// \param it
   explicit constexpr u32_transform_iterator(CodePointIterator it)
       : it_(it) {}
@@ -72,18 +69,12 @@ class u32_transform_iterator {
     return (*it_).and_then(to_u32);
   }
 
-  ///
-  /// \param other
-  /// \return
-  constexpr auto operator == (const u32_transform_iterator &other) const noexcept {
-    return it_ == other.it_;
+  constexpr auto operator == (sentinel sentinel) const noexcept {
+    return (it_ == sentinel);
   }
 
-  ///
-  /// \param other
-  /// \return
-  constexpr auto operator != (const u32_transform_iterator &other) const noexcept {
-    return !(*this == other);
+  constexpr auto operator != (sentinel sentinel) const noexcept {
+    return !(*this == sentinel);
   }
 
  private:
@@ -115,9 +106,6 @@ class transform_u32_range {
   using size_type = std::size_t;
 
   ///
-  constexpr transform_u32_range() = default;
-
-  ///
   /// \param range
   explicit constexpr transform_u32_range(CodePointRange &&range)
       : range_(std::forward<CodePointRange>(range)) {}
@@ -125,13 +113,13 @@ class transform_u32_range {
   ///
   /// \return
   [[nodiscard]] constexpr auto begin() const noexcept {
-    return const_iterator(range_.begin());
+    return const_iterator(std::cbegin(range_));
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto end() const noexcept {
-    return const_iterator(range_.end());
+    return sentinel{};
   }
 
   ///
@@ -150,12 +138,6 @@ class transform_u32_range {
   /// \return
   [[nodiscard]] constexpr auto empty() const noexcept {
     return range_.empty();
-  }
-
-  ///
-  /// \return
-  [[nodiscard]] constexpr auto size() const noexcept -> size_type {
-    return range_.size();
   }
 
  private:
@@ -202,13 +184,16 @@ static constexpr transform_u32_range_fn to_u32;
 template <class Output, class CodePointRange>
 auto as(transform_u32_range<CodePointRange> &&range) -> tl::expected<Output, unicode_errc> {
   auto result = Output{};
-  for (auto &&code_point : range) {
+
+  for (auto it = std::cbegin(range); it != std::cend(range); ++it) {
+    auto code_point = *it;
     auto u32_code_point = u32_value(code_point);
     if (!u32_code_point) {
       return tl::make_unexpected(u32_code_point.error());
     }
     result.push_back(u32_code_point.value());
   }
+
   return result;
 }
 }  // namespace unicode

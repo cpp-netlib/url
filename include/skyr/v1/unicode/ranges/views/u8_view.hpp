@@ -25,13 +25,10 @@ namespace unicode {
 /// \brief
 ///
 /// \tparam OctetIterator
-template <
-    class OctetIterator,
-    class Sentinel=OctetIterator
-    >
+template <class OctetIterator>
 class u8_range_iterator {
 
-  using iterator_type = unchecked_u8_range_iterator<OctetIterator, Sentinel>;
+  using iterator_type = unchecked_u8_range_iterator<OctetIterator>;
 
  public:
 
@@ -52,17 +49,14 @@ class u8_range_iterator {
   /// \c std::size_t
   using size_type = std::size_t;
 
-  /// \brief Constructs an end range iterator
-  constexpr u8_range_iterator() = default;
-
   /// \brief Constructs a \c u8_range_iterator from a range of octets
   ///
   /// \param first
   /// \param last
   constexpr u8_range_iterator(
       OctetIterator first,
-      Sentinel sentinel)
-      : it_(iterator_type(first, sentinel)) {}
+      OctetIterator last)
+      : it_(iterator_type(first, last)) {}
 
   /// \brief Post-increment operator
   ///
@@ -70,9 +64,8 @@ class u8_range_iterator {
   ///
   /// \return The previous iterator value
   auto operator ++ (int) noexcept -> u8_range_iterator {
-    assert(it_);
     auto result = *this;
-    increment();
+    ++it_;
     return result;
   }
 
@@ -82,8 +75,7 @@ class u8_range_iterator {
   ///
   /// \return \c *this
   auto operator ++ () noexcept -> u8_range_iterator & {
-    assert(it_);
-    increment();
+    ++it_;
     return *this;
   }
 
@@ -93,24 +85,7 @@ class u8_range_iterator {
   ///
   /// \return A proxy to a UTF-8 encoded code point
   constexpr auto operator * () const noexcept -> const_reference {
-    assert(it_);
-    return checked_u8_code_point(*it_.value());
-  }
-
-  /// \brief Equality operator
-  ///
-  /// \param other Another iterator
-  /// \return \c true if the iterators are the same, \c false otherwise
-  constexpr auto operator == (const u8_range_iterator &other) const noexcept {
-    return it_ == other.it_;
-  }
-
-  /// \brief Inequality operator
-  ///
-  /// \param other Another iterator
-  /// \return `!(*this == other)`
-  constexpr auto operator != (const u8_range_iterator &other) const noexcept {
-    return !(*this == other);
+    return checked_u8_code_point(*it_);
   }
 
   ///
@@ -127,21 +102,9 @@ class u8_range_iterator {
     return !(*this == sentinel);
   }
 
-
  private:
 
-  void increment() {
-    if (**this) {
-      ++it_.value();
-      if (it_ == sentinel()) {
-        it_ = std::nullopt;
-      }
-    } else {
-      it_ = std::nullopt;
-    }
-  }
-
-  std::optional<iterator_type> it_;
+  iterator_type it_;
 
 };
 
@@ -169,25 +132,20 @@ class view_u8_range {
   using size_type = std::size_t;
 
   ///
-  constexpr view_u8_range() = default;
-
-  ///
   /// \param range
   explicit constexpr view_u8_range(const OctetRange &range)
-      : impl_(
-      impl(std::begin(range),
-           std::end(range))) {}
+      : it_(std::cbegin(range), std::cend(range)) {}
 
   ///
   /// \return
   [[nodiscard]] constexpr auto begin() const noexcept {
-    return impl_? impl_.value().first : iterator_type();
+    return it_;
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto end() const noexcept {
-    return iterator_type();
+    return sentinel{};
   }
 
   ///
@@ -208,24 +166,9 @@ class view_u8_range {
     return begin() == end();
   }
 
-  ///
-  /// \return
-  [[nodiscard]] constexpr auto size() const noexcept {
-    return static_cast<size_type>(std::distance(begin(), end()));
-  }
-
  private:
 
-  struct impl {
-    constexpr impl(
-        octet_iterator_type first,
-        octet_iterator_type last)
-        : first(first, last)
-        , last(last, last) {}
-    iterator_type first, last;
-  };
-
-  std::optional<impl> impl_;
+  iterator_type it_;
 
 };
 

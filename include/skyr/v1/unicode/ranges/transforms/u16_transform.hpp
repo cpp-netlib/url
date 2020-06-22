@@ -45,15 +45,12 @@ class u16_transform_iterator {
   /// \c std::size_t
   using size_type = std::size_t;
 
-  /// Default constructor
-  u16_transform_iterator() = default;
   ///
   /// \param first
   /// \param last
   explicit constexpr u16_transform_iterator(
-      CodePointIterator first,
-      CodePointIterator last)
-      : it_(first) {}
+      CodePointIterator it)
+      : it_(it) {}
 
   /// Pre-increment operator
   /// \return A reference to this iterator
@@ -78,18 +75,12 @@ class u16_transform_iterator {
     return code_point.map(to_u16);
   }
 
-  /// Equality operator
-  /// \param other The other iterator
-  /// \return \c true if the iterators are the same, \c false otherwise
-  auto operator == (const u16_transform_iterator &other) const noexcept {
-    return it_ == other.it_;
+  constexpr auto operator == (sentinel sentinel) const noexcept {
+    return it_ == sentinel;
   }
 
-  /// Inequality operator
-  /// \param other The other iterator
-  /// \return \c true if the iterators are not the same, \c false otherwise
-  auto operator != (const u16_transform_iterator &other) const noexcept {
-    return !(*this == other);
+  constexpr auto operator != (sentinel sentinel) const noexcept {
+    return !(*this == sentinel);
   }
 
  private:
@@ -122,9 +113,6 @@ class transform_u16_range {
   ///
   using size_type = std::size_t;
 
-  /// Default constructor
-  constexpr transform_u16_range() = default;
-
   ///
   /// \param range
   explicit constexpr transform_u16_range(
@@ -134,13 +122,13 @@ class transform_u16_range {
   /// Returns an iterator to the beginning
   /// \return \c const_iterator
   [[nodiscard]] auto begin() const noexcept {
-    return iterator_type(std::begin(range_), std::end(range_));
+    return const_iterator(std::begin(range_));
   }
 
   /// Returns an iterator to the end
   /// \return \c const_iterator
   [[nodiscard]] auto end() const noexcept {
-    return iterator_type();
+    return sentinel{};
   }
 
   /// Returns an iterator to the beginning
@@ -160,12 +148,6 @@ class transform_u16_range {
   [[nodiscard]] constexpr auto empty() const noexcept {
     return range_.empty();
   }
-//
-//  ///
-//  /// \return
-//  [[nodiscard]] constexpr size_type size() const noexcept {
-//    return range_.size();
-//  }
 
  private:
 
@@ -211,7 +193,9 @@ static constexpr transform_u16_range_fn to_u16;
 template <class Output, class CodePointRange>
 auto as(transform_u16_range<CodePointRange> &&range) -> tl::expected<Output, unicode_errc> {
   auto result = Output{};
-  for (auto &&code_point : range) {
+
+  for (auto it = std::cbegin(range); it != std::cend(range); ++it) {
+    auto code_point = *it;
     if (!code_point) {
       return tl::make_unexpected(code_point.error());
     }

@@ -46,8 +46,6 @@ class u16_range_iterator {
   ///
   using size_type = std::size_t;
 
-  /// \brief Constructor
-  u16_range_iterator() = default;
   ///
   /// \param first
   /// \param last
@@ -75,10 +73,11 @@ class u16_range_iterator {
   ///
   /// \return
   auto operator * () const noexcept -> const_reference {
-    assert(it_);
-    auto value = mask16(*it_.value());
+    assert(it_ != last_);
+
+    auto value = mask16(*it_);
     if (is_lead_surrogate(value)) {
-      auto next_it = it_.value();
+      auto next_it = it_;
       ++next_it;
       auto trail_value = mask16(*next_it);
       if (!is_trail_surrogate(trail_value)) {
@@ -94,24 +93,10 @@ class u16_range_iterator {
   }
 
   ///
-  /// \param other
-  /// \return
-  auto operator == (const u16_range_iterator &other) const noexcept {
-    return it_ == other.it_;
-  }
-
-  ///
-  /// \param other
-  /// \return
-  auto operator != (const u16_range_iterator &other) const noexcept {
-    return !(*this == other);
-  }
-
-  ///
   /// \param sentinel
   /// \return
   [[maybe_unused]] auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
-    return !it_;
+    return it_ == last_;
   }
 
   ///
@@ -124,15 +109,12 @@ class u16_range_iterator {
  private:
 
   void increment() {
-    assert(it_);
-    auto value = mask16(*it_.value());
-    std::advance(it_.value(), is_lead_surrogate(value)? 2 : 1);
-    if (it_ == last_) {
-      it_ = std::nullopt;
-    }
+    assert(it_ != last_);
+    auto step = is_lead_surrogate(mask16(*it_)) ? 2u : 1u;
+    std::advance(it_, step);
   }
 
-  std::optional<U16Iterator> it_, last_;
+  U16Iterator it_, last_;
 
 };
 
@@ -159,9 +141,6 @@ class view_u16_range {
   using size_type = std::size_t;
 
   ///
-  constexpr view_u16_range() = default;
-
-  ///
   /// \param range
   explicit constexpr view_u16_range(U16Range range)
       : range_(std::move(range)) {}
@@ -169,13 +148,13 @@ class view_u16_range {
   ///
   /// \return
   [[nodiscard]] constexpr auto begin() const noexcept {
-    return iterator_type(std::begin(range_), std::end(range_));
+    return iterator_type(std::cbegin(range_), std::cend(range_));
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto end() const noexcept {
-    return iterator_type();
+    return sentinel{};
   }
 
   ///
@@ -194,12 +173,6 @@ class view_u16_range {
   /// \return
   [[nodiscard]] constexpr auto empty() const noexcept {
     return begin() == end();
-  }
-
-  ///
-  /// \return
-  [[nodiscard]] constexpr auto size() const noexcept {
-    return static_cast<size_type>(end() - begin());
   }
 
  private:

@@ -20,10 +20,7 @@ inline namespace v1 {
 namespace unicode {
 ///
 /// \tparam OctetIterator
-template <
-    class OctetIterator,
-    class Sentinel=OctetIterator
-    >
+template <class OctetIterator>
 class unchecked_u8_range_iterator {
  public:
 
@@ -45,17 +42,15 @@ class unchecked_u8_range_iterator {
   using size_type = std::size_t;
 
   ///
-  constexpr unchecked_u8_range_iterator() = default;
-  ///
   /// \param it
   /// \param last
-  constexpr unchecked_u8_range_iterator(OctetIterator it, Sentinel sentinel)
-      : it_(it), sentinel_(sentinel) {}
+  constexpr unchecked_u8_range_iterator(OctetIterator it, OctetIterator last)
+      : it_(it), last_(last) {}
 
   ///
   /// \return
   auto operator ++ (int) noexcept -> unchecked_u8_range_iterator {
-    assert(it_);
+    assert(it_ != last_);
     auto result = *this;
     increment();
     return result;
@@ -64,7 +59,7 @@ class unchecked_u8_range_iterator {
   ///
   /// \return
   auto operator ++ () noexcept -> unchecked_u8_range_iterator & {
-    assert(it_);
+    assert(it_ != last_);
     increment();
     return *this;
   }
@@ -72,31 +67,17 @@ class unchecked_u8_range_iterator {
   ///
   /// \return
   constexpr auto operator * () const noexcept -> const_reference {
-    assert(it_);
-    auto last = it_.value();
-    std::advance(last, sequence_length(*it_.value()));
-    return u8_code_point_view<OctetIterator>(it_.value(), last);
-  }
-
-  ///
-  /// \param other
-  /// \return
-  constexpr auto operator == (const unchecked_u8_range_iterator &other) const noexcept {
-    return it_ == other.it_;
-  }
-
-  ///
-  /// \param other
-  /// \return
-  constexpr auto operator != (const unchecked_u8_range_iterator &other) const noexcept {
-    return !(*this == other);
+    assert(it_ != last_);
+    auto last = it_;
+    std::advance(last, sequence_length(*it_));
+    return u8_code_point_view<OctetIterator>(it_, last);
   }
 
   ///
   /// \param sentinel
   /// \return
   [[maybe_unused]] constexpr auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
-    return !it_;
+    return it_ == last_;
   }
 
   ///
@@ -109,14 +90,10 @@ class unchecked_u8_range_iterator {
  private:
 
   void increment() {
-    std::advance(it_.value(), sequence_length(*it_.value()));
-    if (it_ == sentinel_) {
-      it_ = std::nullopt;
-    }
+    std::advance(it_, sequence_length(*it_));
   }
 
-  std::optional<OctetIterator> it_;
-  Sentinel sentinel_;
+  OctetIterator it_, last_;
 
 };
 
@@ -143,27 +120,22 @@ class view_unchecked_u8_range {
   ///
   using size_type = std::size_t;
 
-  /// Default constructor
-  constexpr view_unchecked_u8_range() = default;
-
   ///
   /// \param range
   explicit constexpr view_unchecked_u8_range(
       const OctetRange &range)
-      : impl_(
-      impl(std::begin(range),
-           std::end(range))) {}
+      : it_(std::begin(range), std::end(range)) {}
 
   ///
   /// \return
   [[nodiscard]] constexpr auto begin() const noexcept {
-    return impl_? impl_.value().first : iterator_type();
+    return it_;
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto end() const noexcept {
-    return impl_? impl_.value().last : iterator_type();
+    return sentinel{};
   }
 
   ///
@@ -184,24 +156,9 @@ class view_unchecked_u8_range {
     return begin() == end();
   }
 
-  ///
-  /// \return
-  [[nodiscard]] auto size() const noexcept {
-    return static_cast<size_type>(std::distance(begin(), end()));
-  }
-
  private:
 
-  struct impl {
-    constexpr impl(
-        octet_iterator_type first,
-        octet_iterator_type last)
-        : first(first)
-        , last(last) {}
-    iterator_type first, last;
-  };
-
-  std::optional<impl> impl_;
+  iterator_type it_;
 
 };
 
