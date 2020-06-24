@@ -50,7 +50,7 @@ class static_vector {
   using iterator = typename impl_type::iterator;
 
   /// Constructor
-  constexpr static_vector() noexcept(std::is_trivially_constructible_v<T>) = default;
+  constexpr static_vector() = default;
 
   /// Gets the first const element in the vector
   /// \return a const T &

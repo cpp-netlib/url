@@ -83,6 +83,7 @@ class idna_code_point_map_iterator {
         case idna::idna_status::valid:
           return code_point;
       }
+      return code_point;
     };
 
     auto code_point = unicode::u32_value(*it_);

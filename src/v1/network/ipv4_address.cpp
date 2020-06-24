@@ -69,7 +69,7 @@ auto parse_ipv4_address(
     return std::string_view(std::addressof(*std::begin(part)), ranges::distance(part));
   };
 
-  static_vector<std::string_view, 8> parts;
+  auto parts = static_vector<std::string_view, 8>{};
   for (auto &&part : input | ranges::views::split('.') | ranges::views::transform(to_string_view)) {
     if (parts.size() == parts.max_size()) {
       *validation_error |= true;
