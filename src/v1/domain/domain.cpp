@@ -19,13 +19,6 @@
 #include "idna_code_point_map_iterator.hpp"
 #include "punycode.hpp"
 
-//#if !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
-//#define SKYR_DOMAIN_MAX_DOMAIN_LENGTH 253
-//#endif // !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
-
-//#if !defined(SKYR_DOMAIN_MAX_LABEL_LENGTH)
-//#define SKYR_DOMAIN_MAX_LABEL_LENGTH 63
-//#endif // !defined(SKYR_LABEL_MAX_DOMAIN_LENGTH)
 
 /// How many labels can be in a domain?
 /// https://www.farsightsecurity.com/blog/txt-record/rrlabel-20171013/
@@ -123,7 +116,6 @@ auto domain_to_ascii(
     return std::u32string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
-  /// TODO: try this without allocating strings (e.g. for large strings that don't use SBO)
   auto labels = static_vector<std::u32string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
   for (auto &&label : mapped_domain_name | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
     if (labels.size() == labels.max_size()) {
@@ -174,15 +166,18 @@ auto domain_to_ascii(
     labels.emplace_back();
   }
 
+  constexpr auto max_domain_length = 253;
+  constexpr auto max_label_length = 63;
+
   if (verify_dns_length) {
     auto length = mapped_domain_name.size();
-    if ((length < 1) || (length > 253)) {
+    if ((length < 1) || (length > max_domain_length)) {
       return tl::make_unexpected(domain_errc::invalid_length);
     }
 
     for (const auto &label : labels) {
       auto label_length = label.size();
-      if ((label_length < 1) || (label_length > 63)) {
+      if ((label_length < 1) || (label_length > max_label_length)) {
         return tl::make_unexpected(domain_errc::invalid_length);
       }
     }
