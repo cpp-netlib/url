@@ -18,7 +18,8 @@ int main() {
       "[2001:0db8:0:0::1428:57ab]"sv,
       "localhost"sv,
       "a.b.c.d.e.f.g.h.i.j.k.l.example.com"sv,
-      "sub.llanfairpwllgwyngyllgogerychwndrwbwllllantysiliogogogoch.com"sv
+      "sub.llanfairpwllgwyngyllgogerychwndrwbwllllantysiliogogogoch.com"sv,
+      "i am a terrible host name and n\0t in any way.valid.but. i am useful to validate @llocation"sv
   };
 
   for (auto &&host_string : host_strings) {
