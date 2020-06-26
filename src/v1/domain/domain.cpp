@@ -13,6 +13,7 @@
 #include <skyr/v1/containers/static_vector.hpp>
 #include <skyr/v1/domain/domain.hpp>
 #include <skyr/v1/domain/errors.hpp>
+#include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/v1/unicode/ranges/views/u8_view.hpp>
 #include "idna.hpp"
@@ -123,13 +124,14 @@ auto domain_to_ascii(
     }
 
     if ((label.size() >= 4) && (label.substr(0, 4) == U"xn--")) {
-      auto decoded = punycode_decode(label.substr(4));
-      if (!decoded) {
-        return tl::make_unexpected(decoded.error());
+      auto decoded = std::u32string{};
+      auto result = punycode_decode(label.substr(4), &decoded);
+      if (!result) {
+        return tl::make_unexpected(result.error());
       }
 
       auto validated =
-          validate_label(decoded.value(), use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, false);
+          validate_label(decoded, use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, false);
       if (!validated) {
         return tl::make_unexpected(validated.error());
       }
@@ -150,12 +152,13 @@ auto domain_to_ascii(
 
     labels.emplace_back();
     if (!is_ascii(label)) {
-      auto encoded = punycode_encode(label);
-      if (!encoded) {
-        return tl::make_unexpected(encoded.error());
+      auto encoded = std::string{};
+      auto result = punycode_encode(label, &encoded);
+      if (!result) {
+        return tl::make_unexpected(result.error());
       }
       ranges::copy(U"xn--"sv, ranges::back_inserter(labels.back()));
-      ranges::copy(encoded.value(), ranges::back_inserter(labels.back()));
+      ranges::copy(encoded, ranges::back_inserter(labels.back()));
     }
     else {
       ranges::copy(label, ranges::back_inserter(labels.back()));
@@ -217,11 +220,17 @@ auto domain_to_u8(std::string_view domain_name, [[maybe_unused]] bool *validatio
     labels.emplace_back();
     if (label.substr(0, 4) == "xn--") {
       label.remove_prefix(4);
-      auto decoded = punycode_decode(label);
-      if (!decoded) {
-        return tl::make_unexpected(decoded.error());
+      auto decoded = std::u32string{};
+      auto result = punycode_decode(label, &decoded);
+      if (!result) {
+        return tl::make_unexpected(result.error());
       }
-      ranges::copy(decoded.value(), ranges::back_inserter(labels.back()));
+      auto u8 = decoded | unicode::transforms::to_u8;
+      auto first = std::cbegin(u8);
+      auto last = std::cend(u8);
+      for (auto it = first; it != last; ++it) {
+        labels.back().push_back((*it).value());
+      }
     }
     else {
       ranges::copy(label, ranges::back_inserter(labels.back()));

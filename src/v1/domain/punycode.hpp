@@ -82,17 +82,17 @@ constexpr inline auto adapt(uint32_t delta, uint32_t numpoints, bool firsttime) 
 /// Performs Punycode encoding based on a reference implementation
 /// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
 ///
-/// \param input A UTF-8 encoded domain to be encoded
-/// \returns The encoded ASCII domain, or an error
+/// \param input A UTF-32 encoded domain
+/// \param output An ascii string on output
+/// \returns `void` or an error
 inline auto punycode_encode(
-    std::u32string_view input) -> tl::expected<std::string, domain_errc> {
+    std::u32string_view input,
+    std::string *output) -> tl::expected<void, domain_errc> {
   using namespace punycode::constants;
 
   if (input.empty()) {
     return tl::make_unexpected(domain_errc::empty_string);
   }
-
-  auto result = std::string{};
 
   auto n = initial_n;
   auto delta = 0x00u;
@@ -100,15 +100,15 @@ inline auto punycode_encode(
 
   for (auto c : input) {
     if (static_cast<uint32_t>(c) < 0x80u) {
-      result += static_cast<char>(c);
+      *output += static_cast<char>(c);
     }
   }
 
-  auto h = static_cast<uint32_t>(result.size());
-  auto b = static_cast<uint32_t>(result.size());
+  auto h = static_cast<uint32_t>(output->size());
+  auto b = static_cast<uint32_t>(output->size());
 
   if (b > 0x00u) {
-    result += static_cast<char>(delimiter);
+    *output += static_cast<char>(delimiter);
   }
 
   while (h < input.size()) {
@@ -140,12 +140,12 @@ inline auto punycode_encode(
           if (q < t) {
             break;
           }
-          result += static_cast<char>(punycode::encode_digit(t + (q - t) % (base - t), 0));
+          *output += static_cast<char>(punycode::encode_digit(t + (q - t) % (base - t), 0));
           q = (q - t) / (base - t);
           k += base;
         }
 
-        result += static_cast<char>(punycode::encode_digit(q, 0));
+        *output += static_cast<char>(punycode::encode_digit(q, 0));
         bias = punycode::adapt(delta, (h + 1), (h == b));
         delta = 0;
         ++h;
@@ -155,25 +155,7 @@ inline auto punycode_encode(
     ++delta, ++n;
   }
 
-  return result;
-}
-
-/// Performs Punycode encoding based on a reference implementation
-/// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
-///
-/// \param input A UTF-8 encoded domain to be encoded
-/// \returns The encoded ASCII domain, or an error
-inline auto punycode_encode(
-    std::string_view input) -> tl::expected<std::string, domain_errc> {
-  if (input.empty()) {
-    return tl::make_unexpected(domain_errc::empty_string);
-  }
-
-  auto utf32 = unicode::as<std::u32string>(unicode::views::as_u8(input) | unicode::transforms::to_u32);
-  if (!utf32) {
-    return tl::make_unexpected(domain_errc::bad_input);
-  }
-  return punycode_encode(utf32.value());
+  return {};
 }
 
 /// Performs Punycode decoding based on a reference implementation
@@ -181,16 +163,15 @@ inline auto punycode_encode(
 ///
 /// \param input An ASCII encoded domain to be decoded
 /// \returns The decoded UTF-8 domain, or an error
+template <class charT>
 inline auto punycode_decode(
-    std::string_view input) -> tl::expected<std::string, domain_errc> {
+    std::basic_string_view<charT> input,
+    std::u32string *output) -> tl::expected<void, domain_errc> {
   using namespace punycode::constants;
 
   if (input.empty()) {
     return tl::make_unexpected(domain_errc::empty_string);
   }
-
-  auto result = std::u32string();
-  result.reserve(256);
 
   auto n = initial_n;
   auto bias = initial_bias;
@@ -203,7 +184,7 @@ inline auto punycode_decode(
   }
 
   for (auto j = 0u; j < basic; ++j) {
-    result += input[j];
+    *output += input[j];
   }
 
   auto in = (basic > 0x0u) ? (basic + 0x01u) : 0x00u;
@@ -236,7 +217,7 @@ inline auto punycode_decode(
       k += base;
     }
 
-    auto out = static_cast<std::uint32_t>(result.size()) + 1U;
+    auto out = static_cast<std::uint32_t>(output->size()) + 1U;
     bias = punycode::adapt((i - oldi), out, (oldi == 0U));
 
     if ((i / out) > (std::numeric_limits<uint32_t>::max() - n)) {
@@ -245,32 +226,10 @@ inline auto punycode_decode(
     n += i / out;
     i %= out;
 
-    result.insert(i++, 1, static_cast<char32_t>(n));
+    output->insert(i++, 1, static_cast<char32_t>(n));
   }
 
-  auto u8_result = unicode::as<std::string>(result | unicode::transforms::to_u8);
-  if (!u8_result) {
-    return tl::make_unexpected(domain_errc::bad_input);
-  }
-  return u8_result.value();
-}
-
-/// Performs Punycode decoding based on a reference implementation
-/// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
-///
-/// \param input An ASCII encoded domain to be decoded
-/// \returns The decoded UTF-8 domain, or an error
-inline auto punycode_decode(
-    std::u32string_view input) -> tl::expected<std::u32string, domain_errc> {
-  if (input.empty()) {
-    return tl::make_unexpected(domain_errc::empty_string);
-  }
-
-  auto u8input = unicode::as<std::string>(input | unicode::transforms::to_u8).value();
-  return punycode_decode(std::string_view(u8input))
-      .and_then([] (auto &&output) -> tl::expected<std::u32string, domain_errc> {
-        return unicode::as<std::u32string>(unicode::views::as_u8(output) | unicode::transforms::to_u32).value();
-      });
+  return {};
 }
 }  // namespace v1
 }  // namespace skyr
