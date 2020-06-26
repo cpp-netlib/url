@@ -29,14 +29,14 @@
 namespace skyr {
 inline namespace v1 {
 namespace {
-template <class U32Range>
+template <class DomainName>
 auto map_code_points(
-    U32Range &&domain_name,
+    DomainName &&domain_name,
     bool use_std3_ascii_rules,
     bool transitional_processing,
     std::u32string *result)
     -> tl::expected<void, domain_errc> {
-  auto range = views::map_code_points(domain_name, use_std3_ascii_rules, transitional_processing);
+  auto range = idna::views::map_code_points(domain_name, use_std3_ascii_rules, transitional_processing);
   auto first = std::cbegin(range);
   auto last = std::cend(range);
   for (auto it = first; it != last; ++it) {

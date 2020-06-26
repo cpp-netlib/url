@@ -31,7 +31,6 @@ target_sources(skyr-url
         v1/domain/idna.cpp
         v1/domain/idna_code_point_map_iterator.hpp
         v1/domain/punycode.hpp
-        v1/domain/punycode.cpp
         v1/url/url.cpp
         v1/url/url_search_parameters.cpp
 

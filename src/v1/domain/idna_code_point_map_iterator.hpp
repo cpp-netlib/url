@@ -14,6 +14,10 @@
 
 namespace skyr {
 inline namespace v1 {
+namespace idna {
+/// An iterator adapter that converts a domain name.
+/// \tparam Iterator
+/// \tparam Sentinel
 template <
     class Iterator,
     class Sentinel=unicode::sentinel
@@ -30,6 +34,11 @@ class idna_code_point_map_iterator {
   using difference_type = typename Iterator::difference_type;
   using size_type = typename Iterator::size_type;
 
+  /// Constructor
+  /// \param first
+  /// \param last
+  /// \param use_std3_ascii_rules
+  /// \param transitional_processing
   explicit constexpr idna_code_point_map_iterator(
       Iterator first,
       Sentinel last,
@@ -40,17 +49,23 @@ class idna_code_point_map_iterator {
   , use_std3_ascii_rules_(use_std3_ascii_rules)
   , transitional_processing_(transitional_processing) {}
 
+  ///
+  /// \return
   constexpr auto operator ++ () noexcept -> idna_code_point_map_iterator & {
     increment();
     return *this;
   }
 
+  ///
+  /// \return
   constexpr auto operator ++ (int) noexcept -> idna_code_point_map_iterator {
     auto result = *this;
     increment();
     return result;
   }
 
+  ///
+  /// \return
   constexpr auto operator * () const noexcept -> const_reference {
     constexpr auto map_code_point = [] (char32_t code_point, bool use_std3_ascii_rules, bool transitional_processing)
         -> tl::expected<char32_t, domain_errc> {
@@ -95,11 +110,17 @@ class idna_code_point_map_iterator {
     }
   }
 
-  [[nodiscard]] constexpr bool operator == ([[maybe_unused]] unicode::sentinel sentinel) const noexcept {
+  ///
+  /// \param sentinel
+  /// \return
+  [[nodiscard]] constexpr auto operator == ([[maybe_unused]] unicode::sentinel sentinel) const noexcept {
     return it_ == last_;
   }
 
-  [[nodiscard]] constexpr bool operator != (unicode::sentinel sentinel) const noexcept {
+  ///
+  /// \param sentinel
+  /// \return
+  [[nodiscard]] constexpr auto operator != (unicode::sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
@@ -124,50 +145,71 @@ class idna_code_point_map_iterator {
 
 };
 
-template <class Range>
+/// A range adapter that maps code points in a domain name using IDNA
+/// \tparam DomainName
+template <class DomainName>
 class idna_code_point_map_range {
  public:
 
+  ///
+  /// \param domain_name
+  /// \param use_std3_ascii_rules
+  /// \param transitional_processing
   constexpr idna_code_point_map_range(
-    Range &&range,
-    bool use_std3_ascii_rules,
-    bool transitional_processing)
-  : range_(range)
+      DomainName &&domain_name,
+      bool use_std3_ascii_rules,
+      bool transitional_processing)
+  : domain_name_(domain_name)
   , use_std3_ascii_rules_(use_std3_ascii_rules)
   , transitional_processing_(transitional_processing) {}
 
+  ///
+  /// \return
   [[nodiscard]] constexpr auto cbegin() const noexcept {
-    return idna_code_point_map_iterator<unicode::traits::range_iterator_t<Range>>(
-        std::cbegin(range_), std::cend(range_), use_std3_ascii_rules_, transitional_processing_);
+    return idna_code_point_map_iterator<unicode::traits::range_iterator_t<DomainName>>(
+        std::cbegin(domain_name_), std::cend(domain_name_), use_std3_ascii_rules_, transitional_processing_);
   }
 
+  ///
+  /// \return
   [[nodiscard]] constexpr auto cend() const noexcept {
     return unicode::sentinel{};
   }
 
+  ///
+  /// \return
   [[nodiscard]] constexpr auto begin() const noexcept {
     return cbegin();
   }
 
+  ///
+  /// \return
   [[nodiscard]] constexpr auto end() const noexcept {
     return cend();
   }
 
  private:
-
-  Range range_;
+  DomainName domain_name_;
   bool use_std3_ascii_rules_;
   bool transitional_processing_;
 
 };
 
 namespace views {
-template <class Range>
-constexpr inline auto map_code_points(Range &&range, bool use_std3_ascii_rules, bool transitional_processing)
-    -> idna_code_point_map_range<Range> {
-  return {range, use_std3_ascii_rules, transitional_processing};
+///
+/// \tparam DomainName
+/// \param domain_name
+/// \param use_std3_ascii_rules
+/// \param transitional_processing
+/// \return A range adapter
+template <class DomainName>
+constexpr inline auto map_code_points(
+    DomainName &&domain_name, bool use_std3_ascii_rules, bool transitional_processing)
+    -> idna_code_point_map_range<DomainName> {
+  return {domain_name, use_std3_ascii_rules, transitional_processing};
 }
-}  //
+}  // namespaec views
+}  // namespace idna
 }  // namespace v1
 }  // namespace skyr
 
