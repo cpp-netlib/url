@@ -82,12 +82,14 @@ constexpr inline auto adapt(uint32_t delta, uint32_t numpoints, bool firsttime) 
 /// Performs Punycode encoding based on a reference implementation
 /// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
 ///
+/// \tparam AsciiString
 /// \param input A UTF-32 encoded domain
 /// \param output An ascii string on output
 /// \returns `void` or an error
+template <class AsciiString>
 inline auto punycode_encode(
     std::u32string_view input,
-    std::string *output) -> tl::expected<void, domain_errc> {
+    AsciiString *output) -> tl::expected<void, domain_errc> {
   using namespace punycode::constants;
 
   if (input.empty()) {
@@ -163,10 +165,10 @@ inline auto punycode_encode(
 ///
 /// \param input An ASCII encoded domain to be decoded
 /// \returns The decoded UTF-8 domain, or an error
-template <class charT>
+template <class charT, class U32String>
 inline auto punycode_decode(
     std::basic_string_view<charT> input,
-    std::u32string *output) -> tl::expected<void, domain_errc> {
+    U32String *output) -> tl::expected<void, domain_errc> {
   using namespace punycode::constants;
 
   if (input.empty()) {
