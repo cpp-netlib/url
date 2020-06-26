@@ -6,7 +6,7 @@
 #include <string>
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include "../../src/v1/domain/punycode.hpp"
+#include <skyr/v1/domain/punycode.hpp>
 
 
 TEST_CASE("encode_test", "[punycode]") {

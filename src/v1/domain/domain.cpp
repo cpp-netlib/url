@@ -4,22 +4,21 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <algorithm>
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/iterator.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/split.hpp>
 #include <range/v3/view/transform.hpp>
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/iterator.hpp>
 #include <skyr/v1/containers/static_vector.hpp>
 #include <skyr/v1/domain/domain.hpp>
 #include <skyr/v1/domain/errors.hpp>
-#include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
+#include <skyr/v1/domain/idna.hpp>
+#include <skyr/v1/domain/idna_code_point_map_iterator.hpp>
+#include <skyr/v1/domain/punycode.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
+#include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
 #include <skyr/v1/unicode/ranges/views/u8_view.hpp>
-#include "idna.hpp"
-#include "idna_code_point_map_iterator.hpp"
-#include "punycode.hpp"
-
 
 /// How many labels can be in a domain?
 /// https://www.farsightsecurity.com/blog/txt-record/rrlabel-20171013/

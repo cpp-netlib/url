@@ -8,9 +8,10 @@
 
 #include <iterator>
 #include <skyr/v1/domain/errors.hpp>
+#include <skyr/v1/domain/idna.hpp>
 #include <skyr/v1/unicode/code_point.hpp>
 #include <skyr/v1/unicode/ranges/sentinel.hpp>
-#include "idna.hpp"
+
 
 namespace skyr {
 inline namespace v1 {
