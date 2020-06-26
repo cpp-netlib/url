@@ -149,16 +149,28 @@ class static_vector {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+  [[nodiscard]] constexpr auto cbegin() const noexcept -> const_iterator {
     return impl_.begin();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+  [[nodiscard]] constexpr auto cend() const noexcept -> const_iterator {
     auto last = impl_.begin();
     std::advance(last, size_);
     return last;
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] constexpr auto begin() const noexcept -> const_iterator {
+    return cbegin();
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
+    return cend();
   }
 
 };

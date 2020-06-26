@@ -1,12 +1,12 @@
-// Copyright 2018-19 Glyn Matthews.
+// Copyright 2018-20 Glyn Matthews.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#include <skyr/v1/domain/idna.hpp>
 
-#include "../../src/v1/domain/idna.hpp"
 
 TEST_CASE("IDNA character values", "[idna]") {
   using param = std::pair<char32_t, skyr::idna::idna_status>;

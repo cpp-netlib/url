@@ -27,10 +27,7 @@ target_sources(skyr-url
         v1/network/ipv4_address.cpp
         v1/network/ipv6_address.cpp
         v1/domain/domain.cpp
-        v1/domain/idna.hpp
         v1/domain/idna.cpp
-        v1/domain/idna_code_point_map_iterator.hpp
-        v1/domain/punycode.hpp
         v1/url/url.cpp
         v1/url/url_search_parameters.cpp
 
@@ -52,6 +49,9 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/string/starts_with.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/containers/static_vector.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/errors.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/idna.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/idna_code_point_map_iterator.hpp
+        ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/punycode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/domain.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/platform/endianness.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/network/ipv4_address.hpp
