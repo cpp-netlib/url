@@ -19,13 +19,13 @@
 #include "idna_code_point_map_iterator.hpp"
 #include "punycode.hpp"
 
-#if !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
-#define SKYR_DOMAIN_MAX_DOMAIN_LENGTH 253
-#endif // !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
+//#if !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
+//#define SKYR_DOMAIN_MAX_DOMAIN_LENGTH 253
+//#endif // !defined(SKYR_DOMAIN_MAX_DOMAIN_LENGTH)
 
-#if !defined(SKYR_DOMAIN_MAX_LABEL_LENGTH)
-#define SKYR_DOMAIN_MAX_LABEL_LENGTH 63
-#endif // !defined(SKYR_LABEL_MAX_DOMAIN_LENGTH)
+//#if !defined(SKYR_DOMAIN_MAX_LABEL_LENGTH)
+//#define SKYR_DOMAIN_MAX_LABEL_LENGTH 63
+//#endif // !defined(SKYR_LABEL_MAX_DOMAIN_LENGTH)
 
 /// How many labels can be in a domain?
 /// https://www.farsightsecurity.com/blog/txt-record/rrlabel-20171013/
@@ -41,7 +41,7 @@ auto map_code_points(
     U32Range &&domain_name,
     bool use_std3_ascii_rules,
     bool transitional_processing,
-    static_vector<char32_t, SKYR_DOMAIN_MAX_DOMAIN_LENGTH> *result)
+    std::u32string *result)
     -> tl::expected<void, domain_errc> {
   auto range = views::map_code_points(domain_name, use_std3_ascii_rules, transitional_processing);
   auto first = std::cbegin(range);
@@ -50,7 +50,7 @@ auto map_code_points(
     if (!*it) {
       return tl::make_unexpected((*it).error());
     }
-    result->emplace_back((*it).value());
+    result->push_back((*it).value());
     if (result->size() == result->max_size()) {
       return tl::make_unexpected(domain_errc::invalid_length);
     }
@@ -113,7 +113,7 @@ auto domain_to_ascii(
   using namespace std::string_view_literals;
 
   auto u32domain_name = unicode::views::as_u8(domain_name) | unicode::transforms::to_u32;
-  auto mapped_domain_name = static_vector<char32_t, SKYR_DOMAIN_MAX_DOMAIN_LENGTH>{};
+  auto mapped_domain_name = std::u32string{};
   auto result = map_code_points(u32domain_name, use_std3_ascii_rules, transitional_processing, &mapped_domain_name);
   if (!result) {
     return tl::make_unexpected(result.error());
@@ -124,7 +124,7 @@ auto domain_to_ascii(
   };
 
   /// TODO: try this without allocating strings (e.g. for large strings that don't use SBO)
-  auto labels = static_vector<static_vector<char32_t, SKYR_DOMAIN_MAX_LABEL_LENGTH>, SKYR_DOMAIN_MAX_NUM_LABELS>{};
+  auto labels = static_vector<std::u32string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
   for (auto &&label : mapped_domain_name | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
     if (labels.size() == labels.max_size()) {
       return tl::make_unexpected(domain_errc::too_many_labels);
@@ -213,7 +213,7 @@ auto domain_to_u8(std::string_view domain_name, [[maybe_unused]] bool *validatio
     return std::string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
-  auto labels = static_vector<static_vector<char, SKYR_DOMAIN_MAX_LABEL_LENGTH>, SKYR_DOMAIN_MAX_NUM_LABELS>{};
+  auto labels = static_vector<std::string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
   for (auto &&label : domain_name | ranges::views::split('.') | ranges::views::transform(to_string_view)) {
     if (labels.size() == labels.max_size()) {
       return tl::make_unexpected(domain_errc::too_many_labels);
