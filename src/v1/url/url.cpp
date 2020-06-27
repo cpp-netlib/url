@@ -179,7 +179,11 @@ auto url::domain() const -> std::optional<std::string> {
 
 auto url::u8domain() const -> std::optional<std::string> {
   auto domain = this->domain();
-  return domain? std::make_optional(domain_to_u8(domain.value()).value()) : std::nullopt;
+  if (domain) {
+    auto u8_domain = std::string{};
+    return domain_to_u8(domain.value(), &u8_domain) ? std::make_optional(u8_domain) : std::nullopt;
+  }
+  return domain;
 }
 
 auto url::set_port(string_view port) -> std::error_code {

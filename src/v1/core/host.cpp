@@ -87,26 +87,25 @@ auto parse_host(
     domain.push_back((*it).value());
   }
 
-  auto ascii_domain = domain_to_ascii(std::string_view(domain.data(), domain.size()));
-  if (!ascii_domain) {
+  auto ascii_domain = std::string{};
+  if (!domain_to_ascii(std::string_view(domain.data(), domain.size()), &ascii_domain)) {
     return tl::make_unexpected(url_parse_errc::domain_error);
   }
 
-  auto it = std::find_if(
-      begin(ascii_domain.value()), end(ascii_domain.value()), is_forbidden_host_point);
-  if (it != end(ascii_domain.value())) {
+  auto it = std::find_if(std::cbegin(ascii_domain), std::cend(ascii_domain), is_forbidden_host_point);
+  if (it != std::cend(ascii_domain)) {
     *validation_error |= true;
     return tl::make_unexpected(url_parse_errc::domain_error);
   }
 
   bool ipv4_validation_error = false;
-  auto host = parse_ipv4_address(ascii_domain.value(), &ipv4_validation_error);
+  auto host = parse_ipv4_address(ascii_domain, &ipv4_validation_error);
   if (!host) {
     if (host.error() == ipv4_address_errc::overflow) {
       return tl::make_unexpected(url_parse_errc::invalid_ipv4_address);
     }
     else {
-      return skyr::v1::host{skyr::v1::domain{ascii_domain.value()}};
+      return skyr::v1::host{skyr::v1::domain{ascii_domain}};
     }
   }
   *validation_error = ipv4_validation_error;

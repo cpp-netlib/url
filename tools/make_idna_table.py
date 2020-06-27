@@ -83,7 +83,7 @@ def main():
 #include <algorithm>
 #include <iterator>
 #include <array>
-#include "idna.hpp"
+#include <skyr/v1/domain/idna.hpp>
 
 namespace skyr {
 inline namespace v1 {

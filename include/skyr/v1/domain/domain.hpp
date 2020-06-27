@@ -79,9 +79,9 @@ inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_
 }
 
 inline auto domain_to_ascii(
-    std::string_view domain_name, bool check_hyphens, bool check_bidi,
+    std::string_view domain_name, std::string *ascii_domain, bool check_hyphens, bool check_bidi,
     bool check_joiners, bool use_std3_ascii_rules, bool transitional_processing,
-    bool verify_dns_length) -> tl::expected<std::string, domain_errc> {
+    bool verify_dns_length) -> tl::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#ToASCII
 
   using namespace std::string_view_literals;
@@ -173,7 +173,8 @@ inline auto domain_to_ascii(
     }
   }
 
-  return labels | ranges::views::join('.') | ranges::to<std::string>();
+  ranges::copy(labels | ranges::views::join('.'), ranges::back_inserter(*ascii_domain));
+  return {};
 }
 
 
@@ -186,18 +187,19 @@ inline auto domain_to_ascii(
 /// \returns An ASCII domain, or an error
 inline auto domain_to_ascii(
     std::string_view domain_name,
+    std::string *ascii_domain,
     bool be_strict,
-    bool *validation_error) -> tl::expected<std::string, domain_errc> {
-  auto result = domain_to_ascii(domain_name, false, true, true, be_strict, false, be_strict);
+    bool *validation_error) -> tl::expected<void, domain_errc> {
+  auto result = domain_to_ascii(domain_name, ascii_domain, false, true, true, be_strict, false, be_strict);
   if (!result) {
     *validation_error |= true;
     return tl::make_unexpected(result.error());
   }
-  else if (result.value().empty()) {
+  else if (ascii_domain->empty()) {
     *validation_error |= true;
     return tl::make_unexpected(domain_errc::empty_string);
   }
-  return result;
+  return {};
 }
 
 /// Converts a UTF-8 encoded domain to ASCII using
@@ -208,9 +210,10 @@ inline auto domain_to_ascii(
 /// \returns An ASCII domain, or an error
 inline auto domain_to_ascii(
     std::string_view domain_name,
-    bool be_strict) -> tl::expected<std::string, domain_errc> {
+    std::string *ascii_domain,
+    bool be_strict) -> tl::expected<void, domain_errc> {
   [[maybe_unused]] bool validation_error = false;
-  return domain_to_ascii(domain_name, be_strict, &validation_error);
+  return domain_to_ascii(domain_name, ascii_domain, be_strict, &validation_error);
 }
 
 /// Converts a UTF-8 encoded domain to ASCII using
@@ -219,8 +222,8 @@ inline auto domain_to_ascii(
 /// \param domain_name A domain
 /// \param validation_error
 /// \returns An ASCII domain, or an error
-inline auto domain_to_ascii(std::string_view domain_name, bool *validation_error) {
-  return domain_to_ascii(domain_name, false, validation_error);
+inline auto domain_to_ascii(std::string_view domain_name, std::string *ascii_domain, bool *validation_error) {
+  return domain_to_ascii(domain_name, ascii_domain, false, validation_error);
 }
 
 /// Converts a UTF-8 encoded domain to ASCII using
@@ -228,17 +231,19 @@ inline auto domain_to_ascii(std::string_view domain_name, bool *validation_error
 ///
 /// \param domain_name A domain
 /// \returns An ASCII domain, or an error
-inline auto domain_to_ascii(std::string_view domain_name) {
+inline auto domain_to_ascii(std::string_view domain_name, std::string *ascii_domain) {
   [[maybe_unused]] bool validation_error = false;
-  return domain_to_ascii(domain_name, false, &validation_error);
+  return domain_to_ascii(domain_name, ascii_domain, false, &validation_error);
 }
 
 /// Converts a Punycode encoded domain to UTF-8
 ///
 /// \param domain_name A Punycode encoded domain
 /// \returns A valid UTF-8 encoded domain, or an error
-inline auto domain_to_u8(std::string_view domain_name, [[maybe_unused]] bool *validation_error)
--> tl::expected<std::string, domain_errc> {
+inline auto domain_to_u8(
+    std::string_view domain_name,
+    std::string *u8_domain,
+    [[maybe_unused]] bool *validation_error) -> tl::expected<void, domain_errc> {
 
   static constexpr auto to_string_view = [] (auto &&label) {
     return std::string_view(std::addressof(*std::begin(label)), ranges::distance(label));
@@ -274,16 +279,17 @@ inline auto domain_to_u8(std::string_view domain_name, [[maybe_unused]] bool *va
     labels.emplace_back();
   }
 
-  return labels | ranges::views::join('.') | ranges::to<std::string>();
+  ranges::copy(labels | ranges::views::join('.'), ranges::back_inserter(*u8_domain));
+  return {};
 }
 
 /// Converts a Punycode encoded domain to UTF-8
 ///
 /// \param domain_name A Punycode encoded domain
 /// \returns A valid UTF-8 encoded domain, or an error
-inline auto domain_to_u8(std::string_view domain_name) -> tl::expected<std::string, domain_errc> {
+inline auto domain_to_u8(std::string_view domain_name, std::string *u8_domain) -> tl::expected<void, domain_errc> {
   [[maybe_unused]] bool validation_error = false;
-  return domain_to_u8(domain_name, &validation_error);
+  return domain_to_u8(domain_name, u8_domain, &validation_error);
 }
 }  // namespace v1
 }  // namespace skyr

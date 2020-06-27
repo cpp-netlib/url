@@ -25,10 +25,11 @@ TEST_CASE("valid domains to ascii", "[domain]") {
 
   SECTION("domain_to_ascii_tests") {
     const auto &[input, expected] = domain;
-    auto instance = skyr::domain_to_ascii(input);
     INFO("input = " << input << ", expected = " << expected);
-    REQUIRE(instance);
-    CHECK(expected == instance.value());
+    auto output = std::string{};
+    auto result = skyr::domain_to_ascii(input, &output);
+    REQUIRE(result);
+    CHECK(expected == output);
   }
 }
 
@@ -45,9 +46,10 @@ TEST_CASE("valid domains from ascii", "[domain]") {
 
   SECTION("ascii_to_domain_tests") {
     const auto &[expected, input] = domain;
-    auto instance = skyr::domain_to_u8(input);
-    REQUIRE(instance);
-    CHECK(expected == instance.value());
+    auto output = std::string{};
+    auto result = skyr::domain_to_u8(input, &output);
+    REQUIRE(result);
+    CHECK(expected == output);
   }
 }
 
@@ -58,12 +60,14 @@ TEST_CASE("invalid domains", "[domain]") {
   //  }
 
   SECTION("invalid_domain_1_be strict") {
-    auto instance = skyr::domain_to_ascii("GOO\xc2\xa0\xE3\x80\x80goo.com", true);
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("GOO\xc2\xa0\xE3\x80\x80goo.com", &output, true);
     REQUIRE_FALSE(instance);
   }
 
   SECTION("invalid_domain_2") {
-    auto instance = skyr::domain_to_ascii("\xef\xbf\xbd");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("\xef\xbf\xbd", &output);
     REQUIRE_FALSE(instance);
   }
 
@@ -73,13 +77,15 @@ TEST_CASE("invalid domains", "[domain]") {
   //  }
 
   SECTION("invalid_domain_4_bestrict") {
-    auto instance = skyr::domain_to_ascii("％\xef\xbc\x94\xef\xbc\x91.com", true);
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("％\xef\xbc\x94\xef\xbc\x91.com", &output, true);
     REQUIRE_FALSE(instance);
   }
 
   SECTION("invalid_name_long_name") {
     auto domain = std::string(300, 'x') + ".com";
-    auto instance = skyr::domain_to_ascii(domain, true);
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii(domain, &output, true);
     REQUIRE_FALSE(instance);
     REQUIRE(instance.error() == skyr::domain_errc::invalid_length);
   }
@@ -88,42 +94,49 @@ TEST_CASE("invalid domains", "[domain]") {
 TEST_CASE("web platform tests", "[domain]") {
   /// Invalid Punycode
   SECTION("toascii_01") {
-    auto instance = skyr::domain_to_ascii("xn--a");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("xn--a", &output);
     REQUIRE_FALSE(instance);
   }
 
   SECTION("toascii_02") {
-    auto instance = skyr::domain_to_ascii("xn--a.xn--nxa");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("xn--a.xn--nxa", &output);
     REQUIRE_FALSE(instance);
   }
 
   SECTION("toascii_03") {
-    auto instance = skyr::domain_to_ascii("xn--a.β");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("xn--a.β", &output);
     REQUIRE_FALSE(instance);
   }
 
     /// ProcessingOptions is non-transitional
   SECTION("toascii_08") {
-    auto instance = skyr::domain_to_ascii("ශ්‍රී");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("ශ්‍රී", &output);
     REQUIRE(instance);
-    CHECK("xn--10cl1a0b660p" == instance.value());
+    CHECK("xn--10cl1a0b660p" == output);
   }
 
   SECTION("toascii_09") {
-    auto instance = skyr::domain_to_ascii("نامه‌ای");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("نامه‌ای", &output);
     REQUIRE(instance);
-    CHECK("xn--mgba3gch31f060k" == instance.value());
+    CHECK("xn--mgba3gch31f060k" == output);
   }
 
     /// U+FFFD (replacement character)
   SECTION("toascii_10") {
-    auto instance = skyr::domain_to_ascii("\xef\xbf\xbd.com");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("\xef\xbf\xbd.com", &output);
     REQUIRE_FALSE(instance);
   }
 
     /// U+FFFD character encoded in Punycode
   SECTION("toascii_11") {
-    auto instance = skyr::domain_to_ascii("xn--zn7c.com");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("xn--zn7c.com", &output);
     REQUIRE_FALSE(instance);
   }
 }
@@ -131,23 +144,27 @@ TEST_CASE("web platform tests", "[domain]") {
 TEST_CASE("web platform tests mayfail", "[domain][!mayfail]") {
   /// CheckJoiners
   SECTION("toascii_04") {
-    auto instance = skyr::domain_to_ascii("\xe2\x80\x8d.example");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("\xe2\x80\x8d.example", &output);
     REQUIRE_FALSE(instance);
   }
 
   SECTION("toascii_05") {
-    auto instance = skyr::domain_to_ascii("xn--1ug.example");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("xn--1ug.example", &output);
     REQUIRE_FALSE(instance);
   }
 
   /// CheckBidi
   SECTION("toascii_06") {
-    auto instance = skyr::domain_to_ascii("a\xd9\x8a");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("a\xd9\x8a", &output);
     REQUIRE_FALSE(instance);
   }
 
   SECTION("toascii_07") {
-    auto instance = skyr::domain_to_ascii("xn--a-yoc");
+    auto output = std::string{};
+    auto instance = skyr::domain_to_ascii("xn--a-yoc", &output);
     REQUIRE_FALSE(instance);
   }
 }
