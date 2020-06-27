@@ -174,7 +174,7 @@ auto url::ipv6_address() const -> std::optional<skyr::ipv6_address> {
 }
 
 auto url::domain() const -> std::optional<std::string> {
-  return url_.host? url_.host.value().domain() : std::nullopt;
+  return url_.host? url_.host.value().domain_name() : std::nullopt;
 }
 
 auto url::u8domain() const -> std::optional<std::string> {

@@ -111,7 +111,13 @@ class static_vector {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto data() const noexcept -> const value_type * {
+  [[nodiscard]] constexpr auto data() noexcept -> pointer {
+    return impl_.data();
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] constexpr auto data() const noexcept -> const_pointer {
     return impl_.data();
   }
 
@@ -131,6 +137,11 @@ class static_vector {
   /// \return `true` if there are elements
   [[nodiscard]] constexpr auto empty() const noexcept -> bool {
     return size_ == 0;
+  }
+
+  ///
+  constexpr void clear() noexcept {
+    size_ = 0;
   }
 
   ///

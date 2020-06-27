@@ -16,19 +16,12 @@
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/split.hpp>
 #include <range/v3/view/transform.hpp>
-#include <skyr/v1/containers/static_vector.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
 #include <skyr/v1/unicode/ranges/views/u8_view.hpp>
 #include <skyr/v1/domain/errors.hpp>
 #include <skyr/v1/domain/idna.hpp>
 #include <skyr/v1/domain/punycode.hpp>
-
-/// How many labels can be in a domain?
-/// https://www.farsightsecurity.com/blog/txt-record/rrlabel-20171013/
-#if !defined(SKYR_DOMAIN_MAX_NUM_LABELS)
-#define SKYR_DOMAIN_MAX_NUM_LABELS 32
-#endif // !defined(SKYR_DOMAIN_MAX_NUM_LABELS)
 
 namespace skyr {
 inline namespace v1 {
@@ -104,21 +97,21 @@ inline auto domain_to_ascii(
     return std::u32string_view(std::addressof(*std::cbegin(label)), ranges::distance(label));
   };
 
-  auto labels = static_vector<std::u32string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
+  auto labels = std::vector<std::u32string>{};
   for (auto &&label : mapped_domain_name.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
     if (labels.size() == labels.max_size()) {
       return tl::make_unexpected(domain_errc::too_many_labels);
     }
 
     if ((label.size() >= 4) && (label.substr(0, 4) == U"xn--")) {
-      auto decoded = std::u32string{};
-      auto result = punycode_decode(label.substr(4), &decoded);
-      if (!result) {
-        return tl::make_unexpected(result.error());
+      auto decoded_label = std::u32string{};
+      auto decoded = punycode_decode(label.substr(4), &decoded_label);
+      if (!decoded) {
+        return tl::make_unexpected(decoded.error());
       }
 
       auto validated =
-          validate_label(decoded, use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, false);
+          validate_label(decoded_label, use_std3_ascii_rules, check_hyphens, check_bidi, check_joiners, false);
       if (!validated) {
         return tl::make_unexpected(validated.error());
       }
@@ -249,7 +242,7 @@ inline auto domain_to_u8(
     return std::string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
-  auto labels = static_vector<std::string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
+  auto labels = std::vector<std::string>{};
   for (auto &&label : domain_name | ranges::views::split('.') | ranges::views::transform(to_string_view)) {
     if (labels.size() == labels.max_size()) {
       return tl::make_unexpected(domain_errc::too_many_labels);

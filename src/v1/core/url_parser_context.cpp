@@ -33,11 +33,13 @@ auto remaining_starts_with(
 }
 
 auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {
-  if (port.empty()) {
+  auto tmp_port = std::string(port); // strtoul doesn't quite like non-null terminated strings
+
+  if (tmp_port.empty()) {
     return tl::make_unexpected(url_parse_errc::invalid_port);
   }
 
-  const char* port_first = port.data();
+  const char* port_first = tmp_port.data();
   char* port_last = nullptr;
   auto port_value = std::strtoul(port_first, &port_last, 10);
 
@@ -352,7 +354,7 @@ auto url_parser_context::parse_authority(char byte) -> tl::expected<url_parse_ac
   if (byte == '@') {
     *validation_error |= true;
     if (at_flag) {
-      buffer = "%40" + buffer;
+      buffer.insert(0, "%40");
     }
     at_flag = true;
 
@@ -669,7 +671,7 @@ auto url_parser_context::parse_path(char byte) -> tl::expected<url_parse_action,
         buffer[1] = ':';
       }
 
-      url.path.push_back(buffer);
+      url.path.emplace_back(std::cbegin(buffer), std::cend(buffer));
     }
 
     buffer.clear();

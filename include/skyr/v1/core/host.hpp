@@ -21,8 +21,8 @@
 
 namespace skyr {
 inline namespace v1 {
-/// Represents a domain in a [URL host](https://url.spec.whatwg.org/#host-representation)
-struct domain {
+/// Represents a domain name in a [URL host](https://url.spec.whatwg.org/#host-representation)
+struct domain_name {
   std::string name;
 };
 
@@ -40,7 +40,7 @@ class host {
   using host_types = std::variant<
       skyr::v1::ipv4_address,
       skyr::v1::ipv6_address,
-      skyr::v1::domain,
+      skyr::v1::domain_name,
       skyr::v1::opaque_host,
       skyr::v1::empty_host
       >;
@@ -59,13 +59,13 @@ class host {
 
   /// Constructor
   /// \param host A domain name
-  explicit host(skyr::v1::domain host)
-      : host_(host) {}
+  explicit host(skyr::v1::domain_name host)
+      : host_(std::move(host)) {}
 
   /// Constructor
   /// \param host An opaque host string
   explicit host(skyr::v1::opaque_host host)
-      : host_(host) {}
+      : host_(std::move(host)) {}
 
   /// Constructor
   /// \param hsost An empty host
@@ -84,7 +84,7 @@ class host {
       else if constexpr (std::is_same_v<T, skyr::v1::ipv6_address>) {
         return "[" + host.serialize() + "]";
       }
-      else if constexpr (std::is_same_v<T, skyr::v1::domain> ||
+      else if constexpr (std::is_same_v<T, skyr::v1::domain_name> ||
                          std::is_same_v<T, skyr::v1::opaque_host>) {
         return host.name;
       }
@@ -98,14 +98,14 @@ class host {
 
   ///
   /// \return \c true if the host is a domain, \c false otherwise
-  [[nodiscard]] auto is_domain() const noexcept {
-    return std::holds_alternative<skyr::v1::domain>(host_);
+  [[nodiscard]] auto is_domain_name() const noexcept {
+    return std::holds_alternative<skyr::v1::domain_name>(host_);
   }
 
   ///
   /// \return
-  [[nodiscard]] auto domain() const noexcept -> std::optional<std::string> {
-    return is_domain() ? std::make_optional(std::get<skyr::v1::domain>(host_).name) : std::nullopt;
+  [[nodiscard]] auto domain_name() const noexcept -> std::optional<std::string> {
+    return is_domain_name() ? std::make_optional(std::get<skyr::v1::domain_name>(host_).name) : std::nullopt;
   }
 
   ///
