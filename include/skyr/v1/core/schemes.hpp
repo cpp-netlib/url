@@ -28,29 +28,36 @@ constexpr static auto schemes = default_port_list{{
                                                {"ws"sv, static_cast<std::uint16_t>(80)},
                                                {"wss"sv, static_cast<std::uint16_t>(443)},
                                            }};
-
-constexpr static auto scheme_less(
-    const default_port_list::value_type &special_scheme,
-    std::string_view scheme) {
-  return special_scheme.first < scheme;
-};
 }  // namespace details
 
 /// \param scheme
 /// \returns
-inline auto is_special(std::string_view scheme) noexcept {
-  auto it = std::lower_bound(cbegin(details::schemes), cend(details::schemes), scheme, details::scheme_less);
-  return ((it != end(details::schemes)) && !(scheme < it->first));
+constexpr inline auto is_special(std::string_view scheme) noexcept {
+  constexpr auto less = [] (const auto &special_scheme, auto scheme) {
+    return special_scheme.first < scheme;
+  };
+
+  if (scheme.back() == ':') {
+    scheme.remove_suffix(1);
+  }
+  auto first = std::cbegin(details::schemes), last = std::cend(details::schemes);
+  auto it = std::lower_bound(first, last, scheme, less);
+  return ((it != last) && !(scheme < it->first));
 }
 
 /// \param scheme
 /// \returns
-inline auto default_port(std::string_view scheme) noexcept {
+constexpr inline auto default_port(std::string_view scheme) noexcept {
+  constexpr auto less = [] (const auto &special_scheme, auto scheme) {
+    return special_scheme.first < scheme;
+  };
+
   if (scheme.back() == ':') {
     scheme.remove_suffix(1);
   }
-  auto it = std::lower_bound(cbegin(details::schemes), cend(details::schemes), scheme, details::scheme_less);
-  return ((it != end(details::schemes)) && !(scheme < it->first)) ? it->second : std::nullopt;
+  auto first = std::cbegin(details::schemes), last = std::cend(details::schemes);
+  auto it = std::lower_bound(first, last, scheme, less);
+  return ((it != last) && !(scheme < it->first)) ? it->second : std::nullopt;
 }
 }  // namespace v1
 }  // namespace skyr
