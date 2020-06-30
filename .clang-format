@@ -32,3 +32,5 @@ BreakBeforeBraces: Attach
 SpacesInParentheses: false
 SpaceInEmptyParentheses: false
 SpacesInCStyleCastParentheses: false
+SortIncludes: false
+SortUsingDeclarations: false

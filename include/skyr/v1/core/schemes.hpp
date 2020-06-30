@@ -46,6 +46,9 @@ inline auto is_special(std::string_view scheme) noexcept {
 /// \param scheme
 /// \returns
 inline auto default_port(std::string_view scheme) noexcept {
+  if (scheme.back() == ':') {
+    scheme.remove_suffix(1);
+  }
   auto it = std::lower_bound(cbegin(details::schemes), cend(details::schemes), scheme, details::scheme_less);
   return ((it != end(details::schemes)) && !(scheme < it->first)) ? it->second : std::nullopt;
 }

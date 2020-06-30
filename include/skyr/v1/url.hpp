@@ -219,6 +219,11 @@ class url {
   /// \returns The [URL origin](https://url.spec.whatwg.org/#origin)
   [[nodiscard]] auto origin() const -> string_type;
 
+  /// The URL scheme
+  [[nodiscard]] auto scheme() const -> string_type {
+    return url_.scheme;
+  }
+
   /// The URL scheme + `":"`
   ///
   /// \returns The [URL protocol](https://url.spec.whatwg.org/#dom-url-protocol)

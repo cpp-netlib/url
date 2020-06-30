@@ -440,6 +440,12 @@ TEST_CASE("url_tests", "[url]") {
     CHECK_FALSE(port);
   }
 
+  SECTION("http_default_port_is_80_using_protocol") {
+    auto port = skyr::url::default_port("http:");
+    REQUIRE(port);
+    CHECK(80 == port.value());
+  }
+
   SECTION("about_blank") {
     auto instance = skyr::url("about:blank");
     CHECK("about:" == instance.protocol());
