@@ -32,7 +32,7 @@ constexpr static auto schemes = default_port_list{{
 
 /// \param scheme
 /// \returns
-constexpr inline auto is_special(std::string_view scheme) noexcept {
+inline auto is_special(std::string_view scheme) noexcept {
   constexpr auto less = [] (const auto &special_scheme, auto scheme) {
     return special_scheme.first < scheme;
   };
@@ -47,7 +47,7 @@ constexpr inline auto is_special(std::string_view scheme) noexcept {
 
 /// \param scheme
 /// \returns
-constexpr inline auto default_port(std::string_view scheme) noexcept {
+inline auto default_port(std::string_view scheme) noexcept {
   constexpr auto less = [] (const auto &special_scheme, auto scheme) {
     return special_scheme.first < scheme;
   };
