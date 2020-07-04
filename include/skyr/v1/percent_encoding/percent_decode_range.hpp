@@ -145,32 +145,26 @@ class percent_decode_range {
 
   ///
   /// \return
-  [[nodiscard]] auto begin() const noexcept {
+  [[nodiscard]] auto cbegin() const noexcept {
     return it_;
   }
 
   ///
   /// \return
-  [[nodiscard]] auto end() const noexcept {
+  [[nodiscard]] auto cend() const noexcept {
     return sentinel{};
   }
 
   ///
   /// \return
-  [[nodiscard]] auto cbegin() const noexcept {
-    return begin();
+  [[nodiscard]] auto begin() const noexcept {
+    return cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] auto cend() const noexcept {
-    return end();
-  }
-
-  ///
-  /// \return
-  [[nodiscard]] auto empty() const noexcept {
-    return begin() == end();
+  [[nodiscard]] auto end() const noexcept {
+    return cend();
   }
 
  private:
