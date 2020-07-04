@@ -50,7 +50,6 @@ target_sources(skyr-url
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/containers/static_vector.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/errors.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/idna.hpp
-        ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/idna_code_point_map_iterator.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/punycode.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/domain/domain.hpp
         ${PROJECT_SOURCE_DIR}/include/skyr/v1/platform/endianness.hpp

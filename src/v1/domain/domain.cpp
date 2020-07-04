@@ -14,7 +14,6 @@
 #include <skyr/v1/domain/domain.hpp>
 #include <skyr/v1/domain/errors.hpp>
 #include <skyr/v1/domain/idna.hpp>
-#include <skyr/v1/domain/idna_code_point_map_iterator.hpp>
 #include <skyr/v1/domain/punycode.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
@@ -29,28 +28,6 @@
 namespace skyr {
 inline namespace v1 {
 namespace {
-template <class DomainName>
-auto map_code_points(
-    DomainName &&domain_name,
-    bool use_std3_ascii_rules,
-    bool transitional_processing,
-    std::u32string *result)
-    -> tl::expected<void, domain_errc> {
-  auto range = idna::views::map_code_points(domain_name, use_std3_ascii_rules, transitional_processing);
-  auto first = std::cbegin(range);
-  auto last = std::cend(range);
-  for (auto it = first; it != last; ++it) {
-    if (!*it) {
-      return tl::make_unexpected((*it).error());
-    }
-    result->push_back((*it).value());
-    if (result->size() == result->max_size()) {
-      return tl::make_unexpected(domain_errc::invalid_length);
-    }
-  }
-  return {};
-}
-
 auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules, bool check_hyphens,
                     [[maybe_unused]] bool check_bidi, [[maybe_unused]] bool check_joiners, bool transitional_processing)
     -> tl::expected<void, domain_errc> {
@@ -105,11 +82,21 @@ auto domain_to_ascii(
 
   using namespace std::string_view_literals;
 
-  auto u32domain_name = unicode::views::as_u8(domain_name) | unicode::transforms::to_u32;
-  auto mapped_domain_name = std::u32string{};
-  auto result = map_code_points(u32domain_name, use_std3_ascii_rules, transitional_processing, &mapped_domain_name);
-  if (!result) {
-    return tl::make_unexpected(result.error());
+  auto mapped_domain_name = unicode::as<std::u32string>(
+      unicode::views::as_u8(domain_name) | unicode::transforms::to_u32);
+  if (mapped_domain_name) {
+    auto result = idna::map_code_points(
+        std::begin(mapped_domain_name.value()),
+        std::end(mapped_domain_name.value()),
+        use_std3_ascii_rules,
+        transitional_processing);
+    if (result) {
+      mapped_domain_name.value().erase(result.value());
+    } else {
+      return tl::make_unexpected(result.error());
+    }
+  } else {
+    return tl::make_unexpected(domain_errc::encoding_error);
   }
 
   static constexpr auto to_string_view = [] (auto &&label) {
@@ -117,7 +104,7 @@ auto domain_to_ascii(
   };
 
   auto labels = static_vector<std::u32string, SKYR_DOMAIN_MAX_NUM_LABELS>{};
-  for (auto &&label : mapped_domain_name | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
+  for (auto &&label : mapped_domain_name.value() | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
     if (labels.size() == labels.max_size()) {
       return tl::make_unexpected(domain_errc::too_many_labels);
     }
@@ -164,7 +151,7 @@ auto domain_to_ascii(
     }
   }
 
-  if (mapped_domain_name.back() == U'.') {
+  if (mapped_domain_name.value().back() == U'.') {
     labels.emplace_back();
   }
 
@@ -172,7 +159,7 @@ auto domain_to_ascii(
   constexpr auto max_label_length = 63;
 
   if (verify_dns_length) {
-    auto length = mapped_domain_name.size();
+    auto length = mapped_domain_name.value().size();
     if ((length < 1) || (length > max_domain_length)) {
       return tl::make_unexpected(domain_errc::invalid_length);
     }

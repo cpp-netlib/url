@@ -6,6 +6,9 @@
 #ifndef SKYR_V1_DOMAIN_IDNA_HPP
 #define SKYR_V1_DOMAIN_IDNA_HPP
 
+#include <tl/expected.hpp>
+#include <skyr/v1/domain/errors.hpp>
+
 namespace skyr {
 inline namespace v1 {
 namespace idna {
@@ -45,6 +48,57 @@ auto code_point_status(char32_t code_point) -> idna_status;
 /// \return The code point or mapped value, depending on the status of the code
 /// point
 auto map_code_point(char32_t code_point) -> char32_t;
+
+///
+/// \tparam FwdIter
+/// \param first
+/// \param last
+/// \param use_std3_ascii_rules
+/// \param transitional_processing
+/// \return
+template <class FwdIter>
+inline auto map_code_points(
+    FwdIter first,
+    FwdIter last,
+    bool use_std3_ascii_rules,
+    bool transitional_processing) -> tl::expected<FwdIter, domain_errc> {
+  for (auto it = first; it != last; ++it) {
+    switch (code_point_status(*it)) {
+      case idna_status::disallowed:
+        return tl::make_unexpected(domain_errc::disallowed_code_point);
+      case idna_status::disallowed_std3_valid:
+        if (use_std3_ascii_rules) {
+          return tl::make_unexpected(domain_errc::disallowed_code_point);
+        } else {
+          *first++ = *it;
+        }
+        break;
+      case idna_status::disallowed_std3_mapped:
+        if (use_std3_ascii_rules) {
+          return tl::make_unexpected(domain_errc::disallowed_code_point);
+        } else {
+          *first++ = map_code_point(*it);
+        }
+        break;
+      case idna_status::ignored:
+        break;
+      case idna_status::mapped:
+        *first++ = idna::map_code_point(*it);
+        break;
+      case idna_status::deviation:
+        if (transitional_processing) {
+          *first++ = idna::map_code_point(*it);
+        } else {
+          *first++ = *it;
+        }
+        break;
+      case idna_status::valid:
+        *first++ = *it;
+        break;
+    }
+  }
+  return first;
+}
 }  // namespace idna
 }  // namespace v1
 }  // namespace skyr
