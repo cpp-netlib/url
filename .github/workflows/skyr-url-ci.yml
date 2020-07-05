@@ -15,6 +15,128 @@ jobs:
       fail-fast: false
       matrix:
         config:
+          # GCC-7
+          - {
+            name: "Linux GCC 7 Debug (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-7", cxx: "g++-7",
+            cxx_standard: 17
+          }
+          - {
+            name: "Linux GCC 7 Release (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "gcc-7", cxx: "g++-7",
+            cxx_standard: 17
+          }
+
+          # GCC-8
+          - {
+            name: "Linux GCC 8 Debug (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-8", cxx: "g++-8",
+            cxx_standard: 17
+          }
+          - {
+            name: "Linux GCC 8 Release (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "gcc-8", cxx: "g++-8",
+            cxx_standard: 17
+          }
+
+          # GCC-9
+          - {
+            name: "Linux GCC 9 Debug (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-9", cxx: "g++-9",
+            cxx_standard: 17
+          }
+          - {
+            name: "Linux GCC 9 Release (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "gcc-9", cxx: "g++-9",
+            cxx_standard: 17
+          }
+          - {
+            name: "Linux GCC 9 Debug (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-9", cxx: "g++-9",
+            cxx_standard: 20
+          }
+          - {
+            name: "Linux GCC 9 Release (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "gcc-9", cxx: "g++-9",
+            cxx_standard: 20
+          }
+
+          # Clang-8
+          - {
+            name: "Linux Clang 8 Debug (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 17
+          }
+          - {
+            name: "Linux Clang 8 Release (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 17
+          }
+          - {
+            name: "Linux Clang 8 Debug (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 20
+          }
+          - {
+            name: "Linux Clang 8 Release (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "clang-8", cxx: "clang++-8",
+            cxx_standard: 20
+          }
+
+          # Clang-9
+          - {
+            name: "Linux Clang 9 Debug (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 17
+          }
+          - {
+            name: "Linux Clang 9 Release (C++17)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 17,
+          }
+          - {
+            name: "Linux Clang 9 Debug (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 20
+          }
+          - {
+            name: "Linux Clang 9 Release (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "clang-9", cxx: "clang++-9",
+            cxx_standard: 20,
+          }
+
           # Clang-10
           - {
             name: "Linux Clang 10 Debug (C++20)", artifact: "Linux.tar.xz",
@@ -28,7 +150,71 @@ jobs:
             os: ubuntu-latest,
             build_type: RelWithDebInfo,
             cc: "clang-10", cxx: "clang++-10",
+            cxx_standard: 20,
+          }
+
+          # AppleClang
+          - {
+            name: "macOS Clang Debug (C++17)", artifact: "macOS.tar.xz",
+            os: macos-latest,
+            build_type: Debug,
+            cc: "clang", cxx: "clang++",
+            cxx_standard: 17
+          }
+          - {
+            name: "macOS Clang Release (C++17)", artifact: "macOS.tar.xz",
+            os: macos-latest,
+            build_type: RelWithDebInfo,
+            cc: "clang", cxx: "clang++",
+            cxx_standard: 17,
+          }
+          - {
+            name: "macOS Clang Debug (C++20)", artifact: "macOS.tar.xz",
+            os: macos-latest,
+            build_type: Debug,
+            cc: "clang", cxx: "clang++",
             cxx_standard: 20
+          }
+          - {
+            name: "macOS Clang Release (C++20)", artifact: "macOS.tar.xz",
+            os: macos-latest,
+            build_type: RelWithDebInfo,
+            cc: "clang", cxx: "clang++",
+            cxx_standard: 20,
+          }
+
+          # MSVC 2019
+          - {
+            name: "Windows MSVC 2019 Debug (C++17)", artifact: "Windows-MSVC.tar.xz",
+            os: windows-latest,
+            build_type: Debug,
+            cc: "cl", cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cxx_standard: 17,
+          }
+          - {
+            name: "Windows MSVC 2019 Release (C++17)", artifact: "Windows-MSVC.tar.xz",
+            os: windows-latest,
+            build_type: RelWithDebInfo,
+            cc: "cl", cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cxx_standard: 17,
+          }
+          - {
+            name: "Windows MSVC 2019 Debug (C++20)", artifact: "Windows-MSVC.tar.xz",
+            os: windows-latest,
+            build_type: Debug,
+            cc: "cl", cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cxx_standard: 20,
+          }
+          - {
+            name: "Windows MSVC 2019 Release (C++20)", artifact: "Windows-MSVC.tar.xz",
+            os: windows-latest,
+            build_type: RelWithDebInfo,
+            cc: "cl", cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            cxx_standard: 20,
           }
 
     steps:
@@ -84,40 +270,72 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 10
 
-      - name: Download vcpkg
-        id: vcpkg
+      - name: Install vcpkg (Linux/MacOS)
+        id: vcpkg_linux_macos
+        if: startsWith(matrix.config.os, 'ubuntu') || startsWith(matrix.config.os, 'macos')
+        shell: bash
         run: |
           mkdir -p ${GITHUB_WORKSPACE}/vcpkg
-          pushd ${GITHUB_WORKSPACE}/vcpkg
+          cd ${GITHUB_WORKSPACE}/vcpkg
           git init
-          git remote add origin https://github.com/Microsoft/vcpkg.git
+          git remote add origin https://github.com/microsoft/vcpkg.git
           git fetch origin master
           git checkout -b master origin/master
           export
           ./bootstrap-vcpkg.sh
           ./vcpkg install tl-expected range-v3 catch2 nlohmann-json fmt
-          popd
+
+      - name: Install vcpkg (Windows)
+        id: vcpkg_windows
+        if: startsWith(matrix.config.os, 'windows')
+        shell: powershell
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git ${Env:GITHUB_WORKSPACE}\vcpkg
+          cd ${Env:GITHUB_WORKSPACE}\vcpkg
+          .\bootstrap-vcpkg.bat
+          vcpkg install tl-expected range-v3 catch2 nlohmann-json fmt --triplet x64-windows
+          vcpkg integrate install
 
       - name: Configure
         shell: cmake -P {0}
+        working-directory: ${{ env.HOME }}
         run: |
-          set(ENV{NINJA_STATUS} "[%f/%t %o/sec] ")
-          set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}:$ENV{PATH}")
-
           set(ENV{CC} ${{ matrix.config.cc }})
           set(ENV{CXX} ${{ matrix.config.cxx }})
+
+          if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
+            execute_process(
+                COMMAND "${{ matrix.config.environment_script }}" && set
+                OUTPUT_FILE environment_script_output.txt
+            )
+            set(cxx_flags "/permissive- /EHsc")
+            file(STRINGS environment_script_output.txt output_lines)
+            foreach(line IN LISTS output_lines)
+              if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
+                set(ENV{${CMAKE_MATCH_1}} "${CMAKE_MATCH_2}")
+              endif()
+            endforeach()
+          endif()
+
+          set(path_separator ":")
+          if ("${{ runner.os }}" STREQUAL "Windows")
+            set(path_separator ";")
+          endif()
+          set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}${path_separator}$ENV{PATH}")
 
           execute_process(
             COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake
               -S .
               -B build
               -G Ninja
+              -D CMAKE_CXX_STANDARD:STRING=${{ matrix.config.cxx_standard }}
               -D skyr_WARNINGS_AS_ERRORS=OFF
               -D skyr_BUILD_TESTS=ON
               -D skyr_BUILD_DOCS=OFF
               -D skyr_BUILD_EXAMPLES=OFF
               -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
               -D CMAKE_TOOLCHAIN_FILE=$ENV{GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
+              -D CMAKE_INSTALL_PREFIX=$ENV{GITHUB_WORKSPACE}/install
             RESULT_VARIABLE result
           )
           if (NOT result EQUAL 0)
@@ -126,9 +344,24 @@ jobs:
 
       - name: Build
         shell: cmake -P {0}
+        working-directory: ${{ env.HOME }}
         continue-on-error: ${{ matrix.config.experimental || false }}
         run: |
           set(ENV{NINJA_STATUS} "[%f/%t %o/sec] ")
+
+          if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
+            file(STRINGS environment_script_output.txt output_lines)
+            foreach(line IN LISTS output_lines)
+              if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
+                set(ENV{${CMAKE_MATCH_1}} "${CMAKE_MATCH_2}")
+              endif()
+            endforeach()
+          endif()
+
+          set(path_separator ":")
+          if ("${{ runner.os }}" STREQUAL "Windows")
+            set(path_separator ";")
+          endif()
           set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}${path_separator}$ENV{PATH}")
 
           execute_process(
@@ -141,6 +374,7 @@ jobs:
 
       - name: Run tests
         shell: cmake -P {0}
+        working-directory: ${{ env.HOME }}
         continue-on-error: ${{ matrix.config.experimental || false }}
         run: |
           include(ProcessorCount)
@@ -154,4 +388,17 @@ jobs:
           )
           if (NOT result EQUAL 0)
             message(FATAL_ERROR "Running tests failed!")
+          endif()
+
+      - name: Install
+        shell: cmake -P {0}
+        working-directory: ${{ env.HOME }}
+        continue-on-error: ${{ matrix.config.experimental || false }}
+        run: |
+          execute_process(
+            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake --build build --target install
+            RESULT_VARIABLE result
+          )
+          if (NOT result EQUAL 0)
+            message(FATAL_ERROR "Install failed!")
           endif()
