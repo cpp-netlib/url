@@ -10,6 +10,9 @@
     https://travis-ci.org/cpp-netlib/url)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/1iblsi5apka29dmg?svg=true)](
     https://ci.appveyor.com/project/glynos/url-3aeqd)
+![GitHub Actions Status](https://github.com/cpp-netlib/url/workflows/skyr-url%20CI/badge.svg?branch=master)](
+    https://github.com/cpp-netlib/url/actions)
+
     
 ## Notice
 
