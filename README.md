@@ -5,14 +5,8 @@
 [![License](
     https://img.shields.io/badge/license-boost-blue.svg "License")](
     https://github.com/cpp-netlib/url/blob/master/LICENSE_1_0.txt)
-[![Travis Build Status](
-    https://travis-ci.org/cpp-netlib/url.svg?branch=master "Build Status")](
-    https://travis-ci.org/cpp-netlib/url)
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/1iblsi5apka29dmg?svg=true)](
-    https://ci.appveyor.com/project/glynos/url-3aeqd)
-![GitHub Actions Status](https://github.com/cpp-netlib/url/workflows/skyr-url%20CI/badge.svg?branch=master)](
+![GitHub Actions Status](https://github.com/cpp-netlib/url/workflows/skyr-url%20CI/badge.svg?branch=main)](
     https://github.com/cpp-netlib/url/actions)
-
     
 ## Notice
 
@@ -210,28 +204,8 @@ This library includes a modified implementation of [utfcpp](https://github.com/n
 
 ## Requirements
 
-This library has been tested using the following platforms and
-compilers:
-
-Linux:
-
-* GCC 8
-* GCC 9
-* Clang 7
-* Clang 8
-* Clang 9
-
-MacOS:
-
-* Clang 7
-* Clang 8
-* Clang 9
-
-Windows:
-
-* Microsoft Visual C++ 2019
-
-Microsoft Visual C++ 2017 is supported below version 0.11.
+Look at the [GitHub Actions Status](https://github.com/cpp-netlib/url/actions)
+for all of the configurations for which this library is tested.
 
 ## License
 
