@@ -362,7 +362,7 @@ auto url_parser_context::parse_authority(char byte) -> tl::expected<url_parse_ac
         continue;
       }
 
-      auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::userinfo);
+      auto pct_encoded = percent_encode_byte(std::byte(c), percent_encoding::encode_set::userinfo);
       if (password_token_seen_flag) {
         url.password += pct_encoded.to_string();
       } else {
@@ -698,7 +698,7 @@ auto url_parser_context::parse_path(char byte) -> tl::expected<url_parse_action,
       *validation_error |= true;
     }
 
-    auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::path);
+    auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::path);
     buffer += pct_encoded.to_string();
   }
 
@@ -721,7 +721,7 @@ auto url_parser_context::parse_cannot_be_a_base_url(char byte) -> tl::expected<u
       *validation_error |= true;
     }
     if (!is_eof()) {
-      auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::c0_control);
+      auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::c0_control);
       url.path[0] += pct_encoded.to_string();
     }
   }
@@ -737,7 +737,7 @@ auto url_parser_context::parse_query(char byte) -> tl::expected<url_parse_action
         (byte > '~') ||
         (contains(byte, R"("#<>)"sv)) ||
         ((byte == '\'') && url.is_special())) {
-      auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::none);
+      auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::none);
       url.query.value() += pct_encoded.to_string();
     } else {
       url.query.value().push_back(byte);
@@ -757,7 +757,7 @@ auto url_parser_context::parse_fragment(char byte) -> tl::expected<url_parse_act
       *validation_error |= true;
     }
 
-    auto pct_encoded = percent_encode_byte(byte, percent_encoding::encode_set::fragment);
+    auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::fragment);
     url.fragment.value() += pct_encoded.to_string();
   }
   return url_parse_action::increment;

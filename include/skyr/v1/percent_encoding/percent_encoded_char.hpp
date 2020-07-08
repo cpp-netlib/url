@@ -8,59 +8,75 @@
 
 #include <string>
 #include <locale>
+#include <cstddef>
 
 namespace skyr {
 inline namespace v1 {
 namespace percent_encoding {
 namespace details {
-inline constexpr auto hex_to_letter(char byte) noexcept {
-  if ((byte >= '\x00') && (byte < '\x0a')) {
-    return static_cast<char>(byte + '0');
+///
+/// \param value
+/// \return
+inline constexpr auto hex_to_alnum(std::byte value) noexcept {
+  if ((value >= std::byte(0x00)) && (value < std::byte(0x0a))) {
+    return static_cast<char>(std::to_integer<unsigned>(value) + '0');
   }
 
-  if ((byte >= '\x0a') && (byte < '\x10')) {
-    return static_cast<char>(byte - '\x0a' + 'A');
+  if ((value >= std::byte(0x0a)) && (value < std::byte(0x10))) {
+    return static_cast<char>(std::to_integer<unsigned>(value) - '\x0a' + 'A');
   }
 
-  return byte;
+  return static_cast<char>(value);
 }
 
-inline constexpr auto is_c0_control_byte(char byte) noexcept {
-  return (byte <= '\x1f') || (byte > '\x7e');
+///
+/// \param value
+/// \return
+inline constexpr auto is_c0_control_byte(std::byte value) noexcept {
+  return (value <= std::byte(0x1f)) || (value > std::byte(0x7e));
 }
 
-inline constexpr auto is_fragment_byte(char byte) {
+///
+/// \param value
+/// \return
+inline constexpr auto is_fragment_byte(std::byte value) {
   return
-      is_c0_control_byte(byte) ||
-      (byte == '\x20') ||
-      (byte == '\x22') ||
-      (byte == '\x3c') ||
-      (byte == '\x3e') ||
-      (byte == '\x60');
+      is_c0_control_byte(value) ||
+      (value == std::byte(0x20)) ||
+      (value == std::byte(0x22)) ||
+      (value == std::byte(0x3c)) ||
+      (value == std::byte(0x3e)) ||
+      (value == std::byte(0x60));
 }
 
-inline constexpr auto is_path_byte(char byte) {
+///
+/// \param value
+/// \return
+inline constexpr auto is_path_byte(std::byte value) {
   return
-      is_fragment_byte(byte) ||
-      (byte == '\x23') ||
-      (byte == '\x3f') ||
-      (byte == '\x7b') ||
-      (byte == '\x7d');
+      is_fragment_byte(value) ||
+      (value == std::byte(0x23)) ||
+      (value == std::byte(0x3f)) ||
+      (value == std::byte(0x7b)) ||
+      (value == std::byte(0x7d));
 }
 
-inline constexpr auto is_userinfo_byte(char byte) {
+///
+/// \param value
+/// \return
+inline constexpr auto is_userinfo_byte(std::byte value) {
   return
-      is_path_byte(byte) ||
-      (byte == '\x2f') ||
-      (byte == '\x3a') ||
-      (byte == '\x3b') ||
-      (byte == '\x3d') ||
-      (byte == '\x40') ||
-      (byte == '\x5b') ||
-      (byte == '\x5c') ||
-      (byte == '\x5d') ||
-      (byte == '\x5e') ||
-      (byte == '\x7c');
+      is_path_byte(value) ||
+      (value == std::byte(0x2f)) ||
+      (value == std::byte(0x3a)) ||
+      (value == std::byte(0x3b)) ||
+      (value == std::byte(0x3d)) ||
+      (value == std::byte(0x40)) ||
+      (value == std::byte(0x5b)) ||
+      (value == std::byte(0x5c)) ||
+      (value == std::byte(0x5d)) ||
+      (value == std::byte(0x5e)) ||
+      (value == std::byte(0x7c));
 }
 }  // namespace details
 
@@ -83,6 +99,8 @@ struct percent_encoded_char {
 
   using impl_type = std::string;
 
+  static constexpr std::byte mask = std::byte(0x0f);
+
  public:
 
   ///
@@ -101,27 +119,38 @@ struct percent_encoded_char {
   percent_encoded_char() = default;
 
   ///
-  /// \param byte
-  percent_encoded_char(char byte, no_encode)
-      : impl_{byte} {}
+  /// \param value
+  percent_encoded_char(std::byte value, no_encode)
+      : impl_{static_cast<char>(value)} {}
+
   ///
-  /// \param byte
-  explicit percent_encoded_char(char byte)
+  /// \param value
+  explicit percent_encoded_char(std::byte value)
       : impl_{
-      '%',
-      details::hex_to_letter(static_cast<char>((static_cast<unsigned>(byte) >> 4u) & 0x0fu)),
-      details::hex_to_letter(static_cast<char>(static_cast<unsigned>(byte) & 0x0fu))} {}
+      '%', details::hex_to_alnum((value >> 4u) & mask), details::hex_to_alnum(value & mask)} {}
+
+  ///
+  /// \return
+  [[nodiscard]] auto cbegin() const noexcept {
+    return impl_.cbegin();
+  }
+
+  ///
+  /// \return
+  [[nodiscard]] auto cend() const noexcept {
+    return impl_.cend();
+  }
 
   ///
   /// \return
   [[nodiscard]] auto begin() const noexcept {
-    return impl_.begin();
+    return cbegin();
   }
 
   ///
   /// \return
   [[nodiscard]] auto end() const noexcept {
-    return impl_.end();
+    return cend();
   }
 
   ///
@@ -160,7 +189,7 @@ struct percent_encoded_char {
 /// \param pred
 /// \return
 template <class Pred>
-inline auto percent_encode_byte(char byte, Pred pred) -> percent_encoded_char {
+inline auto percent_encode_byte(std::byte byte, Pred pred) -> percent_encoded_char {
   if (pred(byte)) {
     return percent_encoding::percent_encoded_char(byte);
   }
@@ -169,23 +198,23 @@ inline auto percent_encode_byte(char byte, Pred pred) -> percent_encoded_char {
 }
 
 ///
-/// \param byte
+/// \param value
 /// \param excludes
 /// \return
-inline auto percent_encode_byte(char byte, encode_set excludes) -> percent_encoded_char {
+inline auto percent_encode_byte(std::byte value, encode_set excludes) -> percent_encoded_char {
   switch (excludes) {
     case encode_set::none:
-      return percent_encoding::percent_encoded_char(byte);
+      return percent_encoding::percent_encoded_char(value);
     case encode_set::c0_control:
-      return percent_encode_byte(byte, details::is_c0_control_byte);
+      return percent_encode_byte(value, details::is_c0_control_byte);
     case encode_set::userinfo:
-      return percent_encode_byte(byte, details::is_userinfo_byte);
+      return percent_encode_byte(value, details::is_userinfo_byte);
     case encode_set::path:
-      return percent_encode_byte(byte, details::is_path_byte);
+      return percent_encode_byte(value, details::is_path_byte);
     case encode_set::fragment:
-      return percent_encode_byte(byte, details::is_fragment_byte);
+      return percent_encode_byte(value, details::is_fragment_byte);
   }
-  return percent_encoding::percent_encoded_char(byte);
+  return percent_encoding::percent_encoded_char(value);
 }
 
 /// Tests whether the input string contains percent encoded values

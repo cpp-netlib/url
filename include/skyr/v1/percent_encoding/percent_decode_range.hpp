@@ -17,17 +17,17 @@ namespace skyr {
 inline namespace v1 {
 namespace percent_encoding {
 namespace details {
-inline auto letter_to_hex(char byte) noexcept -> tl::expected<char, percent_encode_errc> {
-  if ((byte >= '0') && (byte <= '9')) {
-    return static_cast<char>(byte - '0');
+inline auto alnum_to_hex(char value) noexcept -> tl::expected<std::byte, percent_encode_errc> {
+  if ((value >= '0') && (value <= '9')) {
+    return static_cast<std::byte>(value - '0');
   }
 
-  if ((byte >= 'a') && (byte <= 'f')) {
-    return static_cast<char>(byte + '\x0a' - 'a');
+  if ((value >= 'a') && (value <= 'f')) {
+    return static_cast<std::byte>(value + '\x0a' - 'a');
   }
 
-  if ((byte >= 'A') && (byte <= 'F')) {
-    return static_cast<char>(byte + '\x0a' - 'A');
+  if ((value >= 'A') && (value <= 'F')) {
+    return static_cast<std::byte>(value + '\x0a' - 'A');
   }
 
   return tl::make_unexpected(percent_encoding::percent_encode_errc::non_hex_input);
@@ -86,14 +86,15 @@ class percent_decode_iterator {
       if (remainder_.size() < 3) {
         return tl::make_unexpected(percent_encoding::percent_encode_errc::overflow);
       }
-      auto v0 = details::letter_to_hex(remainder_[1]);
-      auto v1 = details::letter_to_hex(remainder_[2]);
+      auto v0 = details::alnum_to_hex(remainder_[1]);
+      auto v1 = details::alnum_to_hex(remainder_[2]);
 
       if (!v0 || !v1) {
         return tl::make_unexpected(percent_encoding::percent_encode_errc::non_hex_input);
       }
 
-      return static_cast<char>((0x10u * v0.value()) + v1.value());
+      return static_cast<char>(
+          (0x10u * std::to_integer<unsigned int>(v0.value())) + std::to_integer<unsigned int>(v1.value()));
     } else {
       return remainder_[0];
     }
@@ -145,26 +146,26 @@ class percent_decode_range {
 
   ///
   /// \return
-  [[nodiscard]] auto begin() const noexcept {
+  [[nodiscard]] auto cbegin() const noexcept {
     return it_;
   }
 
   ///
   /// \return
-  [[nodiscard]] auto end() const noexcept {
+  [[nodiscard]] auto cend() const noexcept {
     return sentinel{};
   }
 
   ///
   /// \return
-  [[nodiscard]] auto cbegin() const noexcept {
-    return begin();
+  [[nodiscard]] auto begin() const noexcept {
+    return cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] auto cend() const noexcept {
-    return end();
+  [[nodiscard]] auto end() const noexcept {
+    return cend();
   }
 
   ///

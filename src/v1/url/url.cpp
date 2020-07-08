@@ -84,7 +84,7 @@ auto url::set_username(string_view username) -> std::error_code {
 
   new_url.username.clear();
   for (auto c : username) {
-    auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::userinfo);
+    auto pct_encoded = percent_encode_byte(std::byte(c), percent_encoding::encode_set::userinfo);
     new_url.username += pct_encoded.to_string();
   }
 
@@ -102,7 +102,7 @@ auto url::set_password(string_view password) -> std::error_code {
 
   new_url.password.clear();
   for (auto c : password) {
-    auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::userinfo);
+    auto pct_encoded = percent_encode_byte(std::byte(c), percent_encoding::encode_set::userinfo);
     new_url.password += pct_encoded.to_string();
   }
 

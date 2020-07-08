@@ -14,7 +14,8 @@ TEST_CASE("encode fragment", "[percent_encoding]") {
       ' ', '\"', '<', '>', '`');
 
   SECTION("encode_fragment_set") {
-    auto encoded = skyr::percent_encoding::percent_encode_byte(c, skyr::percent_encoding::encode_set::fragment);
+    auto encoded = skyr::percent_encoding::percent_encode_byte(
+        std::byte(c), skyr::percent_encoding::encode_set::fragment);
     CHECK(encoded.is_encoded());
   }
 }
@@ -24,7 +25,8 @@ TEST_CASE("encode path", "[percent_encoding]") {
       ' ', '\"', '<', '>', '`', '#', '?', '{', '}');
 
   SECTION("encode_path_set") {
-    auto encoded = skyr::percent_encoding::percent_encode_byte(c, skyr::percent_encoding::encode_set::path);
+    auto encoded = skyr::percent_encoding::percent_encode_byte(
+        std::byte(c), skyr::percent_encoding::encode_set::path);
     CHECK(encoded.is_encoded());
   }
 }
@@ -35,7 +37,8 @@ TEST_CASE("encode userinfo", "[percent_encoding]") {
       ':', ';', '=', '@', '[', '\\', ']', '^', '|');
 
   SECTION("encode_userinfo_set") {
-    auto encoded = skyr::percent_encoding::percent_encode_byte(c, skyr::percent_encoding::encode_set::userinfo);
+    auto encoded = skyr::percent_encoding::percent_encode_byte(
+        std::byte(c), skyr::percent_encoding::encode_set::userinfo);
     CHECK(encoded.is_encoded());
   }
 }
@@ -45,14 +48,16 @@ TEST_CASE("encode_tests", "[percent_encoding]") {
 
   SECTION("encode_codepoints_before_0x20_set") {
     for (auto i = 0u; i < 0x20u; ++i) {
-      auto encoded = skyr::percent_encoding::percent_encode_byte(i, skyr::percent_encoding::encode_set::c0_control);
+      auto encoded = skyr::percent_encoding::percent_encode_byte(
+          std::byte(i), skyr::percent_encoding::encode_set::c0_control);
       CHECK(fmt::format("%{:02X}", i) == encoded.to_string());
     }
   }
 
   SECTION("encode_codepoints_before_0x7e_set") {
     for (auto i = 0x7fu; i <= 0xffu; ++i) {
-      auto encoded = skyr::percent_encoding::percent_encode_byte(i, skyr::percent_encoding::encode_set::c0_control);
+      auto encoded = skyr::percent_encoding::percent_encode_byte(
+          std::byte(i), skyr::percent_encoding::encode_set::c0_control);
       CHECK(fmt::format("%{:02X}", i) == encoded.to_string());
     }
   }

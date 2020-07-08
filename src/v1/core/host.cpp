@@ -40,7 +40,7 @@ auto parse_opaque_host(std::string_view input,
 
   auto output = std::string();
   for (auto c : input) {
-    auto pct_encoded = percent_encode_byte(c, percent_encoding::encode_set::c0_control);
+    auto pct_encoded = percent_encode_byte(std::byte(c), percent_encoding::encode_set::c0_control);
     output += pct_encoded.to_string();
   }
   return skyr::v1::opaque_host{output};

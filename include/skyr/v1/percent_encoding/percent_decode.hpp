@@ -30,4 +30,4 @@ inline auto percent_decode(std::string_view input) -> tl::expected<std::string, 
 }  // namespace v1
 }  // namespace skyr
 
-#endif //SKYR_V1_PERCENT_DECODING_PERCENT_DECODE_HPP
+#endif  // SKYR_V1_PERCENT_DECODING_PERCENT_DECODE_HPP

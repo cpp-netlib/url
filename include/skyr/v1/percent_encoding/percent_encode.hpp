@@ -19,20 +19,20 @@ inline auto percent_encode(std::string_view input) {
   using percent_encoding::percent_encoded_char;
 
   static constexpr auto encode = [] (auto byte) {
-    if (byte == '\x20') {
-      return percent_encoded_char('+', percent_encoded_char::no_encode());
-    } else if ((byte == '\x2a') || (byte == '\x2d') || (byte == '\x2e') ||
+    if ((byte == '\x2a') || (byte == '\x2d') || (byte == '\x2e') ||
         ((byte >= '\x30') && (byte <= '\x39')) ||
         ((byte >= '\x41') && (byte <= '\x5a')) || (byte == '\x5f') ||
         ((byte >= '\x61') && (byte <= '\x7a'))) {
       return percent_encoded_char(
-          byte, percent_encoded_char::no_encode());
+          std::byte(byte), percent_encoded_char::no_encode());
+    } else if (byte == '\x20') {
+      return percent_encoded_char(std::byte('+'), percent_encoded_char::no_encode());
     }
-    return percent_encoded_char(byte);
+    return percent_encoded_char(std::byte(byte));
   };
 
   auto result = std::string{};
-  for (auto encoded : input | ranges::views::transform(encode)) {
+  for (const auto &encoded : input | ranges::views::transform(encode)) {
     result += std::string(std::cbegin(encoded), std::cend(encoded));
   }
   return result;
