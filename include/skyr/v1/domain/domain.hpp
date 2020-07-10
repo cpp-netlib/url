@@ -23,6 +23,7 @@
 #include <skyr/v1/domain/idna.hpp>
 #include <skyr/v1/domain/punycode.hpp>
 
+
 namespace skyr {
 inline namespace v1 {
 inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules, bool check_hyphens,
@@ -116,8 +117,7 @@ inline auto create_domain_to_ascii_context(std::string_view domain_name, std::st
 ///
 /// \param context
 /// \return
-inline auto domain_to_ascii_impl(domain_to_ascii_context &&context)
-  -> tl::expected<void, domain_errc> {
+inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#ToASCII
 
   constexpr static auto map_domain_name = [] (domain_to_ascii_context &&ctx)
@@ -299,28 +299,26 @@ inline auto domain_to_ascii(std::string_view domain_name, std::string *ascii_dom
 }
 
 struct domain_to_u8_context {
+  std::string_view domain_name;
+
+  /// Parameters
+  std::string *u8_domain;
+
   std::vector<std::string> labels;
 
   /// This is used as an intermediate buffer
   std::u32string punycode_decoded;
 };
 
-/// Converts a Punycode encoded domain to UTF-8
 ///
-/// \param domain_name A Punycode encoded domain
-/// \returns A valid UTF-8 encoded domain, or an error
-inline auto domain_to_u8(
-    std::string_view domain_name,
-    std::string *u8_domain,
-    [[maybe_unused]] bool *validation_error) -> tl::expected<void, domain_errc> {
-
-  auto context = domain_to_u8_context{};
-
+/// \param context
+/// \return
+inline auto domain_to_u8_impl(domain_to_u8_context &&context) -> tl::expected<void, domain_errc> {
   static constexpr auto to_string_view = [] (auto &&label) {
     return std::string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
-  for (auto &&label : domain_name | ranges::views::split('.') | ranges::views::transform(to_string_view)) {
+  for (auto &&label : context.domain_name | ranges::views::split('.') | ranges::views::transform(to_string_view)) {
     context.labels.emplace_back();
     if (label.substr(0, 4) == "xn--") {
       label.remove_prefix(4);
@@ -340,12 +338,25 @@ inline auto domain_to_u8(
     }
   }
 
-  if (domain_name.back() == U'.') {
+  if (context.domain_name.back() == U'.') {
     context.labels.emplace_back();
   }
 
-  ranges::copy(context.labels | ranges::views::join('.'), ranges::back_inserter(*u8_domain));
+  ranges::copy(context.labels | ranges::views::join('.'), ranges::back_inserter(*context.u8_domain));
+
   return {};
+}
+
+/// Converts a Punycode encoded domain to UTF-8
+///
+/// \param domain_name A Punycode encoded domain
+/// \returns A valid UTF-8 encoded domain, or an error
+inline auto domain_to_u8(
+    std::string_view domain_name,
+    std::string *u8_domain,
+    [[maybe_unused]] bool *validation_error) -> tl::expected<void, domain_errc> {
+  auto context = domain_to_u8_context{domain_name, u8_domain, {}, {}};
+  return domain_to_u8_impl(std::move(context));
 }
 
 /// Converts a Punycode encoded domain to UTF-8
