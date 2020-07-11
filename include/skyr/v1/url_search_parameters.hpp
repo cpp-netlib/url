@@ -13,6 +13,7 @@
 #include <optional>
 #include <algorithm>
 #include <cassert>
+#include <range/v3/algorithm/sort.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -121,28 +122,28 @@ class url_search_parameters {
   void sort() {
     static constexpr auto less_name = [](const auto &lhs, const auto &rhs) { return lhs.first < rhs.first; };
 
-    std::sort(std::begin(parameters_), std::end(parameters_), less_name);
+    ranges::sort(parameters_, less_name);
     update();
   }
 
   /// \returns An iterator to the first element in the search parameters
-  [[nodiscard]] auto begin() const noexcept {
-    return parameters_.begin();
-  }
-
-  /// \returns An iterator to the last element in the search parameters
-  [[nodiscard]] auto end() const noexcept {
-    return parameters_.end();
-  }
-
-  /// \returns An iterator to the first element in the search parameters
   [[nodiscard]] auto cbegin() const noexcept {
-    return begin();
+    return parameters_.cbegin();
   }
 
   /// \returns An iterator to the last element in the search parameters
   [[nodiscard]] auto cend() const noexcept {
-    return end();
+    return parameters_.cend();
+  }
+
+  /// \returns An iterator to the first element in the search parameters
+  [[nodiscard]] auto begin() const noexcept {
+    return cbegin();
+  }
+
+  /// \returns An iterator to the last element in the search parameters
+  [[nodiscard]] auto end() const noexcept {
+    return cend();
   }
 
   /// \returns `true` if the URL search string is empty, `false`
