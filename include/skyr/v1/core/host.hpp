@@ -11,6 +11,8 @@
 #include <cassert>
 #include <algorithm>
 #include <tl/expected.hpp>
+#include <range/v3/algorithm/find_if.hpp>
+#include <range/v3/range/access.hpp>
 #include <skyr/v1/core/errors.hpp>
 #include <skyr/v1/network/ipv4_address.hpp>
 #include <skyr/v1/network/ipv6_address.hpp>
@@ -169,9 +171,7 @@ inline auto parse_opaque_host(std::string_view input,
     return (byte != '%') && is_forbidden_host_point(byte);
   };
 
-  auto first = begin(input), last = end(input);
-  auto it = std::find_if(first, last, is_forbidden);
-  if (it != last) {
+  if (std::cend(input) != ranges::find_if(input, is_forbidden)) {
     *validation_error |= true;
     return tl::make_unexpected(url_parse_errc::forbidden_host_point);
   }
@@ -238,8 +238,7 @@ inline auto parse_host(
     return tl::make_unexpected(url_parse_errc::domain_error);
   }
 
-  auto it = std::find_if(std::cbegin(ascii_domain), std::cend(ascii_domain), details::is_forbidden_host_point);
-  if (it != std::cend(ascii_domain)) {
+  if (ranges::cend(ascii_domain) != ranges::find_if(ascii_domain, details::is_forbidden_host_point)) {
     *validation_error |= true;
     return tl::make_unexpected(url_parse_errc::domain_error);
   }

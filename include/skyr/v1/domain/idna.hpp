@@ -8,6 +8,7 @@
 
 #include <tl/expected.hpp>
 #include <skyr/v1/domain/errors.hpp>
+#include <skyr/v1/unicode/traits/range_iterator.hpp>
 
 namespace skyr {
 inline namespace v1 {
@@ -98,6 +99,14 @@ inline auto map_code_points(
     }
   }
   return first;
+}
+
+template <class T>
+inline auto map_code_points(
+    T &code_points,
+    bool use_std3_ascii_rules,
+    bool transitional_processing) -> tl::expected<typename unicode::traits::range_iterator_t<T>, domain_errc> {
+  return map_code_points(std::begin(code_points), std::end(code_points), use_std3_ascii_rules, transitional_processing);
 }
 }  // namespace idna
 }  // namespace v1

@@ -11,8 +11,12 @@
 #include <algorithm>
 #include <tl/expected.hpp>
 #include <range/v3/algorithm/copy.hpp>
+#include <range/v3/algorithm/find_if.hpp>
+#include <range/v3/algorithm/find_if_not.hpp>
+#include <range/v3/action/erase.hpp>
 #include <range/v3/iterator.hpp>
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/range/access.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/split.hpp>
 #include <range/v3/view/transform.hpp>
@@ -29,9 +33,7 @@ inline namespace v1 {
 inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules, bool check_hyphens,
                            [[maybe_unused]] bool check_bidi, [[maybe_unused]] bool check_joiners,
                            bool transitional_processing) -> tl::expected<void, domain_errc> {
-  /// https://www.unicode.org/reports/tr46/#Validity_Criteria
-
-  auto first = std::cbegin(label), last = std::cend(label);
+  /// https://www.unicode.org/reports/tr46/#Validity_Criteria;
 
   if (check_hyphens) {
     /// Criterion 2
@@ -52,8 +54,7 @@ inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_
       return (cp <= U'\x7e') || (status == idna::idna_status::valid);
     };
 
-    auto it = std::find_if_not(first, last, is_valid);
-    if (it != last) {
+    if (ranges::cend(label) != ranges::find_if_not(label, is_valid)) {
       return tl::make_unexpected(domain_errc::bad_input);
     }
   } else {
@@ -62,8 +63,7 @@ inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_
       return (cp <= U'\x7e') || (status == idna::idna_status::valid) || (status == idna::idna_status::deviation);
     };
 
-    auto it = std::find_if_not(first, last, is_valid_or_deviation);
-    if (it != last) {
+    if (ranges::cend(label) != ranges::find_if_not(label, is_valid_or_deviation)) {
       return tl::make_unexpected(domain_errc::bad_input);
     }
   }
@@ -122,10 +122,9 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
 
   constexpr static auto map_domain_name = [] (domain_to_ascii_context &&ctx)
       -> tl::expected<domain_to_ascii_context, domain_errc> {
-    auto result = idna::map_code_points(std::begin(ctx.domain_name), std::end(ctx.domain_name),
-                                        ctx.use_std3_ascii_rules, ctx.transitional_processing);
+    auto result = idna::map_code_points(ctx.domain_name, ctx.use_std3_ascii_rules, ctx.transitional_processing);
     if (result) {
-      ctx.domain_name.erase(result.value(), ctx.domain_name.cend());
+      ranges::erase(ctx.domain_name, result.value(), ctx.domain_name.cend());
       return std::move(ctx);
     } else {
       return tl::make_unexpected(result.error());
@@ -137,7 +136,7 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
     using namespace std::string_view_literals;
 
     static constexpr auto to_string_view = [] (auto &&label) {
-      return std::u32string_view(std::addressof(*std::cbegin(label)), ranges::distance(label));
+      return std::u32string_view(std::addressof(*ranges::cbegin(label)), ranges::distance(label));
     };
 
     for (auto &&label : ctx.domain_name | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
@@ -162,10 +161,9 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
       }
 
       constexpr static auto is_ascii = [] (std::u32string_view input) noexcept {
-        constexpr static auto is_in_ascii_set = [](auto c) { return static_cast<unsigned>(c) <= 0x7eu; };
+        constexpr static auto is_in_ascii_set = [](auto c) { return c <= U'\x7e'; };
 
-        auto first = std::cbegin(input), last = std::cend(input);
-        return last == std::find_if_not(first, last, is_in_ascii_set);
+        return ranges::cend(input) == ranges::find_if_not(input, is_in_ascii_set);
       };
 
       ctx.labels.emplace_back();
