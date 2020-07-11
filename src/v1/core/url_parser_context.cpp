@@ -11,7 +11,6 @@
 #include <skyr/v1/core/schemes.hpp>
 #include <skyr/v1/core/host.hpp>
 #include <skyr/v1/percent_encoding/percent_encoded_char.hpp>
-#include <skyr/v1/percent_encoding/percent_decode_range.hpp>
 #include <skyr/v1/string/starts_with.hpp>
 #include "url_parser_context.hpp"
 
@@ -21,8 +20,8 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 namespace {
-auto contains(char byte, std::string_view view) noexcept {
-  auto first = begin(view), last = end(view);
+auto contains(std::string_view view, char byte) noexcept {
+  auto first = std::cbegin(view), last = std::cend(view);
   return last != std::find(first, last, byte);
 }
 
@@ -50,7 +49,7 @@ auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, 
 }
 
 auto is_url_code_point(char byte) noexcept {
-  return std::isalnum(byte, std::locale::classic()) || contains(byte, "!$&'()*+,-./:;=?@_~"sv);
+  return std::isalnum(byte, std::locale::classic()) || contains("!$&'()*+,-./:;=?@_~"sv, byte);
 }
 
 inline auto is_windows_drive_letter(std::string_view segment) noexcept {
@@ -121,7 +120,7 @@ auto url_parser_context::parse_scheme_start(char byte) -> tl::expected<url_parse
 }
 
 auto url_parser_context::parse_scheme(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
-  if (std::isalnum(byte, std::locale::classic()) || contains(byte, "+-."sv)) {
+  if (std::isalnum(byte, std::locale::classic()) || contains("+-."sv, byte)) {
     auto lower = std::tolower(byte, std::locale::classic());
     buffer.push_back(lower);
   } else if (byte == ':') {
@@ -697,7 +696,7 @@ auto url_parser_context::parse_query(char byte) -> tl::expected<url_parse_action
     url.fragment = std::string();
     state = url_parse_state::fragment;
   } else if (!is_eof()) {
-    if ((byte < '!') || (byte > '~') || (contains(byte, R"("#<>)"sv)) || ((byte == '\'') && url.is_special())) {
+    if ((byte < '!') || (byte > '~') || (contains(R"("#<>)"sv, byte)) || ((byte == '\'') && url.is_special())) {
       auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::none);
       url.query.value() += pct_encoded.to_string();
     } else {
