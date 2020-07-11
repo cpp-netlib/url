@@ -7,8 +7,10 @@
 #include <climits>
 #include <locale>
 #include <skyr/v1/network/ipv4_address.hpp>
+#include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/view/split.hpp>
 #include <range/v3/view/transform.hpp>
+#include <range/v3/view/drop_last.hpp>
 #include <skyr/v1/containers/static_vector.hpp>
 
 namespace skyr { inline namespace v1 {
@@ -107,20 +109,16 @@ auto parse_ipv4_address(
     numbers.push_back(number.value());
   }
 
-  constexpr static auto greater_than_255 = [] (auto number) { return number> 255; };
+  constexpr static auto greater_than_255 = [] (auto number) { return number > 255; };
 
-  auto numbers_first = std::begin(numbers), numbers_last = std::end(numbers);
-
-  auto numbers_it = std::find_if(numbers_first, numbers_last, greater_than_255);
-  if (numbers_it != numbers_last) {
+  if (ranges::cend(numbers) != ranges::find_if(numbers, greater_than_255)) {
     *validation_error |= true;
   }
 
-  auto numbers_last_but_one = numbers_last;
+  auto numbers_last_but_one = ranges::cend(numbers);
   --numbers_last_but_one;
-
-  numbers_it = std::find_if(numbers_first, numbers_last_but_one, greater_than_255);
-  if (numbers_it != numbers_last_but_one) {
+  if (numbers_last_but_one != ranges::find_if(numbers | ranges::views::drop_last(1), greater_than_255)) {
+    *validation_error |= true;
     return tl::make_unexpected(ipv4_address_errc::overflow);
   }
 

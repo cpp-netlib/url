@@ -5,6 +5,7 @@
 
 #include <locale>
 #include <cassert>
+#include <range/v3/algorithm/stable_sort.hpp>
 #include <skyr/v1/network/ipv6_address.hpp>
 #include <skyr/v1/string/starts_with.hpp>
 #include <skyr/v1/containers/static_vector.hpp>
@@ -19,11 +20,11 @@ namespace skyr { inline namespace v1 {
   auto sequences = static_vector<std::pair<std::size_t, std::size_t>, 8>{};
   auto in_sequence = false;
 
-  auto first = std::begin(address_), last = std::end(address_);
+  auto first = std::cbegin(address_), last = std::cend(address_);
   auto it = first;
   while (true) {
     if (*it == 0) {
-      auto index = std::distance(first, it);
+      auto index = ranges::distance(first, it);
 
       if (!in_sequence) {
         sequences.emplace_back(index, 1);
@@ -53,7 +54,7 @@ namespace skyr { inline namespace v1 {
   if (!sequences.empty()) {
     constexpr static auto greater = [](const auto &lhs, const auto &rhs) -> bool { return lhs.second > rhs.second; };
 
-    std::stable_sort(std::begin(sequences), std::end(sequences), greater);
+    ranges::stable_sort(sequences, greater);
     compress = sequences.front().first;
   }
 
@@ -105,11 +106,11 @@ auto parse_ipv6_address(
   auto piece_index = 0;
   auto compress = std::optional<decltype(piece_index)>();
 
-  auto first = begin(input), last = end(input);
+  auto first = std::cbegin(input), last = std::cend(input);
   auto it = first;
 
   if (starts_with(input, "::"sv)) {
-    std::advance(it, 2);
+    ranges::advance(it, 2);
     ++piece_index;
     compress = piece_index;
   }
@@ -152,7 +153,7 @@ auto parse_ipv6_address(
         return tl::make_unexpected(ipv6_address_errc::empty_ipv4_segment);
       }
 
-      std::advance(it, -length);
+      ranges::advance(it, -length);
 
       if (piece_index > 6) {
         *validation_error |= true;

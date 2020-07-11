@@ -33,13 +33,11 @@ auto remaining_starts_with(
 }
 
 auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {
-  auto tmp_port = std::string(port); // strtoul doesn't quite like non-null terminated strings
-
-  if (tmp_port.empty()) {
+  if (port.empty()) {
     return tl::make_unexpected(url_parse_errc::invalid_port);
   }
 
-  const char* port_first = tmp_port.data();
+  const char* port_first = port.data();
   char* port_last = nullptr;
   auto port_value = std::strtoul(port_first, &port_last, 10);
 

@@ -15,6 +15,7 @@
 #include <range/v3/algorithm/find_if_not.hpp>
 #include <range/v3/action/erase.hpp>
 #include <range/v3/iterator.hpp>
+#include <range/v3/distance.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/range/access.hpp>
 #include <range/v3/view/join.hpp>
