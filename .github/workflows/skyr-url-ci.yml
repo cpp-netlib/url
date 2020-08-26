@@ -270,11 +270,27 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 10
 
-      - name: Install vcpkg (Linux/MacOS)
-        id: vcpkg_linux_macos
-        if: startsWith(matrix.config.os, 'ubuntu') || startsWith(matrix.config.os, 'macos')
+      - name: Install vcpkg (Linux)
+        id: vcpkg_linux
+        if: startsWith(matrix.config.os, 'ubuntu')
         shell: bash
         run: |
+          mkdir -p ${GITHUB_WORKSPACE}/vcpkg
+          cd ${GITHUB_WORKSPACE}/vcpkg
+          git init
+          git remote add origin https://github.com/microsoft/vcpkg.git
+          git fetch origin master
+          git checkout -b master origin/master
+          export
+          ./bootstrap-vcpkg.sh
+          ./vcpkg install tl-expected range-v3 catch2 nlohmann-json fmt
+
+      - name: Install vcpkg (MacOS)
+        id: vcpkg_macos
+        if: startsWith(matrix.config.os, 'macos')
+        shell: bash
+        run: |
+          brew install pkg-config
           mkdir -p ${GITHUB_WORKSPACE}/vcpkg
           cd ${GITHUB_WORKSPACE}/vcpkg
           git init
