@@ -33,6 +33,7 @@ function(skyr_create_test file_name output_dir test_name)
     set(test_name ${test} PARENT_SCOPE)
 endfunction()
 
+add_subdirectory(containers)
 add_subdirectory(unicode)
 add_subdirectory(domain)
 add_subdirectory(percent_encoding)
