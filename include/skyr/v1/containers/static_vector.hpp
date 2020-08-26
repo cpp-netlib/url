@@ -52,6 +52,10 @@ class static_vector {
   /// Constructor
   constexpr static_vector() = default;
 
+  ~static_vector() {
+    clear();
+  }
+
   /// Gets the first const element in the vector
   /// \return a const T &
   /// \pre `size() > 0`
@@ -107,6 +111,7 @@ class static_vector {
   /// \pre `size() > 0`
   constexpr void pop_back() noexcept {
     --size_;
+    impl_[size_].~T();
   }
 
   ///
@@ -140,8 +145,11 @@ class static_vector {
   }
 
   ///
+  /// \post size() == 0
   constexpr void clear() noexcept {
-    size_ = 0;
+    while (size_) {
+      pop_back();
+    }
   }
 
   ///
