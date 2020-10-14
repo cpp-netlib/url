@@ -67,16 +67,16 @@ endif()
 
 # Add an alias for projects that use skyr-url as a dependency
 if (NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    add_library(skyr::skyr-url ALIAS skyr-url)
+    add_library(skyr::skyr-url ALIAS skyr-url-v1)
     if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
-        add_library(skyr::skyr-filesystem ALIAS skyr-filesystem)
+        add_library(skyr::skyr-filesystem ALIAS skyr-filesystem-v1)
     endif()
     if (skyr_ENABLE_JSON_FUNCTIONS)
-        add_library(skyr::skyr-json ALIAS skyr-json)
+        add_library(skyr::skyr-json ALIAS skyr-json-v1)
     endif()
 endif()
 
-# Install
+## Install
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
@@ -90,12 +90,12 @@ write_basic_package_version_file(
         COMPATIBILITY SameMajorVersion
         ARCH_INDEPENDENT)
 
-set(skyr_TARGETS skyr-url)
+set(skyr_TARGETS skyr-url-v1)
 if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
-    list(APPEND skyr_TARGETS skyr-filesystem)
+    list(APPEND skyr_TARGETS skyr-filesystem-v1)
 endif()
 if (skyr_ENABLE_JSON_FUNCTIONS)
-    list(APPEND skyr_TARGETS skyr-json)
+    list(APPEND skyr_TARGETS skyr-json-v1)
 endif()
 
 install(TARGETS ${skyr_TARGETS}

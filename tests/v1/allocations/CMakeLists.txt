@@ -3,7 +3,7 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-functions.cmake)
+include(../../../cmake/skyr-url-functions.cmake)
 
 set(full_warnings $<BOOL:${skyr_FULL_WARNINGS}>)
 set(warnings_as_errors $<BOOL:${skyr_WARNINGS_AS_ERRORS}>)
@@ -21,7 +21,7 @@ foreach(
 )
     skyr_remove_extension(${file_name} test)
     add_executable(${test} ${file_name})
-    add_dependencies(${test} skyr-url)
+    add_dependencies(${test} skyr-url-v1)
     target_compile_options(
             ${test}
             PRIVATE
@@ -40,7 +40,7 @@ foreach(
     target_link_libraries(
             ${test}
             PRIVATE
-            skyr-url
+            skyr-url-v1
             fmt::fmt
     )
     set_target_properties(
