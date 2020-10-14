@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/url.hpp>
+#include <skyr/v1/url.hpp>
 
 TEST_CASE("url_setter_tests", "[url]") {
   SECTION("test_href_1") {

@@ -7,7 +7,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include <vector>
-#include <skyr/json/json.hpp>
+#include <skyr/v1/json/json.hpp>
 
 TEST_CASE("ipv6_address_tests", "[json.query]") {
   using namespace std::string_literals;

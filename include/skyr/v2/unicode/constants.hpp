@@ -3,13 +3,13 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_UNICODE_CONSTANTS_HPP
-#define SKYR_V1_UNICODE_CONSTANTS_HPP
+#ifndef SKYR_V2_UNICODE_CONSTANTS_HPP
+#define SKYR_V2_UNICODE_CONSTANTS_HPP
 
 #include <array>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace unicode::constants {
 namespace surrogates {
 // Leading (high) surrogates: 0xd800 - 0xdbff
@@ -29,7 +29,7 @@ constexpr char32_t max = U'\x0010ffff';
 
 constexpr std::array<uint8_t, 3> bom = {0xef, 0xbb, 0xbf};
 }  // namespace unicode::constants
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_V1_UNICODE_CONSTANTS_HPP
+#endif // SKYR_V2_UNICODE_CONSTANTS_HPP

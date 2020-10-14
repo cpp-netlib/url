@@ -3,16 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_UNICODE_CODE_POINT_HPP
-#define SKYR_V1_UNICODE_CODE_POINT_HPP
+#ifndef SKYR_V2_UNICODE_CODE_POINT_HPP
+#define SKYR_V2_UNICODE_CODE_POINT_HPP
 
 #include <tl/expected.hpp>
-#include <skyr/v1/unicode/code_points/u16.hpp>
-#include <skyr/v1/unicode/code_points/u8.hpp>
-#include <skyr/v1/unicode/errors.hpp>
+#include <skyr/v2/unicode/code_points/u16.hpp>
+#include <skyr/v2/unicode/code_points/u8.hpp>
+#include <skyr/v2/unicode/errors.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace unicode {
 ///
 /// \tparam OctetIterator
@@ -92,7 +92,7 @@ inline auto u16_value(
   return u32_value(code_point).map(to_u16);
 }
 }  // namespace unicode
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_V1_UNICODE_CODE_POINT_HPP
+#endif // SKYR_V2_UNICODE_CODE_POINT_HPP

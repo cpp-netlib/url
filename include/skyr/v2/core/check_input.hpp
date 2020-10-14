@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_CORE_CHECK_INPUT_HPP
-#define SKYR_V1_CORE_CHECK_INPUT_HPP
+#ifndef SKYR_V2_CORE_CHECK_INPUT_HPP
+#define SKYR_V2_CORE_CHECK_INPUT_HPP
 
 #include <locale>
 #include <string>
@@ -15,7 +15,7 @@
 #include <range/v3/action/erase.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 constexpr static auto is_c0_control_or_space = [] (auto byte) {
   return std::iscntrl(byte, std::locale::classic()) || std::isspace(byte, std::locale::classic());
 };
@@ -44,7 +44,7 @@ inline auto remove_tabs_and_newlines(std::string &input, bool *validation_error)
   *validation_error |= (it != std::cend(input));
   ranges::erase(input, it, std::cend(input));
 }
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif  // SKYR_V1_CORE_CHECK_INPUT_HPP
+#endif  // SKYR_V2_CORE_CHECK_INPUT_HPP

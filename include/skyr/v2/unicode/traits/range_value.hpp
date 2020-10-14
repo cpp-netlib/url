@@ -3,11 +3,13 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_UNICODE_TRAITS_RANGE_VALUE_HPP
-#define SKYR_UNICODE_TRAITS_RANGE_VALUE_HPP
+#ifndef SKYR_V2_UNICODE_TRAITS_RANGE_VALUE_HPP
+#define SKYR_V2_UNICODE_TRAITS_RANGE_VALUE_HPP
+
+#include <cstdlib>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace unicode::traits {
 ///
 /// \tparam Range
@@ -29,7 +31,7 @@ class range_value<T[N]> { // NOLINT
 template <class Range>
 using range_value_t = typename range_value<Range>::type;
 }  // namespace unicode::traits
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_UNICODE_TRAITS_RANGE_VALUE_HPP
+#endif // SKYR_V2_UNICODE_TRAITS_RANGE_VALUE_HPP

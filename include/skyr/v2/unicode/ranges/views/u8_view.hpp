@@ -3,22 +3,22 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_UNICODE_RANGES_VIEWS_U8_VIEW_HPP
-#define SKYR_V1_UNICODE_RANGES_VIEWS_U8_VIEW_HPP
+#ifndef SKYR_V2_UNICODE_RANGES_VIEWS_U8_VIEW_HPP
+#define SKYR_V2_UNICODE_RANGES_VIEWS_U8_VIEW_HPP
 
 #include <iterator>
 #include <type_traits>
 #include <tl/expected.hpp>
-#include <skyr/v1/unicode/code_point.hpp>
-#include <skyr/v1/unicode/core.hpp>
-#include <skyr/v1/unicode/errors.hpp>
-#include <skyr/v1/unicode/ranges/views/unchecked_u8_view.hpp>
-#include <skyr/v1/unicode/traits/iterator_value.hpp>
-#include <skyr/v1/unicode/traits/range_iterator.hpp>
-#include <skyr/v1/unicode/traits/range_value.hpp>
+#include <skyr/v2/unicode/code_point.hpp>
+#include <skyr/v2/unicode/core.hpp>
+#include <skyr/v2/unicode/errors.hpp>
+#include <skyr/v2/unicode/ranges/views/unchecked_u8_view.hpp>
+#include <skyr/v2/unicode/traits/iterator_value.hpp>
+#include <skyr/v2/unicode/traits/range_iterator.hpp>
+#include <skyr/v2/unicode/traits/range_value.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace unicode {
 /// \brief
 ///
@@ -182,7 +182,7 @@ constexpr inline auto as_u8(const OctetRange &range) {
 }
 }  // namespace views
 }  // namespace unicode
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
 #endif // SKYR_V1_UNICODE_RANGES_VIEWS_U8_VIEW_HPP

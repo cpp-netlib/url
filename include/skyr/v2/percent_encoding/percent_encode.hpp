@@ -3,16 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_PERCENT_ENCODING_PERCENT_ENCODE_HPP
-#define SKYR_V1_PERCENT_ENCODING_PERCENT_ENCODE_HPP
+#ifndef SKYR_V2_PERCENT_ENCODING_PERCENT_ENCODE_HPP
+#define SKYR_V2_PERCENT_ENCODING_PERCENT_ENCODE_HPP
 
 #include <string_view>
 #include <string>
 #include <range/v3/view/transform.hpp>
-#include <skyr/v1/percent_encoding/percent_encoded_char.hpp>
+#include <skyr/v2/percent_encoding/percent_encoded_char.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 /// Percent encodes the input
 /// \returns The percent encoded output when successful, an error otherwise.
 inline auto percent_encode(std::string_view input) {
@@ -37,7 +37,7 @@ inline auto percent_encode(std::string_view input) {
   }
   return result;
 }
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif //SKYR_V1_PERCENT_ENCODING_PERCENT_ENCODE_HPP
+#endif //SKYR_V2_PERCENT_ENCODING_PERCENT_ENCODE_HPP

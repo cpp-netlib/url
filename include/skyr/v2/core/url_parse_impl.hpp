@@ -3,16 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_URL_PARSE_IMPL_HPP
-#define SKYR_V1_URL_PARSE_IMPL_HPP
+#ifndef SKYR_V2_URL_PARSE_IMPL_HPP
+#define SKYR_V2_URL_PARSE_IMPL_HPP
 
 #include <string>
 #include <optional>
 #include <tl/expected.hpp>
-#include <skyr/v1/core/url_record.hpp>
+#include <skyr/v2/core/url_record.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 /// States of the URL parser
 enum class url_parse_state {
   /// Pointer is at the scheme start
@@ -103,7 +103,7 @@ inline auto parse(
   return parse(input, validation_error, nullptr);
 }
 }  // namespace details
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_V1_URL_PARSE_IMPL_HPP
+#endif // SKYR_V2_URL_PARSE_IMPL_HPP

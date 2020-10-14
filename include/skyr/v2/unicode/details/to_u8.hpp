@@ -3,17 +3,17 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_UNICODE_DETAILS_TO_U8_HPP
-#define SKYR_V1_UNICODE_DETAILS_TO_U8_HPP
+#ifndef SKYR_V2_UNICODE_DETAILS_TO_U8_HPP
+#define SKYR_V2_UNICODE_DETAILS_TO_U8_HPP
 
 #include <string>
-#include <skyr/v1/traits/string_traits.hpp>
-#include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
-#include <skyr/v1/unicode/ranges/views/u16_view.hpp>
-#include <skyr/v1/unicode/errors.hpp>
+#include <skyr/v2/traits/string_traits.hpp>
+#include <skyr/v2/unicode/ranges/transforms/u8_transform.hpp>
+#include <skyr/v2/unicode/ranges/views/u16_view.hpp>
+#include <skyr/v2/unicode/errors.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace details {
 template<class Source, class Enable = void>
 struct to_u8_impl;
@@ -56,7 +56,7 @@ inline auto to_u8(const Source &source) {
   return to_u8(source);
 }
 }  // namespace details
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif  // SKYR_V1_UNICODE_DETAILS_TO_U8_HPP
+#endif  // SKYR_V2_UNICODE_DETAILS_TO_U8_HPP

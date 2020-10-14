@@ -5,8 +5,8 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/url.hpp>
-#include <skyr/filesystem/path.hpp>
+#include <skyr/v1/url.hpp>
+#include <skyr/v1/filesystem/path.hpp>
 
 SKYR_DEFINE_FILESYSTEM_NAMESPACE_ALIAS(stdfs)
 

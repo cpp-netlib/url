@@ -3,11 +3,13 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_UNICODE_TRAITS_RANGE_ITERATOR_HPP
-#define SKYR_UNICODE_TRAITS_RANGE_ITERATOR_HPP
+#ifndef SKYR_V2_UNICODE_TRAITS_RANGE_ITERATOR_HPP
+#define SKYR_V2_UNICODE_TRAITS_RANGE_ITERATOR_HPP
+
+#include <type_traits>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace unicode::traits {
 ///
 /// \tparam Range
@@ -29,7 +31,7 @@ class range_iterator<T[N]> { // NOLINT
 template <class Range>
 using range_iterator_t = typename range_iterator<Range>::type;
 }  // namespace unicode::traits
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_UNICODE_TRAITS_RANGE_ITERATOR_HPP
+#endif // SKYR_V2_UNICODE_TRAITS_RANGE_ITERATOR_HPP

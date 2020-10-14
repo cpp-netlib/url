@@ -6,8 +6,8 @@
 #include <string>
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/domain/domain.hpp>
-#include <skyr/domain/errors.hpp>
+#include <skyr/v1/domain/domain.hpp>
+#include <skyr/v1/domain/errors.hpp>
 
 TEST_CASE("valid domains to ascii", "[domain]") {
   using param = std::pair<std::string, std::string>;

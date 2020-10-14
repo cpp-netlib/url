@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/network/ipv6_address.hpp>
+#include <skyr/v1/network/ipv6_address.hpp>
 
 TEST_CASE("ipv6_address_tests", "[ipv6]") {
   using namespace std::string_literals;

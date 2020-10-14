@@ -3,18 +3,18 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_DOMAIN_PUNYCODE_HPP
-#define SKYR_V1_DOMAIN_PUNYCODE_HPP
+#ifndef SKYR_V2_DOMAIN_PUNYCODE_HPP
+#define SKYR_V2_DOMAIN_PUNYCODE_HPP
 
 #include <string>
 #include <string_view>
 #include <limits>
 #include <tl/expected.hpp>
-#include <skyr/v1/domain/errors.hpp>
+#include <skyr/v2/domain/errors.hpp>
 
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace punycode {
 namespace constants {
 constexpr auto base = 0x24u;
@@ -228,7 +228,7 @@ inline auto punycode_decode(
 
   return {};
 }
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_V1_DOMAIN_PUNYCODE_HPP
+#endif // SKYR_V2_DOMAIN_PUNYCODE_HPP

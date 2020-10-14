@@ -3,15 +3,43 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#ifndef SKYR_V2_DOMAIN_IDNA_TABLES_HPP
+#define SKYR_V2_DOMAIN_IDNA_TABLES_HPP
+
 #include <algorithm>
 #include <array>
 #include <iterator>
-#include <skyr/v1/domain/idna.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace idna {
-namespace {
+/// \enum idna_status
+/// The status values come from the IDNA mapping table in domain TR46:
+///
+/// https://domain.org/reports/tr46/#IDNA_Mapping_Table
+///
+enum class idna_status {
+  /// The code point is disallowed
+  disallowed = 1,
+  /// The code point is disallowed, but can be treated as valid when using std 3
+  /// rules
+  disallowed_std3_valid,
+  /// The code point is disallowed, but can be mapped to another value when
+  /// using std 3 rules
+  disallowed_std3_mapped,
+  /// The code point will be ignored - equivalent to being mapped to an empty
+  /// string
+  ignored,
+  /// The code point will be replaced by another character
+  mapped,
+  /// The code point is either mapped or valid, depending on whether the process
+  /// is transitional or not
+  deviation,
+  /// The code point is valid
+  valid,
+};
+
+namespace details {
 struct code_point_range {
   char32_t first;
   char32_t last;
@@ -1614,19 +1642,10 @@ constexpr static auto statuses = std::array<code_point_range, 1594>{{
   { U'\xe0100', U'\xe01ef', idna_status::ignored },
   { U'\xe01f0', U'\x10ffff', idna_status::disallowed },
 }};
-}  // namespace
+}  // namespace details
 
-auto code_point_status(char32_t code_point) -> idna_status {
-  constexpr static auto less = [] (const auto &range, auto code_point) {
-    return range.last < code_point;
-  };
 
-  auto first = std::begin(statuses), last = std::end(statuses);
-  auto it = std::lower_bound(first, last, code_point, less);
-  return (it == last) || !((code_point >= (*it).first) && (code_point <= (*it).last)) ? idna_status::valid : it->status;
-}
-
-namespace {
+namespace details {
 struct mapped_16_code_point {
   char16_t code_point;
   char16_t mapped;
@@ -7463,21 +7482,9 @@ constexpr static auto mapped_32 = std::array<mapped_32_code_point, 2038>{{
   { U'\x2fa1c', U'\x9f3b' },
   { U'\x2fa1d', U'\x2a600' },
 }};
-}  // namespace
-
-auto map_code_point(char32_t code_point) -> char32_t {
-  constexpr static auto less = [](const auto &lhs, auto rhs) {
-    return lhs.code_point < rhs;
-  };
-  
-  if (code_point <= U'\xffff') {
-    return static_cast<char32_t>(map_code_point_16(static_cast<char16_t>(code_point)));
-  }
-
-  auto first = std::begin(mapped_32), last = std::end(mapped_32);
-  auto it = std::lower_bound(first, last, code_point, less);
-  return (it != last) ? it->mapped : code_point;
-}
+}  // namespace details
 }  // namespace idna
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
+
+#endif // SKYR_V2_DOMAIN_IDNA_TABLES_HPP

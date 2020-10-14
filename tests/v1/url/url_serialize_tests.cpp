@@ -5,9 +5,8 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/core/url_record.hpp>
-#include <skyr/core/parse.hpp>
-#include <skyr/core/serialize.hpp>
+#include <skyr/v1/core/parse.hpp>
+#include <skyr/v1/core/serialize.hpp>
 
 TEST_CASE("url_serialize_tests", "[ipv6]") {
   SECTION("url_serialize_1") {

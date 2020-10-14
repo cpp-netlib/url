@@ -3,17 +3,17 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_UNICODE_CODE_POINTS_U8_HPP
-#define SKYR_V1_UNICODE_CODE_POINTS_U8_HPP
+#ifndef SKYR_V2_UNICODE_CODE_POINTS_U8_HPP
+#define SKYR_V2_UNICODE_CODE_POINTS_U8_HPP
 
-#include <skyr/v1/unicode/constants.hpp>
-#include <skyr/v1/unicode/core.hpp>
-#include <skyr/v1/unicode/errors.hpp>
-#include <skyr/v1/unicode/traits/range_iterator.hpp>
+#include <skyr/v2/unicode/constants.hpp>
+#include <skyr/v2/unicode/core.hpp>
+#include <skyr/v2/unicode/errors.hpp>
+#include <skyr/v2/unicode/traits/range_iterator.hpp>
 #include <tl/expected.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace unicode {
 /// This class defines a view over a code point in raw bytes,
 /// according to UTF-8.
@@ -131,7 +131,7 @@ inline auto checked_u8_code_point(
   return u8_code_point(range).and_then(check_code_point);
 }
 }  // namespace unicode
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_V1_UNICODE_CODE_POINTS_U8_HPP
+#endif // SKYR_V2_UNICODE_CODE_POINTS_U8_HPP

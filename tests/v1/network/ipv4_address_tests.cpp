@@ -5,7 +5,7 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <skyr/network/ipv4_address.hpp>
+#include <skyr/v1/network/ipv4_address.hpp>
 
 TEST_CASE("ipv4 addresses", "[ipv4]") {
   using namespace std::string_literals;

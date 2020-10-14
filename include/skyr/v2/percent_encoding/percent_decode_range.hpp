@@ -3,18 +3,18 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP
-#define SKYR_V1_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP
+#ifndef SKYR_V2_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP
+#define SKYR_V2_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP
 
 #include <iterator>
 #include <string_view>
 #include <cassert>
 #include <tl/expected.hpp>
-#include <skyr/v1/percent_encoding/errors.hpp>
-#include <skyr/v1/percent_encoding/sentinel.hpp>
+#include <skyr/v2/percent_encoding/errors.hpp>
+#include <skyr/v2/percent_encoding/sentinel.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace percent_encoding {
 namespace details {
 inline auto alnum_to_hex(char value) noexcept -> tl::expected<std::byte, percent_encode_errc> {
@@ -180,7 +180,7 @@ class percent_decode_range {
 
 };
 }  // namespace percent_encoding
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif //SKYR_V1_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP
+#endif //SKYR_V2_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP

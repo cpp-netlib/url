@@ -3,15 +3,15 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_UNICODE_RANGES_SENTINEL_HPP
-#define SKYR_V1_UNICODE_RANGES_SENTINEL_HPP
+#ifndef SKYR_V2_UNICODE_RANGES_SENTINEL_HPP
+#define SKYR_V2_UNICODE_RANGES_SENTINEL_HPP
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace unicode {
 class sentinel {};
 }  // namespace unicode
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif  // SKYR_V1_UNICODE_RANGES_SENTINEL_HPP
+#endif  // SKYR_V2_UNICODE_RANGES_SENTINEL_HPP

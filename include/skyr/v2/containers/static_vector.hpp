@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_CONTAINERS_STATIC_VECTOR_HPP
-#define SKYR_V1_CONTAINERS_STATIC_VECTOR_HPP
+#ifndef SKYR_V2_CONTAINERS_STATIC_VECTOR_HPP
+#define SKYR_V2_CONTAINERS_STATIC_VECTOR_HPP
 
 #include <cstdlib>
 #include <array>
@@ -12,7 +12,7 @@
 #include <optional>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 ///
 /// \tparam T
 /// \tparam Capacity
@@ -193,7 +193,7 @@ class static_vector {
   }
 
 };
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif  // SKYR_V1_CONTAINERS_STATIC_VECTOR_HPP
+#endif  // SKYR_V2_CONTAINERS_STATIC_VECTOR_HPP

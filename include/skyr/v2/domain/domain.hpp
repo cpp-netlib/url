@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_DOMAIN_DOMAIN_HPP
-#define SKYR_V1_DOMAIN_DOMAIN_HPP
+#ifndef SKYR_V2_DOMAIN_DOMAIN_HPP
+#define SKYR_V2_DOMAIN_DOMAIN_HPP
 
 #include <string>
 #include <string_view>
@@ -21,16 +21,16 @@
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/split.hpp>
 #include <range/v3/view/transform.hpp>
-#include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>
-#include <skyr/v1/unicode/ranges/views/u8_view.hpp>
-#include <skyr/v1/domain/errors.hpp>
-#include <skyr/v1/domain/idna.hpp>
-#include <skyr/v1/domain/punycode.hpp>
+#include <skyr/v2/unicode/ranges/transforms/u32_transform.hpp>
+#include <skyr/v2/unicode/ranges/transforms/u8_transform.hpp>
+#include <skyr/v2/unicode/ranges/views/u8_view.hpp>
+#include <skyr/v2/domain/errors.hpp>
+#include <skyr/v2/domain/idna.hpp>
+#include <skyr/v2/domain/punycode.hpp>
 
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules, bool check_hyphens,
                            [[maybe_unused]] bool check_bidi, [[maybe_unused]] bool check_joiners,
                            bool transitional_processing) -> tl::expected<void, domain_errc> {
@@ -366,7 +366,7 @@ inline auto domain_to_u8(std::string_view domain_name, std::string *u8_domain) -
   [[maybe_unused]] bool validation_error = false;
   return domain_to_u8(domain_name, u8_domain, &validation_error);
 }
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_V1_DOMAIN_DOMAIN_HPP
+#endif // SKYR_V2_DOMAIN_DOMAIN_HPP

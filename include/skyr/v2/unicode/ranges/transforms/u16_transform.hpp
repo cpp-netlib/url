@@ -3,21 +3,21 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP
-#define SKYR_V1_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP
+#ifndef SKYR_V2_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP
+#define SKYR_V2_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP
 
 #include <iterator>
 #include <type_traits>
 #include <tl/expected.hpp>
-#include <skyr/v1/unicode/core.hpp>
-#include <skyr/v1/unicode/errors.hpp>
-#include <skyr/v1/unicode/code_points/u16.hpp>
-#include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/v1/unicode/ranges/sentinel.hpp>
-#include <skyr/v1/unicode/traits/range_iterator.hpp>
+#include <skyr/v2/unicode/core.hpp>
+#include <skyr/v2/unicode/errors.hpp>
+#include <skyr/v2/unicode/code_points/u16.hpp>
+#include <skyr/v2/unicode/ranges/transforms/u32_transform.hpp>
+#include <skyr/v2/unicode/ranges/sentinel.hpp>
+#include <skyr/v2/unicode/traits/range_iterator.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace unicode {
 /// An iterator that transform a code point to UTF-16 code
 /// units
@@ -207,7 +207,7 @@ auto as(transform_u16_range<CodePointRange> &&range) -> tl::expected<Output, uni
   return result;
 }
 }  // namespace unicode
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_V1_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP
+#endif // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP

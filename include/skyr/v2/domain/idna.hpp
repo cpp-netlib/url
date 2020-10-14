@@ -3,52 +3,47 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_DOMAIN_IDNA_HPP
-#define SKYR_V1_DOMAIN_IDNA_HPP
+#ifndef SKYR_V2_DOMAIN_IDNA_HPP
+#define SKYR_V2_DOMAIN_IDNA_HPP
 
 #include <tl/expected.hpp>
-#include <skyr/v1/domain/errors.hpp>
-#include <skyr/v1/unicode/traits/range_iterator.hpp>
+#include <skyr/v2/domain/errors.hpp>
+#include <skyr/v2/unicode/traits/range_iterator.hpp>
+#include <skyr/v2/domain/idna_tables.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace idna {
-/// \enum idna_status
-/// The status values come from the IDNA mapping table in domain TR46:
-///
-/// https://domain.org/reports/tr46/#IDNA_Mapping_Table
-///
-enum class idna_status {
-  /// The code point is disallowed
-  disallowed = 1,
-  /// The code point is disallowed, but can be treated as valid when using std 3
-  /// rules
-  disallowed_std3_valid,
-  /// The code point is disallowed, but can be mapped to another value when
-  /// using std 3 rules
-  disallowed_std3_mapped,
-  /// The code point will be ignored - equivalent to being mapped to an empty
-  /// string
-  ignored,
-  /// The code point will be replaced by another character
-  mapped,
-  /// The code point is either mapped or valid, depending on whether the process
-  /// is transitional or not
-  deviation,
-  /// The code point is valid
-  valid,
-};
-
 ///
 /// \param code_point A code point value
 /// \return The status of the code point
-auto code_point_status(char32_t code_point) -> idna_status;
+constexpr auto code_point_status(char32_t code_point) -> idna_status {
+  constexpr auto less = [] (const auto &range, auto code_point) {
+    return range.last < code_point;
+  };
+
+  auto first = std::begin(details::statuses), last = std::end(details::statuses);
+  auto it = std::lower_bound(first, last, code_point, less);
+  return (it == last) || !((code_point >= (*it).first) && (code_point <= (*it).last)) ? idna_status::valid : it->status;
+}
 
 ///
 /// \param code_point A code point value
 /// \return The code point or mapped value, depending on the status of the code
 /// point
-auto map_code_point(char32_t code_point) -> char32_t;
+constexpr auto map_code_point(char32_t code_point) -> char32_t {
+  constexpr auto less = [](const auto &lhs, auto rhs) {
+    return lhs.code_point < rhs;
+  };
+
+  if (code_point <= U'\xffff') {
+    return static_cast<char32_t>(details::map_code_point_16(static_cast<char16_t>(code_point)));
+  }
+
+  auto first = std::begin(details::mapped_32), last = std::end(details::mapped_32);
+  auto it = std::lower_bound(first, last, code_point, less);
+  return (it != last) ? it->mapped : code_point;
+}
 
 ///
 /// \tparam FwdIter
@@ -109,7 +104,7 @@ inline auto map_code_points(
   return map_code_points(std::begin(code_points), std::end(code_points), use_std3_ascii_rules, transitional_processing);
 }
 }  // namespace idna
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif  // SKYR_V1_DOMAIN_IDNA_HPP
+#endif  // SKYR_V2_DOMAIN_IDNA_HPP

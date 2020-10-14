@@ -6,5 +6,5 @@
 foreach (
         file_name
         static_vector_tests.cpp)
-    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/container test_name)
+    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/container test_name v1)
 endforeach ()

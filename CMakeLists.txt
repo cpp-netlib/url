@@ -27,7 +27,7 @@ option(skyr_ENABLE_FILESYSTEM_FUNCTIONS "Enable functions to convert URL to std:
 option(skyr_ENABLE_JSON_FUNCTIONS "Enable functions to convert URL components to JSON" ON)
 
 set(CMAKE_VERBOSE_MAKEFILE true)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

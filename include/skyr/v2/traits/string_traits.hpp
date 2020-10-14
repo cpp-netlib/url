@@ -3,15 +3,15 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_STRING_TRAITS_HPP
-#define SKYR_STRING_TRAITS_HPP
+#ifndef SKYR_V2_STRING_TRAITS_HPP
+#define SKYR_V2_STRING_TRAITS_HPP
 
 #include <type_traits>
 #include <string>
 #include <string_view>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 /// Meta-function to test if the type is of the form
 /// basic_string<charT>
 template <class T, class charT>
@@ -65,13 +65,14 @@ template <class T>
 using is_url_convertible =
   std::disjunction<
       is_string_convertible<T, char>,
-      is_string_convertible<T, wchar_t>,
+      is_string_convertible<T, char8_t>,
+//      is_string_convertible<T, wchar_t>,
       is_string_convertible<T, char16_t>,
       is_string_convertible<T, char32_t>>;
 
 template <class T>
 inline constexpr auto is_url_convertible_v = is_url_convertible<T>::value;
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif //SKYR_STRING_TRAITS_HPP
+#endif //SKYR_V2_STRING_TRAITS_HPP

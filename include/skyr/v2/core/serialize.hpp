@@ -3,16 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_CORE_SERIALIZE_HPP
-#define SKYR_V1_CORE_SERIALIZE_HPP
+#ifndef SKYR_V2_CORE_SERIALIZE_HPP
+#define SKYR_V2_CORE_SERIALIZE_HPP
 
-#include <skyr/v1/core/url_record.hpp>
-#include <skyr/v1/core/errors.hpp>
-#include <skyr/v1/network/ipv4_address.hpp>
-#include <skyr/v1/network/ipv6_address.hpp>
+#include <skyr/v2/core/url_record.hpp>
+#include <skyr/v2/core/errors.hpp>
+#include <skyr/v2/network/ipv4_address.hpp>
+#include <skyr/v2/network/ipv6_address.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 /// Serializes a URL record according to the
 /// [WhatWG specification](https://url.spec.whatwg.org/#url-serializing)
 ///
@@ -74,7 +74,7 @@ inline auto serialize(const url_record &url) -> url_record::string_type {
 
   return output;
 }
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif  // SKYR_V1_CORE_SERIALIZE_HPP
+#endif  // SKYR_V2_CORE_SERIALIZE_HPP

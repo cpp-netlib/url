@@ -3,11 +3,11 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_UNICODE_TRAITS_ITERATOR_VALUE_HPP
-#define SKYR_UNICODE_TRAITS_ITERATOR_VALUE_HPP
+#ifndef SKYR_V2_UNICODE_TRAITS_ITERATOR_VALUE_HPP
+#define SKYR_V2_UNICODE_TRAITS_ITERATOR_VALUE_HPP
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace unicode::traits {
 ///
 /// \tparam Iterator
@@ -29,7 +29,7 @@ class iterator_value<T*> {
 template <class Range>
 using iterator_value_t = typename iterator_value<Range>::type;
 }  // namespace unicode::traits
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif // SKYR_UNICODE_TRAITS_ITERATOR_VALUE_HPP
+#endif // SKYR_V2_UNICODE_TRAITS_ITERATOR_VALUE_HPP

@@ -3,13 +3,13 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_CORE_ERRORS_HPP
-#define SKYR_V1_CORE_ERRORS_HPP
+#ifndef SKYR_V2_CORE_ERRORS_HPP
+#define SKYR_V2_CORE_ERRORS_HPP
 
 #include <system_error>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 /// \enum url_parse_errc
 /// Enumerates URL parser errors
 enum class url_parse_errc {
@@ -74,12 +74,12 @@ inline auto make_error_code(url_parse_errc error) noexcept -> std::error_code {
   static const details::url_parse_error_category category{};
   return std::error_code(static_cast<int>(error), category);
 }
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
 namespace std {
 template <>
-struct is_error_code_enum<skyr::v1::url_parse_errc> : true_type {};
+struct is_error_code_enum<skyr::v2::url_parse_errc> : true_type {};
 }  // namespace std
 
-#endif // SKYR_V1_CORE_ERRORS_HPP
+#endif // SKYR_V2_CORE_ERRORS_HPP

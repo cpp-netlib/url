@@ -3,21 +3,26 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_URL_HPP
-#define SKYR_V1_URL_HPP
+#ifndef SKYR_V2_URL_HPP
+#define SKYR_V2_URL_HPP
 
 #include <ostream>
-#include <skyr/config.hpp>
-#include <skyr/v1/core/errors.hpp>
-#include <skyr/v1/core/url_record.hpp>
-#include <skyr/v1/network/ipv4_address.hpp>
-#include <skyr/v1/network/ipv6_address.hpp>
-#include <skyr/v1/unicode/details/to_u8.hpp>
-#include <skyr/v1/url_search_parameters.hpp>
 #include <string>
 #include <string_view>
-#include <tl/expected.hpp>
 #include <type_traits>
+#include <tl/expected.hpp>
+#include <skyr/config.hpp>
+#include <skyr/v2/network/ipv4_address.hpp>
+#include <skyr/v2/network/ipv6_address.hpp>
+#include <skyr/v2/unicode/details/to_u8.hpp>
+#include <skyr/v2/percent_encoding/percent_encoded_char.hpp>
+#include <skyr/v2/domain/domain.hpp>
+#include <skyr/v2/core/errors.hpp>
+#include <skyr/v2/core/url_record.hpp>
+#include <skyr/v2/core/url_parse_impl.hpp>
+#include <skyr/v2/core/parse.hpp>
+#include <skyr/v2/core/serialize.hpp>
+#include <skyr/v2/url_search_parameters.hpp>
 
 #if defined(SKYR_PLATFORM_MSVC)
 #pragma warning(push)
@@ -28,7 +33,11 @@
 /// Top-level namespace for URL parsing, unicode encoding and domain
 /// name parsing.
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
+namespace details {
+auto make_url(std::string_view input, const url_record *base) -> tl::expected<url, url_parse_errc>;
+}   // namespace details
+
 /// Thrown when there is an error parsing the URL
 class url_parse_error : public std::runtime_error {
  public:
@@ -202,7 +211,15 @@ class url {
   /// \tparam Source The input string type
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
-  auto set_href(string_view href) -> std::error_code;
+  auto set_href(string_view href) -> std::error_code {
+    bool validation_error = false;
+    auto new_url = details::basic_parse(href, &validation_error, nullptr, nullptr, std::nullopt);
+    if (!new_url) {
+      return new_url.error();
+    }
+    update_record(std::move(new_url).value());
+    return {};
+  }
 
   /// Returns the [serialization of the context object’s url](https://url.spec.whatwg.org/#dom-url-href)
   ///
@@ -217,7 +234,21 @@ class url {
   /// Returns the [URL origin](https://url.spec.whatwg.org/#origin)
   ///
   /// \returns The [URL origin](https://url.spec.whatwg.org/#origin)
-  [[nodiscard]] auto origin() const -> string_type;
+  [[nodiscard]] auto origin() const -> string_type {
+    if (url_.scheme == "blob") {
+      auto url = details::make_url(pathname(), nullptr);
+      return url ? url.value().origin() : "";
+    } else if ((url_.scheme == "ftp") ||
+        (url_.scheme == "http") ||
+        (url_.scheme == "https") ||
+        (url_.scheme == "ws") ||
+        (url_.scheme == "wss")) {
+      return protocol() + "//" + host();
+    } else if (url_.scheme == "file") {
+      return "";
+    }
+    return "null";
+  }
 
   /// The URL scheme
   [[nodiscard]] auto scheme() const -> string_type {
@@ -254,7 +285,22 @@ class url {
   ///
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
-  auto set_protocol(string_view protocol) -> std::error_code;
+  auto set_protocol(string_view protocol) -> std::error_code {
+    auto protocol_ = static_cast<string_type>(protocol);
+    if (protocol_.back() != ':') {
+      protocol_ += ':';
+      protocol = string_view(protocol_);
+    }
+
+    bool validation_error = false;
+    auto new_url = details::basic_parse(
+        protocol, &validation_error, nullptr, &url_, url_parse_state::scheme_start);
+    if (!new_url) {
+      return new_url.error();
+    }
+    update_record(std::move(new_url).value());
+    return {};
+  }
 
   /// \returns The [URL username](https://url.spec.whatwg.org/#dom-url-username)
   [[nodiscard]] auto username() const -> string_type {
@@ -283,7 +329,23 @@ class url {
   ///
   /// \param username The new username
   /// \returns An error on failure to parse the new URL
-  auto set_username(string_view username) -> std::error_code;
+  auto set_username(string_view username) -> std::error_code {
+    if (url_.cannot_have_a_username_password_or_port()) {
+      return make_error_code(
+          url_parse_errc::cannot_have_a_username_password_or_port);
+    }
+
+    auto new_url = url_;
+
+    new_url.username.clear();
+    for (auto c : username) {
+      auto pct_encoded = percent_encode_byte(std::byte(c), percent_encoding::encode_set::userinfo);
+      new_url.username += pct_encoded.to_string();
+    }
+
+    update_record(std::move(new_url));
+    return {};
+  }
 
   /// The [URL password](https://url.spec.whatwg.org/#dom-url-password)
   ///
@@ -316,7 +378,23 @@ class url {
   ///
   /// \param password The new password
   /// \returns An error on failure to parse the new URL
-  auto set_password(string_view password) -> std::error_code;
+  auto set_password(string_view password) -> std::error_code {
+    if (url_.cannot_have_a_username_password_or_port()) {
+      return make_error_code(
+          url_parse_errc::cannot_have_a_username_password_or_port);
+    }
+
+    auto new_url = url_;
+
+    new_url.password.clear();
+    for (auto c : password) {
+      auto pct_encoded = percent_encode_byte(std::byte(c), percent_encoding::encode_set::userinfo);
+      new_url.password += pct_encoded.to_string();
+    }
+
+    update_record(std::move(new_url));
+    return {};
+  }
 
   /// \returns The [URL host](https://url.spec.whatwg.org/#dom-url-host)
   [[nodiscard]] auto host() const -> string_type {
@@ -353,7 +431,30 @@ class url {
   ///
   /// \param host The new URL host
   /// \returns An error on failure to parse the new URL
-  auto set_host(string_view host) -> std::error_code;
+  auto set_host(string_view host) -> std::error_code {
+    if (url_.cannot_be_a_base_url) {
+      return make_error_code(
+          url_parse_errc::cannot_be_a_base_url);
+    }
+
+    bool validation_error = false;
+    auto new_url = details::basic_parse(
+        host, &validation_error, nullptr, &url_, url_parse_state::host);
+    if (!new_url) {
+      if (new_url.error() == url_parse_errc::invalid_port) {
+        new_url = details::basic_parse(
+            host, &validation_error, nullptr, &url_, url_parse_state::hostname);
+        if (!new_url) {
+          return new_url.error();
+        }
+      }
+      else {
+        return new_url.error();
+      }
+    }
+    update_record(std::move(new_url).value());
+    return {};
+  }
 
   /// \returns The [URL hostname](https://url.spec.whatwg.org/#dom-url-hostname)
   [[nodiscard]] auto hostname() const -> string_type {
@@ -386,7 +487,21 @@ class url {
   ///
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
-  auto set_hostname(string_view hostname) -> std::error_code;
+  auto set_hostname(string_view hostname) -> std::error_code {
+    if (url_.cannot_be_a_base_url) {
+      return make_error_code(
+          url_parse_errc::cannot_be_a_base_url);
+    }
+
+    bool validation_error = false;
+    auto new_url = details::basic_parse(
+        hostname, &validation_error, nullptr, &url_, url_parse_state::hostname);
+    if (!new_url) {
+      return new_url.error();
+    }
+    update_record(std::move(new_url).value());
+    return {};
+  }
 
   /// Checks if the hostname is a valid domain name
   [[nodiscard]] auto is_domain() const -> bool {
@@ -394,25 +509,48 @@ class url {
   }
 
   /// Returns an optional domain name
-  [[nodiscard]] auto domain() const -> std::optional<string_type>;
+  [[nodiscard]] auto domain() const -> std::optional<string_type> {
+    return url_.host? url_.host.value().domain_name() : std::nullopt;
+  }
 
   /// Returns an optional domain after decoding as a UTF-8 string
   /// \returns
-  [[nodiscard]] auto u8domain() const -> std::optional<std::string>;
+  [[nodiscard]] auto u8domain() const -> std::optional<std::string> {
+    auto domain = this->domain();
+    if (domain) {
+      auto u8_domain = std::string{};
+      return domain_to_u8(domain.value(), &u8_domain) ? std::make_optional(u8_domain) : std::nullopt;
+    }
+    return domain;
+  }
 
   /// Checks if the hostname is a valid IPv4 address
-  [[nodiscard]] auto is_ipv4_address() const -> bool;
+  [[nodiscard]] auto is_ipv4_address() const -> bool {
+    return (url_.host && url_.host.value().is_ipv4_address());
+  }
 
   /// Returns an optional ipv4_address value if the hostname is a
   /// valid IPv4 address
-  [[nodiscard]] auto ipv4_address() const -> std::optional<skyr::ipv4_address>;
+  [[nodiscard]] auto ipv4_address() const -> std::optional<skyr::ipv4_address> {
+    if (!is_ipv4_address()) {
+      return std::nullopt;
+    }
+    return url_.host.value().ipv4_address();
+  }
 
   /// Checks if the hostname is a valid IPv6 address
-  [[nodiscard]] auto is_ipv6_address() const -> bool;
+  [[nodiscard]] auto is_ipv6_address() const -> bool {
+    return (url_.host && url_.host.value().is_ipv6_address());
+  }
 
   /// Returns an optional ipv6_address value if the hostname is a
   /// valid IPv6 address
-  [[nodiscard]] auto ipv6_address() const -> std::optional<skyr::ipv6_address>;
+  [[nodiscard]] auto ipv6_address() const -> std::optional<skyr::ipv6_address> {
+    if (!is_ipv6_address()) {
+      return std::nullopt;
+    }
+    return url_.host.value().ipv6_address();
+  }
 
   /// Checks if the hostname is a valid opaque host
   [[nodiscard]] auto is_opaque_host() const -> bool {
@@ -466,7 +604,28 @@ class url {
   ///
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
-  auto set_port(string_view port) -> std::error_code;
+  auto set_port(string_view port) -> std::error_code {
+    if (url_.cannot_have_a_username_password_or_port()) {
+      return make_error_code(
+          url_parse_errc::cannot_have_a_username_password_or_port);
+    }
+
+    if (port.empty()) {
+      auto new_url = url_;
+      new_url.port = std::nullopt;
+      update_record(std::move(new_url));
+    } else {
+      bool validation_error = false;
+      auto new_url = details::basic_parse(
+          port, &validation_error, nullptr, &url_, url_parse_state::port);
+      if (!new_url) {
+        return new_url.error();
+      }
+      update_record(std::move(new_url).value());
+    }
+
+    return {};
+  }
 
   /// Returns the [URL pathname](https://url.spec.whatwg.org/#dom-url-pathname)
   ///
@@ -510,7 +669,22 @@ class url {
   ///
   /// \param pathname The new pathname
   /// \returns An error on failure to parse the new URL
-  auto set_pathname(string_view pathname) -> std::error_code;
+  auto set_pathname(string_view pathname) -> std::error_code {
+    if (url_.cannot_be_a_base_url) {
+      return make_error_code(
+          url_parse_errc::cannot_be_a_base_url);
+    }
+
+    url_.path.clear();
+    bool validation_error = false;
+    auto new_url = details::basic_parse(
+        pathname, &validation_error, nullptr, &url_, url_parse_state::path_start);
+    if (!new_url) {
+      return new_url.error();
+    }
+    update_record(std::move(new_url).value());
+    return {};
+  }
 
   /// Returns the [URL search string](https://url.spec.whatwg.org/#dom-url-search)
   ///
@@ -545,7 +719,28 @@ class url {
   ///
   /// \param search The new search string
   /// \returns An error on failure to parse the new URL
-  auto set_search(string_view search) -> std::error_code;
+  auto set_search(string_view search) -> std::error_code {
+    auto url = url_;
+    if (search.empty()) {
+      url.query = std::nullopt;
+      update_record(std::move(url));
+      return {};
+    }
+
+    if (search.front() == '?') {
+      search.remove_prefix(1);
+    }
+
+    url.query = "";
+    bool validation_error = false;
+    auto new_url = details::basic_parse(
+        search, &validation_error, nullptr, &url, url_parse_state::query);
+    if (!new_url) {
+      return new_url.error();
+    }
+    update_record(std::move(new_url).value());
+    return {};
+  }
 
   /// \returns A reference to the search parameters
   [[nodiscard]] auto search_parameters() -> url_search_parameters & {
@@ -590,7 +785,26 @@ class url {
   ///
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
-  auto set_hash(string_view hash) -> std::error_code;
+  auto set_hash(string_view hash) -> std::error_code {
+    if (hash.empty()) {
+      url_.fragment = std::nullopt;
+      update_record(std::move(url_));
+      return {};
+    }
+
+    if (hash.front() == '#') {
+      hash.remove_prefix(1);
+    }
+
+    url_.fragment = "";
+    bool validation_error = false;
+    auto new_url = details::basic_parse(hash, &validation_error, nullptr, &url_, url_parse_state::fragment);
+    if (!new_url) {
+      return new_url.error();
+    }
+    update_record(std::move(new_url).value());
+    return {};
+  }
 
   /// The URL context object
   ///
@@ -658,7 +872,9 @@ class url {
   /// \returns The default port if the scheme is special, `nullopt`
   ///          otherwise
   [[nodiscard]] static auto default_port(
-      std::string_view scheme) noexcept -> std::optional<std::uint16_t>;
+      std::string_view scheme) noexcept -> std::optional<std::uint16_t> {
+    return skyr::default_port(scheme);
+  }
 
   /// Clears the underlying URL string
   ///
@@ -692,12 +908,34 @@ class url {
 
   void initialize(
       string_view input,
-      const url_record *base);
+      const url_record *base) {
+    using result_type = tl::expected<void, std::error_code>;
+
+    bool validation_error = false;
+    details::parse(input, &validation_error, base)
+        .and_then([=](auto &&url) -> result_type {
+          update_record(std::forward<url_record>(url));
+          return {};
+        })
+        .or_else([](auto &&error) -> result_type {
+          SKYR_EXCEPTIONS_THROW(url_parse_error(error));
+          return {};
+        });
+  }
+
 
   void initialize(
-      string_view input);
+      string_view input) {
+    initialize(input, nullptr);
+  }
 
-  void update_record(url_record &&url);
+  void update_record(url_record &&url) {
+    url_ = url;
+    href_ = serialize(url_);
+    view_ = string_view(href_);
+    parameters_.initialize(
+        url_.query ? string_view(url_.query.value()) : string_view{});
+  }
 
   template<class Source>
   auto set_port_impl(
@@ -735,8 +973,14 @@ inline void swap(url &lhs, url &rhs) noexcept {
 }
 
 namespace details {
-auto make_url(
-    std::string_view input, const url_record *base) -> tl::expected<url, url_parse_errc>;
+inline auto make_url(
+    std::string_view input, const url_record *base) -> tl::expected<url, url_parse_errc> {
+  bool validation_error = false;
+  return parse(input, &validation_error, base)
+      .and_then([](auto &&new_url) -> tl::expected<url, url_parse_errc> {
+        return url(std::forward<url_record>(new_url));
+      });
+}
 }  // namespace details
 
 /// Parses a URL string and constructs a `url` object on success,
@@ -845,13 +1089,13 @@ inline auto operator "" _url(const char *str, std::size_t length) {
   return url(std::string_view(str, length));
 }
 
-///
-/// \param str
-/// \param length
-/// \return
-inline auto operator "" _url(const wchar_t *str, std::size_t length) {
-  return url(std::wstring_view(str, length));
-}
+/////
+///// \param str
+///// \param length
+///// \return
+//inline auto operator "" _url(const wchar_t *str, std::size_t length) {
+//  return url(std::wstring_view(str, length));
+//}
 
 ///
 /// \param str
@@ -869,11 +1113,25 @@ inline auto operator "" _url(const char32_t *str, std::size_t length) {
   return url(std::u32string_view(str, length));
 }
 }  // namespace literals
-}  // namespace v1
+
+inline url_search_parameters::url_search_parameters(url *url) : url_(url) {
+  if (url_->record().query) {
+    initialize(url_->record().query.value());
+  }
+}
+
+inline void url_search_parameters::update() {
+  if (url_) {
+    auto query = to_string();
+    parameters_.clear();
+    url_->set_search(std::string_view(query));
+  }
+}
+}  // namespace v2
 }  // namespace skyr
 
 #if defined(SKYR_PLATFORM_MSVC)
 #pragma warning(pop)
 #endif // defined(SKYR_PLATFORM_MSVC)
 
-#endif  // SKYR_V1_URL_HPP
+#endif  // SKYR_V2_URL_HPP

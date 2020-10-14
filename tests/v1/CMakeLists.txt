@@ -11,28 +11,6 @@ find_package(fmt CONFIG REQUIRED)
 set(clang $<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>)
 set(libcxx $<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>)
 
-function(skyr_create_test file_name output_dir test_name)
-    skyr_remove_extension(${file_name} test)
-    add_executable(${test})
-    target_sources(${test} PRIVATE ${test}.cpp)
-    target_compile_options(${test} PRIVATE $<${libcxx}:-stdlib=libc++>)
-    add_dependencies(${test} skyr-url-v1)
-    target_link_libraries(
-            ${test}
-            PRIVATE
-            skyr-url-v1
-            Catch2::Catch2
-            fmt::fmt
-    )
-    set_target_properties(
-            ${test}
-            PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${output_dir}
-    )
-    add_test(${test} ${output_dir}/${test})
-    set(test_name ${test} PARENT_SCOPE)
-endfunction()
-
 add_subdirectory(containers)
 add_subdirectory(unicode)
 add_subdirectory(domain)

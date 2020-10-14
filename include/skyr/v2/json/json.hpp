@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V1_JSON_JSON_HPP
-#define SKYR_V1_JSON_JSON_HPP
+#ifndef SKYR_V2_JSON_JSON_HPP
+#define SKYR_V2_JSON_JSON_HPP
 
 #include <string>
 #include <optional>
@@ -13,11 +13,11 @@
 #include <range/v3/view/split_when.hpp>
 #include <range/v3/view/transform.hpp>
 #include <nlohmann/json.hpp>
-#include <skyr/v1/percent_encoding/percent_encode.hpp>
-#include <skyr/v1/percent_encoding/percent_decode.hpp>
+#include <skyr/v2/percent_encoding/percent_encode.hpp>
+#include <skyr/v2/percent_encoding/percent_decode.hpp>
 
 namespace skyr {
-inline namespace v1 {
+inline namespace v2 {
 namespace json {
 ///
 enum class json_errc {
@@ -105,7 +105,7 @@ inline auto decode_query(std::string_view query, char separator='&', char equal=
   return object;
 }
 }  // namespace json
-}  // namespace v1
+}  // namespace v2
 }  // namespace skyr
 
-#endif //SKYR_V1_JSON_JSON_HPP
+#endif //SKYR_V2_JSON_JSON_HPP
