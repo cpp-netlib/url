@@ -87,8 +87,8 @@ class u8_code_point_view {
 
   ///
   /// \return
-  [[nodiscard]] auto u32_value() const noexcept {
-    constexpr static auto to_u32 = [] (auto &&state) { return state.value; };
+  [[nodiscard]] constexpr auto u32_value() const noexcept {
+    constexpr auto to_u32 = [] (auto &&state) { return state.value; };
     return find_code_point(first).map(to_u32).value();
   }
 
@@ -103,7 +103,7 @@ class u8_code_point_view {
 /// \param range
 /// \return
 template<typename OctetRange>
-inline auto u8_code_point(const OctetRange &range)
+inline constexpr auto u8_code_point(const OctetRange &range)
     -> tl::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc> {
   auto first = std::begin(range), last = std::end(range);
   auto length = sequence_length(*first);
@@ -120,11 +120,11 @@ inline auto u8_code_point(const OctetRange &range)
 /// \param range
 /// \return
 template <typename OctetRange>
-inline auto checked_u8_code_point(
+inline constexpr auto checked_u8_code_point(
     const OctetRange &range) {
   using result_type = tl::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc>;
 
-  constexpr static auto check_code_point = [] (auto &&code_point) -> result_type {
+  constexpr auto check_code_point = [] (auto &&code_point) -> result_type {
     return find_code_point(std::begin(code_point)).map([=] (auto) { return code_point; });
   };
 

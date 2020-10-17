@@ -9,6 +9,7 @@
 #include <string>
 #include <string_view>
 #include <algorithm>
+#include <iterator>
 #include <tl/expected.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/find_if.hpp>
@@ -31,9 +32,10 @@
 
 namespace skyr {
 inline namespace v2 {
-inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules, bool check_hyphens,
-                           [[maybe_unused]] bool check_bidi, [[maybe_unused]] bool check_joiners,
-                           bool transitional_processing) -> tl::expected<void, domain_errc> {
+constexpr inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules,
+                                     bool check_hyphens, [[maybe_unused]] bool check_bidi,
+                                     [[maybe_unused]] bool check_joiners, bool transitional_processing)
+    -> tl::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#Validity_Criteria;
 
   if (check_hyphens) {
@@ -50,21 +52,21 @@ inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_
 
   /// Criterion 6
   if (transitional_processing) {
-    static constexpr auto is_valid = [](auto cp) {
+    constexpr auto is_valid = [](auto cp) {
       auto status = idna::code_point_status(cp);
       return (cp <= U'\x7e') || (status == idna::idna_status::valid);
     };
 
-    if (ranges::cend(label) != ranges::find_if_not(label, is_valid)) {
+    if (std::cend(label) != std::find_if_not(std::cbegin(label), std::cend(label), is_valid)) {
       return tl::make_unexpected(domain_errc::bad_input);
     }
   } else {
-    static constexpr auto is_valid_or_deviation = [](auto cp) {
+    constexpr auto is_valid_or_deviation = [](auto cp) {
       auto status = idna::code_point_status(cp);
       return (cp <= U'\x7e') || (status == idna::idna_status::valid) || (status == idna::idna_status::deviation);
     };
 
-    if (ranges::cend(label) != ranges::find_if_not(label, is_valid_or_deviation)) {
+    if (std::cend(label) != std::find_if_not(std::cbegin(label), std::cend(label), is_valid_or_deviation)) {
       return tl::make_unexpected(domain_errc::bad_input);
     }
   }
@@ -102,9 +104,10 @@ struct domain_to_ascii_context {
 /// \param transitional_processing
 /// \param verify_dns_length
 /// \return
-inline auto create_domain_to_ascii_context(std::string_view domain_name, std::string *ascii_domain, bool check_hyphens,
-                                           bool check_bidi, bool check_joiners, bool use_std3_ascii_rules,
-                                           bool transitional_processing, bool verify_dns_length)
+inline auto create_domain_to_ascii_context(std::string_view domain_name, std::string *ascii_domain,
+                                           bool check_hyphens, bool check_bidi, bool check_joiners,
+                                           bool use_std3_ascii_rules, bool transitional_processing,
+                                           bool verify_dns_length)
     -> tl::expected<domain_to_ascii_context, domain_errc> {
   auto u32domain_name = unicode::as<std::u32string>(unicode::views::as_u8(domain_name) | unicode::transforms::to_u32);
   if (u32domain_name) {
@@ -121,23 +124,24 @@ inline auto create_domain_to_ascii_context(std::string_view domain_name, std::st
 inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#ToASCII
 
-  constexpr static auto map_domain_name = [] (domain_to_ascii_context &&ctx)
+  constexpr auto map_domain_name = [] (domain_to_ascii_context &&ctx)
       -> tl::expected<domain_to_ascii_context, domain_errc> {
     auto result = idna::map_code_points(ctx.domain_name, ctx.use_std3_ascii_rules, ctx.transitional_processing);
     if (result) {
-      ranges::erase(ctx.domain_name, result.value(), ctx.domain_name.cend());
+      ctx.domain_name.erase(result.value(), std::cend(ctx.domain_name));
       return std::move(ctx);
     } else {
       return tl::make_unexpected(result.error());
     }
   };
 
-  constexpr static auto process_labels = [] (auto &&ctx)
+  constexpr auto process_labels = [] (auto &&ctx)
       -> tl::expected<domain_to_ascii_context, domain_errc> {
     using namespace std::string_view_literals;
 
-    static constexpr auto to_string_view = [] (auto &&label) {
-      return std::u32string_view(std::addressof(*ranges::cbegin(label)), ranges::distance(label));
+    constexpr auto to_string_view = [] (auto &&label) {
+      auto size = ranges::distance(label);
+      return std::u32string_view(std::addressof(*std::cbegin(label)), size);
     };
 
     for (auto &&label : ctx.domain_name | ranges::views::split(U'.') | ranges::views::transform(to_string_view)) {
@@ -161,8 +165,8 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
         }
       }
 
-      constexpr static auto is_ascii = [] (std::u32string_view input) noexcept {
-        constexpr static auto is_in_ascii_set = [](auto c) { return c <= U'\x7e'; };
+      constexpr auto is_ascii = [] (std::u32string_view input) noexcept {
+        constexpr auto is_in_ascii_set = [](auto c) { return c <= U'\x7e'; };
 
         return ranges::cend(input) == ranges::find_if_not(input, is_in_ascii_set);
       };
@@ -188,7 +192,7 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
     return std::move(ctx);
   };
 
-  constexpr static auto check_length = [] (domain_to_ascii_context &&ctx)
+  constexpr auto check_length = [] (domain_to_ascii_context &&ctx)
       -> tl::expected<domain_to_ascii_context, domain_errc> {
     constexpr auto max_domain_length = 253;
     constexpr auto max_label_length = 63;
@@ -210,8 +214,8 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
     return std::move(ctx);
   };
 
-  constexpr static auto copy_to_output = [] (domain_to_ascii_context &&ctx)
-                                         -> tl::expected<void, domain_errc> {
+  constexpr auto copy_to_output = [] (domain_to_ascii_context &&ctx)
+      -> tl::expected<void, domain_errc> {
     ranges::copy(ctx.labels | ranges::views::join('.'), ranges::back_inserter(*ctx.ascii_domain));
     return {};
   };
@@ -234,8 +238,9 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
 /// \param verify_dns_length
 /// \return
 inline auto domain_to_ascii(std::string_view domain_name, std::string *ascii_domain, bool check_hyphens,
-                            bool check_bidi, bool check_joiners, bool use_std3_ascii_rules,
-                            bool transitional_processing, bool verify_dns_length) -> tl::expected<void, domain_errc> {
+                                      bool check_bidi, bool check_joiners, bool use_std3_ascii_rules,
+                                      bool transitional_processing, bool verify_dns_length)
+    -> tl::expected<void, domain_errc> {
   return create_domain_to_ascii_context(domain_name, ascii_domain, check_hyphens, check_bidi, check_joiners,
                                         use_std3_ascii_rules, transitional_processing, verify_dns_length)
       .and_then(domain_to_ascii_impl);

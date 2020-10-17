@@ -43,12 +43,12 @@ class ipv6_address {
  public:
 
   /// Constructor
-  ipv6_address() = default;
+  constexpr ipv6_address() = default;
 
   /// Constructor
   /// \param address Sets the IPv6 address to `address`
-  explicit ipv6_address(std::array<unsigned short, 8> address) {
-    constexpr static auto network_byte_order = [] (auto v) { return to_network_byte_order<unsigned short>(v); };
+  constexpr explicit ipv6_address(std::array<unsigned short, 8> address) {
+    constexpr auto network_byte_order = [] (auto v) { return to_network_byte_order<unsigned short>(v); };
 
     std::transform(
         begin(address), end(address),
@@ -58,7 +58,7 @@ class ipv6_address {
 
   /// The address in bytes in network byte order
   /// \returns The address in bytes
-  [[nodiscard]] auto to_bytes() const noexcept -> std::array<unsigned char, 16> {
+  [[nodiscard]] constexpr auto to_bytes() const noexcept -> std::array<unsigned char, 16> {
     std::array<unsigned char, 16> bytes{};
     for (auto i = 0UL; i < address_.size(); ++i) {
       bytes[i * 2    ] = static_cast<unsigned char>(address_[i] >> 8u); // NOLINT
@@ -145,7 +145,7 @@ class ipv6_address {
 
 namespace details {
 template <class intT, class charT>
-auto hex_to_dec(charT byte) noexcept {
+constexpr inline auto hex_to_dec(charT byte) noexcept {
   assert(std::isxdigit(byte, std::locale::classic()));
 
   if (std::isdigit(byte, std::locale::classic())) {

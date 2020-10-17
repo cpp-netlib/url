@@ -8,11 +8,8 @@
 
 #include <locale>
 #include <string>
-#include <range/v3/distance.hpp>
-#include <range/v3/algorithm/find_if_not.hpp>
-#include <range/v3/algorithm/remove_if.hpp>
-#include <range/v3/view/reverse.hpp>
-#include <range/v3/action/erase.hpp>
+#include <algorithm>
+#include <iterator>
 
 namespace skyr {
 inline namespace v2 {
@@ -20,29 +17,30 @@ constexpr static auto is_c0_control_or_space = [] (auto byte) {
   return std::iscntrl(byte, std::locale::classic()) || std::isspace(byte, std::locale::classic());
 };
 
-inline auto remove_leading_c0_control_or_space(std::string_view input, bool *validation_error) {
-  auto it = ranges::find_if_not(input, is_c0_control_or_space);
-  *validation_error |= (it != ranges::cbegin(input));
-  input.remove_prefix(std::distance(ranges::cbegin(input), it));
+constexpr inline auto remove_leading_c0_control_or_space(std::string_view input, bool *validation_error) {
+  auto first = std::cbegin(input), last = std::cend(input);
+  auto it = std::find_if_not(first, last, is_c0_control_or_space);
+  *validation_error |= (it != first);
+  input.remove_prefix(std::distance(first, it));
   return input;
 }
 
-inline auto remove_trailing_c0_control_or_space(std::string_view input, bool *validation_error) {
-  auto reversed = ranges::reverse_view(input);
-  auto it = ranges::find_if_not(reversed, is_c0_control_or_space);
-  *validation_error |= (it != ranges::cbegin(reversed));
-  input.remove_suffix(std::distance(ranges::cbegin(reversed), it));
+constexpr inline auto remove_trailing_c0_control_or_space(std::string_view input, bool *validation_error) {
+  auto first = std::crbegin(input), last = std::crend(input);
+  auto it = std::find_if_not(first, last, is_c0_control_or_space);
+  *validation_error |= (it != first);
+  input.remove_suffix(std::distance(first, it));
   return input;
 }
 
-inline auto remove_tabs_and_newlines(std::string &input, bool *validation_error) {
-  constexpr static auto is_tab_or_newline = [] (auto byte) {
+constexpr inline auto remove_tabs_and_newlines(std::string &input, bool *validation_error) {
+  constexpr auto is_tab_or_newline = [] (auto byte) {
     return (byte == '\t') || (byte == '\r') || (byte == '\n');
   };
 
-  auto it = ranges::remove_if(input, is_tab_or_newline);
+  auto it = std::remove_if(std::begin(input), std::end(input), is_tab_or_newline);
   *validation_error |= (it != std::cend(input));
-  ranges::erase(input, it, std::cend(input));
+  input.erase(it, std::cend(input));
 }
 }  // namespace v2
 }  // namespace skyr

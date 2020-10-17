@@ -48,13 +48,13 @@ class u16_code_point_t {
 
   ///
   /// \return
-  [[nodiscard]] auto trail_value() const {
+  [[nodiscard]] constexpr auto trail_value() const {
     return is_surrogate_pair()?
            static_cast<char16_t>((code_point_ & 0x3ffU) + constants::surrogates::trail_min) :
            0;
   }
 
-  [[nodiscard]] auto u32_value() const noexcept -> tl::expected<char32_t, unicode_errc> {
+  [[nodiscard]] constexpr auto u32_value() const noexcept -> tl::expected<char32_t, unicode_errc> {
     return code_point_;
   }
 
@@ -67,14 +67,14 @@ class u16_code_point_t {
 ///
 /// \param code_point
 /// \return
-inline auto u16_code_point(char32_t code_point) {
+inline constexpr auto u16_code_point(char32_t code_point) {
   return u16_code_point_t(code_point);
 }
 
 ///
 /// \param code_point
 /// \return
-inline auto u16_code_point(char16_t code_point) {
+inline constexpr auto u16_code_point(char16_t code_point) {
   return u16_code_point_t(code_point);
 }
 
@@ -82,7 +82,7 @@ inline auto u16_code_point(char16_t code_point) {
 /// \param lead_code_unit
 /// \param trail_code_unit
 /// \return
-inline auto u16_code_point(
+inline constexpr auto u16_code_point(
     char16_t lead_code_unit,
     char16_t trail_code_unit) {
   return u16_code_point_t(lead_code_unit, trail_code_unit);

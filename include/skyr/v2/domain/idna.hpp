@@ -22,10 +22,22 @@ constexpr auto code_point_status(char32_t code_point) -> idna_status {
     return range.last < code_point;
   };
 
-  auto first = std::begin(details::statuses), last = std::end(details::statuses);
+  auto first = std::cbegin(details::statuses), last = std::cend(details::statuses);
   auto it = std::lower_bound(first, last, code_point, less);
   return (it == last) || !((code_point >= (*it).first) && (code_point <= (*it).last)) ? idna_status::valid : it->status;
 }
+
+namespace details {
+constexpr auto map_code_point_16(char16_t code_point) -> char16_t {
+  constexpr auto less = [](const auto &lhs, auto rhs) {
+    return lhs.code_point < rhs;
+  };
+
+  auto first = std::cbegin(mapped_16), last = std::cend(mapped_16);
+  auto it = std::lower_bound(first, last, code_point, less);
+  return (it != last) ? it->mapped : code_point;
+}
+}  // namespace details
 
 ///
 /// \param code_point A code point value
@@ -40,7 +52,7 @@ constexpr auto map_code_point(char32_t code_point) -> char32_t {
     return static_cast<char32_t>(details::map_code_point_16(static_cast<char16_t>(code_point)));
   }
 
-  auto first = std::begin(details::mapped_32), last = std::end(details::mapped_32);
+  auto first = std::cbegin(details::mapped_32), last = std::cend(details::mapped_32);
   auto it = std::lower_bound(first, last, code_point, less);
   return (it != last) ? it->mapped : code_point;
 }

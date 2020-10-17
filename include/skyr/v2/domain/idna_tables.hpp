@@ -1642,10 +1642,7 @@ constexpr static auto statuses = std::array<code_point_range, 1594>{{
   { U'\xe0100', U'\xe01ef', idna_status::ignored },
   { U'\xe01f0', U'\x10ffff', idna_status::disallowed },
 }};
-}  // namespace details
 
-
-namespace details {
 struct mapped_16_code_point {
   char16_t code_point;
   char16_t mapped;
@@ -5426,16 +5423,6 @@ constexpr static auto mapped_16 = std::array<mapped_16_code_point, 3773>{{
   { U'\xffed', U'\x25a0' },
   { U'\xffee', U'\x25cb' },
 }};
-
-auto map_code_point_16(char16_t code_point) -> char16_t {
-  constexpr static auto less = [](const auto &lhs, auto rhs) {
-    return lhs.code_point < rhs;
-  };
-
-  auto first = std::begin(mapped_16), last = std::end(mapped_16);
-  auto it = std::lower_bound(first, last, code_point, less);
-  return (it != last) ? it->mapped : code_point;
-}
 
 struct mapped_32_code_point {
   char32_t code_point;

@@ -52,7 +52,12 @@ class static_vector {
   /// Constructor
   constexpr static_vector() = default;
 
-  ~static_vector() {
+  constexpr static_vector(const static_vector &) = default;
+  constexpr static_vector(static_vector &&) noexcept = default;
+  constexpr auto operator=(const static_vector &) -> static_vector & = default;
+  constexpr auto operator=(static_vector &&) noexcept -> static_vector & = default;
+
+  constexpr ~static_vector() {
     clear();
   }
 

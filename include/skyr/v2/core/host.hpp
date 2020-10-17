@@ -51,12 +51,12 @@ class host {
 
   /// Constructor
   /// \param host An IPv4 address
-  explicit host(ipv4_address host)
+  constexpr explicit host(ipv4_address host)
       : host_(host) {}
 
   /// Constructor
   /// \param host An IPv6 address
-  explicit host(ipv6_address host)
+  constexpr explicit host(ipv6_address host)
       : host_(host) {}
 
   /// Constructor
@@ -71,7 +71,7 @@ class host {
 
   /// Constructor
   /// \param hsost An empty host
-  explicit host(empty_host host)
+  constexpr explicit host(empty_host host)
       : host_(host) {}
 
   ///

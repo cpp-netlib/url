@@ -45,13 +45,13 @@ struct to_u8_impl<
 template<class Source>
 struct to_u8_impl<
     Source, std::enable_if_t<is_string_convertible_v<Source, char32_t>>> {
-  auto operator()(const Source &source) const {
+  constexpr auto operator()(const Source &source) const {
     return unicode::as<std::string>(source | unicode::transforms::to_u8);
   }
 };
 
 template<typename Source>
-inline auto to_u8(const Source &source) {
+constexpr inline auto to_u8(const Source &source) {
   to_u8_impl<Source> to_u8;
   return to_u8(source);
 }

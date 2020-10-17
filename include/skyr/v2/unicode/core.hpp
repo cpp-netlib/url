@@ -97,7 +97,7 @@ constexpr inline auto sequence_length(uint8_t lead_value) {
 /// \tparam OctetIterator
 template<typename OctetIterator>
 struct sequence_state {
-  sequence_state(
+  constexpr sequence_state(
       OctetIterator it,
       char32_t value)
       : it(it), value(value) {}
@@ -117,7 +117,7 @@ struct sequence_state {
 /// \return A sequence_state with a value of 0, and the iterator
 ///         pointing to the lead value
 template<class OctetIterator>
-inline auto make_state(OctetIterator it) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
+constexpr inline auto make_state(OctetIterator it) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   return sequence_state<OctetIterator>(it, 0);
 }
 
@@ -128,7 +128,7 @@ inline auto make_state(OctetIterator it) -> tl::expected<sequence_state<OctetIte
 /// \param value The updated value
 /// \return A new state with an updateds value
 template<class OctetIterator>
-inline auto update_value(
+constexpr inline auto update_value(
     sequence_state<OctetIterator> state,
     char32_t value) -> sequence_state<OctetIterator> {
   return {state.it, value};
@@ -140,7 +140,7 @@ inline auto update_value(
 /// \return The new state with the updated iterator, on an error if
 ///         the sequence isn't valid
 template<typename OctetIterator>
-inline auto
+constexpr inline auto
 increment(sequence_state<OctetIterator> state) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   ++state.it;
   if (!is_trail(*state.it)) {
@@ -155,7 +155,8 @@ namespace details {
 /// \param state
 /// \return
 template<typename OctetIterator>
-inline auto mask_byte(sequence_state<OctetIterator> state) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
+constexpr inline auto mask_byte(sequence_state<OctetIterator> state)
+    -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   return update_value(state, static_cast<char32_t>(mask8(static_cast<std::uint8_t>(*state.it))));
 }
 
@@ -165,10 +166,11 @@ inline auto mask_byte(sequence_state<OctetIterator> state) -> tl::expected<seque
 /// \param first
 /// \return
 template<typename OctetIterator>
-auto from_two_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
+constexpr auto from_two_byte_sequence(OctetIterator first)
+    -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
 
-  constexpr static auto set_code_point = [](auto state) -> result_type {
+  constexpr auto set_code_point = [](auto state) -> result_type {
     return update_value(
         state,
         ((state.value << 6) & 0x7ff) + (*state.it & 0x3f));
@@ -187,16 +189,17 @@ auto from_two_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<
 /// \param first
 /// \return
 template<typename OctetIterator>
-auto from_three_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
+constexpr inline auto from_three_byte_sequence(OctetIterator first)
+    -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
 
-  constexpr static auto update_code_point_from_second_byte = [](auto state) -> result_type {
+  constexpr auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
         state,
         ((state.value << 12) & 0xffff) + ((mask8(static_cast<std::uint8_t>(*state.it)) << 6) & 0xfff));
   };
 
-  constexpr static auto set_code_point = [](auto state) -> result_type {
+  constexpr auto set_code_point = [](auto state) -> result_type {
     return update_value(
         state,
         state.value + (*state.it & 0x3f));
@@ -216,22 +219,23 @@ auto from_three_byte_sequence(OctetIterator first) -> tl::expected<sequence_stat
 /// \param first
 /// \return
 template<typename OctetIterator>
-auto from_four_byte_sequence(OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
+constexpr inline auto from_four_byte_sequence(OctetIterator first)
+    -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   using result_type = tl::expected<sequence_state<OctetIterator>, unicode_errc>;
 
-  constexpr static auto update_code_point_from_second_byte = [](auto state) -> result_type {
+  constexpr auto update_code_point_from_second_byte = [](auto state) -> result_type {
     return update_value(
         state,
         ((state.value << 18) & 0x1fffff) + ((mask8(static_cast<std::uint8_t>(*state.it)) << 12) & 0x3ffff));
   };
 
-  constexpr static auto update_code_point_from_third_byte = [](auto state) -> result_type {
+  constexpr auto update_code_point_from_third_byte = [](auto state) -> result_type {
     return update_value(
         state,
         state.value + ((mask8(static_cast<std::uint8_t>(*state.it)) << 6) & 0xfff));
   };
 
-  constexpr static auto set_code_point = [](auto state) -> result_type {
+  constexpr auto set_code_point = [](auto state) -> result_type {
     return update_value(
         state,
         state.value + (*state.it & 0x3f));
@@ -256,7 +260,7 @@ auto from_four_byte_sequence(OctetIterator first) -> tl::expected<sequence_state
 /// \param first
 /// \return
 template <typename OctetIterator>
-auto find_code_point(
+constexpr inline auto find_code_point(
     OctetIterator first) -> tl::expected<sequence_state<OctetIterator>, unicode_errc> {
   const auto length = sequence_length(*first);
   switch (length) {

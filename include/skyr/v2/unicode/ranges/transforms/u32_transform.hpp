@@ -180,7 +180,7 @@ static constexpr transform_u32_range_fn to_u32;
 /// \param range
 /// \return
 template <class Output, class CodePointRange>
-auto as(transform_u32_range<CodePointRange> &&range) -> tl::expected<Output, unicode_errc> {
+constexpr auto as(transform_u32_range<CodePointRange> &&range) -> tl::expected<Output, unicode_errc> {
   auto result = Output{};
 
   for (auto it = std::cbegin(range); it != std::cend(range); ++it) {

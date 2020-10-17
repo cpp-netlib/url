@@ -53,21 +53,21 @@ class url_record {
   /// Tests if the URL is a special scheme
   /// \returns `true` if the URL scheme is a special scheme, `false`
   ///          otherwise
-  [[nodiscard]] auto is_special() const noexcept -> bool {
+  [[nodiscard]] constexpr auto is_special() const noexcept -> bool {
     return skyr::is_special(scheme);
   }
 
   /// Tests if the URL includes credentials
   /// \returns `true` if the URL username or password is not an
   ///          empty string, `false` otherwise
-  [[nodiscard]] auto includes_credentials() const noexcept -> bool {
+  [[nodiscard]] constexpr auto includes_credentials() const noexcept -> bool {
     return !username.empty() || !password.empty();
   }
 
   /// Tests if the URL cannot have a username, password or port
   /// \returns `true` if the URL cannot have a username, password
   ///          or port
-  [[nodiscard]] auto cannot_have_a_username_password_or_port() const noexcept -> bool {
+  [[nodiscard]] constexpr auto cannot_have_a_username_password_or_port() const noexcept -> bool {
     return
         (!host || host.value().is_empty()) ||
             cannot_be_a_base_url ||

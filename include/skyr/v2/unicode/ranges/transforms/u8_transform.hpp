@@ -55,7 +55,7 @@ class u8_transform_iterator {
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  auto operator++() noexcept -> u8_transform_iterator & {
+  constexpr auto operator++() noexcept -> u8_transform_iterator & {
     increment();
     return *this;
   }
@@ -189,13 +189,13 @@ class transform_u8_range {
 
   /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] auto cbegin() const noexcept {
+  [[nodiscard]] constexpr auto cbegin() const noexcept {
     return first_;
   }
 
   /// Returns an iterator to the last element in the code point sequence
   /// \return \c const_iterator
-  [[nodiscard]] auto cend() const noexcept {
+  [[nodiscard]] constexpr auto cend() const noexcept {
     return sentinel{};
   }
 
@@ -258,7 +258,7 @@ static constexpr u8_range_fn to_u8;
 /// \param range
 /// \return
 template <class Output, typename CodePointRange>
-auto as(transform_u8_range<CodePointRange> &&range) -> tl::expected<Output, unicode_errc> {
+constexpr auto as(transform_u8_range<CodePointRange> &&range) -> tl::expected<Output, unicode_errc> {
   auto result = Output{};
 
   for (auto it = std::cbegin(range); it != std::cend(range); ++it) {

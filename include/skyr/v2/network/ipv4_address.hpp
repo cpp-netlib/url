@@ -42,22 +42,22 @@ class ipv4_address {
  public:
 
   /// Constructor
-  ipv4_address() = default;
+  constexpr ipv4_address() = default;
 
    /// Constructor
    /// \param address Sets the IPv4 address to `address`
-  explicit ipv4_address(unsigned int address)
+  constexpr explicit ipv4_address(unsigned int address)
       : address_(to_network_byte_order(address)) {}
 
   /// The address value
   /// \returns The address value
-  [[nodiscard]] auto address() const noexcept {
+  [[nodiscard]] constexpr auto address() const noexcept {
     return from_network_byte_order(address_);
   }
 
   /// The address in bytes in network byte order
   /// \returns The address in bytes
-  [[nodiscard]] auto to_bytes() const noexcept -> std::array<unsigned char, 4> {
+  [[nodiscard]] constexpr auto to_bytes() const noexcept -> std::array<unsigned char, 4> {
     return {{
       static_cast<unsigned char>(address_ >> 24u),
       static_cast<unsigned char>(address_ >> 16u),
