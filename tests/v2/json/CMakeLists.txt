@@ -9,6 +9,6 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
 endif()
 
 foreach (file_name json_query_tests.cpp)
-    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/json test_name v1)
-    target_link_libraries(${test_name} PRIVATE skyr-json-v1)
+    skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/json test_name v2)
+    target_link_libraries(${test_name} PRIVATE skyr-json-v2)
 endforeach()
