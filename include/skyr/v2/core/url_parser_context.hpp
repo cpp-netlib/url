@@ -28,9 +28,10 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 namespace details {
-inline auto contains(std::string_view view, char byte) noexcept {
+template <class View>
+inline auto contains(View view, typename View::value_type element) noexcept {
   auto first = std::cbegin(view), last = std::cend(view);
-  return last != std::find(first, last, byte);
+  return last != std::find(first, last, element);
 }
 
 inline auto remaining_starts_with(std::string_view input, std::string_view chars) noexcept {

@@ -17,7 +17,7 @@
 
 namespace skyr {
 inline namespace v2 {
-namespace {
+namespace details {
 inline auto parse_next(url_parser_context &context, char byte)
 -> tl::expected<url_parse_action, url_parse_errc> {
 
@@ -67,23 +67,14 @@ inline auto parse_next(url_parser_context &context, char byte)
       return tl::make_unexpected(url_parse_errc::cannot_override_scheme);
   }
 }
-}
 
-namespace details {
-auto basic_parse(
-    std::string_view input,
-    bool *validation_error,
-    const url_record *base,
-    const url_record *url,
+inline auto basic_parse_impl(
+std::string_view input,
+bool *validation_error,
+const url_record *base,
+const url_record *url,
     std::optional<url_parse_state> state_override) -> tl::expected<url_record, url_parse_errc> {
-  if (url == nullptr) {
-    input = remove_leading_c0_control_or_space(input, validation_error);
-    input = remove_trailing_c0_control_or_space(input, validation_error);
-  }
-  auto input_ = std::string(input);
-  remove_tabs_and_newlines(input_, validation_error);
-
-  auto context = url_parser_context(input_, validation_error, base, url, state_override);
+  auto context = url_parser_context(input, validation_error, base, url, state_override);
 
   while (true) {
     auto byte = context.is_eof() ? '\0' : *context.it;
@@ -108,6 +99,21 @@ auto basic_parse(
   }
 
   return context.url;
+}
+
+inline auto basic_parse(
+    std::string_view input,
+    bool *validation_error,
+    const url_record *base,
+    const url_record *url,
+    std::optional<url_parse_state> state_override) -> tl::expected<url_record, url_parse_errc> {
+  if (url == nullptr) {
+    input = remove_leading_c0_control_or_space(input, validation_error);
+    input = remove_trailing_c0_control_or_space(input, validation_error);
+  }
+  auto input_ = std::string(input);
+  remove_tabs_and_newlines(input_, validation_error);
+  return basic_parse_impl(input_, validation_error, base, url, state_override);
 }
 }  // namespace details
 

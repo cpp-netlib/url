@@ -873,6 +873,9 @@ class url {
   ///          otherwise
   [[nodiscard]] static auto default_port(
       std::string_view scheme) noexcept -> std::optional<std::uint16_t> {
+    if (scheme.ends_with(':')) {
+      scheme.remove_suffix(1);
+    }
     return skyr::default_port(scheme);
   }
 

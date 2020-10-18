@@ -109,14 +109,14 @@ class static_vector {
   constexpr auto emplace_back(Args &&... args)
     noexcept(std::is_trivially_move_assignable_v<T>) -> reference {
     impl_[size_++] = value_type{std::forward<Args>(args)...};
-    return impl_[size_ - 1];
+    return back();
   }
 
   ///
   /// \pre `size() > 0`
   constexpr void pop_back() noexcept {
+    back().~value_type();
     --size_;
-    impl_[size_].~T();
   }
 
   ///
