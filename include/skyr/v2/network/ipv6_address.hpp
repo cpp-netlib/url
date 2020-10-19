@@ -159,7 +159,7 @@ constexpr inline auto hex_to_dec(charT byte) noexcept {
 /// Parses an IPv6 address
 /// \param input An input string
 /// \returns An `ipv6_address` object or an error
-inline auto parse_ipv6_address(
+constexpr inline auto parse_ipv6_address(
     std::string_view input, bool *validation_error) -> tl::expected<ipv6_address, ipv6_address_errc> {
   using namespace std::string_view_literals;
 

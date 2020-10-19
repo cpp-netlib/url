@@ -8,7 +8,6 @@
 
 /// \file skyr/version.hpp
 
-#include <tuple>
 #include <string_view>
 #include <skyr/config.hpp>
 
@@ -26,13 +25,34 @@
   SKYR_PREPROCESSOR_TO_STRING(SKYR_VERSION_PATCH)
 
 namespace skyr {
-/// \returns The majo, minor version as a tuple
-[[maybe_unused]] static constexpr auto version() noexcept -> std::tuple<int, int> {
+struct skyr_version {
+  int major;
+  int minor;
+};
+
+struct skyr_release {
+  int major;
+  int minor;
+  int patch;
+};
+
+/// Gets the library version
+///
+/// \code
+/// auto [major, minor] = skyr::version();
+/// \endcode
+/// \returns The major and minor version
+[[maybe_unused]] static constexpr auto version() noexcept -> skyr_version {
   return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR};
 }
 
-/// \returns The major, minor, patch as a tuple
-[[maybe_unused]] static constexpr auto release() noexcept -> std::tuple<int, int, int> {
+/// Gets the library release
+///
+/// \code
+/// auto [major, minor, patch] = skyr::release();
+/// \endcode
+/// \returns The major, minor and patch
+[[maybe_unused]] static constexpr auto release() noexcept -> skyr_release {
   return {SKYR_VERSION_MAJOR, SKYR_VERSION_MINOR, SKYR_VERSION_PATCH};
 }
 

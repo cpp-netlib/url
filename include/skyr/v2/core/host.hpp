@@ -165,13 +165,14 @@ constexpr static auto is_forbidden_host_point = [](auto byte) {
           (byte == '@') || (byte == '[') || (byte == '\\') || (byte == ']') || (byte == '^');
 };
 
-inline auto parse_opaque_host(std::string_view input,
-                              bool *validation_error) -> tl::expected<opaque_host, url_parse_errc> {
-  constexpr static auto is_forbidden = [] (auto byte) -> bool {
+inline auto parse_opaque_host(
+    std::string_view input, bool *validation_error) -> tl::expected<opaque_host, url_parse_errc> {
+  constexpr auto is_forbidden = [] (auto byte) -> bool {
     return (byte != '%') && is_forbidden_host_point(byte);
   };
 
-  if (std::cend(input) != ranges::find_if(input, is_forbidden)) {
+  auto it = std::find_if(std::cbegin(input), std::cend(input), is_forbidden);
+  if (std::cend(input) != it) {
     *validation_error |= true;
     return tl::make_unexpected(url_parse_errc::forbidden_host_point);
   }
@@ -238,7 +239,8 @@ inline auto parse_host(
     return tl::make_unexpected(url_parse_errc::domain_error);
   }
 
-  if (ranges::cend(ascii_domain) != ranges::find_if(ascii_domain, details::is_forbidden_host_point)) {
+  auto it = std::find_if(std::cbegin(ascii_domain), std::cend(ascii_domain), details::is_forbidden_host_point);
+  if (std::cend(ascii_domain) != it) {
     *validation_error |= true;
     return tl::make_unexpected(url_parse_errc::domain_error);
   }

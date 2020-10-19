@@ -88,7 +88,7 @@ class ipv4_address {
 };
 
 namespace details {
-inline auto parse_ipv4_number(
+constexpr inline auto parse_ipv4_number(
     std::string_view input,
     bool *validation_error) -> tl::expected<std::uint64_t, ipv4_address_errc> {
   auto base = 10;
@@ -120,11 +120,11 @@ inline auto parse_ipv4_number(
 /// Parses an IPv4 address
 /// \param input An input string
 /// \returns An `ipv4_address` object or an error
-inline auto parse_ipv4_address(
+constexpr inline auto parse_ipv4_address(
     std::string_view input, bool *validation_error) -> tl::expected<ipv4_address, ipv4_address_errc>  {
   using namespace std::string_view_literals;
 
-  static constexpr auto to_string_view = [] (auto &&part) {
+  constexpr auto to_string_view = [] (auto &&part) {
     return std::string_view(std::addressof(*std::begin(part)), ranges::distance(part));
   };
 
@@ -166,7 +166,7 @@ inline auto parse_ipv4_address(
     numbers.push_back(number.value());
   }
 
-  constexpr static auto greater_than_255 = [] (auto number) { return number > 255; };
+  constexpr auto greater_than_255 = [] (auto number) { return number > 255; };
 
   if (ranges::cend(numbers) != ranges::find_if(numbers, greater_than_255)) {
     *validation_error |= true;
