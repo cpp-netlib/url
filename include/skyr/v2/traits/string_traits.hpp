@@ -12,13 +12,24 @@
 
 namespace skyr {
 inline namespace v2 {
-/// Meta-function to test if the type is of the form
+//template <class charT>
+//concept is_basic_string = std::is_same<
+//    std::remove_cv_t<T>,
+//    std::basic_string<charT>>;
+
+    /// Meta-function to test if the type is of the form
 /// basic_string<charT>
 template <class T, class charT>
 using is_basic_string =
   std::is_same<
       std::remove_cv_t<T>,
       std::basic_string<charT>>;
+
+template <class T, class charT>
+concept is_basic_string_c = std::is_same<
+    std::remove_cv_t<T>,
+    std::basic_string<charT>>::value;
+
 
 /// Meta-function to test if the type is of the form
 /// basic_string_view<charT>
@@ -27,6 +38,12 @@ using is_basic_string_view =
   std::is_same<
       std::remove_cv_t<T>,
       std::basic_string_view<charT>>;
+
+template <class T, class charT>
+concept is_basic_string_view_c =
+  std::is_same<
+      std::remove_cv_t<T>,
+      std::basic_string_view<charT>>::value;
 
 /// Meta-function to test if the type is of the form charT[]
 template <class T, class charT>
@@ -37,6 +54,14 @@ using is_char_array =
         std::remove_cv_t<std::remove_extent_t<T>>,
         charT>>;
 
+template <class T, class charT>
+concept is_char_array_c =
+  std::conjunction<
+    std::is_array<T>,
+    std::is_same<
+        std::remove_cv_t<std::remove_extent_t<T>>,
+        charT>>::value;
+
 /// Meta-function to test if the type is of the form charT*
 template <class T, class charT>
 using is_char_pointer =
@@ -45,6 +70,14 @@ using is_char_pointer =
     std::is_same<
         std::remove_pointer_t<T>,
         charT>>;
+
+template <class T, class charT>
+concept is_char_pointer_c =
+  std::conjunction<
+    std::is_pointer<T>,
+    std::is_same<
+        std::remove_pointer_t<T>,
+        charT>>::value;
 
 /// Meta-function to test if the type can be converted to a
 /// basic_string<charT>
@@ -66,12 +99,21 @@ using is_url_convertible =
   std::disjunction<
       is_string_convertible<T, char>,
       is_string_convertible<T, char8_t>,
-//      is_string_convertible<T, wchar_t>,
+      is_string_convertible<T, wchar_t>,
       is_string_convertible<T, char16_t>,
       is_string_convertible<T, char32_t>>;
 
 template <class T>
 inline constexpr auto is_url_convertible_v = is_url_convertible<T>::value;
+
+template <typename T>
+concept is_url_convertible_c =
+    is_string_convertible_v<T, char> ||
+    is_string_convertible_v<T, char8_t> ||
+    is_string_convertible_v<T, wchar_t> ||
+    is_string_convertible_v<T, char16_t> ||
+    is_string_convertible_v<T, char32_t>
+        ;
 }  // namespace v2
 }  // namespace skyr
 

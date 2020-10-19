@@ -95,13 +95,9 @@ class url {
   /// \tparam Source The input string type
   /// \param input The input string
   /// \throws url_parse_error on parse errors
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   explicit url(const Source &input)
       : url() {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(input);
     if (!bytes) {
       SKYR_EXCEPTIONS_THROW(url_parse_error(
@@ -117,13 +113,9 @@ class url {
   /// \param input The input string
   /// \param base A base URL
   /// \throws url_parse_error on parse errors
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   url(const Source &input, const url &base)
       : url() {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(input);
     if (!bytes) {
       SKYR_EXCEPTIONS_THROW(url_parse_error(
@@ -192,12 +184,8 @@ class url {
   /// \tparam Source The input string type
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   auto set_href(const Source &href) -> std::error_code {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(href);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -208,7 +196,6 @@ class url {
   /// Sets the context object's url according to the
   /// [steps described in the specification](https://url.spec.whatwg.org/#dom-url-href)
 
-  /// \tparam Source The input string type
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
   auto set_href(string_view href) -> std::error_code {
@@ -267,12 +254,8 @@ class url {
   /// \tparam Source The input string type
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   auto set_protocol(const Source &protocol) -> std::error_code {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(protocol);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -312,12 +295,8 @@ class url {
   /// \tparam Source The input string type
   /// \param username The new username
   /// \returns An error on failure to parse the new URL
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   auto set_username(const Source &username) -> std::error_code {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(username);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -361,12 +340,8 @@ class url {
   /// \tparam Source The input string type
   /// \param password The new password
   /// \returns An error on failure to parse the new URL
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   auto set_password(const Source &password) -> std::error_code {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(password);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -414,12 +389,8 @@ class url {
   /// \tparam Source The input string type
   /// \param host The new URL host
   /// \returns An error on failure to parse the new URL
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   auto set_host(const Source &host) -> std::error_code {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(host);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -470,12 +441,8 @@ class url {
   /// \tparam Source The input string type
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   auto set_hostname(const Source &hostname) -> std::error_code {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(hostname);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -595,9 +562,22 @@ class url {
   /// \tparam PortSource The input type
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
-  template<class PortSource>
-  auto set_port(const PortSource &port) -> std::error_code {
-    return set_port_impl(port);
+  template<class Source> requires is_url_convertible_c<Source>
+  auto set_port(
+      const Source &port,
+      typename std::enable_if_t<is_url_convertible_v<Source>> * = nullptr) -> std::error_code {
+    auto bytes = details::to_u8(port);
+    if (!bytes) {
+      return make_error_code(url_parse_errc::invalid_unicode_character);
+    }
+    return set_port(std::string_view(bytes.value()));
+  }
+
+  template<typename intT> requires std::is_integral_v<intT>
+  auto set_port(
+      intT port,
+      std::enable_if_t<std::is_integral_v<intT>> * = nullptr) -> std::error_code {
+    return set_port(string_view(std::to_string(port)));
   }
 
   /// Sets the [URL port](https://url.spec.whatwg.org/#dom-url-port)
@@ -652,12 +632,8 @@ class url {
   /// \tparam Source The input string type
   /// \param pathname The new pathname
   /// \returns An error on failure to parse the new URL
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   auto set_pathname(const Source &pathname) -> std::error_code {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(pathname);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -702,12 +678,8 @@ class url {
   /// \tparam Source The input string type
   /// \param search The new search string
   /// \returns An error on failure to parse the new URL
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   auto set_search(const Source &search) -> std::error_code {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(search);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -768,12 +740,8 @@ class url {
   /// \tparam Source The input string type
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
-  template<class Source>
+  template<class Source> requires is_url_convertible_c<Source>
   auto set_hash(const Source &hash) -> std::error_code {
-    static_assert(
-        is_url_convertible_v<Source>,
-        "Source is not a valid URL string type");
-
     auto bytes = details::to_u8(hash);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -938,24 +906,6 @@ class url {
     view_ = string_view(href_);
     parameters_.initialize(
         url_.query ? string_view(url_.query.value()) : string_view{});
-  }
-
-  template<class Source>
-  auto set_port_impl(
-      const Source &port,
-      typename std::enable_if_t<is_url_convertible_v<Source>> * = nullptr) -> std::error_code {
-    auto bytes = details::to_u8(port);
-    if (!bytes) {
-      return make_error_code(url_parse_errc::invalid_unicode_character);
-    }
-    return set_port(std::string_view(bytes.value()));
-  }
-
-  template<typename intT>
-  auto set_port_impl(
-      intT port,
-      std::enable_if_t<std::is_integral_v<intT>> * = nullptr) -> std::error_code {
-    return set_port(string_view(std::to_string(port)));
   }
 
   url_record url_;
