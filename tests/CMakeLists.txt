@@ -22,4 +22,6 @@ function(skyr_create_test file_name output_dir test_name version)
 endfunction()
 
 add_subdirectory(v1)
-add_subdirectory(v2)
+if (skyr_BUILD_V2)
+    add_subdirectory(v2)
+endif()
