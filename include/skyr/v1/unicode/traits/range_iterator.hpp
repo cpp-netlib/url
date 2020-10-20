@@ -28,7 +28,7 @@ class range_iterator<T[N]> { // NOLINT
 
 template <class Range>
 using range_iterator_t = typename range_iterator<Range>::type;
-}  // namespace unicode::traits
+}  // namespace unicode::concepts
 }  // namespace v1
 }  // namespace skyr
 

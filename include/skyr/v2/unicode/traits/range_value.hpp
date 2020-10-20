@@ -30,7 +30,7 @@ class range_value<T[N]> { // NOLINT
 
 template <class Range>
 using range_value_t = typename range_value<Range>::type;
-}  // namespace unicode::traits
+}  // namespace unicode::concepts
 }  // namespace v2
 }  // namespace skyr
 

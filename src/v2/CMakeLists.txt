@@ -12,9 +12,9 @@ add_library(skyr-url-v2 INTERFACE)
 #        ${PROJECT_SOURCE_DIR}/include/skyr/config.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/errors.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/core.hpp
-#        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/traits/iterator_value.hpp
-#        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/traits/range_iterator.hpp
-#        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/traits/range_value.hpp
+#        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/concepts/iterator_value.hpp
+#        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/concepts/range_iterator.hpp
+#        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/concepts/range_value.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/ranges/views/u8_view.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/ranges/views/unchecked_u8_view.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/unicode/ranges/views/u16_view.hpp
@@ -45,7 +45,7 @@ add_library(skyr-url-v2 INTERFACE)
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/core/serialize.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/core/schemes.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/core/errors.hpp
-#        ${PROJECT_SOURCE_DIR}/include/skyr/v2/traits/string_traits.hpp
+#        ${PROJECT_SOURCE_DIR}/include/skyr/v2/concepts/string_traits.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/url_search_parameters.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/v2/url.hpp
 #        ${PROJECT_SOURCE_DIR}/include/skyr/domain/errors.hpp
