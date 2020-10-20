@@ -4,7 +4,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.17)
 
 project(
         skyr-url
