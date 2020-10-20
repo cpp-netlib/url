@@ -8,7 +8,7 @@
 
 #include <locale>
 #include <string>
-#include <range/v3/distance.hpp>
+#include <range/v3/iterator/operations.hpp>
 #include <range/v3/algorithm/find_if_not.hpp>
 #include <range/v3/algorithm/remove_if.hpp>
 #include <range/v3/view/reverse.hpp>
