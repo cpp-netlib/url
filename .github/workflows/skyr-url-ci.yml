@@ -153,6 +153,22 @@ jobs:
             cxx_standard: 20,
           }
 
+          # Clang-11
+          - {
+            name: "Linux Clang 11 Debug (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-11", cxx: "clang++-11",
+            cxx_standard: 20
+          }
+          - {
+            name: "Linux Clang 11 Release (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "clang-11", cxx: "clang++-11",
+            cxx_standard: 20,
+          }
+
           # AppleClang
           - {
             name: "macOS Clang Debug (C++17)", artifact: "macOS.tar.xz",
@@ -343,6 +359,12 @@ jobs:
             endforeach()
           endif()
 
+          if (${{ matrix.config.cxx_standard }} STREQUAL "17")
+            set(BUILD_V2 OFF)
+          else()
+            set(BUILD_V2 ON)
+          endif()
+
           set(path_separator ":")
           if ("${{ runner.os }}" STREQUAL "Windows")
             set(path_separator ";")
@@ -359,7 +381,7 @@ jobs:
               -D skyr_BUILD_TESTS=ON
               -D skyr_BUILD_DOCS=OFF
               -D skyr_BUILD_EXAMPLES=OFF
-              -D skyr_BUILD_V2=OFF
+              -D skyr_BUILD_V2=${BUILD_V2}
               -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
               -D CMAKE_TOOLCHAIN_FILE=$ENV{GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
               -D CMAKE_INSTALL_PREFIX=$ENV{GITHUB_WORKSPACE}/install
