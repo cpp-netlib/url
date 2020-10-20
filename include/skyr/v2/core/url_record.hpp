@@ -13,8 +13,7 @@
 #include <skyr/v2/core/host.hpp>
 #include <skyr/v2/core/schemes.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// Represents the parts of a URL identifier.
 class url_record {
 
@@ -99,7 +98,6 @@ class url_record {
 inline void swap(url_record &lhs, url_record &rhs) noexcept {
   lhs.swap(rhs);
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif // SKYR_V2_CORE_URL_RECORD_HPP

@@ -18,8 +18,7 @@
 #include <skyr/v2/containers/static_vector.hpp>
 #include <skyr/v2/platform/endianness.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// Enumerates IPv6 address parsing errors
 enum class ipv6_address_errc {
   /// IPv6 address does not start with a double colon
@@ -302,7 +301,6 @@ constexpr inline auto parse_ipv6_address(
 
   return ipv6_address(address);
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif //SKYR_V2_NETWORK_IPV6_ADDRESS_HPP

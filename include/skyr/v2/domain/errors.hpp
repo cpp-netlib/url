@@ -6,8 +6,7 @@
 #ifndef SKYR_V2_DOMAIN_ERRORS_HPP
 #define SKYR_V2_DOMAIN_ERRORS_HPP
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// \enum domain_errc
 /// Enumerates domain processing errors
 enum class domain_errc {
@@ -26,7 +25,6 @@ enum class domain_errc {
   /// The number of labels in the domain is too large
   too_many_labels,
 };
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif //SKYR_V2_DOMAIN_ERRORS_HPP

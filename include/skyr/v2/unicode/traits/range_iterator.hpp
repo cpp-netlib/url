@@ -8,9 +8,7 @@
 
 #include <type_traits>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode::traits {
+namespace skyr::inline v2::unicode::traits {
 ///
 /// \tparam Range
 template <class Range>
@@ -30,8 +28,6 @@ class range_iterator<T[N]> { // NOLINT
 
 template <class Range>
 using range_iterator_t = typename range_iterator<Range>::type;
-}  // namespace unicode::concepts
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode::traits
 
 #endif // SKYR_V2_UNICODE_TRAITS_RANGE_ITERATOR_HPP

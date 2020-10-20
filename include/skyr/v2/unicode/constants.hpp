@@ -8,9 +8,7 @@
 
 #include <array>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode::constants {
+namespace skyr::inline v2::unicode::constants {
 namespace surrogates {
 // Leading (high) surrogates: 0xd800 - 0xdbff
 constexpr char16_t lead_min = u'\xd800';
@@ -28,8 +26,6 @@ constexpr char32_t max = U'\x0010ffff';
 }  // namespace code_points
 
 constexpr std::array<uint8_t, 3> bom = {0xef, 0xbb, 0xbf};
-}  // namespace unicode::constants
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode::constants
 
 #endif // SKYR_V2_UNICODE_CONSTANTS_HPP

@@ -14,9 +14,7 @@
 #include <skyr/v2/unicode/ranges/sentinel.hpp>
 #include <skyr/v2/unicode/traits/range_iterator.hpp>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 ///
 /// \tparam CodePointIterator
 template <class CodePointIterator>
@@ -194,8 +192,6 @@ constexpr auto as(transform_u32_range<CodePointRange> &&range) -> tl::expected<O
 
   return result;
 }
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U32_TRANSFORM_HPP

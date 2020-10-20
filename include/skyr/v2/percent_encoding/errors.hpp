@@ -6,8 +6,7 @@
 #ifndef SKYR_V2_PERCENT_ENCODING_ERRORS_HPP
 #define SKYR_V2_PERCENT_ENCODING_ERRORS_HPP
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 namespace percent_encoding {
 /// Enumerates percent encoding errors
 enum class percent_encode_errc {
@@ -17,7 +16,6 @@ enum class percent_encode_errc {
   overflow,
 };
 }  // namespace percent_encoding
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif  // SKYR_V2_PERCENT_ENCODING_ERRORS_HPP

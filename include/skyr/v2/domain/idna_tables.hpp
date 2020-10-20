@@ -10,9 +10,7 @@
 #include <array>
 #include <iterator>
 
-namespace skyr {
-inline namespace v2 {
-namespace idna {
+namespace skyr::inline v2::idna {
 /// \enum idna_status
 /// The status values come from the IDNA mapping table in domain TR46:
 ///
@@ -7470,8 +7468,6 @@ constexpr static auto mapped_32 = std::array<mapped_32_code_point, 2038>{{
   { U'\x2fa1d', U'\x2a600' },
 }};
 }  // namespace details
-}  // namespace idna
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::idna
 
 #endif // SKYR_V2_DOMAIN_IDNA_TABLES_HPP

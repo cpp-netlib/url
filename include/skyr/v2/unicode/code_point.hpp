@@ -11,9 +11,7 @@
 #include <skyr/v2/unicode/code_points/u8.hpp>
 #include <skyr/v2/unicode/errors.hpp>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 ///
 /// \tparam OctetIterator
 /// \param code_point
@@ -91,8 +89,6 @@ constexpr inline auto u16_value(
   constexpr auto to_u16 = [] (auto code_point) { return u16_code_point(code_point); };
   return u32_value(code_point).map(to_u16);
 }
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif // SKYR_V2_UNICODE_CODE_POINT_HPP

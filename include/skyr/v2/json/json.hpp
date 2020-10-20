@@ -16,8 +16,7 @@
 #include <skyr/v2/percent_encoding/percent_encode.hpp>
 #include <skyr/v2/percent_encoding/percent_decode.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 namespace json {
 ///
 enum class json_errc {
@@ -105,7 +104,6 @@ inline auto decode_query(std::string_view query, char separator='&', char equal=
   return object;
 }
 }  // namespace json
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif //SKYR_V2_JSON_JSON_HPP

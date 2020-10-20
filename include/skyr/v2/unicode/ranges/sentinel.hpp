@@ -6,12 +6,8 @@
 #ifndef SKYR_V2_UNICODE_RANGES_SENTINEL_HPP
 #define SKYR_V2_UNICODE_RANGES_SENTINEL_HPP
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 class sentinel {};
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif  // SKYR_V2_UNICODE_RANGES_SENTINEL_HPP

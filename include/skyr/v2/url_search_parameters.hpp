@@ -22,8 +22,7 @@
 #include <skyr/v2/percent_encoding/percent_encode.hpp>
 #include <skyr/v2/percent_encoding/percent_decode.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 class url;
 
 namespace details {
@@ -272,7 +271,6 @@ class url_search_parameters {
 inline void swap(url_search_parameters &lhs, url_search_parameters &rhs) noexcept {
   lhs.swap(rhs);
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif  // SKYR_V2_URL_SEARCH_PARAMETERS_HPP

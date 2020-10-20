@@ -30,8 +30,7 @@
 #include <skyr/v2/domain/punycode.hpp>
 
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 constexpr inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules,
                                      bool check_hyphens, [[maybe_unused]] bool check_bidi,
                                      [[maybe_unused]] bool check_joiners, bool transitional_processing)
@@ -371,7 +370,6 @@ inline auto domain_to_u8(std::string_view domain_name, std::string *u8_domain) -
   [[maybe_unused]] bool validation_error = false;
   return domain_to_u8(domain_name, u8_domain, &validation_error);
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif // SKYR_V2_DOMAIN_DOMAIN_HPP

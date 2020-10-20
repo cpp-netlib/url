@@ -11,8 +11,7 @@
 #include <skyr/v2/percent_encoding/percent_decode_range.hpp>
 #include <skyr/v2/percent_encoding/errors.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// Percent decodes the input
 /// \returns The percent decoded output when successful, an error otherwise.
 inline auto percent_decode(std::string_view input) -> tl::expected<std::string, percent_encoding::percent_encode_errc> {
@@ -27,7 +26,6 @@ inline auto percent_decode(std::string_view input) -> tl::expected<std::string, 
   }
   return result;
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif  // SKYR_V2_PERCENT_DECODING_PERCENT_DECODE_HPP

@@ -32,8 +32,7 @@
 /// \namespace skyr
 /// Top-level namespace for URL parsing, unicode encoding and domain
 /// name parsing.
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 namespace details {
 auto make_url(std::string_view input, const url_record *base) -> tl::expected<url, url_parse_errc>;
 }   // namespace details
@@ -1081,8 +1080,7 @@ inline void url_search_parameters::update() {
     url_->set_search(std::string_view(query));
   }
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #if defined(SKYR_PLATFORM_MSVC)
 #pragma warning(pop)

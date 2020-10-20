@@ -17,9 +17,7 @@
 #include <skyr/v2/unicode/traits/range_iterator.hpp>
 #include <skyr/v2/unicode/traits/range_value.hpp>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 /// \brief
 ///
 /// \tparam OctetIterator
@@ -181,8 +179,6 @@ constexpr inline auto as_u8(const OctetRange &range) {
   return view_u8_range{range};
 }
 }  // namespace views
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif // SKYR_V1_UNICODE_RANGES_VIEWS_U8_VIEW_HPP

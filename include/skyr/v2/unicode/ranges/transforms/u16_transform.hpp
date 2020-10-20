@@ -16,9 +16,7 @@
 #include <skyr/v2/unicode/ranges/sentinel.hpp>
 #include <skyr/v2/unicode/traits/range_iterator.hpp>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 /// An iterator that transform a code point to UTF-16 code
 /// units
 ///
@@ -206,8 +204,6 @@ auto as(transform_u16_range<CodePointRange> &&range) -> tl::expected<Output, uni
   }
   return result;
 }
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP

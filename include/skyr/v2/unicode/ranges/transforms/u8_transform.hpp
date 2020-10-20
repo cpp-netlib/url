@@ -14,9 +14,7 @@
 #include <skyr/v2/unicode/ranges/sentinel.hpp>
 #include <skyr/v2/unicode/traits/range_iterator.hpp>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 /// An iterator that transforms a code point to bytes
 /// (as UTF-8) when dereferenced
 ///
@@ -272,8 +270,6 @@ constexpr auto as(transform_u8_range<CodePointRange> &&range) -> tl::expected<Ou
 
   return result;
 }
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U8_TRANSFORM_HPP

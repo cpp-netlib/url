@@ -12,9 +12,7 @@
 #include <skyr/v2/unicode/traits/range_iterator.hpp>
 #include <tl/expected.hpp>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 /// This class defines a view over a code point in raw bytes,
 /// according to UTF-8.
 /// \tparam OctetIterator An iterator type over the raw bytes
@@ -130,8 +128,6 @@ inline constexpr auto checked_u8_code_point(
 
   return u8_code_point(range).and_then(check_code_point);
 }
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif // SKYR_V2_UNICODE_CODE_POINTS_U8_HPP

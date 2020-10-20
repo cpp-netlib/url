@@ -13,8 +13,7 @@
 #include <skyr/v2/domain/errors.hpp>
 
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 namespace punycode {
 namespace constants {
 constexpr auto base = 0x24u;
@@ -228,7 +227,6 @@ inline auto punycode_decode(
 
   return {};
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif // SKYR_V2_DOMAIN_PUNYCODE_HPP

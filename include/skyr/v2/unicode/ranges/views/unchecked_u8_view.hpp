@@ -16,9 +16,7 @@
 #include <skyr/v2/unicode/traits/range_iterator.hpp>
 #include <skyr/v2/unicode/ranges/sentinel.hpp>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 ///
 /// \tparam OctetIterator
 template <class OctetIterator>
@@ -174,8 +172,6 @@ template <typename OctetRange>
   return view_unchecked_u8_range{range};
 }
 }  // namespace views
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif // SKYR_V2_UNICODE_RANGES_VIEWS_UNCHECKED_U8_VIEW_HPP

@@ -11,9 +11,7 @@
 #include <skyr/v2/unicode/traits/range_iterator.hpp>
 #include <skyr/v2/domain/idna_tables.hpp>
 
-namespace skyr {
-inline namespace v2 {
-namespace idna {
+namespace skyr::inline v2::idna {
 ///
 /// \param code_point A code point value
 /// \return The status of the code point
@@ -115,8 +113,6 @@ inline auto map_code_points(
     bool transitional_processing) -> tl::expected<typename unicode::traits::range_iterator_t<T>, domain_errc> {
   return map_code_points(std::begin(code_points), std::end(code_points), use_std3_ascii_rules, transitional_processing);
 }
-}  // namespace idna
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::idna
 
 #endif  // SKYR_V2_DOMAIN_IDNA_HPP

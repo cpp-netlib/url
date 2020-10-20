@@ -11,8 +11,7 @@
 #include <type_traits>
 #include <optional>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 ///
 /// \tparam T
 /// \tparam Capacity
@@ -198,7 +197,6 @@ class static_vector {
   }
 
 };
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif  // SKYR_V2_CONTAINERS_STATIC_VECTOR_HPP

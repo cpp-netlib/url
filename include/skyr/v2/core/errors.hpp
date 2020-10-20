@@ -8,8 +8,7 @@
 
 #include <system_error>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// \enum url_parse_errc
 /// Enumerates URL parser errors
 enum class url_parse_errc {
@@ -74,8 +73,7 @@ inline auto make_error_code(url_parse_errc error) noexcept -> std::error_code {
   static const details::url_parse_error_category category{};
   return std::error_code(static_cast<int>(error), category);
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 namespace std {
 template <>

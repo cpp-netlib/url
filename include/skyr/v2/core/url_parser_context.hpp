@@ -22,8 +22,7 @@
 #include <skyr/v2/core/url_parse_impl.hpp>
 #include <skyr/v2/percent_encoding/percent_encoded_char.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
@@ -786,7 +785,6 @@ class url_parser_context {
   }
 
 };
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif // SKYR_V2_CORE_URL_PARSER_CONTEXT_HPP

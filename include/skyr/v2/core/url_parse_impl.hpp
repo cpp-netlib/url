@@ -11,8 +11,7 @@
 #include <tl/expected.hpp>
 #include <skyr/v2/core/url_record.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// States of the URL parser
 enum class url_parse_state {
   /// Pointer is at the scheme start
@@ -103,7 +102,6 @@ inline auto parse(
   return parse(input, validation_error, nullptr);
 }
 }  // namespace details
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif // SKYR_V2_URL_PARSE_IMPL_HPP

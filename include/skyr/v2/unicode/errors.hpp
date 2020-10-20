@@ -6,9 +6,7 @@
 #ifndef SKYR_V2_UNICODE_ERRORS_HPP
 #define SKYR_V2_UNICODE_ERRORS_HPP
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 /// \enum unicode_errc
 /// Enumerates Unicode errors
 enum class unicode_errc {
@@ -21,8 +19,6 @@ enum class unicode_errc {
   /// Invalid code point
   invalid_code_point,
 };
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif // SKYR_V2_UNICODE_ERRORS_HPP

@@ -21,8 +21,7 @@
 #include <skyr/v2/domain/domain.hpp>
 
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// Represents a domain name in a [URL host](https://url.spec.whatwg.org/#host-representation)
 struct domain_name {
   std::string name;
@@ -294,7 +293,6 @@ inline auto parse_host(
     bool *validation_error) -> tl::expected<host, url_parse_errc> {
   return parse_host(input, false, validation_error);
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif  // SKYR_V2_CORE_HOST_HPP

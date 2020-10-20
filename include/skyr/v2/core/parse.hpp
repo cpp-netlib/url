@@ -15,8 +15,7 @@
 #include <skyr/v2/core/url_parse_impl.hpp>
 #include <skyr/v2/core/url_parser_context.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 namespace details {
 inline auto parse_next(url_parser_context &context, char byte)
 -> tl::expected<url_parse_action, url_parse_errc> {
@@ -142,7 +141,6 @@ inline auto parse(
     bool *validation_error) -> tl::expected<url_record, url_parse_errc> {
   return details::parse(input, validation_error, &base);
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif  // SKYR_V2_CORE_PARSE_HPP

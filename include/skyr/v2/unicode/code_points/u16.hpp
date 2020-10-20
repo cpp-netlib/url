@@ -11,9 +11,7 @@
 #include <skyr/v2/unicode/errors.hpp>
 #include <tl/expected.hpp>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode {
+namespace skyr::inline v2::unicode {
 ///
 class u16_code_point_t {
 
@@ -87,8 +85,6 @@ inline constexpr auto u16_code_point(
     char16_t trail_code_unit) {
   return u16_code_point_t(lead_code_unit, trail_code_unit);
 }
-}  // namespace unicode
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode
 
 #endif // SKYR_V2_UNICODE_CODE_POINTS_U16_HPP

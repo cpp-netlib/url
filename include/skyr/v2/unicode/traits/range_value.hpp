@@ -8,9 +8,7 @@
 
 #include <cstdlib>
 
-namespace skyr {
-inline namespace v2 {
-namespace unicode::traits {
+namespace skyr::inline v2::unicode::traits {
 ///
 /// \tparam Range
 template <class Range>
@@ -30,8 +28,6 @@ class range_value<T[N]> { // NOLINT
 
 template <class Range>
 using range_value_t = typename range_value<Range>::type;
-}  // namespace unicode::concepts
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2::unicode::traits
 
 #endif // SKYR_V2_UNICODE_TRAITS_RANGE_VALUE_HPP

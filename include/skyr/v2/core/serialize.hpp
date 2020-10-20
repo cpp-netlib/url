@@ -11,8 +11,7 @@
 #include <skyr/v2/network/ipv4_address.hpp>
 #include <skyr/v2/network/ipv6_address.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// Serializes a URL record according to the
 /// [WhatWG specification](https://url.spec.whatwg.org/#url-serializing)
 ///
@@ -74,7 +73,6 @@ inline auto serialize(const url_record &url) -> url_record::string_type {
 
   return output;
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif  // SKYR_V2_CORE_SERIALIZE_HPP

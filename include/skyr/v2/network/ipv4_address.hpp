@@ -20,8 +20,7 @@
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/drop_last.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// Enumerates IPv4 address parsing errors
 enum class ipv4_address_errc {
   /// The input contains more than 4 segments
@@ -194,7 +193,6 @@ constexpr inline auto parse_ipv4_address(
   }
   return ipv4_address(static_cast<unsigned int>(ipv4));
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif //SKYR_V2_NETWORK_IPV4_ADDRESS_HPP

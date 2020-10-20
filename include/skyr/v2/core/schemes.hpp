@@ -10,8 +10,7 @@
 #include <cstdint>
 #include <optional>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// \param scheme
 /// \returns
 constexpr inline auto is_special(std::string_view scheme) noexcept -> bool {
@@ -31,7 +30,6 @@ constexpr inline auto default_port(std::string_view scheme) noexcept -> std::opt
   }
   return std::nullopt;
 }
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif  // SKYR_V2_CORE_URL_SCHEMES_HPP

@@ -11,8 +11,7 @@
 #include <skyr/v2/url.hpp>
 #include <skyr/v2/percent_encoding/percent_decode.hpp>
 
-namespace skyr {
-inline namespace v2 {
+namespace skyr::inline v2 {
 /// \namespace filesystem
 /// Contains functions to convert from filesystem path to URLs and
 /// vice versa
@@ -45,7 +44,6 @@ inline auto to_path(const url &input) -> tl::expected<std::filesystem::path, pat
   return std::filesystem::path(decoded.value());
 }
 }  // namespace filesystem
-}  // namespace v2
-}  // namespace skyr
+}  // namespace skyr::v2
 
 #endif  // SKYR_V2_FILESYSTEM_PATH_HPP
