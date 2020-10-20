@@ -16,13 +16,11 @@ namespace skyr::inline v2 {
 /// \returns The percent decoded output when successful, an error otherwise.
 inline auto percent_decode(std::string_view input) -> tl::expected<std::string, percent_encoding::percent_encode_errc> {
   auto result = std::string{};
-
-  auto range = percent_encoding::percent_decode_range{input};
-  for (auto it = std::cbegin(range); it != std::cend(range); ++it) {
-    if (!*it) {
-      return tl::make_unexpected((*it).error());
+  for (auto &&value : percent_encoding::percent_decode_range{input}) {
+    if (!value) {
+      return tl::make_unexpected((value).error());
     }
-    result.push_back((*it).value());
+    result.push_back((value).value());
   }
   return result;
 }

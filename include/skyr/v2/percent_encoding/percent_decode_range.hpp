@@ -16,7 +16,7 @@
 namespace skyr::inline v2 {
 namespace percent_encoding {
 namespace details {
-inline auto alnum_to_hex(char value) noexcept -> tl::expected<std::byte, percent_encode_errc> {
+constexpr inline auto alnum_to_hex(char value) noexcept -> tl::expected<std::byte, percent_encode_errc> {
   if ((value >= '0') && (value <= '9')) {
     return static_cast<std::byte>(value - '0');
   }
@@ -56,12 +56,12 @@ class percent_decode_iterator {
   using size_type = std::size_t;
 
   ///
-  explicit percent_decode_iterator(std::string_view s)
+  constexpr explicit percent_decode_iterator(std::string_view s)
   : remainder_(s) {}
 
   ///
   /// \return
-  auto operator++(int) noexcept -> percent_decode_iterator {
+  constexpr auto operator++(int) noexcept -> percent_decode_iterator {
     assert(!remainder_.empty());
     auto result = *this;
     increment();
@@ -70,7 +70,7 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  auto operator++() noexcept -> percent_decode_iterator & {
+  constexpr auto operator++() noexcept -> percent_decode_iterator & {
     assert(!remainder_.empty());
     increment();
     return *this;
@@ -78,7 +78,7 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  [[nodiscard]] auto operator * () const noexcept -> const_reference {
+  [[nodiscard]] constexpr auto operator * () const noexcept -> const_reference {
     assert(!remainder_.empty());
 
     if (remainder_[0] == '%') {
@@ -102,20 +102,20 @@ class percent_decode_iterator {
   ///
   /// \param sentinel
   /// \return
-  auto operator==([[maybe_unused]] sentinel sentinel) const noexcept -> bool {
+  constexpr auto operator==([[maybe_unused]] sentinel sentinel) const noexcept -> bool {
     return remainder_.empty();
   }
 
   ///
   /// \param sentinel
   /// \return
-  auto operator!=(sentinel sentinel) const noexcept -> bool {
+  constexpr auto operator!=(sentinel sentinel) const noexcept -> bool {
     return !(*this == sentinel);
   }
 
  private:
 
-  void increment() {
+  constexpr void increment() {
     auto step = (remainder_[0] == '%') ? 3u : 1u;
     remainder_.remove_prefix(step);
   }
@@ -140,36 +140,36 @@ class percent_decode_range {
 
   ///
   /// \param range
-  explicit percent_decode_range(std::string_view s)
+  constexpr explicit percent_decode_range(std::string_view s)
       : it_(s) {}
 
   ///
   /// \return
-  [[nodiscard]] auto cbegin() const noexcept {
+  [[nodiscard]] constexpr auto cbegin() const noexcept {
     return it_;
   }
 
   ///
   /// \return
-  [[nodiscard]] auto cend() const noexcept {
+  [[nodiscard]] constexpr auto cend() const noexcept {
     return sentinel{};
   }
 
   ///
   /// \return
-  [[nodiscard]] auto begin() const noexcept {
+  [[nodiscard]] constexpr auto begin() const noexcept {
     return cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] auto end() const noexcept {
+  [[nodiscard]] constexpr auto end() const noexcept {
     return cend();
   }
 
   ///
   /// \return
-  [[nodiscard]] auto empty() const noexcept {
+  [[nodiscard]] constexpr auto empty() const noexcept {
     return begin() == end();
   }
 

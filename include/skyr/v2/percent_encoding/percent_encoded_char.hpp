@@ -220,7 +220,7 @@ inline auto percent_encode_byte(std::byte value, encode_set excludes) -> percent
 /// \param input An ASCII string
 /// \returns `true` if the input string contains percent encoded
 ///          values, `false` otherwise
-inline auto is_percent_encoded(std::string_view input) noexcept {
+constexpr inline auto is_percent_encoded(std::string_view input) noexcept {
   return
       (input.size() == 3) &&
       (input[0] == '%') &&
