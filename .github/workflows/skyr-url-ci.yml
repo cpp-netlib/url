@@ -270,6 +270,16 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 10
 
+      - name: Install Clang 11
+        id: install_clang_11
+        if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-11' )
+        shell: bash
+        working-directory: ${{ env.HOME }}
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 11
+
       - name: Install vcpkg (Linux)
         id: vcpkg_linux
         if: startsWith(matrix.config.os, 'ubuntu')
@@ -349,6 +359,7 @@ jobs:
               -D skyr_BUILD_TESTS=ON
               -D skyr_BUILD_DOCS=OFF
               -D skyr_BUILD_EXAMPLES=OFF
+              -D skyr_BUILD_V2=OFF
               -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
               -D CMAKE_TOOLCHAIN_FILE=$ENV{GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
               -D CMAKE_INSTALL_PREFIX=$ENV{GITHUB_WORKSPACE}/install
