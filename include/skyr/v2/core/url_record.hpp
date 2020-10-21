@@ -52,7 +52,7 @@ class url_record {
   /// Tests if the URL is a special scheme
   /// \returns `true` if the URL scheme is a special scheme, `false`
   ///          otherwise
-  [[nodiscard]] constexpr auto is_special() const noexcept -> bool {
+  [[nodiscard]] auto is_special() const noexcept -> bool {
     return skyr::is_special(scheme);
   }
 
