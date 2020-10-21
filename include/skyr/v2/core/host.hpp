@@ -105,7 +105,7 @@ class host {
 
   ///
   /// \return
-  [[nodiscard]] auto domain_name() const noexcept -> std::optional<std::string> {
+  [[nodiscard]] auto to_domain_name() const noexcept -> std::optional<std::string> {
     return is_domain_name() ? std::make_optional(std::get<skyr::v2::domain_name>(host_).name) : std::nullopt;
   }
 
@@ -117,7 +117,7 @@ class host {
 
   ///
   /// \return
-  [[nodiscard]] auto ipv4_address() const noexcept {
+  [[nodiscard]] auto to_ipv4_address() const noexcept {
     return is_ipv4_address() ? std::make_optional(std::get<skyr::v2::ipv4_address>(host_)) : std::nullopt;
   }
 
@@ -129,7 +129,7 @@ class host {
 
   ///
   /// \return
-  [[nodiscard]] auto ipv6_address() const noexcept {
+  [[nodiscard]] auto to_ipv6_address() const noexcept {
     return is_ipv6_address() ? std::make_optional(std::get<skyr::v2::ipv6_address>(host_)) : std::nullopt;
   }
 
@@ -141,7 +141,7 @@ class host {
 
   ///
   /// \return
-  [[nodiscard]] auto opaque_host() const noexcept {
+  [[nodiscard]] auto to_opaque_host() const noexcept {
     return is_opaque_host() ? std::make_optional(std::get<skyr::v2::opaque_host>(host_).name) : std::nullopt;
   }
 

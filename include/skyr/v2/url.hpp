@@ -476,7 +476,7 @@ class url {
 
   /// Returns an optional domain name
   [[nodiscard]] auto domain() const -> std::optional<string_type> {
-    return url_.host? url_.host.value().domain_name() : std::nullopt;
+    return url_.host? url_.host.value().to_domain_name() : std::nullopt;
   }
 
   /// Returns an optional domain after decoding as a UTF-8 string
@@ -501,7 +501,7 @@ class url {
     if (!is_ipv4_address()) {
       return std::nullopt;
     }
-    return url_.host.value().ipv4_address();
+    return url_.host.value().to_ipv4_address();
   }
 
   /// Checks if the hostname is a valid IPv6 address
@@ -515,7 +515,7 @@ class url {
     if (!is_ipv6_address()) {
       return std::nullopt;
     }
-    return url_.host.value().ipv6_address();
+    return url_.host.value().to_ipv6_address();
   }
 
   /// Checks if the hostname is a valid opaque host

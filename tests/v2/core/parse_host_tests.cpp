@@ -22,13 +22,13 @@ TEST_CASE("parse_host_tests", "url.parse_host") {
     SECTION("parse IPv4 address name") {
       auto host = skyr::parse_host("127.0.0.1"sv, false);
       REQUIRE(host);
-      CHECK_NOTHROW(host.value().ipv4_address());
+      CHECK_NOTHROW(host.value().to_ipv4_address());
     }
 
     SECTION("parse IPv6 address name") {
       auto host = skyr::parse_host("[1080:0:0:0:8:800:200C:417A]"sv, false);
       REQUIRE(host);
-      CHECK_NOTHROW(host.value().ipv6_address());
+      CHECK_NOTHROW(host.value().to_ipv6_address());
     }
 
     SECTION("parse invalid IPv4 address") {
@@ -58,7 +58,7 @@ TEST_CASE("parse_host_tests", "url.parse_host") {
     SECTION("parse IPv6 address name") {
       auto host = skyr::parse_host("[1080:0:0:0:8:800:200C:417A]"sv, true);
       REQUIRE(host);
-      CHECK_NOTHROW(host->ipv6_address());
+      CHECK_NOTHROW(host.value().to_ipv6_address());
     }
   }
 }
