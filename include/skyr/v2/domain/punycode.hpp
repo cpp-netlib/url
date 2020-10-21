@@ -81,7 +81,7 @@ constexpr inline auto adapt(uint32_t delta, uint32_t numpoints, bool firsttime) 
 /// \param input A UTF-32 encoded domain
 /// \param output An ascii string on output
 /// \returns `void` or an error
-constexpr inline auto punycode_encode(
+inline auto punycode_encode(
     std::u32string_view input,
     std::string *output) -> tl::expected<void, domain_errc> {
   using namespace punycode::constants;
