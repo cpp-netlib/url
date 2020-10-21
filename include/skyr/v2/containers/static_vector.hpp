@@ -56,7 +56,7 @@ class static_vector {
   constexpr auto operator=(const static_vector &) -> static_vector & = default;
   constexpr auto operator=(static_vector &&) noexcept -> static_vector & = default;
 
-  constexpr ~static_vector() {
+  ~static_vector() {
     clear();
   }
 
