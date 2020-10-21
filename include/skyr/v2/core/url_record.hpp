@@ -59,14 +59,14 @@ class url_record {
   /// Tests if the URL includes credentials
   /// \returns `true` if the URL username or password is not an
   ///          empty string, `false` otherwise
-  [[nodiscard]] constexpr auto includes_credentials() const noexcept -> bool {
+  [[nodiscard]] auto includes_credentials() const noexcept -> bool {
     return !username.empty() || !password.empty();
   }
 
   /// Tests if the URL cannot have a username, password or port
   /// \returns `true` if the URL cannot have a username, password
   ///          or port
-  [[nodiscard]] constexpr auto cannot_have_a_username_password_or_port() const noexcept -> bool {
+  [[nodiscard]] auto cannot_have_a_username_password_or_port() const noexcept -> bool {
     return
         (!host || host.value().is_empty()) ||
             cannot_be_a_base_url ||

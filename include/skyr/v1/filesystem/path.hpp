@@ -32,7 +32,7 @@ enum class path_errc {
 /// \param path A filesystem path
 /// \returns a url object or an error on failure
 inline auto from_path(const stdfs::path &path) -> tl::expected<url, url_parse_errc> {
-  return make_url("file://" + path.generic_u8string());
+  return make_url("file://" + path.generic_string());
 }
 
 /// Converts a URL pathname to a filesystem path

@@ -32,7 +32,7 @@ constexpr inline auto remove_trailing_c0_control_or_space(std::string_view input
   return input;
 }
 
-constexpr inline auto remove_tabs_and_newlines(std::string &input, bool *validation_error) {
+inline auto remove_tabs_and_newlines(std::string &input, bool *validation_error) {
   constexpr auto is_tab_or_newline = [] (auto byte) {
     return (byte == '\t') || (byte == '\r') || (byte == '\n');
   };

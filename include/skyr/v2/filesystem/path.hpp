@@ -29,7 +29,15 @@ enum class path_errc {
 /// \param path A filesystem path
 /// \returns a url object or an error on failure
 inline auto from_path(const std::filesystem::path &path) -> tl::expected<url, url_parse_errc> {
-  return make_url("file://" + path.generic_u8string());
+  /// This is weird because not every library implementation has transitioned
+  /// from changing the return type of generic_u8string to a std::u8string between C++17 and C++20
+  using namespace std::string_view_literals;
+  constexpr auto scheme = u8"file://"sv;
+  auto input = std::u8string(scheme);
+  auto u8string = path.generic_u8string(); // Sometimes a std::string and
+                                           // sometimes a std::u8string (correct, for C++20)
+  input.append(std::cbegin(u8string), std::cend(u8string));
+  return make_url(input);
 }
 
 /// Converts a URL pathname to a filesystem path
