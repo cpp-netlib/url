@@ -94,7 +94,7 @@ class url {
   /// \tparam Source The input string type
   /// \param input The input string
   /// \throws url_parse_error on parse errors
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   explicit url(const Source &input)
       : url() {
     auto bytes = details::to_u8(input);
@@ -112,7 +112,7 @@ class url {
   /// \param input The input string
   /// \param base A base URL
   /// \throws url_parse_error on parse errors
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   url(const Source &input, const url &base)
       : url() {
     auto bytes = details::to_u8(input);
@@ -183,7 +183,7 @@ class url {
   /// \tparam Source The input string type
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_href(const Source &href) -> std::error_code {
     auto bytes = details::to_u8(href);
     if (!bytes) {
@@ -253,7 +253,7 @@ class url {
   /// \tparam Source The input string type
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_protocol(const Source &protocol) -> std::error_code {
     auto bytes = details::to_u8(protocol);
     if (!bytes) {
@@ -294,7 +294,7 @@ class url {
   /// \tparam Source The input string type
   /// \param username The new username
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_username(const Source &username) -> std::error_code {
     auto bytes = details::to_u8(username);
     if (!bytes) {
@@ -339,7 +339,7 @@ class url {
   /// \tparam Source The input string type
   /// \param password The new password
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_password(const Source &password) -> std::error_code {
     auto bytes = details::to_u8(password);
     if (!bytes) {
@@ -388,7 +388,7 @@ class url {
   /// \tparam Source The input string type
   /// \param host The new URL host
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_host(const Source &host) -> std::error_code {
     auto bytes = details::to_u8(host);
     if (!bytes) {
@@ -440,7 +440,7 @@ class url {
   /// \tparam Source The input string type
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_hostname(const Source &hostname) -> std::error_code {
     auto bytes = details::to_u8(hostname);
     if (!bytes) {
@@ -561,7 +561,7 @@ class url {
   /// \tparam PortSource The input type
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_port(const Source &port) -> std::error_code {
     auto bytes = details::to_u8(port);
     if (!bytes) {
@@ -632,7 +632,7 @@ class url {
   /// \tparam Source The input string type
   /// \param pathname The new pathname
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_pathname(const Source &pathname) -> std::error_code {
     auto bytes = details::to_u8(pathname);
     if (!bytes) {
@@ -678,7 +678,7 @@ class url {
   /// \tparam Source The input string type
   /// \param search The new search string
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_search(const Source &search) -> std::error_code {
     auto bytes = details::to_u8(search);
     if (!bytes) {
@@ -740,7 +740,7 @@ class url {
   /// \tparam Source The input string type
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
-  template<class Source> requires is_url_convertible<Source>
+  template<class Source> requires is_u8_convertible<Source>
   auto set_hash(const Source &hash) -> std::error_code {
     auto bytes = details::to_u8(hash);
     if (!bytes) {
