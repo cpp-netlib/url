@@ -17,9 +17,9 @@ namespace skyr::inline v2::unicode {
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-constexpr inline auto u32_value(
-    u8_code_point_view<OctetIterator> code_point) noexcept -> tl::expected<char32_t, unicode_errc> {
-  constexpr auto to_value = [] (auto &&state) { return state.value; };
+constexpr inline auto u32_value(u8_code_point_view<OctetIterator> code_point) noexcept
+    -> tl::expected<char32_t, unicode_errc> {
+  constexpr auto to_value = [](auto &&state) { return state.value; };
   return find_code_point(code_point.begin()).map(to_value);
 }
 
@@ -28,44 +28,40 @@ constexpr inline auto u32_value(
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-constexpr inline auto u32_value(
-    tl::expected<u8_code_point_view<OctetIterator>, unicode_errc> code_point) noexcept
+constexpr inline auto u32_value(tl::expected<u8_code_point_view<OctetIterator>, unicode_errc> code_point) noexcept
     -> tl::expected<char32_t, unicode_errc> {
-  constexpr auto to_u32 = [] (auto &&code_point) { return u32_value(code_point); };
+  constexpr auto to_u32 = [](auto &&code_point) { return u32_value(code_point); };
   return code_point.and_then(to_u32);
 }
 
 ///
 /// \param code_point
 /// \return
-constexpr inline auto u32_value(
-    u16_code_point_t code_point) noexcept -> tl::expected<char32_t, unicode_errc> {
+constexpr inline auto u32_value(u16_code_point_t code_point) noexcept -> tl::expected<char32_t, unicode_errc> {
   return code_point.u32_value();
 }
 
 ///
 /// \param code_point
 /// \return
-constexpr inline auto u32_value(
-    tl::expected<u16_code_point_t, unicode_errc> code_point) noexcept
+constexpr inline auto u32_value(tl::expected<u16_code_point_t, unicode_errc> code_point) noexcept
     -> tl::expected<char32_t, unicode_errc> {
-  constexpr auto to_u32 = [] (auto code_point) { return code_point.u32_value(); };
+  constexpr auto to_u32 = [](auto code_point) { return code_point.u32_value(); };
   return code_point.and_then(to_u32);
 }
 
 ///
 /// \param code_point
 /// \return
-constexpr inline auto u32_value(
-    char32_t code_point) noexcept -> tl::expected<char32_t, unicode_errc> {
+constexpr inline auto u32_value(char32_t code_point) noexcept -> tl::expected<char32_t, unicode_errc> {
   return code_point;
 }
 
 ///
 /// \param code_point
 /// \return
-constexpr inline auto u32_value(
-    tl::expected<char32_t, unicode_errc> code_point) noexcept -> tl::expected<char32_t, unicode_errc> {
+constexpr inline auto u32_value(tl::expected<char32_t, unicode_errc> code_point) noexcept
+    -> tl::expected<char32_t, unicode_errc> {
   return code_point;
 }
 
@@ -74,8 +70,8 @@ constexpr inline auto u32_value(
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-constexpr inline auto u16_value(
-    u8_code_point_view<OctetIterator> code_point) -> tl::expected<u16_code_point_t, unicode_errc> {
+constexpr inline auto u16_value(u8_code_point_view<OctetIterator> code_point)
+    -> tl::expected<u16_code_point_t, unicode_errc> {
   return u16_code_point(u32_value(code_point));
 }
 
@@ -84,11 +80,10 @@ constexpr inline auto u16_value(
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-constexpr inline auto u16_value(
-    tl::expected<u8_code_point_view<OctetIterator>, unicode_errc> code_point) {
-  constexpr auto to_u16 = [] (auto code_point) { return u16_code_point(code_point); };
+constexpr inline auto u16_value(tl::expected<u8_code_point_view<OctetIterator>, unicode_errc> code_point) {
+  constexpr auto to_u16 = [](auto code_point) { return u16_code_point(code_point); };
   return u32_value(code_point).map(to_u16);
 }
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif // SKYR_V2_UNICODE_CODE_POINT_HPP
+#endif  // SKYR_V2_UNICODE_CODE_POINT_HPP

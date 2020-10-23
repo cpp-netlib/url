@@ -14,21 +14,20 @@
 namespace skyr::inline v2::unicode {
 ///
 class u16_code_point_t {
-
  public:
+  ///
+  /// \param code_point
+  explicit constexpr u16_code_point_t(char32_t code_point) : code_point_(code_point) {
+  }
 
   ///
   /// \param code_point
-  explicit constexpr u16_code_point_t(char32_t code_point)
-      : code_point_(code_point) {}
-
-  ///
-  /// \param code_point
-  explicit constexpr u16_code_point_t(char16_t code_point)
-      : code_point_(code_point) {}
+  explicit constexpr u16_code_point_t(char16_t code_point) : code_point_(code_point) {
+  }
 
   constexpr u16_code_point_t(char16_t lead_value, char16_t trail_value)
-      : code_point_((lead_value << 10U) + trail_value + constants::surrogates::offset) {}
+      : code_point_((lead_value << 10U) + trail_value + constants::surrogates::offset) {
+  }
 
   ///
   /// \return
@@ -39,17 +38,14 @@ class u16_code_point_t {
   ///
   /// \return
   [[nodiscard]] auto lead_value() const {
-    return is_surrogate_pair()?
-           static_cast<char16_t>((code_point_ >> 10U) + constants::surrogates::lead_offset) :
-           static_cast<char16_t>(code_point_);
+    return is_surrogate_pair() ? static_cast<char16_t>((code_point_ >> 10U) + constants::surrogates::lead_offset)
+                               : static_cast<char16_t>(code_point_);
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto trail_value() const {
-    return is_surrogate_pair()?
-           static_cast<char16_t>((code_point_ & 0x3ffU) + constants::surrogates::trail_min) :
-           0;
+    return is_surrogate_pair() ? static_cast<char16_t>((code_point_ & 0x3ffU) + constants::surrogates::trail_min) : 0;
   }
 
   [[nodiscard]] constexpr auto u32_value() const noexcept -> tl::expected<char32_t, unicode_errc> {
@@ -57,9 +53,7 @@ class u16_code_point_t {
   }
 
  private:
-
   char32_t code_point_;
-
 };
 
 ///
@@ -80,11 +74,9 @@ inline constexpr auto u16_code_point(char16_t code_point) {
 /// \param lead_code_unit
 /// \param trail_code_unit
 /// \return
-inline constexpr auto u16_code_point(
-    char16_t lead_code_unit,
-    char16_t trail_code_unit) {
+inline constexpr auto u16_code_point(char16_t lead_code_unit, char16_t trail_code_unit) {
   return u16_code_point_t(lead_code_unit, trail_code_unit);
 }
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif // SKYR_V2_UNICODE_CODE_POINTS_U16_HPP
+#endif  // SKYR_V2_UNICODE_CODE_POINTS_U16_HPP

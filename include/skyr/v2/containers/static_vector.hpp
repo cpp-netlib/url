@@ -15,20 +15,15 @@ namespace skyr::inline v2 {
 ///
 /// \tparam T
 /// \tparam Capacity
-template <
-    class T,
-    std::size_t Capacity
-    >
+template <class T, std::size_t Capacity>
 class static_vector {
  private:
-
   using impl_type = std::array<T, Capacity>;
 
   impl_type impl_;
   std::size_t size_ = 0;
 
  public:
-
   ///
   using value_type = T;
   ///
@@ -105,8 +100,7 @@ class static_vector {
   /// \pre `size() < capacity()`
   /// \post `size() > 0 && size() <= capacity()`
   template <class... Args>
-  constexpr auto emplace_back(Args &&... args)
-    noexcept(std::is_trivially_move_assignable_v<T>) -> reference {
+  constexpr auto emplace_back(Args &&... args) noexcept(std::is_trivially_move_assignable_v<T>) -> reference {
     impl_[size_++] = value_type{std::forward<Args>(args)...};
     return back();
   }
@@ -195,8 +189,7 @@ class static_vector {
   [[nodiscard]] constexpr auto end() const noexcept -> const_iterator {
     return cend();
   }
-
 };
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
 #endif  // SKYR_V2_CONTAINERS_STATIC_VECTOR_HPP

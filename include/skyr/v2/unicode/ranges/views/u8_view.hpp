@@ -23,11 +23,9 @@ namespace skyr::inline v2::unicode {
 /// \tparam OctetIterator
 template <class OctetIterator>
 class u8_range_iterator {
-
   using iterator_type = unchecked_u8_range_iterator<OctetIterator>;
 
  public:
-
   /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
   /// An expected value containing a UTF-8 encoded code point
@@ -49,17 +47,15 @@ class u8_range_iterator {
   ///
   /// \param first
   /// \param last
-  constexpr u8_range_iterator(
-      OctetIterator first,
-      OctetIterator last)
-      : it_(iterator_type(first, last)) {}
+  constexpr u8_range_iterator(OctetIterator first, OctetIterator last) : it_(iterator_type(first, last)) {
+  }
 
   /// \brief Post-increment operator
   ///
   /// Increments through a code point
   ///
   /// \return The previous iterator value
-  constexpr auto operator ++ (int) noexcept -> u8_range_iterator {
+  constexpr auto operator++(int) noexcept -> u8_range_iterator {
     auto result = *this;
     ++it_;
     return result;
@@ -70,7 +66,7 @@ class u8_range_iterator {
   /// Increments through a code point
   ///
   /// \return \c *this
-  constexpr auto operator ++ () noexcept -> u8_range_iterator & {
+  constexpr auto operator++() noexcept -> u8_range_iterator & {
     ++it_;
     return *this;
   }
@@ -80,40 +76,36 @@ class u8_range_iterator {
   /// Returns a proxy to a UTF-8 encoded code point
   ///
   /// \return A proxy to a UTF-8 encoded code point
-  constexpr auto operator * () const noexcept -> const_reference {
+  constexpr auto operator*() const noexcept -> const_reference {
     return checked_u8_code_point(*it_);
   }
 
   ///
   /// \param sentinel
   /// \return
-  [[maybe_unused]] constexpr auto operator == (sentinel sentinel) const noexcept {
+  [[maybe_unused]] constexpr auto operator==(sentinel sentinel) const noexcept {
     return it_ == sentinel;
   }
 
   ///
   /// \param sentinel
   /// \return
-  [[maybe_unused]] constexpr auto operator != (sentinel sentinel) const noexcept {
+  [[maybe_unused]] constexpr auto operator!=(sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
  private:
-
   iterator_type it_;
-
 };
 
 ///
 /// \tparam OctetRange
 template <class OctetRange>
 class view_u8_range {
-
   using octet_iterator_type = traits::range_iterator_t<OctetRange>;
   using iterator_type = u8_range_iterator<octet_iterator_type>;
 
  public:
-
   ///
   using value_type = u8_code_point_view<octet_iterator_type>;
   ///
@@ -129,8 +121,8 @@ class view_u8_range {
 
   ///
   /// \param range
-  explicit constexpr view_u8_range(const OctetRange &range)
-      : it_(std::cbegin(range), std::cend(range)) {}
+  explicit constexpr view_u8_range(const OctetRange &range) : it_(std::cbegin(range), std::cend(range)) {
+  }
 
   ///
   /// \return
@@ -163,9 +155,7 @@ class view_u8_range {
   }
 
  private:
-
   iterator_type it_;
-
 };
 
 namespace views {
@@ -179,6 +169,6 @@ constexpr inline auto as_u8(const OctetRange &range) {
   return view_u8_range{range};
 }
 }  // namespace views
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif // SKYR_V1_UNICODE_RANGES_VIEWS_U8_VIEW_HPP
+#endif  // SKYR_V1_UNICODE_RANGES_VIEWS_U8_VIEW_HPP

@@ -16,6 +16,6 @@ enum class percent_encode_errc {
   overflow,
 };
 }  // namespace percent_encoding
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
 #endif  // SKYR_V2_PERCENT_ENCODING_ERRORS_HPP

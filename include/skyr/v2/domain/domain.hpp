@@ -29,7 +29,6 @@
 #include <skyr/v2/domain/idna.hpp>
 #include <skyr/v2/domain/punycode.hpp>
 
-
 namespace skyr::inline v2 {
 constexpr inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules,
                                      bool check_hyphens, [[maybe_unused]] bool check_bidi,
@@ -103,15 +102,23 @@ struct domain_to_ascii_context {
 /// \param transitional_processing
 /// \param verify_dns_length
 /// \return
-inline auto create_domain_to_ascii_context(std::string_view domain_name, std::string *ascii_domain,
-                                           bool check_hyphens, bool check_bidi, bool check_joiners,
-                                           bool use_std3_ascii_rules, bool transitional_processing,
-                                           bool verify_dns_length)
+inline auto create_domain_to_ascii_context(std::string_view domain_name, std::string *ascii_domain, bool check_hyphens,
+                                           bool check_bidi, bool check_joiners, bool use_std3_ascii_rules,
+                                           bool transitional_processing, bool verify_dns_length)
     -> tl::expected<domain_to_ascii_context, domain_errc> {
   auto u32domain_name = unicode::as<std::u32string>(unicode::views::as_u8(domain_name) | unicode::transforms::to_u32);
   if (u32domain_name) {
-    return domain_to_ascii_context{u32domain_name.value(), ascii_domain, check_hyphens, check_bidi, check_joiners,
-                                   use_std3_ascii_rules, transitional_processing, verify_dns_length, {}, {}, {}};
+    return domain_to_ascii_context{u32domain_name.value(),
+                                   ascii_domain,
+                                   check_hyphens,
+                                   check_bidi,
+                                   check_joiners,
+                                   use_std3_ascii_rules,
+                                   transitional_processing,
+                                   verify_dns_length,
+                                   {},
+                                   {},
+                                   {}};
   } else {
     return tl::make_unexpected(domain_errc::encoding_error);
   }
@@ -123,8 +130,8 @@ inline auto create_domain_to_ascii_context(std::string_view domain_name, std::st
 inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#ToASCII
 
-  constexpr auto map_domain_name = [] (domain_to_ascii_context &&ctx)
-      -> tl::expected<domain_to_ascii_context, domain_errc> {
+  constexpr auto map_domain_name =
+      [](domain_to_ascii_context &&ctx) -> tl::expected<domain_to_ascii_context, domain_errc> {
     auto result = idna::map_code_points(ctx.domain_name, ctx.use_std3_ascii_rules, ctx.transitional_processing);
     if (result) {
       ctx.domain_name.erase(result.value(), std::cend(ctx.domain_name));
@@ -134,11 +141,10 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
     }
   };
 
-  constexpr auto process_labels = [] (auto &&ctx)
-      -> tl::expected<domain_to_ascii_context, domain_errc> {
+  constexpr auto process_labels = [](auto &&ctx) -> tl::expected<domain_to_ascii_context, domain_errc> {
     using namespace std::string_view_literals;
 
-    constexpr auto to_string_view = [] (auto &&label) {
+    constexpr auto to_string_view = [](auto &&label) {
       auto size = ranges::distance(label);
       return std::u32string_view(std::addressof(*std::cbegin(label)), size);
     };
@@ -164,7 +170,7 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
         }
       }
 
-      constexpr auto is_ascii = [] (std::u32string_view input) noexcept {
+      constexpr auto is_ascii = [](std::u32string_view input) noexcept {
         constexpr auto is_in_ascii_set = [](auto c) { return c <= U'\x7e'; };
 
         return ranges::cend(input) == ranges::find_if_not(input, is_in_ascii_set);
@@ -191,8 +197,8 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
     return std::move(ctx);
   };
 
-  constexpr auto check_length = [] (domain_to_ascii_context &&ctx)
-      -> tl::expected<domain_to_ascii_context, domain_errc> {
+  constexpr auto check_length =
+      [](domain_to_ascii_context &&ctx) -> tl::expected<domain_to_ascii_context, domain_errc> {
     constexpr auto max_domain_length = 253;
     constexpr auto max_label_length = 63;
 
@@ -213,17 +219,12 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
     return std::move(ctx);
   };
 
-  constexpr auto copy_to_output = [] (domain_to_ascii_context &&ctx)
-      -> tl::expected<void, domain_errc> {
+  constexpr auto copy_to_output = [](domain_to_ascii_context &&ctx) -> tl::expected<void, domain_errc> {
     ranges::copy(ctx.labels | ranges::views::join('.'), ranges::back_inserter(*ctx.ascii_domain));
     return {};
   };
 
-  return map_domain_name(std::move(context))
-      .and_then(process_labels)
-      .and_then(check_length)
-      .and_then(copy_to_output)
-      ;
+  return map_domain_name(std::move(context)).and_then(process_labels).and_then(check_length).and_then(copy_to_output);
 }
 
 ///
@@ -237,9 +238,8 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
 /// \param verify_dns_length
 /// \return
 inline auto domain_to_ascii(std::string_view domain_name, std::string *ascii_domain, bool check_hyphens,
-                                      bool check_bidi, bool check_joiners, bool use_std3_ascii_rules,
-                                      bool transitional_processing, bool verify_dns_length)
-    -> tl::expected<void, domain_errc> {
+                            bool check_bidi, bool check_joiners, bool use_std3_ascii_rules,
+                            bool transitional_processing, bool verify_dns_length) -> tl::expected<void, domain_errc> {
   return create_domain_to_ascii_context(domain_name, ascii_domain, check_hyphens, check_bidi, check_joiners,
                                         use_std3_ascii_rules, transitional_processing, verify_dns_length)
       .and_then(domain_to_ascii_impl);
@@ -252,11 +252,8 @@ inline auto domain_to_ascii(std::string_view domain_name, std::string *ascii_dom
 /// \param be_strict Tells the processor to be strict
 /// \param validation_error
 /// \returns An ASCII domain, or an error
-inline auto domain_to_ascii(
-    std::string_view domain_name,
-    std::string *ascii_domain,
-    bool be_strict,
-    bool *validation_error) -> tl::expected<void, domain_errc> {
+inline auto domain_to_ascii(std::string_view domain_name, std::string *ascii_domain, bool be_strict,
+                            bool *validation_error) -> tl::expected<void, domain_errc> {
   auto result = domain_to_ascii(domain_name, ascii_domain, false, true, true, be_strict, false, be_strict);
   if (!result) {
     *validation_error |= true;
@@ -273,10 +270,8 @@ inline auto domain_to_ascii(
 /// \param domain_name A domain
 /// \param be_strict Tells the processor to be strict
 /// \returns An ASCII domain, or an error
-inline auto domain_to_ascii(
-    std::string_view domain_name,
-    std::string *ascii_domain,
-    bool be_strict) -> tl::expected<void, domain_errc> {
+inline auto domain_to_ascii(std::string_view domain_name, std::string *ascii_domain, bool be_strict)
+    -> tl::expected<void, domain_errc> {
   [[maybe_unused]] bool validation_error = false;
   return domain_to_ascii(domain_name, ascii_domain, be_strict, &validation_error);
 }
@@ -317,7 +312,7 @@ struct domain_to_u8_context {
 /// \param context
 /// \return
 inline auto domain_to_u8_impl(domain_to_u8_context &&context) -> tl::expected<void, domain_errc> {
-  static constexpr auto to_string_view = [] (auto &&label) {
+  static constexpr auto to_string_view = [](auto &&label) {
     return std::string_view(std::addressof(*std::begin(label)), ranges::distance(label));
   };
 
@@ -354,10 +349,8 @@ inline auto domain_to_u8_impl(domain_to_u8_context &&context) -> tl::expected<vo
 ///
 /// \param domain_name A Punycode encoded domain
 /// \returns A valid UTF-8 encoded domain, or an error
-inline auto domain_to_u8(
-    std::string_view domain_name,
-    std::string *u8_domain,
-    [[maybe_unused]] bool *validation_error) -> tl::expected<void, domain_errc> {
+inline auto domain_to_u8(std::string_view domain_name, std::string *u8_domain, [[maybe_unused]] bool *validation_error)
+    -> tl::expected<void, domain_errc> {
   auto context = domain_to_u8_context{domain_name, u8_domain, {}, {}};
   return domain_to_u8_impl(std::move(context));
 }
@@ -370,6 +363,6 @@ inline auto domain_to_u8(std::string_view domain_name, std::string *u8_domain) -
   [[maybe_unused]] bool validation_error = false;
   return domain_to_u8(domain_name, u8_domain, &validation_error);
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif // SKYR_V2_DOMAIN_DOMAIN_HPP
+#endif  // SKYR_V2_DOMAIN_DOMAIN_HPP

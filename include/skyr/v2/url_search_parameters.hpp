@@ -27,11 +27,10 @@ class url;
 
 namespace details {
 struct is_name {
-  explicit is_name(std::string_view name)
-      : name_(name)
-  {}
+  explicit is_name(std::string_view name) : name_(name) {
+  }
 
-  auto operator () (const std::pair<std::string, std::string> &parameter) noexcept {
+  auto operator()(const std::pair<std::string, std::string> &parameter) noexcept {
     return name_ == parameter.first;
   }
 
@@ -45,11 +44,9 @@ struct is_name {
 /// The API closely follows the
 /// [WhatWG IDL specification](https://url.spec.whatwg.org/#interface-urlsearchparams)
 class url_search_parameters {
-
   friend class url;
 
  public:
-
   /// string type
   /// \sa url::string_type
   using string_type = std::string;
@@ -77,8 +74,7 @@ class url_search_parameters {
 
   ///
   /// \param parameters
-  url_search_parameters(std::initializer_list<value_type> parameters)
-      : parameters_(parameters) {}
+  url_search_parameters(std::initializer_list<value_type> parameters) : parameters_(parameters) {}
 
   ///
   /// \param other
@@ -116,7 +112,7 @@ class url_search_parameters {
   [[nodiscard]] auto get_all(std::string_view name) const -> std::vector<string_type> {
     std::vector<string_type> result;
     result.reserve(parameters_.size());
-    for (auto[parameter_name, value] : parameters_) {
+    for (auto [parameter_name, value] : parameters_) {
       if (parameter_name == name) {
         result.emplace_back(value);
       }
@@ -154,7 +150,7 @@ class url_search_parameters {
   /// Clears the search parameters
   ///
   /// \post `empty() == true`
-  void clear() noexcept  {
+  void clear() noexcept {
     parameters_.clear();
     update();
   }
@@ -216,8 +212,7 @@ class url_search_parameters {
     for (const auto &[name, value] : parameters_) {
       if (start) {
         start = false;
-      }
-      else {
+      } else {
         result.append("&");
       }
       result.append(percent_encode(name));
@@ -229,7 +224,6 @@ class url_search_parameters {
   }
 
  private:
-
   explicit url_search_parameters(url *url);
 
   void initialize(std::string_view query) {
@@ -237,24 +231,21 @@ class url_search_parameters {
       query.remove_prefix(1);
     }
 
-    static constexpr auto is_separator = [] (auto &&c) {
-      return c == '&' || c == ';';
-    };
+    static constexpr auto is_separator = [](auto &&c) { return c == '&' || c == ';'; };
 
-    static constexpr auto to_nvp = [] (auto &&param) -> std::pair<std::string_view, std::optional<std::string_view>> {
+    static constexpr auto to_nvp = [](auto &&param) -> std::pair<std::string_view, std::optional<std::string_view>> {
       auto element = std::string_view(std::addressof(*ranges::begin(param)), ranges::distance(param));
       auto delim = element.find_first_of("=");
       if (delim != std::string_view::npos) {
-        return { element.substr(0, delim), element.substr(delim + 1) };
-      }
-      else {
-        return { element, std::nullopt };
+        return {element.substr(0, delim), element.substr(delim + 1)};
+      } else {
+        return {element, std::nullopt};
       }
     };
 
     for (auto [name, value] : query | ranges::views::split_when(is_separator) | ranges::views::transform(to_nvp)) {
       auto name_ = percent_decode(name).value_or(std::string(name));
-      auto value_ = value? percent_decode(value.value()).value_or(std::string(value.value())) : std::string();
+      auto value_ = value ? percent_decode(value.value()).value_or(std::string(value.value())) : std::string();
       parameters_.emplace_back(name_, value_);
     }
   }
@@ -265,12 +256,12 @@ class url_search_parameters {
   url *url_ = nullptr;
 };
 
-/// 
+///
 /// \param lhs
 /// \param rhs
 inline void swap(url_search_parameters &lhs, url_search_parameters &rhs) noexcept {
   lhs.swap(rhs);
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
 #endif  // SKYR_V2_URL_SEARCH_PARAMETERS_HPP

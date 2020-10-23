@@ -16,10 +16,9 @@ namespace skyr::inline v2::unicode {
 /// This class defines a view over a code point in raw bytes,
 /// according to UTF-8.
 /// \tparam OctetIterator An iterator type over the raw bytes
-template<typename OctetIterator>
+template <typename OctetIterator>
 class u8_code_point_view {
  public:
-
   ///
   using const_iterator = OctetIterator;
   ///
@@ -42,16 +41,15 @@ class u8_code_point_view {
   /// \brief Constructor
   /// \param first An iterator at the beginning of the code point
   /// \param last An iterator at the end of the code point
-  constexpr u8_code_point_view(
-      OctetIterator first,
-      OctetIterator last)
-      : first(first), last(last) {}
+  constexpr u8_code_point_view(OctetIterator first, OctetIterator last) : first(first), last(last) {
+  }
 
   /// \brief Constructor. The length of the code point sequence is
   ///        inferred from the first code point value.
   /// \param first An iterator at the beginning of the code point
   explicit constexpr u8_code_point_view(OctetIterator first)
-      : u8_code_point_view(first, first + sequence_length(*first)) {}
+      : u8_code_point_view(first, first + sequence_length(*first)) {
+  }
 
   /// Returns an iterator to the beginning
   /// \return \c const_iterator
@@ -86,21 +84,19 @@ class u8_code_point_view {
   ///
   /// \return
   [[nodiscard]] constexpr auto u32_value() const noexcept {
-    constexpr auto to_u32 = [] (auto &&state) { return state.value; };
+    constexpr auto to_u32 = [](auto &&state) { return state.value; };
     return find_code_point(first).map(to_u32).value();
   }
 
  private:
-
   OctetIterator first, last;
-
 };
 
 ///
 /// \tparam OctetRange
 /// \param range
 /// \return
-template<typename OctetRange>
+template <typename OctetRange>
 inline constexpr auto u8_code_point(const OctetRange &range)
     -> tl::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc> {
   auto first = std::begin(range), last = std::end(range);
@@ -118,16 +114,15 @@ inline constexpr auto u8_code_point(const OctetRange &range)
 /// \param range
 /// \return
 template <typename OctetRange>
-inline constexpr auto checked_u8_code_point(
-    const OctetRange &range) {
+inline constexpr auto checked_u8_code_point(const OctetRange &range) {
   using result_type = tl::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc>;
 
-  constexpr auto check_code_point = [] (auto &&code_point) -> result_type {
-    return find_code_point(std::begin(code_point)).map([=] (auto) { return code_point; });
+  constexpr auto check_code_point = [](auto &&code_point) -> result_type {
+    return find_code_point(std::begin(code_point)).map([=](auto) { return code_point; });
   };
 
   return u8_code_point(range).and_then(check_code_point);
 }
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif // SKYR_V2_UNICODE_CODE_POINTS_U8_HPP
+#endif  // SKYR_V2_UNICODE_CODE_POINTS_U8_HPP

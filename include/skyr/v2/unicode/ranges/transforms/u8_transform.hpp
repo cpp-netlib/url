@@ -19,11 +19,9 @@ namespace skyr::inline v2::unicode {
 /// (as UTF-8) when dereferenced
 ///
 /// \tparam CodePointIterator
-template<class CodePointIterator, class Sentinel>
+template <class CodePointIterator, class Sentinel>
 class u8_transform_iterator {
-
  public:
-
   /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
   /// An expected wrapper around a \c char
@@ -46,10 +44,8 @@ class u8_transform_iterator {
   ///
   /// \param first The first iterator in the code point sequence
   /// \param last The end iterator in the code point sequence
-  constexpr u8_transform_iterator(
-      CodePointIterator first,
-      Sentinel last)
-      : it_(first), last_(last) {}
+  constexpr u8_transform_iterator(CodePointIterator first, Sentinel last) : it_(first), last_(last) {
+  }
 
   /// Pre-increment operator
   /// \return A reference to this iterator
@@ -73,7 +69,7 @@ class u8_transform_iterator {
   ///
   /// \return An expected wrapper
   [[nodiscard]] constexpr auto operator*() const noexcept -> reference {
-    constexpr auto u8_code_unit = [] (auto code_point, auto octet_index) -> tl::expected<char, unicode_errc> {
+    constexpr auto u8_code_unit = [](auto code_point, auto octet_index) -> tl::expected<char, unicode_errc> {
       if (code_point < 0x80u) {
         return static_cast<char>(code_point);
       } else if (code_point < 0x800u) {
@@ -122,9 +118,8 @@ class u8_transform_iterator {
   }
 
  private:
-
   constexpr void increment() {
-    constexpr auto octet_count = [] (char32_t code_point) {
+    constexpr auto octet_count = [](char32_t code_point) {
       if (code_point < 0x80u) {
         return 1;
       } else if (code_point < 0x800u) {
@@ -146,22 +141,16 @@ class u8_transform_iterator {
   CodePointIterator it_;
   Sentinel last_;
   int octet_index_ = 0;
-
 };
-
 
 /// A range that transforms code point values to a UTF-8 sequence
 /// \tparam CodePointRange
-template<class CodePointRange>
+template <class CodePointRange>
 class transform_u8_range {
-
-
-  using iterator_type = u8_transform_iterator<
-      traits::range_iterator_t<CodePointRange>,
-      decltype(std::cend(std::declval<CodePointRange>()))>;
+  using iterator_type = u8_transform_iterator<traits::range_iterator_t<CodePointRange>,
+                                              decltype(std::cend(std::declval<CodePointRange>()))>;
 
  public:
-
   /// An expected wrapper around a UTF-8 value
   using value_type = tl::expected<char, unicode_errc>;
   /// \c value_type
@@ -181,9 +170,8 @@ class transform_u8_range {
 
   /// Constructor
   /// \param range A range of code points
-  explicit constexpr transform_u8_range(
-      const CodePointRange &range)
-      : first_(std::cbegin(range), std::cend(range)) {}
+  explicit constexpr transform_u8_range(const CodePointRange &range) : first_(std::cbegin(range), std::cend(range)) {
+  }
 
   /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
@@ -216,21 +204,17 @@ class transform_u8_range {
   }
 
  private:
-
   iterator_type first_;
-
 };
 
 ///
 struct u8_range_fn {
-
   ///
   /// \tparam CodePointRange
   /// \param range
   /// \return
-  template<class CodePointRange>
-  constexpr auto operator()(
-      CodePointRange &&range) const {
+  template <class CodePointRange>
+  constexpr auto operator()(CodePointRange &&range) const {
     return transform_u8_range{std::forward<CodePointRange>(range)};
   }
 
@@ -238,10 +222,8 @@ struct u8_range_fn {
   /// \tparam CodePointRange
   /// \param range
   /// \return
-  template<typename CodePointRange>
-  friend constexpr auto operator|(
-      CodePointRange &&range,
-      const u8_range_fn &) {
+  template <typename CodePointRange>
+  friend constexpr auto operator|(CodePointRange &&range, const u8_range_fn &) {
     return transform_u8_range{std::forward<CodePointRange>(range)};
   }
 };
@@ -264,12 +246,11 @@ constexpr auto as(transform_u8_range<CodePointRange> &&range) -> tl::expected<Ou
     if (!unit) {
       return tl::make_unexpected(unit.error());
     }
-    result.push_back(
-        static_cast<typename Output::value_type>(unit.value()));
+    result.push_back(static_cast<typename Output::value_type>(unit.value()));
   }
 
   return result;
 }
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U8_TRANSFORM_HPP
+#endif  // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U8_TRANSFORM_HPP

@@ -21,13 +21,13 @@ class range_iterator {
 /// \tparam T
 /// \tparam N
 template <typename T, std::size_t N>
-class range_iterator<T[N]> { // NOLINT
+class range_iterator<T[N]> {  // NOLINT
  public:
   using type = const T *;
 };
 
 template <class Range>
 using range_iterator_t = typename range_iterator<Range>::type;
-}  // namespace skyr::v2::unicode::traits
+}  // namespace skyr::inline v2::unicode::traits
 
-#endif // SKYR_V2_UNICODE_TRAITS_RANGE_ITERATOR_HPP
+#endif  // SKYR_V2_UNICODE_TRAITS_RANGE_ITERATOR_HPP

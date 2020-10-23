@@ -16,9 +16,7 @@
 namespace skyr::inline v2 {
 /// Represents the parts of a URL identifier.
 class url_record {
-
  public:
-
   /// string type
   /// \sa url::string_type
   using string_type = std::string;
@@ -67,10 +65,7 @@ class url_record {
   /// \returns `true` if the URL cannot have a username, password
   ///          or port
   [[nodiscard]] auto cannot_have_a_username_password_or_port() const noexcept -> bool {
-    return
-        (!host || host.value().is_empty()) ||
-            cannot_be_a_base_url ||
-            (scheme == "file");
+    return (!host || host.value().is_empty()) || cannot_be_a_base_url || (scheme == "file");
   }
 
   /// Swaps two `url_record` objects
@@ -98,6 +93,6 @@ class url_record {
 inline void swap(url_record &lhs, url_record &rhs) noexcept {
   lhs.swap(rhs);
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif // SKYR_V2_CORE_URL_RECORD_HPP
+#endif  // SKYR_V2_CORE_URL_RECORD_HPP

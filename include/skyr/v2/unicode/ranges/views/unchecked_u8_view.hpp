@@ -22,7 +22,6 @@ namespace skyr::inline v2::unicode {
 template <class OctetIterator>
 class unchecked_u8_range_iterator {
  public:
-
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
@@ -43,12 +42,12 @@ class unchecked_u8_range_iterator {
   ///
   /// \param it
   /// \param last
-  constexpr unchecked_u8_range_iterator(OctetIterator it, OctetIterator last)
-      : it_(it), last_(last) {}
+  constexpr unchecked_u8_range_iterator(OctetIterator it, OctetIterator last) : it_(it), last_(last) {
+  }
 
   ///
   /// \return
-  constexpr auto operator ++ (int) noexcept -> unchecked_u8_range_iterator {
+  constexpr auto operator++(int) noexcept -> unchecked_u8_range_iterator {
     assert(it_ != last_);
     auto result = *this;
     increment();
@@ -57,7 +56,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  constexpr auto operator ++ () noexcept -> unchecked_u8_range_iterator & {
+  constexpr auto operator++() noexcept -> unchecked_u8_range_iterator & {
     assert(it_ != last_);
     increment();
     return *this;
@@ -65,7 +64,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto operator * () const noexcept -> const_reference {
+  [[nodiscard]] constexpr auto operator*() const noexcept -> const_reference {
     assert(it_ != last_);
     auto last = it_;
     std::advance(last, sequence_length(*it_));
@@ -75,37 +74,33 @@ class unchecked_u8_range_iterator {
   ///
   /// \param sentinel
   /// \return
-  [[nodiscard]] constexpr auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator==([[maybe_unused]] sentinel sentinel) const noexcept {
     return it_ == last_;
   }
 
   ///
   /// \param sentinel
   /// \return
-  [[nodiscard]] constexpr auto operator != (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator!=(sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
  private:
-
   constexpr void increment() {
     std::advance(it_, sequence_length(*it_));
   }
 
   OctetIterator it_, last_;
-
 };
 
 ///
 /// \tparam OctetRange
 template <class OctetRange>
 class view_unchecked_u8_range {
-
   using octet_iterator_type = traits::range_iterator_t<OctetRange>;
   using iterator_type = unchecked_u8_range_iterator<octet_iterator_type>;
 
  public:
-
   ///
   using value_type = u8_code_point_view<octet_iterator_type>;
   ///
@@ -121,9 +116,8 @@ class view_unchecked_u8_range {
 
   ///
   /// \param range
-  explicit constexpr view_unchecked_u8_range(
-      const OctetRange &range)
-      : it_(std::begin(range), std::end(range)) {}
+  explicit constexpr view_unchecked_u8_range(const OctetRange &range) : it_(std::begin(range), std::end(range)) {
+  }
 
   ///
   /// \return
@@ -156,9 +150,7 @@ class view_unchecked_u8_range {
   }
 
  private:
-
   iterator_type it_;
-
 };
 
 namespace views {
@@ -167,11 +159,10 @@ namespace views {
 /// \param range
 /// \return
 template <typename OctetRange>
-[[maybe_unused]] constexpr inline auto unchecked_u8(
-    const OctetRange &range) {
+[[maybe_unused]] constexpr inline auto unchecked_u8(const OctetRange &range) {
   return view_unchecked_u8_range{range};
 }
 }  // namespace views
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif // SKYR_V2_UNICODE_RANGES_VIEWS_UNCHECKED_U8_VIEW_HPP
+#endif  // SKYR_V2_UNICODE_RANGES_VIEWS_UNCHECKED_U8_VIEW_HPP

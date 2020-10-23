@@ -12,8 +12,8 @@
 
 namespace skyr::inline v2 {
 namespace details {
-template <class intT> requires std::is_integral_v<intT>
-constexpr inline auto swap_endianness(intT v) noexcept -> intT {
+template <class intT>
+requires std::is_integral_v<intT> constexpr inline auto swap_endianness(intT v) noexcept -> intT {
   constexpr auto byte_count = sizeof(v);
   std::array<unsigned char, byte_count> bytes{};
   for (auto i = 0UL; i < byte_count; ++i) {
@@ -23,15 +23,15 @@ constexpr inline auto swap_endianness(intT v) noexcept -> intT {
 }
 }  // namespace details
 
-template <class intT> requires std::is_integral_v<intT>
-constexpr inline auto to_network_byte_order(intT v) noexcept {
+template <class intT>
+requires std::is_integral_v<intT> constexpr inline auto to_network_byte_order(intT v) noexcept {
   return (std::endian::big == std::endian::native) ? v : details::swap_endianness(v);  // NOLINT
 }
 
-template <class intT> requires std::is_integral_v<intT>
-constexpr inline auto from_network_byte_order(intT v) noexcept {
+template <class intT>
+requires std::is_integral_v<intT> constexpr inline auto from_network_byte_order(intT v) noexcept {
   return (std::endian::big == std::endian::native) ? v : details::swap_endianness(v);  // NOLINT
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif // SKYR_V2_PLATFORM_ENDIANNESS_HPP
+#endif  // SKYR_V2_PLATFORM_ENDIANNESS_HPP

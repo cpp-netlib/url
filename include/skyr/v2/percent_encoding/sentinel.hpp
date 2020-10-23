@@ -10,6 +10,6 @@ namespace skyr::inline v2 {
 namespace percent_encoding {
 class sentinel {};
 }  // namespace percent_encoding
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
 #endif  // SKYR_V2_PERCENT_ENCODING_SENTINEL_HPP

@@ -39,43 +39,26 @@ inline constexpr auto is_c0_control_byte(std::byte value) noexcept {
 /// \param value
 /// \return
 inline constexpr auto is_fragment_byte(std::byte value) {
-  return
-      is_c0_control_byte(value) ||
-      (value == std::byte(0x20)) ||
-      (value == std::byte(0x22)) ||
-      (value == std::byte(0x3c)) ||
-      (value == std::byte(0x3e)) ||
-      (value == std::byte(0x60));
+  return is_c0_control_byte(value) || (value == std::byte(0x20)) || (value == std::byte(0x22)) ||
+         (value == std::byte(0x3c)) || (value == std::byte(0x3e)) || (value == std::byte(0x60));
 }
 
 ///
 /// \param value
 /// \return
 inline constexpr auto is_path_byte(std::byte value) {
-  return
-      is_fragment_byte(value) ||
-      (value == std::byte(0x23)) ||
-      (value == std::byte(0x3f)) ||
-      (value == std::byte(0x7b)) ||
-      (value == std::byte(0x7d));
+  return is_fragment_byte(value) || (value == std::byte(0x23)) || (value == std::byte(0x3f)) ||
+         (value == std::byte(0x7b)) || (value == std::byte(0x7d));
 }
 
 ///
 /// \param value
 /// \return
 inline constexpr auto is_userinfo_byte(std::byte value) {
-  return
-      is_path_byte(value) ||
-      (value == std::byte(0x2f)) ||
-      (value == std::byte(0x3a)) ||
-      (value == std::byte(0x3b)) ||
-      (value == std::byte(0x3d)) ||
-      (value == std::byte(0x40)) ||
-      (value == std::byte(0x5b)) ||
-      (value == std::byte(0x5c)) ||
-      (value == std::byte(0x5d)) ||
-      (value == std::byte(0x5e)) ||
-      (value == std::byte(0x7c));
+  return is_path_byte(value) || (value == std::byte(0x2f)) || (value == std::byte(0x3a)) ||
+         (value == std::byte(0x3b)) || (value == std::byte(0x3d)) || (value == std::byte(0x40)) ||
+         (value == std::byte(0x5b)) || (value == std::byte(0x5c)) || (value == std::byte(0x5d)) ||
+         (value == std::byte(0x5e)) || (value == std::byte(0x7c));
 }
 }  // namespace details
 
@@ -95,13 +78,11 @@ enum class encode_set {
 
 ///
 struct percent_encoded_char {
-
   using impl_type = std::string;
 
   static constexpr std::byte mask = std::byte(0x0f);
 
  public:
-
   ///
   using const_iterator = impl_type::const_iterator;
   ///
@@ -119,14 +100,14 @@ struct percent_encoded_char {
 
   ///
   /// \param value
-  percent_encoded_char(std::byte value, no_encode)
-      : impl_{static_cast<char>(value)} {}
+  percent_encoded_char(std::byte value, no_encode) : impl_{static_cast<char>(value)} {
+  }
 
   ///
   /// \param value
   explicit percent_encoded_char(std::byte value)
-      : impl_{
-      '%', details::hex_to_alnum((value >> 4u) & mask), details::hex_to_alnum(value & mask)} {}
+      : impl_{'%', details::hex_to_alnum((value >> 4u) & mask), details::hex_to_alnum(value & mask)} {
+  }
 
   ///
   /// \return
@@ -166,20 +147,18 @@ struct percent_encoded_char {
 
   ///
   /// \return
-  [[nodiscard]] auto to_string() const & -> std::string {
+  [[nodiscard]] auto to_string() const& -> std::string {
     return impl_;
   }
 
   ///
   /// \return
-  [[nodiscard]] auto to_string() && noexcept -> std::string && {
+  [[nodiscard]] auto to_string() && noexcept -> std::string&& {
     return std::move(impl_);
   }
 
  private:
-
   impl_type impl_;
-
 };
 
 ///
@@ -192,8 +171,7 @@ inline auto percent_encode_byte(std::byte byte, Pred pred) -> percent_encoded_ch
   if (pred(byte)) {
     return percent_encoding::percent_encoded_char(byte);
   }
-  return percent_encoding::percent_encoded_char(
-      byte, percent_encoding::percent_encoded_char::no_encode());
+  return percent_encoding::percent_encoded_char(byte, percent_encoding::percent_encoded_char::no_encode());
 }
 
 ///
@@ -221,13 +199,10 @@ inline auto percent_encode_byte(std::byte value, encode_set excludes) -> percent
 /// \returns `true` if the input string contains percent encoded
 ///          values, `false` otherwise
 constexpr inline auto is_percent_encoded(std::string_view input) noexcept {
-  return
-      (input.size() == 3) &&
-      (input[0] == '%') &&
-      std::isxdigit(input[1], std::locale::classic()) &&
-      std::isxdigit(input[2], std::locale::classic());
+  return (input.size() == 3) && (input[0] == '%') && std::isxdigit(input[1], std::locale::classic()) &&
+         std::isxdigit(input[2], std::locale::classic());
 }
 }  // namespace percent_encoding
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif //SKYR_V2_PERCENT_ENCODING_PERCENT_ENCODED_CHAR_HPP
+#endif  // SKYR_V2_PERCENT_ENCODING_PERCENT_ENCODED_CHAR_HPP

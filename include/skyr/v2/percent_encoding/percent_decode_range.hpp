@@ -35,9 +35,7 @@ constexpr inline auto alnum_to_hex(char value) noexcept -> tl::expected<std::byt
 
 ///
 class percent_decode_iterator {
-
  public:
-
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
@@ -56,8 +54,8 @@ class percent_decode_iterator {
   using size_type = std::size_t;
 
   ///
-  constexpr explicit percent_decode_iterator(std::string_view s)
-  : remainder_(s) {}
+  constexpr explicit percent_decode_iterator(std::string_view s) : remainder_(s) {
+  }
 
   ///
   /// \return
@@ -78,7 +76,7 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto operator * () const noexcept -> const_reference {
+  [[nodiscard]] constexpr auto operator*() const noexcept -> const_reference {
     assert(!remainder_.empty());
 
     if (remainder_[0] == '%') {
@@ -92,8 +90,8 @@ class percent_decode_iterator {
         return tl::make_unexpected(percent_encoding::percent_encode_errc::non_hex_input);
       }
 
-      return static_cast<char>(
-          (0x10u * std::to_integer<unsigned int>(v0.value())) + std::to_integer<unsigned int>(v1.value()));
+      return static_cast<char>((0x10u * std::to_integer<unsigned int>(v0.value())) +
+                               std::to_integer<unsigned int>(v1.value()));
     } else {
       return remainder_[0];
     }
@@ -114,23 +112,19 @@ class percent_decode_iterator {
   }
 
  private:
-
   constexpr void increment() {
     auto step = (remainder_[0] == '%') ? 3u : 1u;
     remainder_.remove_prefix(step);
   }
 
   std::string_view remainder_;
-
 };
 
 ///
 class percent_decode_range {
-
   using iterator_type = percent_decode_iterator;
 
  public:
-
   ///
   using const_iterator = iterator_type;
   ///
@@ -140,8 +134,8 @@ class percent_decode_range {
 
   ///
   /// \param range
-  constexpr explicit percent_decode_range(std::string_view s)
-      : it_(s) {}
+  constexpr explicit percent_decode_range(std::string_view s) : it_(s) {
+  }
 
   ///
   /// \return
@@ -174,11 +168,9 @@ class percent_decode_range {
   }
 
  private:
-
   iterator_type it_;
-
 };
 }  // namespace percent_encoding
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif //SKYR_V2_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP
+#endif  // SKYR_V2_PERCENT_ENCODING_PERCENT_DECODE_RANGE_HPP

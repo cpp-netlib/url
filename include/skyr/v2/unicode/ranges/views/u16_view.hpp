@@ -22,9 +22,7 @@ namespace skyr::inline v2::unicode {
 /// \tparam U16Iterator
 template <class U16Iterator>
 class u16_range_iterator {
-
  public:
-
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
@@ -45,15 +43,12 @@ class u16_range_iterator {
   ///
   /// \param first
   /// \param last
-  explicit constexpr u16_range_iterator(
-      U16Iterator first,
-      U16Iterator last)
-      : it_(first)
-      , last_(last) {}
+  explicit constexpr u16_range_iterator(U16Iterator first, U16Iterator last) : it_(first), last_(last) {
+  }
 
   ///
   /// \return
-  constexpr auto operator ++ (int) noexcept -> u16_range_iterator {
+  constexpr auto operator++(int) noexcept -> u16_range_iterator {
     auto result = *this;
     increment();
     return result;
@@ -61,14 +56,14 @@ class u16_range_iterator {
 
   ///
   /// \return
-  constexpr auto operator ++ () noexcept -> u16_range_iterator & {
+  constexpr auto operator++() noexcept -> u16_range_iterator & {
     increment();
     return *this;
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto operator * () const noexcept -> const_reference {
+  [[nodiscard]] constexpr auto operator*() const noexcept -> const_reference {
     assert(it_ != last_);
 
     auto value = mask16(static_cast<std::uint16_t>(*it_));
@@ -91,19 +86,18 @@ class u16_range_iterator {
   ///
   /// \param sentinel
   /// \return
-  [[nodiscard]] constexpr auto operator == ([[maybe_unused]] sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator==([[maybe_unused]] sentinel sentinel) const noexcept {
     return it_ == last_;
   }
 
   ///
   /// \param sentinel
   /// \return
-  [[nodiscard]] constexpr auto operator != ([[maybe_unused]] sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator!=([[maybe_unused]] sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
  private:
-
   constexpr void increment() {
     assert(it_ != last_);
     auto step = is_lead_surrogate(static_cast<char16_t>(mask16(static_cast<std::uint16_t>(*it_)))) ? 2u : 1u;
@@ -111,18 +105,15 @@ class u16_range_iterator {
   }
 
   U16Iterator it_, last_;
-
 };
 
 ///
 /// \tparam U16Range
 template <class U16Range>
 class view_u16_range {
-
   using iterator_type = u16_range_iterator<traits::range_iterator_t<U16Range>>;
 
  public:
-
   ///
   using value_type = tl::expected<u16_code_point_t, unicode_errc>;
   ///
@@ -138,8 +129,8 @@ class view_u16_range {
 
   ///
   /// \param range
-  explicit constexpr view_u16_range(U16Range range)
-      : range_(std::move(range)) {}
+  explicit constexpr view_u16_range(U16Range range) : range_(std::move(range)) {
+  }
 
   ///
   /// \return
@@ -172,9 +163,7 @@ class view_u16_range {
   }
 
  private:
-
   U16Range range_;
-
 };
 
 namespace views {
@@ -189,6 +178,6 @@ constexpr inline auto as_u16(const U16Range &range) {
   return view_u16_range{range};
 }
 }  // namespace views
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif //SKYR_V2_UNICODE_RANGES_VIEWS_U16_VIEW_HPP
+#endif  // SKYR_V2_UNICODE_RANGES_VIEWS_U16_VIEW_HPP

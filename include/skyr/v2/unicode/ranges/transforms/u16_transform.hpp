@@ -23,9 +23,7 @@ namespace skyr::inline v2::unicode {
 /// \tparam CodePointIterator
 template <class CodePointIterator>
 class u16_transform_iterator {
-
  public:
-
   /// \c std::forward_iterator_tag
   using iterator_category = std::forward_iterator_tag;
   /// An expected wrapper around a UTF-16 encoded code point
@@ -46,20 +44,19 @@ class u16_transform_iterator {
   ///
   /// \param first
   /// \param last
-  explicit constexpr u16_transform_iterator(
-      CodePointIterator it)
-      : it_(it) {}
+  explicit constexpr u16_transform_iterator(CodePointIterator it) : it_(it) {
+  }
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  constexpr auto operator ++ () noexcept -> u16_transform_iterator & {
+  constexpr auto operator++() noexcept -> u16_transform_iterator & {
     ++it_;
     return *this;
   }
 
   /// Post-increment operator
   /// \return A copy of the previous iterator
-  constexpr auto operator ++ (int) noexcept -> u16_transform_iterator {
+  constexpr auto operator++(int) noexcept -> u16_transform_iterator {
     auto result = *this;
     ++it_;
     return result;
@@ -67,24 +64,22 @@ class u16_transform_iterator {
 
   /// Dereference operator
   /// \return An expected value
-  [[nodiscard]] constexpr auto operator * () const noexcept -> const_reference {
+  [[nodiscard]] constexpr auto operator*() const noexcept -> const_reference {
     constexpr auto to_u16 = [](auto value) { return u16_code_point(value); };
     auto code_point = *it_;
     return code_point.map(to_u16);
   }
 
-  [[nodiscard]] constexpr auto operator == (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator==(sentinel sentinel) const noexcept {
     return it_ == sentinel;
   }
 
-  [[nodiscard]] constexpr auto operator != (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator!=(sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
  private:
-
   u32_transform_iterator<CodePointIterator> it_;
-
 };
 
 /// A range that transforms code point values to a UTF-16 sequence
@@ -92,12 +87,9 @@ class u16_transform_iterator {
 /// \tparam CodePointRange
 template <class CodePointRange>
 class transform_u16_range {
-
-  using iterator_type =
-      u16_transform_iterator<traits::range_iterator_t<CodePointRange>>;
+  using iterator_type = u16_transform_iterator<traits::range_iterator_t<CodePointRange>>;
 
  public:
-
   ///
   using value_type = tl::expected<u16_code_point_t, unicode_errc>;
   ///
@@ -113,9 +105,8 @@ class transform_u16_range {
 
   ///
   /// \param range
-  explicit constexpr transform_u16_range(
-      CodePointRange &&range)
-      : range_{std::forward<CodePointRange>(range)} {}
+  explicit constexpr transform_u16_range(CodePointRange &&range) : range_{std::forward<CodePointRange>(range)} {
+  }
 
   /// Returns an iterator to the beginning
   /// \return \c const_iterator
@@ -148,9 +139,7 @@ class transform_u16_range {
   }
 
  private:
-
   transform_u32_range<CodePointRange> range_;
-
 };
 
 ///
@@ -160,8 +149,7 @@ struct transform_u16_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  constexpr auto operator()(
-      CodePointRange &&range) const {
+  constexpr auto operator()(CodePointRange &&range) const {
     return transform_u16_range{std::forward<CodePointRange>(range)};
   }
 
@@ -170,12 +158,9 @@ struct transform_u16_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  friend constexpr auto operator|(
-      CodePointRange &&range,
-      const transform_u16_range_fn&) {
+  friend constexpr auto operator|(CodePointRange &&range, const transform_u16_range_fn &) {
     return transform_u16_range{std::forward<CodePointRange>(range)};
   }
-
 };
 
 namespace transforms {
@@ -204,6 +189,6 @@ auto as(transform_u16_range<CodePointRange> &&range) -> tl::expected<Output, uni
   }
   return result;
 }
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP
+#endif  // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP

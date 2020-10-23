@@ -30,6 +30,6 @@ constexpr inline auto default_port(std::string_view scheme) noexcept -> std::opt
   }
   return std::nullopt;
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
 #endif  // SKYR_V2_CORE_URL_SCHEMES_HPP

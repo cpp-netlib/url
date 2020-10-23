@@ -73,6 +73,6 @@ inline auto serialize(const url_record &url) -> url_record::string_type {
 
   return output;
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
 #endif  // SKYR_V2_CORE_SERIALIZE_HPP

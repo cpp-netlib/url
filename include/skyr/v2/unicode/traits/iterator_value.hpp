@@ -26,6 +26,6 @@ class iterator_value<T*> {
 
 template <class Range>
 using iterator_value_t = typename iterator_value<Range>::type;
-}  // namespace skyr::v2::unicode::traits
+}  // namespace skyr::inline v2::unicode::traits
 
-#endif // SKYR_V2_UNICODE_TRAITS_ITERATOR_VALUE_HPP
+#endif  // SKYR_V2_UNICODE_TRAITS_ITERATOR_VALUE_HPP

@@ -26,6 +26,6 @@ constexpr char32_t max = U'\x0010ffff';
 }  // namespace code_points
 
 constexpr std::array<uint8_t, 3> bom = {0xef, 0xbb, 0xbf};
-}  // namespace skyr::v2::unicode::constants
+}  // namespace skyr::inline v2::unicode::constants
 
-#endif // SKYR_V2_UNICODE_CONSTANTS_HPP
+#endif  // SKYR_V2_UNICODE_CONSTANTS_HPP

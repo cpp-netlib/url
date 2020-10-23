@@ -17,13 +17,10 @@ namespace skyr::inline v2 {
 inline auto percent_encode(std::string_view input) {
   using percent_encoding::percent_encoded_char;
 
-  static constexpr auto encode = [] (auto byte) {
-    if ((byte == '\x2a') || (byte == '\x2d') || (byte == '\x2e') ||
-        ((byte >= '\x30') && (byte <= '\x39')) ||
-        ((byte >= '\x41') && (byte <= '\x5a')) || (byte == '\x5f') ||
-        ((byte >= '\x61') && (byte <= '\x7a'))) {
-      return percent_encoded_char(
-          std::byte(byte), percent_encoded_char::no_encode());
+  static constexpr auto encode = [](auto byte) {
+    if ((byte == '\x2a') || (byte == '\x2d') || (byte == '\x2e') || ((byte >= '\x30') && (byte <= '\x39')) ||
+        ((byte >= '\x41') && (byte <= '\x5a')) || (byte == '\x5f') || ((byte >= '\x61') && (byte <= '\x7a'))) {
+      return percent_encoded_char(std::byte(byte), percent_encoded_char::no_encode());
     } else if (byte == '\x20') {
       return percent_encoded_char(std::byte('+'), percent_encoded_char::no_encode());
     }
@@ -36,6 +33,6 @@ inline auto percent_encode(std::string_view input) {
   }
   return result;
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif //SKYR_V2_PERCENT_ENCODING_PERCENT_ENCODE_HPP
+#endif  // SKYR_V2_PERCENT_ENCODING_PERCENT_ENCODE_HPP

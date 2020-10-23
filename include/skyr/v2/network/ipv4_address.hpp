@@ -36,18 +36,16 @@ enum class ipv4_address_errc {
 
 /// Represents an IPv4 address
 class ipv4_address {
-
   unsigned int address_ = 0;
 
  public:
-
   /// Constructor
   constexpr ipv4_address() = default;
 
-   /// Constructor
-   /// \param address Sets the IPv4 address to `address`
-  constexpr explicit ipv4_address(unsigned int address)
-      : address_(to_network_byte_order(address)) {}
+  /// Constructor
+  /// \param address Sets the IPv4 address to `address`
+  constexpr explicit ipv4_address(unsigned int address) : address_(to_network_byte_order(address)) {
+  }
 
   /// The address value
   /// \returns The address value
@@ -58,12 +56,8 @@ class ipv4_address {
   /// The address in bytes in network byte order
   /// \returns The address in bytes
   [[nodiscard]] constexpr auto to_bytes() const noexcept -> std::array<unsigned char, 4> {
-    return {{
-      static_cast<unsigned char>(address_ >> 24u),
-      static_cast<unsigned char>(address_ >> 16u),
-      static_cast<unsigned char>(address_ >>  8u),
-      static_cast<unsigned char>(address_)
-    }};
+    return {{static_cast<unsigned char>(address_ >> 24u), static_cast<unsigned char>(address_ >> 16u),
+             static_cast<unsigned char>(address_ >> 8u), static_cast<unsigned char>(address_)}};
   }
 
   /// \returns The address as a string
@@ -71,9 +65,7 @@ class ipv4_address {
     using namespace std::string_literals;
     using namespace std::string_view_literals;
 
-    constexpr auto separator = [] (auto i) {
-      return (i < 4) ? "."sv : ""sv;
-    };
+    constexpr auto separator = [](auto i) { return (i < 4) ? "."sv : ""sv; };
 
     auto output = ""s;
     auto n = address_;
@@ -86,13 +78,11 @@ class ipv4_address {
 };
 
 namespace details {
-constexpr inline auto parse_ipv4_number(
-    std::string_view input,
-    bool *validation_error) -> tl::expected<std::uint64_t, ipv4_address_errc> {
+constexpr inline auto parse_ipv4_number(std::string_view input, bool *validation_error)
+    -> tl::expected<std::uint64_t, ipv4_address_errc> {
   auto base = 10;
 
-  if ((input.size() >= 2) && (input[0] == '0') &&
-      (std::tolower(input[1], std::locale::classic()) == 'x')) {
+  if ((input.size() >= 2) && (input[0] == '0') && (std::tolower(input[1], std::locale::classic()) == 'x')) {
     *validation_error |= true;
     input = input.substr(2);
     base = 16;
@@ -118,11 +108,11 @@ constexpr inline auto parse_ipv4_number(
 /// Parses an IPv4 address
 /// \param input An input string
 /// \returns An `ipv4_address` object or an error
-inline auto parse_ipv4_address(
-    std::string_view input, bool *validation_error) -> tl::expected<ipv4_address, ipv4_address_errc>  {
+inline auto parse_ipv4_address(std::string_view input, bool *validation_error)
+    -> tl::expected<ipv4_address, ipv4_address_errc> {
   using namespace std::string_view_literals;
 
-  constexpr auto to_string_view = [] (auto &&part) {
+  constexpr auto to_string_view = [](auto &&part) {
     return std::string_view(std::addressof(*std::begin(part)), ranges::distance(part));
   };
 
@@ -164,7 +154,7 @@ inline auto parse_ipv4_address(
     numbers.push_back(number.value());
   }
 
-  constexpr auto greater_than_255 = [] (auto number) { return number > 255; };
+  constexpr auto greater_than_255 = [](auto number) { return number > 255; };
 
   if (ranges::cend(numbers) != ranges::find_if(numbers, greater_than_255)) {
     *validation_error |= true;
@@ -192,6 +182,6 @@ inline auto parse_ipv4_address(
   }
   return ipv4_address(static_cast<unsigned int>(ipv4));
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif //SKYR_V2_NETWORK_IPV4_ADDRESS_HPP
+#endif  // SKYR_V2_NETWORK_IPV4_ADDRESS_HPP

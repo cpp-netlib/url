@@ -19,6 +19,6 @@ enum class unicode_errc {
   /// Invalid code point
   invalid_code_point,
 };
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif // SKYR_V2_UNICODE_ERRORS_HPP
+#endif  // SKYR_V2_UNICODE_ERRORS_HPP

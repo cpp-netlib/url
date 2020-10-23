@@ -16,9 +16,7 @@ namespace skyr::inline v2::idna {
 /// \param code_point A code point value
 /// \return The status of the code point
 constexpr auto code_point_status(char32_t code_point) -> idna_status {
-  constexpr auto less = [] (const auto &range, auto code_point) {
-    return range.last < code_point;
-  };
+  constexpr auto less = [](const auto &range, auto code_point) { return range.last < code_point; };
 
   auto first = std::cbegin(details::statuses), last = std::cend(details::statuses);
   auto it = std::lower_bound(first, last, code_point, less);
@@ -27,9 +25,7 @@ constexpr auto code_point_status(char32_t code_point) -> idna_status {
 
 namespace details {
 constexpr auto map_code_point_16(char16_t code_point) -> char16_t {
-  constexpr auto less = [](const auto &lhs, auto rhs) {
-    return lhs.code_point < rhs;
-  };
+  constexpr auto less = [](const auto &lhs, auto rhs) { return lhs.code_point < rhs; };
 
   auto first = std::cbegin(mapped_16), last = std::cend(mapped_16);
   auto it = std::lower_bound(first, last, code_point, less);
@@ -42,9 +38,7 @@ constexpr auto map_code_point_16(char16_t code_point) -> char16_t {
 /// \return The code point or mapped value, depending on the status of the code
 /// point
 constexpr auto map_code_point(char32_t code_point) -> char32_t {
-  constexpr auto less = [](const auto &lhs, auto rhs) {
-    return lhs.code_point < rhs;
-  };
+  constexpr auto less = [](const auto &lhs, auto rhs) { return lhs.code_point < rhs; };
 
   if (code_point <= U'\xffff') {
     return static_cast<char32_t>(details::map_code_point_16(static_cast<char16_t>(code_point)));
@@ -63,11 +57,8 @@ constexpr auto map_code_point(char32_t code_point) -> char32_t {
 /// \param transitional_processing
 /// \return
 template <class FwdIter>
-inline auto map_code_points(
-    FwdIter first,
-    FwdIter last,
-    bool use_std3_ascii_rules,
-    bool transitional_processing) -> tl::expected<FwdIter, domain_errc> {
+inline auto map_code_points(FwdIter first, FwdIter last, bool use_std3_ascii_rules, bool transitional_processing)
+    -> tl::expected<FwdIter, domain_errc> {
   for (auto it = first; it != last; ++it) {
     switch (code_point_status(*it)) {
       case idna_status::disallowed:
@@ -107,12 +98,10 @@ inline auto map_code_points(
 }
 
 template <class T>
-inline auto map_code_points(
-    T &code_points,
-    bool use_std3_ascii_rules,
-    bool transitional_processing) -> tl::expected<typename unicode::traits::range_iterator_t<T>, domain_errc> {
+inline auto map_code_points(T &code_points, bool use_std3_ascii_rules, bool transitional_processing)
+    -> tl::expected<typename unicode::traits::range_iterator_t<T>, domain_errc> {
   return map_code_points(std::begin(code_points), std::end(code_points), use_std3_ascii_rules, transitional_processing);
 }
-}  // namespace skyr::v2::idna
+}  // namespace skyr::inline v2::idna
 
 #endif  // SKYR_V2_DOMAIN_IDNA_HPP

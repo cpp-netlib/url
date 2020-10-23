@@ -3,8 +3,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V2_URL_PARSE_IMPL_HPP
-#define SKYR_V2_URL_PARSE_IMPL_HPP
+#ifndef SKYR_V2_URL_PARSE_STATE_HPP
+#define SKYR_V2_URL_PARSE_STATE_HPP
 
 #include <string>
 #include <optional>
@@ -58,50 +58,6 @@ enum class url_parse_state {
   /// Pointer is at the fragment part
   fragment,
 };
+}  // namespace skyr::inline v2
 
-namespace details {
-/// \param input The input string that will be parsed
-/// \param validation_error This value is set if there was a
-///                         validation error during parsing
-/// \param base An optional base URL
-/// \param url An optional `url_record`
-/// \param state_override An optional parameter to override the
-///                       parser state
-/// \returns A `url_record` on success and an error code on failure
-auto basic_parse(
-    std::string_view input,
-    bool *validation_error,
-    const url_record *base,
-    const url_record *url,
-    std::optional<url_parse_state> state_override) -> tl::expected<url_record, url_parse_errc>;
-
-inline auto parse(
-    std::string_view input,
-    bool *validation_error,
-    const url_record *base) -> tl::expected<url_record, url_parse_errc> {
-  auto url = basic_parse(input, validation_error, base, nullptr, std::nullopt);
-
-  if (!url) {
-    return url;
-  }
-
-  if (url.value().scheme == "blob") {
-    return url;
-  }
-
-  if (url.value().path.empty()) {
-    return url;
-  }
-
-  return url;
-}
-
-inline auto parse(
-    std::string_view input,
-    bool *validation_error) -> tl::expected<url_record, url_parse_errc> {
-  return parse(input, validation_error, nullptr);
-}
-}  // namespace details
-}  // namespace skyr::v2
-
-#endif // SKYR_V2_URL_PARSE_IMPL_HPP
+#endif  // SKYR_V2_URL_PARSE_STATE_HPP

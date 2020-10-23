@@ -12,7 +12,7 @@
 #include <iterator>
 
 namespace skyr::inline v2 {
-constexpr static auto is_c0_control_or_space = [] (auto byte) {
+constexpr static auto is_c0_control_or_space = [](auto byte) {
   return std::iscntrl(byte, std::locale::classic()) || std::isspace(byte, std::locale::classic());
 };
 
@@ -33,14 +33,12 @@ constexpr inline auto remove_trailing_c0_control_or_space(std::string_view input
 }
 
 inline auto remove_tabs_and_newlines(std::string &input, bool *validation_error) {
-  constexpr auto is_tab_or_newline = [] (auto byte) {
-    return (byte == '\t') || (byte == '\r') || (byte == '\n');
-  };
+  constexpr auto is_tab_or_newline = [](auto byte) { return (byte == '\t') || (byte == '\r') || (byte == '\n'); };
 
   auto it = std::remove_if(std::begin(input), std::end(input), is_tab_or_newline);
   *validation_error |= (it != std::cend(input));
   input.erase(it, std::cend(input));
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
 #endif  // SKYR_V2_CORE_CHECK_INPUT_HPP

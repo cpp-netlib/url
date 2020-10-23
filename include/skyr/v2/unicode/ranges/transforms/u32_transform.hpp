@@ -20,7 +20,6 @@ namespace skyr::inline v2::unicode {
 template <class CodePointIterator>
 class u32_transform_iterator {
  public:
-
   ///
   using iterator_category = std::forward_iterator_tag;
   ///
@@ -40,12 +39,12 @@ class u32_transform_iterator {
 
   ///
   /// \param it
-  explicit constexpr u32_transform_iterator(CodePointIterator it)
-      : it_(it) {}
+  explicit constexpr u32_transform_iterator(CodePointIterator it) : it_(it) {
+  }
 
   ///
   /// \return
-  constexpr auto operator ++ (int) noexcept -> u32_transform_iterator {
+  constexpr auto operator++(int) noexcept -> u32_transform_iterator {
     auto result = *this;
     ++it_;
     return result;
@@ -53,7 +52,7 @@ class u32_transform_iterator {
 
   ///
   /// \return
-  constexpr auto operator ++ () noexcept -> u32_transform_iterator & {
+  constexpr auto operator++() noexcept -> u32_transform_iterator & {
     ++it_;
     return *this;
   }
@@ -65,29 +64,25 @@ class u32_transform_iterator {
     return (*it_).and_then(to_u32);
   }
 
-  [[nodiscard]] constexpr auto operator == (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator==(sentinel sentinel) const noexcept {
     return (it_ == sentinel);
   }
 
-  [[nodiscard]] constexpr auto operator != (sentinel sentinel) const noexcept {
+  [[nodiscard]] constexpr auto operator!=(sentinel sentinel) const noexcept {
     return !(*this == sentinel);
   }
 
  private:
-
   CodePointIterator it_;
-
 };
 
 ///
 /// \tparam OctetRange
 template <class CodePointRange>
 class transform_u32_range {
-
   using iterator_type = traits::range_iterator_t<CodePointRange>;
 
  public:
-
   ///
   using value_type = char32_t;
   ///
@@ -103,8 +98,8 @@ class transform_u32_range {
 
   ///
   /// \param range
-  explicit constexpr transform_u32_range(CodePointRange &&range)
-      : range_(std::forward<CodePointRange>(range)) {}
+  explicit constexpr transform_u32_range(CodePointRange &&range) : range_(std::forward<CodePointRange>(range)) {
+  }
 
   ///
   /// \return
@@ -137,9 +132,7 @@ class transform_u32_range {
   }
 
  private:
-
   CodePointRange range_;
-
 };
 
 ///
@@ -149,8 +142,7 @@ struct transform_u32_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  constexpr auto operator()(
-      CodePointRange &&range) const {
+  constexpr auto operator()(CodePointRange &&range) const {
     return transform_u32_range{std::forward<CodePointRange>(range)};
   }
 
@@ -159,12 +151,9 @@ struct transform_u32_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  friend constexpr auto operator|(
-      CodePointRange &&range,
-      const transform_u32_range_fn&) {
+  friend constexpr auto operator|(CodePointRange &&range, const transform_u32_range_fn &) {
     return transform_u32_range{std::forward<CodePointRange>(range)};
   }
-
 };
 
 namespace transforms {
@@ -192,6 +181,6 @@ constexpr auto as(transform_u32_range<CodePointRange> &&range) -> tl::expected<O
 
   return result;
 }
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
-#endif // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U32_TRANSFORM_HPP
+#endif  // SKYR_V2_UNICODE_RANGES_TRANSFORMS_U32_TRANSFORM_HPP

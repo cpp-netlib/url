@@ -8,6 +8,6 @@
 
 namespace skyr::inline v2::unicode {
 class sentinel {};
-}  // namespace skyr::v2::unicode
+}  // namespace skyr::inline v2::unicode
 
 #endif  // SKYR_V2_UNICODE_RANGES_SENTINEL_HPP

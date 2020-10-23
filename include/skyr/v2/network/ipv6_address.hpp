@@ -37,23 +37,18 @@ enum class ipv6_address_errc {
 
 /// Represents an IPv6 address
 class ipv6_address {
-
   std::array<unsigned short, 8> address_ = {0, 0, 0, 0, 0, 0, 0, 0};
 
  public:
-
   /// Constructor
   constexpr ipv6_address() = default;
 
   /// Constructor
   /// \param address Sets the IPv6 address to `address`
   constexpr explicit ipv6_address(std::array<unsigned short, 8> address) {
-    constexpr auto network_byte_order = [] (auto v) { return to_network_byte_order<unsigned short>(v); };
+    constexpr auto network_byte_order = [](auto v) { return to_network_byte_order<unsigned short>(v); };
 
-    std::transform(
-        begin(address), end(address),
-        begin(address_),
-        network_byte_order);
+    std::transform(begin(address), end(address), begin(address_), network_byte_order);
   }
 
   /// The address in bytes in network byte order
@@ -61,85 +56,83 @@ class ipv6_address {
   [[nodiscard]] constexpr auto to_bytes() const noexcept -> std::array<unsigned char, 16> {
     std::array<unsigned char, 16> bytes{};
     for (auto i = 0UL; i < address_.size(); ++i) {
-      bytes[i * 2    ] = static_cast<unsigned char>(address_[i] >> 8u); // NOLINT
-      bytes[i * 2 + 1] = static_cast<unsigned char>(address_[i]); // NOLINT
+      bytes[i * 2] = static_cast<unsigned char>(address_[i] >> 8u);  // NOLINT
+      bytes[i * 2 + 1] = static_cast<unsigned char>(address_[i]);    // NOLINT
     }
     return bytes;
   }
 
-   /// \returns The IPv6 address as a string
+  /// \returns The IPv6 address as a string
   [[nodiscard]] auto serialize() const -> std::string {
-     using namespace std::string_literals;
-     using namespace std::string_view_literals;
+    using namespace std::string_literals;
+    using namespace std::string_view_literals;
 
-     auto output = ""s;
-     auto compress = std::optional<std::size_t>();
+    auto output = ""s;
+    auto compress = std::optional<std::size_t>();
 
-     auto sequences = static_vector<std::pair<std::size_t, std::size_t>, 8>{};
-     auto in_sequence = false;
+    auto sequences = static_vector<std::pair<std::size_t, std::size_t>, 8>{};
+    auto in_sequence = false;
 
-     auto first = std::cbegin(address_), last = std::cend(address_);
-     auto it = first;
-     while (true) {
-       if (*it == 0) {
-         auto index = ranges::distance(first, it);
+    auto first = std::cbegin(address_), last = std::cend(address_);
+    auto it = first;
+    while (true) {
+      if (*it == 0) {
+        auto index = ranges::distance(first, it);
 
-         if (!in_sequence) {
-           sequences.emplace_back(index, 1);
-           in_sequence = true;
-         } else {
-           ++sequences.back().second;
-         }
-       } else {
-         if (in_sequence) {
-           if (sequences.back().second == 1) {
-             sequences.pop_back();
-           }
-           in_sequence = false;
-         }
-       }
-       ++it;
+        if (!in_sequence) {
+          sequences.emplace_back(index, 1);
+          in_sequence = true;
+        } else {
+          ++sequences.back().second;
+        }
+      } else {
+        if (in_sequence) {
+          if (sequences.back().second == 1) {
+            sequences.pop_back();
+          }
+          in_sequence = false;
+        }
+      }
+      ++it;
 
-       if (it == last) {
-         if (!sequences.empty() && (sequences.back().second == 1)) {
-           sequences.pop_back();
-         }
-         in_sequence = false;
-         break;
-       }
-     }
+      if (it == last) {
+        if (!sequences.empty() && (sequences.back().second == 1)) {
+          sequences.pop_back();
+        }
+        in_sequence = false;
+        break;
+      }
+    }
 
-     if (!sequences.empty()) {
-       constexpr static auto greater = [](const auto &lhs, const auto &rhs) -> bool { return lhs.second > rhs.second; };
+    if (!sequences.empty()) {
+      constexpr static auto greater = [](const auto &lhs, const auto &rhs) -> bool { return lhs.second > rhs.second; };
 
-       ranges::stable_sort(sequences, greater);
-       compress = sequences.front().first;
-     }
+      ranges::stable_sort(sequences, greater);
+      compress = sequences.front().first;
+    }
 
-     auto ignore0 = false;
-     for (auto i = 0UL; i <= 7UL; ++i) {
-       if (ignore0 && (address_[i] == 0)) { // NOLINT
-         continue;
-       } else if (ignore0) {
-         ignore0 = false;
-       }
+    auto ignore0 = false;
+    for (auto i = 0UL; i <= 7UL; ++i) {
+      if (ignore0 && (address_[i] == 0)) {  // NOLINT
+        continue;
+      } else if (ignore0) {
+        ignore0 = false;
+      }
 
-       if (compress && (compress.value() == i)) {
-         auto separator = (i == 0) ? "::"sv : ":"sv;
-         output += separator;
-         ignore0 = true;
-         continue;
-       }
+      if (compress && (compress.value() == i)) {
+        auto separator = (i == 0) ? "::"sv : ":"sv;
+        output += separator;
+        ignore0 = true;
+        continue;
+      }
 
-       constexpr auto separator = [] (auto i) {
-         return (i != 7) ? ":"sv : ""sv;
-       };
+      constexpr auto separator = [](auto i) { return (i != 7) ? ":"sv : ""sv; };
 
-       output += fmt::format("{:x}{}", address_[i], separator(i)); // NOLINT
-     }
+      output += fmt::format("{:x}{}", address_[i], separator(i));  // NOLINT
+    }
 
-     return output;
-   }
+    return output;
+  }
 };
 
 namespace details {
@@ -153,13 +146,13 @@ constexpr inline auto hex_to_dec(charT byte) noexcept {
 
   return static_cast<intT>(std::tolower(byte, std::locale::classic()) - 'a' + 10);
 }
-} // namespace details
+}  // namespace details
 
 /// Parses an IPv6 address
 /// \param input An input string
 /// \returns An `ipv6_address` object or an error
-constexpr inline auto parse_ipv6_address(
-    std::string_view input, bool *validation_error) -> tl::expected<ipv6_address, ipv6_address_errc> {
+constexpr inline auto parse_ipv6_address(std::string_view input, bool *validation_error)
+    -> tl::expected<ipv6_address, ipv6_address_errc> {
   using namespace std::string_view_literals;
 
   auto address = std::array<unsigned short, 8>{{0, 0, 0, 0, 0, 0, 0, 0}};
@@ -173,8 +166,7 @@ constexpr inline auto parse_ipv6_address(
     ranges::advance(it, 2);
     ++piece_index;
     compress = piece_index;
-  }
-  else if (input.empty() || input.starts_with(":"sv)) {
+  } else if (input.empty() || input.starts_with(":"sv)) {
     *validation_error |= true;
     return tl::make_unexpected(ipv6_address_errc::does_not_start_with_double_colon);
   }
@@ -200,8 +192,7 @@ constexpr inline auto parse_ipv6_address(
     auto value = 0;
     auto length = 0;
 
-    while ((it != last) &&
-        ((length < 4) && std::isxdigit(*it, std::locale::classic()))) {
+    while ((it != last) && ((length < 4) && std::isxdigit(*it, std::locale::classic()))) {
       value = value * 0x10 + details::hex_to_dec<decltype(value)>(*it);
       ++it;
       ++length;
@@ -258,7 +249,7 @@ constexpr inline auto parse_ipv6_address(
           ++it;
         }
 
-        address[piece_index] = static_cast<std::uint16_t>((address[piece_index] << 8) + ipv4_piece.value()); // NOLINT
+        address[piece_index] = static_cast<std::uint16_t>((address[piece_index] << 8) + ipv4_piece.value());  // NOLINT
         ++numbers_seen;
 
         if ((numbers_seen == 2) || (numbers_seen == 4)) {
@@ -282,7 +273,7 @@ constexpr inline auto parse_ipv6_address(
       *validation_error |= true;
       return tl::make_unexpected(ipv6_address_errc::invalid_piece);
     }
-    address[piece_index] = static_cast<unsigned short>(value); // NOLINT
+    address[piece_index] = static_cast<unsigned short>(value);  // NOLINT
     ++piece_index;
   }
 
@@ -290,7 +281,7 @@ constexpr inline auto parse_ipv6_address(
     auto swaps = piece_index - compress.value();
     piece_index = 7;
     while ((piece_index != 0) && (swaps > 0)) {
-      std::swap(address[piece_index], address[compress.value() + swaps - 1]); // NOLINT
+      std::swap(address[piece_index], address[compress.value() + swaps - 1]);  // NOLINT
       --piece_index;
       --swaps;
     }
@@ -301,6 +292,6 @@ constexpr inline auto parse_ipv6_address(
 
   return ipv6_address(address);
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif //SKYR_V2_NETWORK_IPV6_ADDRESS_HPP
+#endif  // SKYR_V2_NETWORK_IPV6_ADDRESS_HPP

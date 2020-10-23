@@ -32,6 +32,6 @@ template <typename T>
 concept is_u8_convertible =
     is_string_container<T, char> || is_string_container<T, char8_t> || is_string_container<T, wchar_t> ||
     is_string_container<T, char16_t> || is_string_container<T, char32_t>;
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
 #endif  // SKYR_V2_CONCEPTS_URL_CONCEPTS_HPP

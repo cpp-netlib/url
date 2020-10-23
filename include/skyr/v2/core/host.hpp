@@ -20,7 +20,6 @@
 #include <skyr/v2/percent_encoding/percent_decode.hpp>
 #include <skyr/v2/domain/domain.hpp>
 
-
 namespace skyr::inline v2 {
 /// Represents a domain name in a [URL host](https://url.spec.whatwg.org/#host-representation)
 struct domain_name {
@@ -37,59 +36,47 @@ struct empty_host {};
 
 /// [A URL host](https://url.spec.whatwg.org/#host-representation)
 class host {
-
-  using host_types = std::variant<
-      ipv4_address,
-      ipv6_address,
-      domain_name,
-      opaque_host,
-      empty_host
-      >;
+  using host_types = std::variant<ipv4_address, ipv6_address, domain_name, opaque_host, empty_host>;
 
  public:
-
   /// Constructor
   /// \param host An IPv4 address
-  constexpr explicit host(ipv4_address host)
-      : host_(host) {}
+  constexpr explicit host(ipv4_address host) : host_(host) {
+  }
 
   /// Constructor
   /// \param host An IPv6 address
-  constexpr explicit host(ipv6_address host)
-      : host_(host) {}
+  constexpr explicit host(ipv6_address host) : host_(host) {
+  }
 
   /// Constructor
   /// \param host A domain name
-  explicit host(domain_name host)
-      : host_(std::move(host)) {}
+  explicit host(domain_name host) : host_(std::move(host)) {
+  }
 
   /// Constructor
   /// \param host An opaque host string
-  explicit host(opaque_host host)
-      : host_(std::move(host)) {}
+  explicit host(opaque_host host) : host_(std::move(host)) {
+  }
 
   /// Constructor
   /// \param hsost An empty host
-  constexpr explicit host(empty_host host)
-      : host_(host) {}
+  constexpr explicit host(empty_host host) : host_(host) {
+  }
 
   ///
   /// \return The host as a string
   [[nodiscard]] auto serialize() const {
-    constexpr static auto serialize = [] (auto &&host) -> std::string {
+    constexpr static auto serialize = [](auto &&host) -> std::string {
       using T = std::decay_t<decltype(host)>;
 
       if constexpr (std::is_same_v<T, skyr::v2::ipv4_address>) {
         return host.serialize();
-      }
-      else if constexpr (std::is_same_v<T, skyr::v2::ipv6_address>) {
+      } else if constexpr (std::is_same_v<T, skyr::v2::ipv6_address>) {
         return "[" + host.serialize() + "]";
-      }
-      else if constexpr (std::is_same_v<T, skyr::v2::domain_name> ||
-                         std::is_same_v<T, skyr::v2::opaque_host>) {
+      } else if constexpr (std::is_same_v<T, skyr::v2::domain_name> || std::is_same_v<T, skyr::v2::opaque_host>) {
         return host.name;
-      }
-      else {
+      } else {
         return std::string();
       }
     };
@@ -152,23 +139,19 @@ class host {
   }
 
  private:
-
   host_types host_;
 };
 
 namespace details {
 constexpr static auto is_forbidden_host_point = [](auto byte) {
-  return
-      (byte == '\0') || (byte == '\t') || (byte == '\n') || (byte == '\r') || (byte == ' ') || (byte == '#') ||
-          (byte == '%') || (byte == '/') || (byte == ':') || (byte == '<') || (byte == '>') || (byte == '?') ||
-          (byte == '@') || (byte == '[') || (byte == '\\') || (byte == ']') || (byte == '^');
+  return (byte == '\0') || (byte == '\t') || (byte == '\n') || (byte == '\r') || (byte == ' ') || (byte == '#') ||
+         (byte == '%') || (byte == '/') || (byte == ':') || (byte == '<') || (byte == '>') || (byte == '?') ||
+         (byte == '@') || (byte == '[') || (byte == '\\') || (byte == ']') || (byte == '^');
 };
 
-inline auto parse_opaque_host(
-    std::string_view input, bool *validation_error) -> tl::expected<opaque_host, url_parse_errc> {
-  constexpr auto is_forbidden = [] (auto byte) -> bool {
-    return (byte != '%') && is_forbidden_host_point(byte);
-  };
+inline auto parse_opaque_host(std::string_view input, bool *validation_error)
+    -> tl::expected<opaque_host, url_parse_errc> {
+  constexpr auto is_forbidden = [](auto byte) -> bool { return (byte != '%') && is_forbidden_host_point(byte); };
 
   auto it = std::find_if(std::cbegin(input), std::cend(input), is_forbidden);
   if (std::cend(input) != it) {
@@ -191,10 +174,8 @@ inline auto parse_opaque_host(
 /// \param is_not_special \c true to process only non-special hosts, \c false otherwise
 /// \param validation_error Set to \c true if there was a validation error
 /// \return A host as a domain (std::string), ipv4_address or ipv6_address, or an error code
-inline auto parse_host(
-    std::string_view input,
-    bool is_not_special,
-    bool *validation_error) -> tl::expected<host, url_parse_errc> {
+inline auto parse_host(std::string_view input, bool is_not_special, bool *validation_error)
+    -> tl::expected<host, url_parse_errc> {
   if (input.empty()) {
     return host{empty_host{}};
   }
@@ -213,15 +194,14 @@ inline auto parse_host(
     if (ipv6_address) {
       *validation_error = ipv6_validation_error;
       return host{ipv6_address.value()};
-    }
-    else {
+    } else {
       return tl::make_unexpected(url_parse_errc::invalid_ipv6_address);
     }
   }
 
   if (is_not_special) {
-    return details::parse_opaque_host(input, validation_error).and_then(
-        [] (auto &&h) -> tl::expected<host, url_parse_errc> { return host{h}; });
+    return details::parse_opaque_host(input, validation_error)
+        .and_then([](auto &&h) -> tl::expected<host, url_parse_errc> { return host{h}; });
   }
 
   auto domain_name = std::string{};
@@ -249,8 +229,7 @@ inline auto parse_host(
   if (!host) {
     if (host.error() == ipv4_address_errc::overflow) {
       return tl::make_unexpected(url_parse_errc::invalid_ipv4_address);
-    }
-    else {
+    } else {
       return skyr::v2::host{skyr::v2::domain_name{std::move(ascii_domain)}};
     }
   }
@@ -264,9 +243,7 @@ inline auto parse_host(
 /// \param input An input string
 /// \param is_not_special \c true to process only non-special hosts, \c false otherwise
 /// \return A host as a domain (std::string), ipv4_address or ipv6_address, or an error code
-inline auto parse_host(
-    std::string_view input,
-    bool is_not_special) -> tl::expected<host, url_parse_errc> {
+inline auto parse_host(std::string_view input, bool is_not_special) -> tl::expected<host, url_parse_errc> {
   [[maybe_unused]] bool validation_error = false;
   return parse_host(input, is_not_special, &validation_error);
 }
@@ -276,8 +253,7 @@ inline auto parse_host(
 /// Parses a string to either a domain, IPv4 address or IPv6 addess
 /// \param input An input string
 /// \return A host as a domain (std::string), ipv4_address or ipv6_address, or an error code
-inline auto parse_host(
-    std::string_view input) -> tl::expected<host, url_parse_errc> {
+inline auto parse_host(std::string_view input) -> tl::expected<host, url_parse_errc> {
   [[maybe_unused]] bool validation_error = false;
   return parse_host(input, false, &validation_error);
 }
@@ -288,11 +264,9 @@ inline auto parse_host(
 /// \param input An input string
 /// \param validation_error Set to \c true if there was a validation error
 /// \return A host as a domain (std::string), ipv4_address or ipv6_address, or an error code
-inline auto parse_host(
-    std::string_view input,
-    bool *validation_error) -> tl::expected<host, url_parse_errc> {
+inline auto parse_host(std::string_view input, bool *validation_error) -> tl::expected<host, url_parse_errc> {
   return parse_host(input, false, validation_error);
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
 #endif  // SKYR_V2_CORE_HOST_HPP

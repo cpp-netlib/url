@@ -19,7 +19,7 @@
 #include <skyr/v2/core/host.hpp>
 #include <skyr/v2/core/errors.hpp>
 #include <skyr/v2/core/url_record.hpp>
-#include <skyr/v2/core/url_parse_impl.hpp>
+#include <skyr/v2/core/url_parse_state.hpp>
 #include <skyr/v2/percent_encoding/percent_encoded_char.hpp>
 
 namespace skyr::inline v2 {
@@ -84,8 +84,8 @@ inline auto is_single_dot_path_segment(std::string_view segment) noexcept {
 
 inline auto is_double_dot_path_segment(std::string_view segment) noexcept {
   return (segment == "..") || (segment == "%2e.") || (segment == ".%2e") || (segment == "%2e%2e") ||
-      (segment == "%2E.") || (segment == ".%2E") || (segment == "%2E%2E") || (segment == "%2E%2e") ||
-      (segment == "%%2E");
+         (segment == "%2E.") || (segment == ".%2E") || (segment == "%2E%2E") || (segment == "%2E%2e") ||
+         (segment == "%%2E");
 }
 
 inline void shorten_path(std::string_view scheme, std::vector<std::string> &path) {
@@ -102,13 +102,10 @@ enum class url_parse_action {
 };
 
 class url_parser_context {
-
  private:
-
   std::string_view input;
 
  public:
-
   std::string_view::const_iterator it;
 
   bool *validation_error;
@@ -125,12 +122,8 @@ class url_parser_context {
   bool square_braces_flag;
   bool password_token_seen_flag;
 
-  url_parser_context(
-      std::string_view input,
-      bool *validation_error,
-      const url_record *base,
-      const url_record *url,
-      std::optional<url_parse_state> state_override)
+  url_parser_context(std::string_view input, bool *validation_error, const url_record *base, const url_record *url,
+                     std::optional<url_parse_state> state_override)
       : input(input),
         it(begin(input)),
         validation_error(validation_error),
@@ -141,7 +134,8 @@ class url_parser_context {
         buffer(),
         at_flag(false),
         square_braces_flag(false),
-        password_token_seen_flag(false) {}
+        password_token_seen_flag(false) {
+  }
 
   [[nodiscard]] auto is_eof() const noexcept {
     return it == end(input);
@@ -413,7 +407,8 @@ class url_parser_context {
         }
       }
       buffer.clear();
-    } else if (((is_eof()) || (byte == '/') || (byte == '?') || (byte == '#')) || (url.is_special() && (byte == '\\'))) {
+    } else if (((is_eof()) || (byte == '/') || (byte == '?') || (byte == '#')) ||
+               (url.is_special() && (byte == '\\'))) {
       if (at_flag && buffer.empty()) {
         *validation_error |= true;
         return tl::make_unexpected(url_parse_errc::empty_hostname);
@@ -491,8 +486,8 @@ class url_parser_context {
   auto parse_port(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
     if (std::isdigit(byte, std::locale::classic())) {
       buffer += byte;
-    } else if (((is_eof()) || (byte == '/') || (byte == '?') || (byte == '#')) || (url.is_special() && (byte == '\\')) ||
-        state_override) {
+    } else if (((is_eof()) || (byte == '/') || (byte == '?') || (byte == '#')) ||
+               (url.is_special() && (byte == '\\')) || state_override) {
       if (!buffer.empty()) {
         auto port = details::port_number(buffer);
 
@@ -683,7 +678,8 @@ class url_parser_context {
         if (!((byte == '/') || (url.is_special() && (byte == '\\')))) {
           url.path.emplace_back();
         }
-      } else if (details::is_single_dot_path_segment(buffer) && !((byte == '/') || (url.is_special() && (byte == '\\')))) {
+      } else if (details::is_single_dot_path_segment(buffer) &&
+                 !((byte == '/') || (url.is_special() && (byte == '\\')))) {
         url.path.emplace_back();
       } else if (!details::is_single_dot_path_segment(buffer)) {
         if ((url.scheme == "file") && url.path.empty() && details::is_windows_drive_letter(buffer)) {
@@ -757,7 +753,8 @@ class url_parser_context {
       url.fragment = std::string();
       state = url_parse_state::fragment;
     } else if (!is_eof()) {
-      if ((byte < '!') || (byte > '~') || (details::contains(R"("#<>)"sv, byte)) || ((byte == '\'') && url.is_special())) {
+      if ((byte < '!') || (byte > '~') || (details::contains(R"("#<>)"sv, byte)) ||
+          ((byte == '\'') && url.is_special())) {
         auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::none);
         url.query.value() += pct_encoded.to_string();
       } else {
@@ -783,8 +780,7 @@ class url_parser_context {
     }
     return url_parse_action::increment;
   }
-
 };
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif // SKYR_V2_CORE_URL_PARSER_CONTEXT_HPP
+#endif  // SKYR_V2_CORE_URL_PARSER_CONTEXT_HPP

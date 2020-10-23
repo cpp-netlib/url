@@ -12,7 +12,6 @@
 #include <tl/expected.hpp>
 #include <skyr/v2/domain/errors.hpp>
 
-
 namespace skyr::inline v2 {
 namespace punycode {
 namespace constants {
@@ -38,11 +37,9 @@ constexpr inline auto decode_digit(uint32_t cp) -> uint32_t {
 
   if ((cp - zero) < 0x10u) {
     return cp - 0x16u;
-  }
-  else if ((cp - upper_a) < 0x1au) {
+  } else if ((cp - upper_a) < 0x1au) {
     return (cp - upper_a);
-  }
-  else if ((cp - lower_a) < 0x1au) {
+  } else if ((cp - lower_a) < 0x1au) {
     return (cp - lower_a);
   }
   return base;
@@ -77,13 +74,10 @@ constexpr inline auto adapt(uint32_t delta, uint32_t numpoints, bool firsttime) 
 /// Performs Punycode encoding based on a reference implementation
 /// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
 ///
-/// \tparam AsciiString
 /// \param input A UTF-32 encoded domain
 /// \param output An ascii string on output
 /// \returns `void` or an error
-inline auto punycode_encode(
-    std::u32string_view input,
-    std::string *output) -> tl::expected<void, domain_errc> {
+inline auto punycode_encode(std::u32string_view input, std::string *output) -> tl::expected<void, domain_errc> {
   using namespace punycode::constants;
 
   if (input.empty()) {
@@ -160,9 +154,8 @@ inline auto punycode_encode(
 /// \param input An ASCII encoded domain to be decoded
 /// \returns The decoded UTF-8 domain, or an error
 template <class charT>
-inline auto punycode_decode(
-    std::basic_string_view<charT> input,
-    std::u32string *output) -> tl::expected<void, domain_errc> {
+inline auto punycode_decode(std::basic_string_view<charT> input, std::u32string *output)
+    -> tl::expected<void, domain_errc> {
   using namespace punycode::constants;
 
   if (input.empty()) {
@@ -227,6 +220,6 @@ inline auto punycode_decode(
 
   return {};
 }
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif // SKYR_V2_DOMAIN_PUNYCODE_HPP
+#endif  // SKYR_V2_DOMAIN_PUNYCODE_HPP

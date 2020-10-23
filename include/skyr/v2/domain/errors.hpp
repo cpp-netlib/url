@@ -25,6 +25,6 @@ enum class domain_errc {
   /// The number of labels in the domain is too large
   too_many_labels,
 };
-}  // namespace skyr::v2
+}  // namespace skyr::inline v2
 
-#endif //SKYR_V2_DOMAIN_ERRORS_HPP
+#endif  // SKYR_V2_DOMAIN_ERRORS_HPP
