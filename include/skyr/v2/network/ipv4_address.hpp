@@ -19,6 +19,7 @@
 #include <range/v3/view/split.hpp>
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/drop_last.hpp>
+#include <fmt/format.h>
 
 namespace skyr::inline v2 {
 /// Enumerates IPv4 address parsing errors
@@ -68,20 +69,18 @@ class ipv4_address {
   /// \returns The address as a string
   [[nodiscard]] auto serialize() const -> std::string {
     using namespace std::string_literals;
+    using namespace std::string_view_literals;
+
+    constexpr auto separator = [] (auto i) {
+      return (i < 4) ? "."sv : ""sv;
+    };
 
     auto output = ""s;
-
     auto n = address_;
     for (auto i = 1U; i <= 4U; ++i) {
-      output = std::to_string(n % 256) + output; // NOLINT
-
-      if (i != 4) {
-        output = "." + output; // NOLINT
-      }
-
-      n = static_cast<std::uint32_t>(std::floor(n / 256.));
+      output = fmt::format("{}{}{}", separator(i), n % 256, output);
+      n >>= 8;
     }
-
     return output;
   }
 };

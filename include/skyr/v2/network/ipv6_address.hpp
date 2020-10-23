@@ -17,6 +17,7 @@
 #include <range/v3/algorithm/stable_sort.hpp>
 #include <skyr/v2/containers/static_vector.hpp>
 #include <skyr/v2/platform/endianness.hpp>
+#include <fmt/format.h>
 
 namespace skyr::inline v2 {
 /// Enumerates IPv6 address parsing errors
@@ -69,6 +70,7 @@ class ipv6_address {
    /// \returns The IPv6 address as a string
   [[nodiscard]] auto serialize() const -> std::string {
      using namespace std::string_literals;
+     using namespace std::string_view_literals;
 
      auto output = ""s;
      auto compress = std::optional<std::size_t>();
@@ -123,19 +125,17 @@ class ipv6_address {
        }
 
        if (compress && (compress.value() == i)) {
-         auto separator = (i == 0) ? "::"s : ":"s;
+         auto separator = (i == 0) ? "::"sv : ":"sv;
          output += separator;
          ignore0 = true;
          continue;
        }
 
-       auto buffer = std::array<char, 8>{};
-       auto chars = std::snprintf(buffer.data(), buffer.size(), "%0x", address_[i]); // NOLINT
-       std::copy(buffer.data(), buffer.data() + chars, std::back_inserter(output)); // NOLINT
+       constexpr auto separator = [] (auto i) {
+         return (i != 7) ? ":"sv : ""sv;
+       };
 
-       if (i != 7) {
-         output += ":";
-       }
+       output += fmt::format("{:x}{}", address_[i], separator(i)); // NOLINT
      }
 
      return output;
@@ -258,7 +258,7 @@ constexpr inline auto parse_ipv6_address(
           ++it;
         }
 
-        address[piece_index] = static_cast<std::uint16_t>(address[piece_index] * 0x100 + ipv4_piece.value()); // NOLINT
+        address[piece_index] = static_cast<std::uint16_t>((address[piece_index] << 8) + ipv4_piece.value()); // NOLINT
         ++numbers_seen;
 
         if ((numbers_seen == 2) || (numbers_seen == 4)) {
