@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <tl/expected.hpp>
 #include <range/v3/algorithm/find_if.hpp>
-#include <range/v3/range/access.hpp>
+#include <range/v3/action/join.hpp>
 #include <skyr/v2/core/errors.hpp>
 #include <skyr/v2/network/ipv4_address.hpp>
 #include <skyr/v2/network/ipv6_address.hpp>
@@ -73,7 +73,7 @@ class host {
       if constexpr (std::is_same_v<T, skyr::v2::ipv4_address>) {
         return host.serialize();
       } else if constexpr (std::is_same_v<T, skyr::v2::ipv6_address>) {
-        return "[" + host.serialize() + "]";
+        return fmt::format("[{}]", host.serialize());
       } else if constexpr (std::is_same_v<T, skyr::v2::domain_name> || std::is_same_v<T, skyr::v2::opaque_host>) {
         return host.name;
       } else {
@@ -153,18 +153,17 @@ inline auto parse_opaque_host(std::string_view input, bool *validation_error)
     -> tl::expected<opaque_host, url_parse_errc> {
   constexpr auto is_forbidden = [](auto byte) -> bool { return (byte != '%') && is_forbidden_host_point(byte); };
 
-  auto it = std::find_if(std::cbegin(input), std::cend(input), is_forbidden);
-  if (std::cend(input) != it) {
+  constexpr auto pct_encode = [](auto c) {
+    return percent_encode_byte(std::byte(c), percent_encoding::encode_set::c0_control).to_string();
+  };
+
+  auto it = ranges::find_if(input, is_forbidden);
+  if (it != std::cend(input)) {
     *validation_error |= true;
     return tl::make_unexpected(url_parse_errc::forbidden_host_point);
   }
 
-  auto output = std::string();
-  for (auto c : input) {
-    auto pct_encoded = percent_encode_byte(std::byte(c), percent_encoding::encode_set::c0_control);
-    output += pct_encoded.to_string();
-  }
-  return skyr::v2::opaque_host{std::move(output)};
+  return skyr::v2::opaque_host{input | ranges::views::transform(pct_encode) | ranges::actions::join};
 }
 }  // namespace details
 
@@ -218,7 +217,7 @@ inline auto parse_host(std::string_view input, bool is_not_special, bool *valida
     return tl::make_unexpected(url_parse_errc::domain_error);
   }
 
-  auto it = std::find_if(std::cbegin(ascii_domain), std::cend(ascii_domain), details::is_forbidden_host_point);
+  auto it = ranges::find_if(ascii_domain, details::is_forbidden_host_point);
   if (std::cend(ascii_domain) != it) {
     *validation_error |= true;
     return tl::make_unexpected(url_parse_errc::domain_error);
