@@ -70,7 +70,7 @@ inline auto basic_parse_impl(std::string_view input, bool *validation_error, con
   auto context = url_parser_context(input, validation_error, base, url, state_override);
 
   while (true) {
-    auto byte = context.is_eof() ? '\0' : *context.it;
+    auto byte = !context.is_eof() ? context.current_byte() :'\0';
     auto action = parse_next(context, byte);
     if (!action) {
       return tl::make_unexpected(action.error());

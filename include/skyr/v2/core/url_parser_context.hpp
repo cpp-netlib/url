@@ -33,10 +33,6 @@ inline auto contains(View view, typename View::value_type element) noexcept {
   return last != std::find(first, last, element);
 }
 
-inline auto remaining_starts_with(std::string_view input, std::string_view chars) noexcept {
-  return !input.empty() && input.substr(1).starts_with(chars);
-}
-
 inline auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {
   if (port.empty()) {
     return tl::make_unexpected(url_parse_errc::invalid_port);
@@ -102,30 +98,27 @@ enum class url_parse_action {
 };
 
 class url_parser_context {
- private:
-  std::string_view input;
-
  public:
-  std::string_view::const_iterator it;
-
-  bool *validation_error;
-
-  const url_record *base;
+  url_parse_state state;
+  std::string_view::const_iterator input_it;
   url_record url;
 
-  url_parse_state state;
+ private:
+  std::string_view input;
+  bool *validation_error;
+  const url_record *base;
   std::optional<url_parse_state> state_override;
-
   std::string buffer;
 
   bool at_flag;
   bool square_braces_flag;
   bool password_token_seen_flag;
 
+ public:
   url_parser_context(std::string_view input, bool *validation_error, const url_record *base, const url_record *url,
                      std::optional<url_parse_state> state_override)
       : input(input),
-        it(begin(input)),
+        input_it(begin(input)),
         validation_error(validation_error),
         base(base),
         url(url ? *url : url_record{}),
@@ -138,25 +131,37 @@ class url_parser_context {
   }
 
   [[nodiscard]] auto is_eof() const noexcept {
-    return it == end(input);
+    return input_it == end(input);
+  }
+
+  [[nodiscard]] auto current_byte() const noexcept {
+    return *input_it;
   }
 
   void increment() noexcept {
-    assert(it != end(input));
-    ++it;
+    assert(input_it != end(input));
+    ++input_it;
   }
 
   void decrement() noexcept {
-    assert(it != begin(input));
-    --it;
+    assert(input_it != begin(input));
+    --input_it;
   }
 
   void reset() noexcept {
-    it = begin(input);
+    input_it = begin(input);
   }
 
   void restart_from_buffer() noexcept {
-    it = it - buffer.size() - 1;
+    input_it -= (buffer.size() + 1);
+  }
+
+  std::string_view still_to_process() const noexcept {
+    return input.substr(std::distance(std::begin(input), input_it));
+  }
+
+  bool remaining_starts_with(std::string_view chars) const noexcept {
+    return !still_to_process().empty() && still_to_process().substr(1).starts_with(chars);
   }
 
   auto parse_scheme_start(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
@@ -199,20 +204,20 @@ class url_parser_context {
         }
       }
 
+      // TODO: set_scheme
       url.scheme = buffer;
 
       if (state_override) {
         if (url.port == default_port(url.scheme)) {
+          // TODO: set_port
           url.port = std::nullopt;
         }
         return url_parse_action::success;
       }
       buffer.clear();
 
-      auto substr = input.substr(std::distance(std::begin(input), it));
-
       if (url.scheme == "file") {
-        if (!details::remaining_starts_with(substr, "//"sv)) {
+        if (!remaining_starts_with("//"sv)) {
           *validation_error |= true;
         }
         state = url_parse_state::file;
@@ -220,10 +225,12 @@ class url_parser_context {
         state = url_parse_state::special_relative_or_authority;
       } else if (url.is_special()) {
         state = url_parse_state::special_authority_slashes;
-      } else if (details::remaining_starts_with(substr, "/"sv)) {
+      } else if (remaining_starts_with("/"sv)) {
         state = url_parse_state::path_or_authority;
         increment();
       } else {
+        // TODO: set_cannot_be_a_base_url
+        // TODO: add_path_element
         url.cannot_be_a_base_url = true;
         url.path.emplace_back();
         state = url_parse_state::cannot_be_a_base_url_path;
@@ -245,6 +252,7 @@ class url_parser_context {
       *validation_error |= true;
       return tl::make_unexpected(url_parse_errc::not_an_absolute_url_with_fragment);
     } else if (base->cannot_be_a_base_url && (byte == '#')) {
+      // TODO: set_scheme etc.
       url.scheme = base->scheme;
       url.path = base->path;
       url.query = base->query;
@@ -265,8 +273,7 @@ class url_parser_context {
   }
 
   auto parse_special_relative_or_authority(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
-    auto substr = input.substr(std::distance(std::begin(input), it));
-    if ((byte == '/') && details::remaining_starts_with(substr, "/"sv)) {
+    if ((byte == '/') && remaining_starts_with("/"sv)) {
       increment();
       state = url_parse_state::special_authority_ignore_slashes;
     } else {
@@ -288,6 +295,7 @@ class url_parser_context {
   }
 
   auto parse_relative(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
+    // TODO: set_scheme etc.
     url.scheme = base->scheme;
     if (is_eof()) {
       url.username = base->username;
@@ -299,6 +307,7 @@ class url_parser_context {
     } else if (byte == '/') {
       state = url_parse_state::relative_slash;
     } else if (byte == '?') {
+      // TODO: set_username etc.
       url.username = base->username;
       url.password = base->password;
       url.host = base->host;
@@ -307,6 +316,7 @@ class url_parser_context {
       url.query = std::string();
       state = url_parse_state::query;
     } else if (byte == '#') {
+      // TODO: set_username etc.
       url.username = base->username;
       url.password = base->password;
       url.host = base->host;
@@ -320,6 +330,7 @@ class url_parser_context {
         *validation_error |= true;
         state = url_parse_state::relative_slash;
       } else {
+        // TODO: set_username etc.
         url.username = base->username;
         url.password = base->password;
         url.host = base->host;
@@ -330,7 +341,7 @@ class url_parser_context {
         }
         state = url_parse_state::path;
 
-        if (it == begin(input)) {
+        if (input_it == begin(input)) {
           return url_parse_action::continue_;
         }
 
@@ -350,6 +361,7 @@ class url_parser_context {
     } else if (byte == '/') {
       state = url_parse_state::authority;
     } else {
+      // TODO: set_username etc.
       url.username = base->username;
       url.password = base->password;
       url.host = base->host;
@@ -362,8 +374,7 @@ class url_parser_context {
   }
 
   auto parse_special_authority_slashes(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
-    auto substr = input.substr(std::distance(std::begin(input), it));
-    if ((byte == '/') && details::remaining_starts_with(substr, "/"sv)) {
+    if ((byte == '/') && remaining_starts_with("/"sv)) {
       increment();
       state = url_parse_state::special_authority_ignore_slashes;
     } else {
@@ -401,8 +412,10 @@ class url_parser_context {
 
         auto pct_encoded = percent_encode_byte(std::byte(c), percent_encoding::encode_set::userinfo);
         if (password_token_seen_flag) {
+          // TODO: append_to_password
           url.password += pct_encoded.to_string();
         } else {
+          // TODO: append_to_username
           url.username += pct_encoded.to_string();
         }
       }
@@ -427,7 +440,7 @@ class url_parser_context {
   auto parse_hostname(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
     if (state_override && (url.scheme == "file")) {
       state = url_parse_state::file_host;
-      if (it == begin(input)) {
+      if (input_it == begin(input)) {
         return url_parse_action::continue_;
       }
       decrement();
@@ -441,6 +454,7 @@ class url_parser_context {
       if (!host) {
         return tl::make_unexpected(host.error());
       }
+      // TODO: set_host
       url.host = host.value();
       buffer.clear();
       state = url_parse_state::port;
@@ -449,7 +463,7 @@ class url_parser_context {
         return url_parse_action::success;
       }
     } else if ((is_eof() || (byte == '/') || (byte == '?') || (byte == '#')) || (url.is_special() && (byte == '\\'))) {
-      if (it != begin(input)) {
+      if (input_it != begin(input)) {
         decrement();
       }
 
@@ -465,6 +479,7 @@ class url_parser_context {
       if (!host) {
         return tl::make_unexpected(host.error());
       }
+      // TODO: set_host
       url.host = host.value();
       buffer.clear();
       state = url_parse_state::path_start;
@@ -498,8 +513,10 @@ class url_parser_context {
 
         auto dport = default_port(url.scheme);
         if (dport && (dport.value() == port.value())) {
+          // TODO: set_port
           url.port = std::nullopt;
         } else {
+          // TODO: set_port
           url.port = port.value();
         }
         buffer.clear();
@@ -520,6 +537,7 @@ class url_parser_context {
   }
 
   auto parse_file(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
+    // TODO: set_scheme
     url.scheme = "file";
 
     if ((byte == '/') || (byte == '\\')) {
@@ -529,22 +547,26 @@ class url_parser_context {
       state = url_parse_state::file_slash;
     } else if (base && (base->scheme == "file")) {
       if (is_eof()) {
+        // TODO: set_host etc.
         url.host = base->host;
         url.path = base->path;
         url.query = base->query;
       } else if (byte == '?') {
+        // TODO: set_host etc.
         url.host = base->host;
         url.path = base->path;
         url.query = std::string();
         state = url_parse_state::query;
       } else if (byte == '#') {
+        // TODO: set_host etc.
         url.host = base->host;
         url.path = base->path;
         url.query = base->query;
         url.fragment = std::string();
         state = url_parse_state::fragment;
       } else {
-        if (!details::is_windows_drive_letter(input.substr(std::distance(begin(input), it)))) {
+        if (!details::is_windows_drive_letter(still_to_process())) {
+          // TODO: set_host etc.
           url.host = base->host;
           url.path = base->path;
           details::shorten_path(url.scheme, url.path);
@@ -552,14 +574,14 @@ class url_parser_context {
           *validation_error |= true;
         }
         state = url_parse_state::path;
-        if (it == begin(input)) {
+        if (input_it == begin(input)) {
           return url_parse_action::continue_;
         }
         decrement();
       }
     } else {
       state = url_parse_state::path;
-      if (it == begin(input)) {
+      if (input_it == begin(input)) {
         return url_parse_action::continue_;
       }
       decrement();
@@ -575,11 +597,12 @@ class url_parser_context {
       }
       state = url_parse_state::file_host;
     } else {
-      auto substr = input.substr(std::distance(begin(input), it));
-      if (base && ((base->scheme == "file") && !details::is_windows_drive_letter(substr))) {
+      if (base && ((base->scheme == "file") && !details::is_windows_drive_letter(still_to_process()))) {
         if (!base->path.empty() && details::is_windows_drive_letter(base->path[0])) {
+          // TODO: set_path
           url.path.push_back(base->path[0]);
         } else {
+          // TODO: set_host
           url.host = base->host;
         }
       }
@@ -593,7 +616,7 @@ class url_parser_context {
 
   auto parse_file_host(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
     if ((is_eof()) || (byte == '/') || (byte == '\\') || (byte == '?') || (byte == '#')) {
-      bool at_begin = (it == begin(input));
+      bool at_begin = (input_it == begin(input));
       if (!at_begin) {
         decrement();
       }
@@ -602,6 +625,7 @@ class url_parser_context {
         *validation_error |= true;
         state = url_parse_state::path;
       } else if (buffer.empty()) {
+        // TODO: set_host
         url.host = skyr::host{skyr::v2::empty_host{}};
 
         if (state_override) {
@@ -618,6 +642,7 @@ class url_parser_context {
         if (host.value().serialize() == "localhost") {
           host.value() = skyr::v2::host{skyr::v2::empty_host{}};
         }
+        // TODO: set_host
         url.host = host.value();
 
         if (state_override) {
@@ -636,7 +661,7 @@ class url_parser_context {
   }
 
   auto parse_path_start(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
-    bool at_begin = (it == begin(input));
+    bool at_begin = (input_it == begin(input));
     if (url.is_special()) {
       if (byte == '\\') {
         *validation_error |= true;
@@ -649,9 +674,11 @@ class url_parser_context {
         decrement();
       }
     } else if (!state_override && (byte == '?')) {
+      // TODO: set_query
       url.query = std::string();
       state = url_parse_state::query;
     } else if (!state_override && (byte == '#')) {
+      // TODO: set_fragment
       url.fragment = std::string();
       state = url_parse_state::fragment;
     } else if (!is_eof()) {
@@ -676,20 +703,24 @@ class url_parser_context {
       if (details::is_double_dot_path_segment(buffer)) {
         details::shorten_path(url.scheme, url.path);
         if (!((byte == '/') || (url.is_special() && (byte == '\\')))) {
+          // TODO: add_path_element
           url.path.emplace_back();
         }
       } else if (details::is_single_dot_path_segment(buffer) &&
                  !((byte == '/') || (url.is_special() && (byte == '\\')))) {
+        // TODO: add_path_element
         url.path.emplace_back();
       } else if (!details::is_single_dot_path_segment(buffer)) {
         if ((url.scheme == "file") && url.path.empty() && details::is_windows_drive_letter(buffer)) {
           if (!url.host || !url.host.value().is_empty()) {
             *validation_error |= true;
+            // TODO: set_host
             url.host = skyr::host{skyr::empty_host{}};
           }
           buffer[1] = ':';
         }
 
+        // TODO: add_path_element
         url.path.emplace_back(std::cbegin(buffer), std::cend(buffer));
       }
 
@@ -697,6 +728,7 @@ class url_parser_context {
 
       if ((url.scheme == "file") && (is_eof() || (byte == '?') || (byte == '#'))) {
         while ((url.path.size() > 1) && url.path[0].empty()) {
+          // TODO: remove_path_element
           *validation_error |= true;
           auto next_it = begin(url.path);
           ++next_it;
@@ -706,11 +738,13 @@ class url_parser_context {
       }
 
       if (byte == '?') {
+        // TODO: set_query
         url.query = std::string();
         state = url_parse_state::query;
       }
 
       if (byte == '#') {
+        // TODO: set_fragment
         url.fragment = std::string();
         state = url_parse_state::fragment;
       }
@@ -728,20 +762,22 @@ class url_parser_context {
 
   auto parse_cannot_be_a_base_url(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
     if (byte == '?') {
+      // TODO: set_query
       url.query = std::string();
       state = url_parse_state::query;
     } else if (byte == '#') {
+      // TODO: set_fragment
       url.fragment = std::string();
       state = url_parse_state::fragment;
     } else {
-      auto substr = input.substr(std::distance(std::begin(input), it));
       if (!is_eof() && (!details::is_url_code_point(byte) && (byte != '%'))) {
         *validation_error |= true;
-      } else if ((byte == '%') && !percent_encoding::is_percent_encoded(substr)) {
+      } else if ((byte == '%') && !percent_encoding::is_percent_encoded(still_to_process())) {
         *validation_error |= true;
       }
       if (!is_eof()) {
         auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::c0_control);
+        // TODO: set_path
         url.path[0] += pct_encoded.to_string();
       }
     }
@@ -750,14 +786,17 @@ class url_parser_context {
 
   auto parse_query(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
     if (!state_override && (byte == '#')) {
+      // TODO: set_fragment
       url.fragment = std::string();
       state = url_parse_state::fragment;
     } else if (!is_eof()) {
       if ((byte < '!') || (byte > '~') || (details::contains(R"("#<>)"sv, byte)) ||
           ((byte == '\'') && url.is_special())) {
+        // TODO: add_to_query
         auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::none);
         url.query.value() += pct_encoded.to_string();
       } else {
+        // TODO: add_to_query
         url.query.value().push_back(byte);
       }
     }
@@ -770,12 +809,12 @@ class url_parser_context {
         *validation_error |= true;
       }
 
-      auto substr = input.substr(std::distance(std::begin(input), it));
-      if ((byte == '%') && !percent_encoding::is_percent_encoded(substr)) {
+      if ((byte == '%') && !percent_encoding::is_percent_encoded(still_to_process())) {
         *validation_error |= true;
       }
 
       auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::fragment);
+      // TODO: add_to_fragment
       url.fragment.value() += pct_encoded.to_string();
     }
     return url_parse_action::increment;
