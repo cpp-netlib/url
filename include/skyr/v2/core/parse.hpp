@@ -16,69 +16,30 @@
 
 namespace skyr::inline v2 {
 namespace details {
-inline auto parse_next(url_parser_context &context, char byte) -> tl::expected<url_parse_action, url_parse_errc> {
-  switch (context.state) {
-    case url_parse_state::scheme_start:
-      return context.parse_scheme_start(byte);
-    case url_parse_state::scheme:
-      return context.parse_scheme(byte);
-    case url_parse_state::no_scheme:
-      return context.parse_no_scheme(byte);
-    case url_parse_state::special_relative_or_authority:
-      return context.parse_special_relative_or_authority(byte);
-    case url_parse_state::path_or_authority:
-      return context.parse_path_or_authority(byte);
-    case url_parse_state::relative:
-      return context.parse_relative(byte);
-    case url_parse_state::relative_slash:
-      return context.parse_relative_slash(byte);
-    case url_parse_state::special_authority_slashes:
-      return context.parse_special_authority_slashes(byte);
-    case url_parse_state::special_authority_ignore_slashes:
-      return context.parse_special_authority_ignore_slashes(byte);
-    case url_parse_state::authority:
-      return context.parse_authority(byte);
-    case url_parse_state::hostname:
-    case url_parse_state::host:
-      return context.parse_hostname(byte);
-    case url_parse_state::port:
-      return context.parse_port(byte);
-    case url_parse_state::file:
-      return context.parse_file(byte);
-    case url_parse_state::file_slash:
-      return context.parse_file_slash(byte);
-    case url_parse_state::file_host:
-      return context.parse_file_host(byte);
-    case url_parse_state::path_start:
-      return context.parse_path_start(byte);
-    case url_parse_state::path:
-      return context.parse_path(byte);
-    case url_parse_state::cannot_be_a_base_url_path:
-      return context.parse_cannot_be_a_base_url(byte);
-    case url_parse_state::query:
-      return context.parse_query(byte);
-    case url_parse_state::fragment:
-      return context.parse_fragment(byte);
-    default:
-      return tl::make_unexpected(url_parse_errc::cannot_override_scheme);
+inline auto basic_parse(std::string_view input, bool *validation_error, const url_record *base, const url_record *url,
+                        std::optional<url_parse_state> state_override) -> tl::expected<url_record, url_parse_errc> {
+  constexpr auto is_tab_or_newline = [](auto byte) { return (byte == '\t') || (byte == '\r') || (byte == '\n'); };
+
+  if (url == nullptr) {
+    input = remove_leading_c0_control_or_space(input, validation_error);
+    input = remove_trailing_c0_control_or_space(input, validation_error);
   }
-}
 
-inline auto basic_parse_impl(std::string_view input, bool *validation_error, const url_record *base,
-                             const url_record *url, std::optional<url_parse_state> state_override)
-    -> tl::expected<url_record, url_parse_errc> {
   auto context = url_parser_context(input, validation_error, base, url, state_override);
-
   while (true) {
-    auto byte = !context.is_eof() ? context.current_byte() :'\0';
-    auto action = parse_next(context, byte);
+    // remove tabs and new lines
+    while (!context.is_eof() && is_tab_or_newline(context.next_byte())) {
+      context.increment();
+    }
+
+    auto action = context.parse_next();
     if (!action) {
       return tl::make_unexpected(action.error());
     }
 
     switch (action.value()) {
       case url_parse_action::success:
-        return context.url;
+        return std::move(context).get_url();
       case url_parse_action::increment:
         break;
       case url_parse_action::continue_:
@@ -91,22 +52,11 @@ inline auto basic_parse_impl(std::string_view input, bool *validation_error, con
     context.increment();
   }
 
-  return context.url;
-}
-
-inline auto basic_parse(std::string_view input, bool *validation_error, const url_record *base, const url_record *url,
-                        std::optional<url_parse_state> state_override) -> tl::expected<url_record, url_parse_errc> {
-  if (url == nullptr) {
-    input = remove_leading_c0_control_or_space(input, validation_error);
-    input = remove_trailing_c0_control_or_space(input, validation_error);
-  }
-  auto input_ = std::string(input);
-  remove_tabs_and_newlines(input_, validation_error);
-  return basic_parse_impl(input_, validation_error, base, url, state_override);
+  return std::move(context).get_url();
 }
 
 inline auto parse(std::string_view input, bool *validation_error, const url_record *base)
--> tl::expected<url_record, url_parse_errc> {
+    -> tl::expected<url_record, url_parse_errc> {
   auto url = basic_parse(input, validation_error, base, nullptr, std::nullopt);
 
   if (!url) {
@@ -122,10 +72,6 @@ inline auto parse(std::string_view input, bool *validation_error, const url_reco
   }
 
   return url;
-}
-
-inline auto parse(std::string_view input, bool *validation_error) -> tl::expected<url_record, url_parse_errc> {
-  return parse(input, validation_error, nullptr);
 }
 }  // namespace details
 

@@ -25,7 +25,7 @@ option(skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
 option(skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
 option(skyr_ENABLE_FILESYSTEM_FUNCTIONS "Enable functions to convert URL to std::filesystem::path" ON)
 option(skyr_ENABLE_JSON_FUNCTIONS "Enable functions to convert URL components to JSON" ON)
-option(skyr_BUILD_V2 "Build v2, which uses C++20 features" ON)
+option(skyr_BUILD_V2 "Build v2, which uses C++20 features" OFF)
 
 set(CMAKE_VERBOSE_MAKEFILE true)
 if (skyr_BUILD_V2)
