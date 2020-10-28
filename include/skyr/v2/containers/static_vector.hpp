@@ -137,7 +137,13 @@ class static_vector {
   }
 
   ///
-  /// \return `true` if there are elements
+  /// \return
+  [[nodiscard]] constexpr auto capacity() const noexcept -> size_type {
+    return Capacity;
+  }
+
+  ///
+  /// \return `true` if there are no elements
   [[nodiscard]] constexpr auto empty() const noexcept -> bool {
     return size_ == 0;
   }

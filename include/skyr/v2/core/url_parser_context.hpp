@@ -201,7 +201,7 @@ class url_parser_context {
     input_it = std::begin(input);
   }
 
-  void restart_from_buffer() noexcept {
+  void restart_from_beginning_of_buffer() noexcept {
     input_it -= (buffer.size() + 1);
   }
 
@@ -276,7 +276,7 @@ class url_parser_context {
         increment();
       } else {
         set_cannot_be_a_base_url_flag();
-        add_path_element();
+        add_empty_path_element();
         state = url_parse_state::cannot_be_a_base_url_path;
       }
     } else if (!state_override) {
@@ -434,7 +434,7 @@ class url_parser_context {
         *validation_error |= true;
         return tl::make_unexpected(url_parse_errc::empty_hostname);
       }
-      restart_from_buffer();
+      restart_from_beginning_of_buffer();
       state = url_parse_state::host;
       buffer.clear();
       return url_parse_action::increment;
@@ -681,11 +681,11 @@ class url_parser_context {
       if (details::is_double_dot_path_segment(buffer)) {
         details::shorten_path(url.scheme, url.path);
         if (!((byte == '/') || (url.is_special() && (byte == '\\')))) {
-          add_path_element();
+          add_empty_path_element();
         }
       } else if (details::is_single_dot_path_segment(buffer) &&
                  !((byte == '/') || (url.is_special() && (byte == '\\')))) {
-        add_path_element();
+        add_empty_path_element();
       } else if (!details::is_single_dot_path_segment(buffer)) {
         if ((url.scheme == "file") && url.path.empty() && details::is_windows_drive_letter(buffer)) {
           if (!url.host || !url.host.value().is_empty()) {
@@ -858,7 +858,7 @@ class url_parser_context {
     url.cannot_be_a_base_url = true;
   }
 
-  void add_path_element() {
+  void add_empty_path_element() {
     url.path.emplace_back();
   }
 
