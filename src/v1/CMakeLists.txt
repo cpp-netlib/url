@@ -95,6 +95,7 @@ set(gnu $<CXX_COMPILER_ID:GNU>)
 set(clang $<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>)
 set(libcxx $<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>)
 set(msvc $<CXX_COMPILER_ID:MSVC>)
+set(clang_with_gnu_stdlib $<AND:$<CXX_COMPILER_ID:Clang>,$<NOT:$<BOOL:${WIN32}>>,$<NOT:$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>>)
 
 target_compile_definitions(
         skyr-url-v1
@@ -161,6 +162,7 @@ if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
             INTERFACE
             skyr-url-v1
             $<${gnu}:"stdc++fs">
+            $<${clang_with_gnu_stdlib}:"stdc++fs">
     )
 
     target_include_directories(
