@@ -52,11 +52,33 @@ inline constexpr auto is_fragment_byte(std::byte value) {
 ///
 /// \param value
 /// \return
+inline constexpr auto is_query_byte(std::byte value) {
+  return
+      is_c0_control_byte(value) ||
+      (value == std::byte(0x20)) ||
+      (value == std::byte(0x22)) ||
+      (value == std::byte(0x23)) ||
+      (value == std::byte(0x3c)) ||
+      (value == std::byte(0x3e));
+}
+
+///
+/// \param value
+/// \return
+inline constexpr auto is_special_query_byte(std::byte value) {
+  return
+      is_query_byte(value) ||
+      (value == std::byte(0x27));
+}
+
+///
+/// \param value
+/// \return
 inline constexpr auto is_path_byte(std::byte value) {
   return
-      is_fragment_byte(value) ||
-      (value == std::byte(0x23)) ||
+      is_query_byte(value) ||
       (value == std::byte(0x3f)) ||
+      (value == std::byte(0x60)) ||
       (value == std::byte(0x7b)) ||
       (value == std::byte(0x7d));
 }
@@ -78,20 +100,39 @@ inline constexpr auto is_userinfo_byte(std::byte value) {
       (value == std::byte(0x5e)) ||
       (value == std::byte(0x7c));
 }
+
+///
+/// \param value
+/// \return
+inline constexpr auto is_component_byte(std::byte value) {
+  return
+      is_userinfo_byte(value) ||
+      (value == std::byte(0x24)) ||
+      (value == std::byte(0x25)) ||
+      (value == std::byte(0x26)) ||
+      (value == std::byte(0x2b)) ||
+      (value == std::byte(0x2c));
+}
 }  // namespace details
 
 ///
 enum class encode_set {
   ///
-  none = 0,
+  any = 0,
   ///
   c0_control,
   ///
   fragment,
   ///
+  query,
+  ///
+  special_query,
+  ///
   path,
   ///
   userinfo,
+  ///
+  component,
 };
 
 ///
@@ -199,18 +240,24 @@ inline auto percent_encode_byte(std::byte byte, Pred pred) -> percent_encoded_ch
 
 ///
 /// \param value
-/// \param excludes
+/// \param encodes
 /// \return
-inline auto percent_encode_byte(std::byte value, encode_set excludes) -> percent_encoded_char {
-  switch (excludes) {
-    case encode_set::none:
+inline auto percent_encode_byte(std::byte value, encode_set encodes) -> percent_encoded_char {
+  switch (encodes) {
+    case encode_set::any:
       return percent_encoding::percent_encoded_char(value);
     case encode_set::c0_control:
       return percent_encode_byte(value, details::is_c0_control_byte);
+    case encode_set::component:
+      return percent_encode_byte(value, details::is_component_byte);
     case encode_set::userinfo:
       return percent_encode_byte(value, details::is_userinfo_byte);
     case encode_set::path:
       return percent_encode_byte(value, details::is_path_byte);
+    case encode_set::special_query:
+      return percent_encode_byte(value, details::is_special_query_byte);
+    case encode_set::query:
+      return percent_encode_byte(value, details::is_query_byte);
     case encode_set::fragment:
       return percent_encode_byte(value, details::is_fragment_byte);
   }

@@ -889,7 +889,7 @@ class url_parser_context {
     if (!url.query) {
       set_empty_query();
     }
-    auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::none);
+    auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::any);
     url.query.value() += std::move(pct_encoded).to_string();
   }
 

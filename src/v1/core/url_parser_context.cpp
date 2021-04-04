@@ -697,7 +697,7 @@ auto url_parser_context::parse_query(char byte) -> tl::expected<url_parse_action
     state = url_parse_state::fragment;
   } else if (!is_eof()) {
     if ((byte < '!') || (byte > '~') || (contains(R"("#<>)"sv, byte)) || ((byte == '\'') && url.is_special())) {
-      auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::none);
+      auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::any);
       url.query.value() += pct_encoded.to_string();
     } else {
       url.query.value().push_back(byte);
