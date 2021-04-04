@@ -141,7 +141,7 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
     }
   };
 
-  constexpr auto process_labels = [](auto &&ctx) -> tl::expected<domain_to_ascii_context, domain_errc> {
+  constexpr auto process_labels = [](auto &&ctx) -> tl::expected<std::decay_t<decltype(ctx)>, domain_errc> {
     using namespace std::string_view_literals;
 
     constexpr auto to_string_view = [](auto &&label) {
@@ -198,7 +198,7 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context &&context) -> tl::expec
   };
 
   constexpr auto check_length =
-      [](domain_to_ascii_context &&ctx) -> tl::expected<domain_to_ascii_context, domain_errc> {
+      [](auto &&ctx) -> tl::expected<std::decay_t<decltype(ctx)>, domain_errc> {
     constexpr auto max_domain_length = 253;
     constexpr auto max_label_length = 63;
 

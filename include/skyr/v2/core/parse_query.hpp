@@ -11,7 +11,6 @@
 #include <range/v3/view/split_when.hpp>
 #include <range/v3/view/transform.hpp>
 #include <skyr/v2/core/parse.hpp>
-#include <skyr/v2/percent_encoding/percent_decode.hpp>
 
 namespace skyr::inline v2 {
 ///
@@ -46,17 +45,17 @@ inline auto parse_query(
   if (url) {
     static constexpr auto is_separator = [](auto c) { return c == '&' || c == ';'; };
 
-    static constexpr auto to_nvp = [](auto &&param) -> query_parameter {
-      if (ranges::empty(param)) {
+    static constexpr auto to_nvp = [](auto &&parameter) -> query_parameter {
+      if (ranges::empty(parameter)) {
         return {};
       }
 
-      auto element = std::string_view(std::addressof(*std::begin(param)), ranges::distance(param));
-      auto delim = element.find_first_of('=');
+      auto view = std::string_view(std::addressof(*std::begin(parameter)), ranges::distance(parameter));
+      auto delim = view.find_first_of('=');
       if (delim != std::string_view::npos) {
-        return {std::string(element.substr(0, delim)), std::string(element.substr(delim + 1))};
+        return {std::string(view.substr(0, delim)), std::string(view.substr(delim + 1))};
       } else {
-        return {std::string(element)};
+        return {std::string(view)};
       }
     };
 

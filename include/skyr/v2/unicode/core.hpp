@@ -87,8 +87,7 @@ constexpr inline auto sequence_length(uint8_t lead_value) {
 /// \tparam OctetIterator
 template <typename OctetIterator>
 struct sequence_state {
-  constexpr sequence_state(OctetIterator it, char32_t value) : it(it), value(value) {
-  }
+  constexpr sequence_state(OctetIterator it, char32_t value) : it(it), value(value) {}
 
   /// The current iterator
   OctetIterator it;

@@ -19,7 +19,7 @@ inline auto parse_path(
     std::string_view path, bool *validation_error) -> tl::expected<std::vector<std::string>, url_parse_errc> {
   auto url = details::basic_parse(path, validation_error, nullptr, nullptr, url_parse_state::path_start);
   if (url) {
-    return url.value().path;
+    return std::move(url.value()).path;
   }
   return tl::make_unexpected(url.error());
 }

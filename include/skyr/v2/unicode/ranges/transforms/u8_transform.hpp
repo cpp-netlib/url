@@ -44,8 +44,7 @@ class u8_transform_iterator {
   ///
   /// \param first The first iterator in the code point sequence
   /// \param last The end iterator in the code point sequence
-  constexpr u8_transform_iterator(CodePointIterator first, Sentinel last) : it_(first), last_(last) {
-  }
+  constexpr u8_transform_iterator(CodePointIterator first, Sentinel last) : it_(first), last_(last) {}
 
   /// Pre-increment operator
   /// \return A reference to this iterator
@@ -170,8 +169,7 @@ class transform_u8_range {
 
   /// Constructor
   /// \param range A range of code points
-  explicit constexpr transform_u8_range(const CodePointRange &range) : first_(std::cbegin(range), std::cend(range)) {
-  }
+  explicit constexpr transform_u8_range(const CodePointRange &range) : first_(std::cbegin(range), std::cend(range)) {}
 
   /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
