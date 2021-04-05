@@ -14,10 +14,10 @@
 namespace skyr::inline v2 {
 /// Percent encodes the input
 /// \returns The percent encoded output when successful, an error otherwise.
-inline auto percent_encode(std::string_view input) {
-  static constexpr auto encode = [] (auto byte) {
+inline auto percent_encode_bytes(std::string_view input, percent_encoding::encode_set encodes) -> std::string {
+  static auto encode = [&encodes] (auto byte) {
     using percent_encoding::percent_encode_byte;
-    return percent_encode_byte(std::byte(byte), percent_encoding::encode_set::component);
+    return percent_encode_byte(std::byte(byte), encodes);
   };
 
   auto result = std::string{};
@@ -25,6 +25,10 @@ inline auto percent_encode(std::string_view input) {
     result += std::string(std::cbegin(encoded), std::cend(encoded));
   }
   return result;
+}
+
+inline auto percent_encode(std::string_view input) -> std::string {
+  return percent_encode_bytes(input, percent_encoding::encode_set::component);
 }
 }  // namespace skyr::inline v2
 
