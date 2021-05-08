@@ -172,25 +172,25 @@ struct percent_encoded_char {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cbegin() const noexcept {
+  [[nodiscard]] auto cbegin() const noexcept {
     return impl_.cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto cend() const noexcept {
+  [[nodiscard]] auto cend() const noexcept {
     return impl_.cend();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto begin() const noexcept {
+  [[nodiscard]] auto begin() const noexcept {
     return cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto end() const noexcept {
+  [[nodiscard]] auto end() const noexcept {
     return cend();
   }
 
