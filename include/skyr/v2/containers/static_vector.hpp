@@ -10,6 +10,7 @@
 #include <array>
 #include <type_traits>
 #include <optional>
+#include <cassert>
 
 namespace skyr::inline v2 {
 ///
@@ -51,14 +52,15 @@ class static_vector {
   constexpr auto operator=(const static_vector &) -> static_vector & = default;
   constexpr auto operator=(static_vector &&) noexcept -> static_vector & = default;
 
-  ~static_vector() {
+  constexpr ~static_vector() {
     clear();
   }
 
   /// Gets the first const element in the vector
   /// \return a const T &
-  /// \pre `size() > 0`
+  /// \pre `size_ > 0`
   constexpr auto front() const noexcept -> const_reference {
+    assert(size() > 0);
     return impl_[0];
   }
 
@@ -66,6 +68,7 @@ class static_vector {
   /// \return a T &
   /// \pre `size() > 0`
   constexpr auto front() noexcept -> reference {
+    assert(size_ > 0);
     return impl_[0];
   }
 
@@ -73,6 +76,7 @@ class static_vector {
   /// \return
   /// \pre `size() > 0`
   constexpr auto back() const noexcept -> const_reference {
+    assert(size_ > 0);
     return impl_[size_ - 1];
   }
 
@@ -80,6 +84,7 @@ class static_vector {
   /// \return
   /// \pre `size() > 0`
   constexpr auto back() noexcept -> reference {
+    assert(size_ > 0);
     return impl_[size_ - 1];
   }
 
@@ -89,6 +94,7 @@ class static_vector {
   /// \pre `size() < capacity()`
   /// \post `size() > 0 && size() <= capacity()`
   constexpr auto push_back(const_reference value) noexcept -> reference {
+    assert(size_ < Capacity);
     impl_[size_++] = value;
     return impl_[size_ - 1];
   }
@@ -101,6 +107,7 @@ class static_vector {
   /// \post `size() > 0 && size() <= capacity()`
   template <class... Args>
   constexpr auto emplace_back(Args &&... args) noexcept(std::is_trivially_move_assignable_v<T>) -> reference {
+    assert(size_ < Capacity);
     impl_[size_++] = value_type{std::forward<Args>(args)...};
     return back();
   }
@@ -108,6 +115,7 @@ class static_vector {
   ///
   /// \pre `size() > 0`
   constexpr void pop_back() noexcept {
+    assert(size_ > 0);
     back().~value_type();
     --size_;
   }

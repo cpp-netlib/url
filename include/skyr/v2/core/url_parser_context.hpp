@@ -27,12 +27,12 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 namespace details {
-inline auto contains(std::string_view view, char element) noexcept {
+constexpr inline auto contains(std::string_view view, char element) noexcept {
   auto first = std::cbegin(view), last = std::cend(view);
   return last != std::find(first, last, element);
 }
 
-inline auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {
+constexpr inline auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {
   if (port.empty()) {
     return tl::make_unexpected(url_parse_errc::invalid_port);
   }
@@ -55,7 +55,7 @@ inline auto is_url_code_point(char byte) noexcept {
   return std::isalnum(byte, std::locale::classic()) || contains("!$&'()*+,-./:;=?@_~"sv, byte);
 }
 
-inline auto is_windows_drive_letter(std::string_view segment) noexcept {
+constexpr inline auto is_windows_drive_letter(std::string_view segment) noexcept {
   if (segment.size() < 2) {
     return false;
   }
@@ -73,17 +73,17 @@ inline auto is_windows_drive_letter(std::string_view segment) noexcept {
   return result;
 }
 
-inline auto is_single_dot_path_segment(std::string_view segment) noexcept {
+constexpr inline auto is_single_dot_path_segment(std::string_view segment) noexcept {
   return (segment == ".") || (segment == "%2e") || (segment == "%2E");
 }
 
-inline auto is_double_dot_path_segment(std::string_view segment) noexcept {
+constexpr inline auto is_double_dot_path_segment(std::string_view segment) noexcept {
   return (segment == "..") || (segment == "%2e.") || (segment == ".%2e") || (segment == "%2e%2e") ||
          (segment == "%2E.") || (segment == ".%2E") || (segment == "%2E%2E") || (segment == "%2E%2e") ||
          (segment == "%2e%2E");
 }
 
-inline void shorten_path(std::string_view scheme, std::vector<std::string> &path) {
+constexpr inline void shorten_path(std::string_view scheme, std::vector<std::string> &path) {
   if (!path.empty() && !((scheme == "file"sv) && (path.size() == 1) && is_windows_drive_letter(path.front()))) {
     path.pop_back();
   }

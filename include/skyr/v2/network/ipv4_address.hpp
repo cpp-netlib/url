@@ -108,7 +108,7 @@ constexpr inline auto parse_ipv4_number(std::string_view input, bool *validation
 /// Parses an IPv4 address
 /// \param input An input string
 /// \returns An `ipv4_address` object or an error
-inline auto parse_ipv4_address(std::string_view input, bool *validation_error)
+constexpr inline auto parse_ipv4_address(std::string_view input, bool *validation_error)
     -> tl::expected<ipv4_address, ipv4_address_errc> {
   using namespace std::string_view_literals;
 

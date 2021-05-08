@@ -50,7 +50,7 @@ constexpr inline auto adapt(uint32_t delta, uint32_t numpoints, bool firsttime) 
 /// \param input A UTF-32 encoded domain
 /// \param output An ascii string on output
 /// \returns `void` or an error
-inline auto punycode_encode(std::u32string_view input, std::string *output) -> tl::expected<void, domain_errc> {
+constexpr inline auto punycode_encode(std::u32string_view input, std::string *output) -> tl::expected<void, domain_errc> {
   using namespace punycode::constants;
 
   constexpr auto is_ascii_value = [] (auto c) { return c < 0x80; };
@@ -138,7 +138,7 @@ inline auto punycode_encode(std::u32string_view input, std::string *output) -> t
 /// \param input An ASCII encoded domain to be decoded
 /// \returns The decoded UTF-8 domain, or an error
 template <class StringView>
-inline auto punycode_decode(StringView input, std::u32string *output) -> tl::expected<void, domain_errc> {
+constexpr inline auto punycode_decode(StringView input, std::u32string *output) -> tl::expected<void, domain_errc> {
   using namespace punycode::constants;
 
   // decode_digit(cp) returns the numeric value of a basic code

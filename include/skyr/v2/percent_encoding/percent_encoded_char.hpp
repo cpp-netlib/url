@@ -172,49 +172,49 @@ struct percent_encoded_char {
 
   ///
   /// \return
-  [[nodiscard]] auto cbegin() const noexcept {
+  [[nodiscard]] constexpr auto cbegin() const noexcept {
     return impl_.cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] auto cend() const noexcept {
+  [[nodiscard]] constexpr auto cend() const noexcept {
     return impl_.cend();
   }
 
   ///
   /// \return
-  [[nodiscard]] auto begin() const noexcept {
+  [[nodiscard]] constexpr auto begin() const noexcept {
     return cbegin();
   }
 
   ///
   /// \return
-  [[nodiscard]] auto end() const noexcept {
+  [[nodiscard]] constexpr auto end() const noexcept {
     return cend();
   }
 
   ///
   /// \return
-  [[nodiscard]] auto size() const noexcept {
+  [[nodiscard]] constexpr auto size() const noexcept {
     return impl_.size();
   }
 
   ///
   /// \return
-  [[nodiscard]] auto is_encoded() const noexcept {
+  [[nodiscard]] constexpr auto is_encoded() const noexcept {
     return impl_.size() == 3;
   }
 
   ///
   /// \return
-  [[nodiscard]] auto to_string() const & -> std::string {
+  [[nodiscard]] constexpr auto to_string() const & -> const std::string & {
     return impl_;
   }
 
   ///
   /// \return
-  [[nodiscard]] auto to_string() && noexcept -> std::string && {
+  [[nodiscard]] constexpr auto to_string() && noexcept -> std::string && {
     return std::move(impl_);
   }
 
