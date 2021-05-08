@@ -83,7 +83,7 @@ constexpr inline auto is_double_dot_path_segment(std::string_view segment) noexc
          (segment == "%2e%2E");
 }
 
-constexpr inline void shorten_path(std::string_view scheme, std::vector<std::string> &path) {
+inline void shorten_path(std::string_view scheme, std::vector<std::string> &path) {
   if (!path.empty() && !((scheme == "file"sv) && (path.size() == 1) && is_windows_drive_letter(path.front()))) {
     path.pop_back();
   }

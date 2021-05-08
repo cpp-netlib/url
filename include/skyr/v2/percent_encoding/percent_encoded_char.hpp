@@ -196,13 +196,13 @@ struct percent_encoded_char {
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto size() const noexcept {
+  [[nodiscard]] auto size() const noexcept {
     return impl_.size();
   }
 
   ///
   /// \return
-  [[nodiscard]] constexpr auto is_encoded() const noexcept {
+  [[nodiscard]] auto is_encoded() const noexcept {
     return impl_.size() == 3;
   }
 

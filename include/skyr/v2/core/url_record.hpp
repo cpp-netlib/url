@@ -57,7 +57,7 @@ class url_record {
   /// Tests if the URL includes credentials
   /// \returns `true` if the URL username or password is not an
   ///          empty string, `false` otherwise
-  [[nodiscard]] constexpr auto includes_credentials() const noexcept -> bool {
+  [[nodiscard]] auto includes_credentials() const noexcept -> bool {
     return !username.empty() || !password.empty();
   }
 
