@@ -32,13 +32,13 @@ constexpr inline auto contains(std::string_view view, char element) noexcept {
   return last != std::find(first, last, element);
 }
 
-constexpr inline auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {
+inline auto port_number(std::string_view port) noexcept -> tl::expected<std::uint16_t, url_parse_errc> {
   if (port.empty()) {
     return tl::make_unexpected(url_parse_errc::invalid_port);
   }
 
   const char *port_first = port.data();
-  char *port_last = nullptr;
+  char *port_last = nullptr; // NOLINT
   auto port_value = std::strtoul(port_first, &port_last, 10);
 
   if (port_first == port_last) {

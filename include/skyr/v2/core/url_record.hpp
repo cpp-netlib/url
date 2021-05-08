@@ -50,7 +50,7 @@ class url_record {
   /// Tests if the URL is a special scheme
   /// \returns `true` if the URL scheme is a special scheme, `false`
   ///          otherwise
-  [[nodiscard]] constexpr auto is_special() const noexcept -> bool {
+  [[nodiscard]] auto is_special() const noexcept -> bool {
     return skyr::is_special(scheme);
   }
 
@@ -64,7 +64,7 @@ class url_record {
   /// Tests if the URL cannot have a username, password or port
   /// \returns `true` if the URL cannot have a username, password
   ///          or port
-  [[nodiscard]] constexpr auto cannot_have_a_username_password_or_port() const noexcept -> bool {
+  [[nodiscard]] auto cannot_have_a_username_password_or_port() const noexcept -> bool {
     return (!host || host.value().is_empty()) || cannot_be_a_base_url || (scheme == "file");
   }
 
