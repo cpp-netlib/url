@@ -5,7 +5,7 @@
 
 #include <string>
 #define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <skyr/v1/unicode/details/to_u8.hpp>
 
 TEST_CASE("weird_01", "byte_conversion_tests") {

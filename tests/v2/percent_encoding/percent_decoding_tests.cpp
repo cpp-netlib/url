@@ -4,7 +4,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 
 #define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #define FMT_HEADER_ONLY
 #include <fmt/format.h>
 #include <skyr/v2/percent_encoding/percent_decode.hpp>

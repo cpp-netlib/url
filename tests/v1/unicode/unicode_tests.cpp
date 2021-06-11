@@ -4,7 +4,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 
 #define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u16_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/v1/unicode/ranges/transforms/u8_transform.hpp>

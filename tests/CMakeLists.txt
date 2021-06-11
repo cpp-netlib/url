@@ -9,7 +9,7 @@ function(skyr_create_test file_name output_dir test_name version)
             ${test}
             PRIVATE
             skyr-url-${version}
-            Catch2::Catch2
+            Catch2::Catch2WithMain
             fmt::fmt
     )
     set_target_properties(
