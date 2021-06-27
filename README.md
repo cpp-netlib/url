@@ -139,7 +139,7 @@ int main() {
 
   std::cout << "Domain?   " << std::boolalpha << url.is_domain() << std::endl;
   std::cout << "Domain:   " << url.hostname() << std::endl;
-  std::cout << "Domain:   " << url.u8domain() << std::endl;
+  std::cout << "Domain:   " << url.u8domain().value() << std::endl;
 
   std::cout << "Port:     " << url.port<std::uint16_t>().value() << std::endl;
 
@@ -160,6 +160,8 @@ Here is the ``CMake`` script to build the example:
 
 ```cmake
 # CMakeLists.txt
+
+cmake_minimum_required(VERSION 3.16)
 
 project(my_project)
 

@@ -465,6 +465,7 @@ auto url_parser_context::parse_port(char byte) -> tl::expected<url_parse_action,
 
 auto url_parser_context::parse_file(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
   url.scheme = "file";
+  url.host = host{empty_host{}};
 
   if ((byte == '/') || (byte == '\\')) {
     if (byte == '\\') {
@@ -472,28 +473,22 @@ auto url_parser_context::parse_file(char byte) -> tl::expected<url_parse_action,
     }
     state = url_parse_state::file_slash;
   } else if (base && (base->scheme == "file")) {
-    if (is_eof()) {
-      url.host = base->host;
-      url.path = base->path;
-      url.query = base->query;
-    } else if (byte == '?') {
-      url.host = base->host;
-      url.path = base->path;
+    url.host = base->host;
+    url.path = base->path;
+    url.query = base->query;
+    if (byte == '?') {
       url.query = std::string();
       state = url_parse_state::query;
     } else if (byte == '#') {
-      url.host = base->host;
-      url.path = base->path;
-      url.query = base->query;
       url.fragment = std::string();
       state = url_parse_state::fragment;
     } else {
+      url.query = std::nullopt;
       if (!is_windows_drive_letter(input.substr(std::distance(begin(input), it)))) {
-        url.host = base->host;
-        url.path = base->path;
         shorten_path(url.scheme, url.path);
       } else {
         *validation_error |= true;
+        url.path.clear();
       }
       state = url_parse_state::path;
       if (it == begin(input)) {
@@ -519,10 +514,11 @@ auto url_parser_context::parse_file_slash(char byte) -> tl::expected<url_parse_a
     }
     state = url_parse_state::file_host;
   } else {
-    auto substr = input.substr(std::distance(begin(input), it));
-    if (base && ((base->scheme == "file") && !is_windows_drive_letter(substr))) {
-      if (!base->path.empty() && is_windows_drive_letter(base->path[0])) {
-        url.path.push_back(base->path[0]);
+    if (base && (base->scheme == "file")) {
+      auto substr = input.substr(std::distance(begin(input), it));
+      if (!is_windows_drive_letter(substr) &&
+          (!base->path.empty() && is_windows_drive_letter(base->path[0]))) {
+          url.path.push_back(base->path[0]);
       } else {
         url.host = base->host;
       }

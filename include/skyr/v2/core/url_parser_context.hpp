@@ -520,6 +520,7 @@ class url_parser_context {
 
   auto parse_file(char byte) -> tl::expected<url_parse_action, url_parse_errc> {
     set_file_scheme();
+    set_empty_host();
 
     if ((byte == '/') || (byte == '\\')) {
       if (byte == '\\') {
@@ -527,28 +528,22 @@ class url_parser_context {
       }
       state = url_parse_state::file_slash;
     } else if (base && (base->scheme == "file")) {
-      if (is_eof()) {
-        set_host_from_base();
-        set_path_from_base();
-        set_query_from_base();
-      } else if (byte == '?') {
-        set_host_from_base();
-        set_path_from_base();
+      set_host_from_base();
+      set_path_from_base();
+      set_query_from_base();
+      if (byte == '?') {
         set_empty_query();
         state = url_parse_state::query;
       } else if (byte == '#') {
-        set_host_from_base();
-        set_path_from_base();
-        set_query_from_base();
         set_empty_fragment();
         state = url_parse_state::fragment;
       } else {
+        clear_query();
         if (!details::is_windows_drive_letter(still_to_process())) {
-          set_host_from_base();
-          set_path_from_base();
           details::shorten_path(url.scheme, url.path);
         } else {
           *validation_error |= true;
+          clear_path();
         }
         state = url_parse_state::path;
         if (input_it == std::begin(input)) {
@@ -574,11 +569,11 @@ class url_parser_context {
       }
       state = url_parse_state::file_host;
     } else {
-      if (base && ((base->scheme == "file") && !details::is_windows_drive_letter(still_to_process()))) {
-        if (!base->path.empty() && details::is_windows_drive_letter(base->path[0])) {
+      if (base && (base->scheme == "file")) {
+        set_host_from_base();
+        if (!details::is_windows_drive_letter(still_to_process()) &&
+            (!base->path.empty() && details::is_windows_drive_letter(base->path[0]))) {
           set_path_from_base0();
-        } else {
-          set_host_from_base();
         }
       }
 
@@ -849,6 +844,10 @@ class url_parser_context {
     url.cannot_be_a_base_url = true;
   }
 
+  void clear_path() {
+    url.path.clear();
+  }
+
   void add_empty_path_element() {
     url.path.emplace_back();
   }
@@ -875,6 +874,10 @@ class url_parser_context {
   void append_to_path0(char byte) {
     auto pct_encoded = percent_encode_byte(std::byte(byte), percent_encoding::encode_set::c0_control);
     url.path[0] += pct_encoded.to_string();
+  }
+
+  void clear_query() {
+    url.query->clear();
   }
 
   void set_empty_query() {
