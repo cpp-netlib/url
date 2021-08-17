@@ -1,4 +1,4 @@
-# Copyright (c) Glyn Matthews 2012-2020.
+# Copyright (c) Glyn Matthews 2012-2021.
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
@@ -13,6 +13,12 @@ project(
         DESCRIPTION "A C++ library that implements the WhatWG URL specification"
         LANGUAGES CXX
 )
+
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    set(skyr_IS_TOP_LEVEL_PROJECT YES)
+else()
+    set(skyr_IS_TOP_LEVEL_PROJECT NO)
+endif()
 
 option(skyr_BUILD_TESTS "Build the URL tests." ON)
 option(skyr_BUILD_DOCS "Build the URL documentation." OFF)
@@ -73,11 +79,14 @@ endif()
 # Add an alias for projects that use skyr-url as a dependency
 if (NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     add_library(skyr::skyr-url ALIAS skyr-url-v1)
+    add_library(skyr::url ALIAS skyr-url-v1)
     if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
         add_library(skyr::skyr-filesystem ALIAS skyr-filesystem-v1)
+        add_library(skyr::filesystem ALIAS skyr-filesystem-v1)
     endif()
     if (skyr_ENABLE_JSON_FUNCTIONS)
         add_library(skyr::skyr-json ALIAS skyr-json-v1)
+        add_library(skyr::json ALIAS skyr-json-v1)
     endif()
 endif()
 
