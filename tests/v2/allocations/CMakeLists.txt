@@ -5,16 +5,6 @@
 
 include(../../../cmake/skyr-url-functions.cmake)
 
-set(full_warnings $<BOOL:${skyr_FULL_WARNINGS}>)
-set(warnings_as_errors $<BOOL:${skyr_WARNINGS_AS_ERRORS}>)
-set(no_exceptions $<BOOL:${skyr_BUILD_WITHOUT_EXCEPTIONS}>)
-set(no_rtti $<BOOL:${skyr_BUILD_WITHOUT_RTTI}>)
-
-set(gnu $<CXX_COMPILER_ID:GNU>)
-set(clang $<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>)
-set(libcxx $<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>)
-set(msvc $<CXX_COMPILER_ID:MSVC>)
-
 foreach(
         file_name
         host_parsing_tests.cpp
@@ -22,7 +12,7 @@ foreach(
     skyr_remove_extension(${file_name} basename)
     set(test ${basename}-v2)
     add_executable(${test} ${file_name})
-    add_dependencies(${test} skyr-url-v1)
+    add_dependencies(${test} skyr-url-v2)
     target_compile_options(
             ${test}
             PRIVATE
