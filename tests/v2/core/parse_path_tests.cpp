@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <skyr/v2/core/parse_path.hpp>
 
 TEST_CASE("path_parsing_example_tests", "[parse]") {

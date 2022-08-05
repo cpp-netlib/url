@@ -5,7 +5,7 @@
 
 #include <vector>
 #define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <skyr/v2/url.hpp>
 
 TEST_CASE("url_vector_tests", "[url]") {
