@@ -4,7 +4,6 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <string>
-#define CATCH_CONFIG_MAIN
 #include <catch2/catch_all.hpp>
 #include <skyr/v1/unicode/details/to_u8.hpp>
 

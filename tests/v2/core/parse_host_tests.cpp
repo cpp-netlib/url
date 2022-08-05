@@ -5,7 +5,6 @@
 
 #include <string_view>
 #include <variant>
-#define CATCH_CONFIG_MAIN
 #include <catch2/catch_all.hpp>
 #include <skyr/v2/core/host.hpp>
 

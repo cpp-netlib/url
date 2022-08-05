@@ -116,7 +116,7 @@ class static_vector {
   /// \pre `size() > 0`
   constexpr void pop_back() noexcept {
     assert(size_ > 0);
-//    back().~value_type();
+    back().~value_type();
     --size_;
   }
 

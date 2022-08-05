@@ -4,7 +4,6 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <memory>
-#define CATCH_CONFIG_MAIN
 #include <catch2/catch_all.hpp>
 #include <skyr/v1/containers/static_vector.hpp>
 
