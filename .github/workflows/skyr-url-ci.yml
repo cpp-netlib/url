@@ -4,8 +4,8 @@ name: skyr-url CI
 on: [ push, pull_request ]
 
 env:
-  CMAKE_VERSION: 3.22.0
-  NINJA_VERSION: 1.11.0
+  CMAKE_VERSION: 3.17.3
+  NINJA_VERSION: 1.9.0
 
 jobs:
   build:
@@ -109,22 +109,6 @@ jobs:
             cxx_standard: 20,
           }
 
-          # Clang-14
-          - {
-            name: "Linux Clang 14 Debug (C++20)", artifact: "Linux.tar.xz",
-            os: ubuntu-latest,
-            build_type: Debug,
-            cc: "clang-14", cxx: "clang++-14",
-            cxx_standard: 20,
-          }
-          - {
-            name: "Linux Clang 14 Release (C++20)", artifact: "Linux.tar.xz",
-            os: ubuntu-latest,
-            build_type: RelWithDebInfo,
-            cc: "clang-14", cxx: "clang++-14",
-            cxx_standard: 20,
-          }
-
           # AppleClang
           - {
             name: "macOS Clang Debug (C++17)", artifact: "macOS.tar.xz",
@@ -186,40 +170,6 @@ jobs:
             build_type: RelWithDebInfo,
             cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            cxx_standard: 20,
-          }
-
-          # MSVC 2022
-          - {
-            name: "Windows MSVC 2022 Debug (C++17)", artifact: "Windows-MSVC.tar.xz",
-            os: windows-latest,
-            build_type: Debug,
-            cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            cxx_standard: 17,
-          }
-          - {
-            name: "Windows MSVC 2022 Release (C++17)", artifact: "Windows-MSVC.tar.xz",
-            os: windows-latest,
-            build_type: RelWithDebInfo,
-            cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            cxx_standard: 17,
-          }
-          - {
-            name: "Windows MSVC 2022 Debug (C++20)", artifact: "Windows-MSVC.tar.xz",
-            os: windows-latest,
-            build_type: Debug,
-            cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            cxx_standard: 20,
-          }
-          - {
-            name: "Windows MSVC 2022 Release (C++20)", artifact: "Windows-MSVC.tar.xz",
-            os: windows-latest,
-            build_type: RelWithDebInfo,
-            cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
             cxx_standard: 20,
           }
 
@@ -414,16 +364,12 @@ jobs:
           set(BUILD_V2 OFF)
           if ("${{ matrix.config.name }}" STREQUAL "Windows MSVC 2019 Debug (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Windows MSVC 2019 Release (C++20)" OR
-              "${{ matrix.config.name }}" STREQUAL "Windows MSVC 2022 Debug (C++20)" OR
-              "${{ matrix.config.name }}" STREQUAL "Windows MSVC 2022 Release (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux GCC 11 Debug (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux GCC 11 Release (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 11 Debug (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 11 Release (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Debug (C++20)" OR
-              "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Release (C++20)" OR
-              "${{ matrix.config.name }}" STREQUAL "Linux Clang 14 Debug (C++20)" OR
-              "${{ matrix.config.name }}" STREQUAL "Linux Clang 14 Release (C++20)"
+              "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Release (C++20)"
           )
             set(BUILD_V2 ON)
           endif()
