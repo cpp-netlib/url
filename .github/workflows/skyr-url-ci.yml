@@ -61,6 +61,22 @@ jobs:
             cxx_standard: 20,
           }
 
+          # GCC-12
+          - {
+            name: "Linux GCC 12 Debug (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-12", cxx: "g++-12",
+            cxx_standard: 20,
+          }
+          - {
+            name: "Linux GCC 12 Release (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "gcc-12", cxx: "g++-12",
+            cxx_standard: 20,
+          }
+
           # Clang-10
           - {
             name: "Linux Clang 10 Debug (C++20)", artifact: "Linux.tar.xz",
@@ -259,6 +275,15 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install g++-11
 
+      - name: Install GCC 12
+        id: install_gcc_12
+        if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'g++-12' )
+        shell: bash
+        working-directory: ${{ env.HOME }}
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install g++-12
+
       - name: Install Clang 8
         id: install_clang_8
         if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'clang++-8' )
@@ -382,12 +407,14 @@ jobs:
               "${{ matrix.config.name }}" STREQUAL "Windows MSVC 2019 Release (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux GCC 11 Debug (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux GCC 11 Release (C++20)" OR
+              "${{ matrix.config.name }}" STREQUAL "Linux GCC 12 Debug (C++20)" OR
+              "${{ matrix.config.name }}" STREQUAL "Linux GCC 12 Release (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 11 Debug (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 11 Release (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Debug (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Release (C++20)" OR
-              "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Debug (C++20)" OR
-              "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Release (C++20)"
+              "${{ matrix.config.name }}" STREQUAL "Linux Clang 14 Debug (C++20)" OR
+              "${{ matrix.config.name }}" STREQUAL "Linux Clang 14 Release (C++20)"
           )
             set(BUILD_V2 ON)
           endif()
