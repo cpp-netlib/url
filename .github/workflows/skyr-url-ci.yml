@@ -109,6 +109,22 @@ jobs:
             cxx_standard: 20,
           }
 
+          # Clang-14
+          - {
+            name: "Linux Clang 14 Debug (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "clang-14", cxx: "clang++-14",
+            cxx_standard: 20,
+          }
+          - {
+            name: "Linux Clang 14 Release (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "clang-14", cxx: "clang++-14",
+            cxx_standard: 20,
+          }
+
           # AppleClang
           - {
             name: "macOS Clang Debug (C++17)", artifact: "macOS.tar.xz",
@@ -368,6 +384,8 @@ jobs:
               "${{ matrix.config.name }}" STREQUAL "Linux GCC 11 Release (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 11 Debug (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 11 Release (C++20)" OR
+              "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Debug (C++20)" OR
+              "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Release (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Debug (C++20)" OR
               "${{ matrix.config.name }}" STREQUAL "Linux Clang 12 Release (C++20)"
           )
