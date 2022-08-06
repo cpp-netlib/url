@@ -61,21 +61,21 @@ jobs:
             cxx_standard: 20,
           }
 
-          # GCC-12
-          - {
-            name: "Linux GCC 12 Debug (C++20)", artifact: "Linux.tar.xz",
-            os: ubuntu-latest,
-            build_type: Debug,
-            cc: "gcc-12", cxx: "g++-12",
-            cxx_standard: 20,
-          }
-          - {
-            name: "Linux GCC 12 Release (C++20)", artifact: "Linux.tar.xz",
-            os: ubuntu-latest,
-            build_type: RelWithDebInfo,
-            cc: "gcc-12", cxx: "g++-12",
-            cxx_standard: 20,
-          }
+#          # GCC-12
+#          - {
+#            name: "Linux GCC 12 Debug (C++20)", artifact: "Linux.tar.xz",
+#            os: ubuntu-latest,
+#            build_type: Debug,
+#            cc: "gcc-12", cxx: "g++-12",
+#            cxx_standard: 20,
+#          }
+#          - {
+#            name: "Linux GCC 12 Release (C++20)", artifact: "Linux.tar.xz",
+#            os: ubuntu-latest,
+#            build_type: RelWithDebInfo,
+#            cc: "gcc-12", cxx: "g++-12",
+#            cxx_standard: 20,
+#          }
 
           # Clang-10
           - {
@@ -294,14 +294,14 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install g++-11
 
-      - name: Install GCC 12
-        id: install_gcc_12
-        if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'g++-12' )
-        shell: bash
-        working-directory: ${{ env.HOME }}
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install g++-12
+#      - name: Install GCC 12
+#        id: install_gcc_12
+#        if: startsWith(matrix.config.os, 'ubuntu') && ( matrix.config.cxx == 'g++-12' )
+#        shell: bash
+#        working-directory: ${{ env.HOME }}
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get -y install g++-12
 
       - name: Install Clang 8
         id: install_clang_8
