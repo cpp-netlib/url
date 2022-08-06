@@ -61,6 +61,22 @@ jobs:
             cxx_standard: 20,
           }
 
+          # GCC-12
+          - {
+            name: "Linux GCC 12 Debug (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: Debug,
+            cc: "gcc-12", cxx: "g++-12",
+            cxx_standard: 20,
+          }
+          - {
+            name: "Linux GCC 12 Release (C++20)", artifact: "Linux.tar.xz",
+            os: ubuntu-latest,
+            build_type: RelWithDebInfo,
+            cc: "gcc-12", cxx: "g++-12",
+            cxx_standard: 20,
+          }
+
           # Clang-10
           - {
             name: "Linux Clang 10 Debug (C++20)", artifact: "Linux.tar.xz",
