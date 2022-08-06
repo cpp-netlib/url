@@ -439,7 +439,6 @@ jobs:
               -D CMAKE_TOOLCHAIN_FILE=$ENV{GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
               -D CMAKE_INSTALL_PREFIX=$ENV{GITHUB_WORKSPACE}/install
             RESULT_VARIABLE result
-            ECHO_ERROR_VARIABLE
           )
           if (NOT result EQUAL 0)
             message(FATAL_ERROR "Bad exit status")
