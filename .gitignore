@@ -3,4 +3,6 @@
 CMakeSettings.json
 cmake-build-*
 _build
+.build
+*.log
 .DS_Store

@@ -1,19 +1,16 @@
-function(skyr_create_test file_name output_dir test_name version)
-    CPMAddPackage("gh:fmtlib/fmt#10.1.1")
-    CPMAddPackage("gh:catchorg/Catch2@3.4.0")
+function(skyr_create_test file_name output_dir test_name)
     skyr_remove_extension(${file_name} base)
-    set(test ${base}-${version})
+    set(test ${base})
     add_executable(${test})
     target_sources(${test} PRIVATE ${base}.cpp)
     target_compile_options(${test} PRIVATE $<${libcxx}:-stdlib=libc++>)
-    add_dependencies(${test} skyr-url-${version})
+    add_dependencies(${test} skyr-url)
     target_link_libraries(
             ${test}
             PRIVATE
-            skyr-url-${version}
+            skyr-url
             Catch2::Catch2
             Catch2::Catch2WithMain
-            fmt::fmt
     )
     set_target_properties(
             ${test}
@@ -24,9 +21,4 @@ function(skyr_create_test file_name output_dir test_name version)
     set(test_name ${test} PARENT_SCOPE)
 endfunction()
 
-if (skyr_BUILD_V1)
-    add_subdirectory(v1)
-endif()
-if (skyr_BUILD_V2)
-    add_subdirectory(v2)
-endif()
+add_subdirectory(skyr)

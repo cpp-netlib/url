@@ -1,36 +1,104 @@
-BasedOnStyle:  Google
+---
+# Modern C++23 clang-format configuration
+BasedOnStyle: Google
+Language: Cpp
+
+# C++ Standard
+Standard: c++23
+
+# Indentation
+IndentWidth: 2
+TabWidth: 4
+UseTab: Never
 AccessModifierOffset: -1
 ConstructorInitializerIndentWidth: 4
-AlignTrailingComments: true
-AllowAllParametersOfDeclarationOnNextLine: true
-#AllowShortIfStatementsOnASingleLine: WithoutElse
-AllowShortFunctionsOnASingleLine: None
-AllowShortLoopsOnASingleLine: true
+ContinuationIndentWidth: 4
+IndentCaseLabels: true
+IndentPPDirectives: AfterHash
+IndentWrappedFunctionNames: false
+
+# Line breaking
+ColumnLimit: 120
 AlwaysBreakTemplateDeclarations: Yes
 AlwaysBreakBeforeMultilineStrings: true
 BreakBeforeBinaryOperators: None
-BreakConstructorInitializersBeforeComma: false
+BreakBeforeBraces: Attach
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
+BreakStringLiterals: true
+
+# Alignment
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: Left
+AlignOperands: Align
+AlignTrailingComments: true
+
+# Spacing
+SpacesBeforeTrailingComments: 2
+SpacesInParentheses: false
+SpaceInEmptyParentheses: false
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals: false
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+
+# Function and parameter formatting
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortFunctionsOnASingleLine: None
+AllowShortLambdasOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+
+# Bin packing and constructor initialization
 BinPackParameters: true
-ColumnLimit:     120
+BinPackArguments: true
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
-ExperimentalAutoDetectBinPacking: false
-IndentCaseLabels: true
+AllowAllConstructorInitializersOnNextLine: false
+
+# Other
+Cpp11BracedListStyle: true
+DerivePointerAlignment: false
+PointerAlignment: Left
+ReferenceAlignment: Left
+ReflowComments: true
+SortIncludes: false
+SortUsingDeclarations: false
 MaxEmptyLinesToKeep: 1
-ObjCSpaceBeforeProtocolList: false
+
+# Penalties for breaking (higher = less likely to break)
 PenaltyBreakComment: 60
 PenaltyBreakString: 1000
 PenaltyBreakFirstLessLess: 120
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 200
-SpacesBeforeTrailingComments: 2
-Cpp11BracedListStyle: true
-Standard:        Auto
-IndentWidth:     2
-TabWidth:        4
-UseTab:          Never
-BreakBeforeBraces: Attach
-SpacesInParentheses: false
-SpaceInEmptyParentheses: false
-SpacesInCStyleCastParentheses: false
-SortIncludes: false
-SortUsingDeclarations: false
+PenaltyBreakBeforeFirstCallParameter: 19
+
+# C++20/23 specific features
+RequiresClausePosition: OwnLine
+IndentRequiresClause: true
+SpaceAroundPointerQualifiers: Default
+
+# Include formatting
+IncludeBlocks: Preserve
+
+# Namespace formatting
+CompactNamespaces: false
+FixNamespaceComments: true
+NamespaceIndentation: None
+
+# Empty lines
+KeepEmptyLinesAtTheStartOfBlocks: false

@@ -10,9 +10,4 @@ configure_file(
         ${PROJECT_BINARY_DIR}/include/skyr/version.hpp
 )
 
-if (skyr_BUILD_V1)
-    add_subdirectory(v1)
-endif()
-if (skyr_BUILD_V2)
-    add_subdirectory(v2)
-endif()
+add_subdirectory(skyr)

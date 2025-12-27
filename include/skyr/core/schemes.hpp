@@ -3,9 +3,33 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_URL_SCHEMES_HPP
-#define SKYR_URL_SCHEMES_HPP
+#ifndef SKYR_CORE_URL_SCHEMES_HPP
+#define SKYR_CORE_URL_SCHEMES_HPP
 
-#include <skyr/v1/core/schemes.hpp>
+#include <string_view>
+#include <cstdint>
+#include <optional>
 
-#endif  // SKYR_URL_SCHEMES_HPP
+namespace skyr {
+/// \param scheme
+/// \returns
+constexpr inline auto is_special(std::string_view scheme) noexcept -> bool {
+  return (scheme == "file") || (scheme == "ftp") || (scheme == "http") || (scheme == "https") || (scheme == "ws") ||
+         (scheme == "wss");
+}
+
+/// \param scheme
+/// \returns
+constexpr inline auto default_port(std::string_view scheme) noexcept -> std::optional<std::uint16_t> {
+  if (scheme == "ftp") {
+    return 21;
+  } else if ((scheme == "http") || (scheme == "ws")) {
+    return 80;
+  } else if ((scheme == "https") || (scheme == "wss")) {
+    return 443;
+  }
+  return std::nullopt;
+}
+}  // namespace skyr
+
+#endif  // SKYR_CORE_URL_SCHEMES_HPP

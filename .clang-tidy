@@ -1,18 +1,133 @@
-Checks: '-*,bugprone-*,-bugprone-exception-escape,clang-diagnostic-*,cppcoreguidelines-*,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-macro-usage,-cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-avoid-c-arrays,misc-*,-misc-unused-parameters,-misc-non-private-member-variables-in-classes,modernize-*,performance-*'
+---
+# Comprehensive modern C++23 clang-tidy configuration
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-exception-escape,
+  -bugprone-easily-swappable-parameters,
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-avoid-do-while,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  misc-*,
+  -misc-unused-parameters,
+  -misc-non-private-member-variables-in-classes,
+  -misc-no-recursion,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  -modernize-avoid-c-arrays,
+  performance-*,
+  portability-*,
+  readability-*,
+  -readability-identifier-length,
+  -readability-function-cognitive-complexity,
+  -readability-magic-numbers,
+  -readability-uppercase-literal-suffix,
+  -readability-else-after-return
+
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*'
+FormatStyle: file
+
 CheckOptions:
-  - key:             readability-identifier-naming.ClassCase
-    value:           lower_case
-  - key:             readability-identifier-naming.EnumCase
-    value:           lower_case
-  - key:             readability-identifier-naming.FunctionCase
-    value:           lower_case
-  - key:             readability-identifier-naming.MemberCase
-    value:           lower_case
-  - key:             readability-identifier-naming.ParameterCase
-    value:           lower_case
-  - key:             readability-identifier-naming.UnionCase
-    value:           lower_case
-  - key:             readability-identifier-naming.VariableCase
-    value:           lower_case
-  - key:             readability-identifier-naming.IgnoreMainLikeFunctions
-    value:           1
+  # Naming conventions (snake_case style)
+  - key: readability-identifier-naming.ClassCase
+    value: lower_case
+  - key: readability-identifier-naming.StructCase
+    value: lower_case
+  - key: readability-identifier-naming.EnumCase
+    value: lower_case
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.MethodCase
+    value: lower_case
+  - key: readability-identifier-naming.MemberCase
+    value: lower_case
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.ConstantCase
+    value: lower_case
+  - key: readability-identifier-naming.ConstantMemberCase
+    value: lower_case
+  - key: readability-identifier-naming.StaticConstantCase
+    value: lower_case
+  - key: readability-identifier-naming.UnionCase
+    value: lower_case
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+  - key: readability-identifier-naming.TemplateParameterCase
+    value: CamelCase
+  - key: readability-identifier-naming.TypeAliasCase
+    value: lower_case
+  - key: readability-identifier-naming.TypedefCase
+    value: lower_case
+  - key: readability-identifier-naming.IgnoreMainLikeFunctions
+    value: 1
+
+  # Modernize options
+  - key: modernize-loop-convert.MaxCopySize
+    value: '16'
+  - key: modernize-loop-convert.MinConfidence
+    value: reasonable
+  - key: modernize-pass-by-value.IncludeStyle
+    value: google
+  - key: modernize-replace-auto-ptr.IncludeStyle
+    value: google
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL'
+
+  # Performance options
+  - key: performance-for-range-copy.WarnOnAllAutoCopies
+    value: '1'
+  - key: performance-inefficient-string-concatenation.StrictMode
+    value: '1'
+  - key: performance-move-const-arg.CheckTriviallyCopyableMove
+    value: '1'
+  - key: performance-unnecessary-value-param.AllowedTypes
+    value: ''
+
+  # Readability options
+  - key: readability-braces-around-statements.ShortStatementLines
+    value: '0'
+  - key: readability-implicit-bool-conversion.AllowIntegerConditions
+    value: '0'
+  - key: readability-implicit-bool-conversion.AllowPointerConditions
+    value: '0'
+  - key: readability-simplify-boolean-expr.ChainedConditionalReturn
+    value: '1'
+  - key: readability-simplify-boolean-expr.ChainedConditionalAssignment
+    value: '1'
+
+  # Bugprone options
+  - key: bugprone-argument-comment.StrictMode
+    value: '0'
+  - key: bugprone-misplaced-widening-cast.CheckImplicitCasts
+    value: '1'
+  - key: bugprone-sizeof-expression.WarnOnSizeOfThis
+    value: '1'
+  - key: bugprone-string-constructor.WarnOnLargeLength
+    value: '1'
+  - key: bugprone-suspicious-string-compare.WarnOnLogicalNotComparison
+    value: '1'
+
+  # C++ Core Guidelines options
+  - key: cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors
+    value: '1'
+  - key: cppcoreguidelines-special-member-functions.AllowMissingMoveFunctions
+    value: '0'
+  - key: cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+    value: '1'
+
+  # Misc options
+  - key: misc-throw-by-value-catch-by-reference.CheckThrowTemporaries
+    value: '1'
