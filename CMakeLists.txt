@@ -80,7 +80,8 @@ set(libcxx $<AND:${clang},$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>)
 set(clang_with_gnu_stdlib $<AND:${clang},$<NOT:$<BOOL:${skyr_BUILD_WITH_LLVM_LIBCXX}>>>)
 set(msvc $<BOOL:${SKY_CXX_COMPILER_MSVC}>)
 
-add_subdirectory(src)
+# Header-only library - target definitions in cmake/targets
+add_subdirectory(cmake/targets)
 
 # Testing
 if (skyr_BUILD_TESTS)

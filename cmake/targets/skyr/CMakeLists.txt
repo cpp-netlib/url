@@ -1,5 +1,6 @@
 #################################################
 # skyr-url (C++23)
+# Header-only library - no compiled code
 #################################################
 
 add_library(skyr-url INTERFACE)

@@ -3,7 +3,10 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-include(skyr-url-functions)
+# CMake target definitions for header-only library
+# Actual implementation is in include/skyr/
+
+include(${PROJECT_SOURCE_DIR}/cmake/skyr-url-functions.cmake)
 
 configure_file(
         version.hpp.in

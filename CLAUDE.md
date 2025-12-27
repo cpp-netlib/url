@@ -13,6 +13,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
+**Header-Only Library**: This is a pure header-only library - all implementation is in `include/skyr/`. No compilation required!
+
 **C++23-Only Implementation**: As of the latest reboot, this library is C++23-only. Previous v1 (C++17) and v2 (C++20) versions have been removed to focus on modern C++ features.
 
 **Modern C++ Features Used**:
@@ -21,7 +23,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `std::ranges` for range-based algorithms and views (replaces `range-v3`)
 - `uni-algo` library for Unicode processing
 
-**Key Advantage**: Minimal external dependencies - only requires `uni-algo` for Unicode support. Everything else (expected, format, ranges) is in the C++23 standard library!
+**Key Advantages**:
+- **Header-only** - just include and use, no linking required
+- **Minimal external dependencies** - only requires `uni-algo` for Unicode support
 
 ## Building
 
@@ -115,6 +119,11 @@ ctest --test-dir _build
    ```
 
 ## Code Structure
+
+**Directory Layout**:
+- `include/skyr/` - All header files (the actual implementation)
+- `cmake/targets/` - CMake target definitions (no source code, just build configuration)
+- `tests/` - Comprehensive test suite
 
 ### Core Components
 
