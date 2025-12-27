@@ -29,7 +29,7 @@ class url_record {
   string_type password;
   /// An optional URL host, either a domain, IPv4 or IPv6 address,
   /// an opaque host, or empty
-  std::optional<host> host;
+  std::optional<::skyr::host> host;
   /// An optional network port
   std::optional<std::uint16_t> port;
   /// A list of zero or more ASCII strings, used to identify a

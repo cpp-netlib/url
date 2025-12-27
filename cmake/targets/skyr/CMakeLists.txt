@@ -12,6 +12,7 @@ target_link_libraries(
         INTERFACE
         uni-algo::uni-algo
         $<${libcxx}:c++>
+        $<${libcxx}:c++abi>
 )
 
 target_include_directories(

@@ -11,6 +11,8 @@
 #include <string_view>
 #include <optional>
 #include <cmath>
+#include <climits>
+#include <cstdint>
 #include <locale>
 #include <expected>
 #include <skyr/platform/endianness.hpp>

@@ -11,7 +11,6 @@
 #include <cstddef>
 
 namespace skyr {
-inline namespace skyr {
 namespace percent_encoding {
 namespace details {
 ///
@@ -276,7 +275,6 @@ inline auto is_percent_encoded(std::string_view input) noexcept {
       std::isxdigit(input[2], std::locale::classic());
 }
 }  // namespace percent_encoding
-}  // namespace skyr
 }  // namespace skyr
 
 #endif //SKYR_PERCENT_ENCODING_PERCENT_ENCODED_CHAR_HPP

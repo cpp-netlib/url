@@ -9,6 +9,7 @@
 #include <string>
 #include <string_view>
 #include <limits>
+#include <cstdint>
 #include <ranges>  // was: range/v3/view/filter.hpp>
 #include <ranges>  // was: range/v3/view/transform.hpp>
 #include <algorithm>

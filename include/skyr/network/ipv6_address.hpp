@@ -10,6 +10,7 @@
 #include <string_view>
 #include <array>
 #include <optional>
+#include <cstdint>
 #include <algorithm>
 #include <iterator>
 #include <locale>

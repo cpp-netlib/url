@@ -7,6 +7,7 @@
 #define SKYR_UNICODE_CONSTANTS_HPP
 
 #include <array>
+#include <cstdint>
 
 namespace skyr::unicode::constants {
 namespace surrogates {

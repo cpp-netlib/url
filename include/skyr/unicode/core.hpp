@@ -8,6 +8,7 @@
 
 #include <string>
 #include <type_traits>
+#include <cstdint>
 #include <expected>
 #include <skyr/unicode/constants.hpp>
 #include <skyr/unicode/errors.hpp>
