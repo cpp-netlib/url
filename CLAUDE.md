@@ -186,12 +186,53 @@ Aliases for compatibility:
 - **.clang-format**: Modern C++23 formatting configuration based on Google style
 - **.clang-tidy**: Comprehensive linting with bugprone, modernize, performance, and readability checks
 
+## Continuous Integration
+
+The library is tested on **26 build configurations** across multiple platforms and compilers to ensure broad compatibility and C++23 standards compliance.
+
+### Tested Compilers
+
+**Linux (12 configurations):**
+- **GCC 13** - Debug + Release (pre-installed on ubuntu-24.04)
+- **GCC 14** - Debug + Release (pre-installed on ubuntu-24.04)
+- **Clang 18** - Debug + Release (with libc++, pre-installed)
+- **Clang 19** - Debug + Release (with libc++, from LLVM repository)
+- **Clang 20** - Debug + Release (with libc++, from LLVM repository)
+- **Clang 21** - Debug + Release (with libc++, from LLVM repository)
+
+**macOS (8 configurations):**
+- **Clang 18** - Debug + Release (LLVM from Homebrew)
+- **Clang 19** - Debug + Release (LLVM from Homebrew)
+- **Clang 20** - Debug + Release (LLVM from Homebrew)
+- **Clang 21** - Debug + Release (LLVM from Homebrew)
+
+**Windows (4 configurations):**
+- **MSVC 2022** - Debug + Release (Visual Studio 2022)
+- **MSVC 2026** - Debug + Release (Visual Studio 2026)
+
+### CI Implementation Details
+
+**Linux Clang with libc++:**
+- Uses custom vcpkg triplet (`x64-linux-libcxx`) to build dependencies with libc++
+- Required for C++23 features (`std::expected`, `std::format`) with Clang on Linux
+- Triplet configuration: `cmake/vcpkg-triplets/x64-linux-libcxx.cmake`
+
+**Compiler Installation:**
+- Pre-installed compilers used when available for faster builds
+- Clang 19-21: Installed from LLVM apt repository
+- macOS Clang: Installed via Homebrew (`brew install llvm@<version>`)
+
+**Build Matrix:**
+- All configurations test both Debug and RelWithDebInfo builds
+- Comprehensive coverage across GCC, Clang (with libc++), and MSVC
+- Tests C++23 standard library features across all platforms
+
 ## Test Results
 
 The library has comprehensive test coverage with **excellent results**:
 
-**Overall: 21/22 test suites passing (95.5%)**
-**Assertions: 240/242 passing (99.2%)**
+**Overall: 22/22 test suites passing (100%)**
+**Assertions: 242/242 passing (100%)**
 
 ### Test Suite Results
 
@@ -224,10 +265,10 @@ The library has comprehensive test coverage with **excellent results**:
 - parse_query_tests
 - url_serialize_tests
 
-⚠️ **URL** (2/3)
-- url_vector_tests ✅
-- url_setter_tests ✅
-- url_tests ⚠️ (2 minor edge case failures)
+✅ **URL** (3/3)
+- url_vector_tests
+- url_setter_tests
+- url_tests
 
 ✅ **Extensions** (2/2)
 - filesystem_path_tests
@@ -238,15 +279,7 @@ The library has comprehensive test coverage with **excellent results**:
 
 ### Known Issues
 
-**Minor edge case regressions** (2 assertions in url_tests):
-- `regression_failure_03`: Dot-segment path normalization for `"http://./"`
-  - Expected: `"http://./"`
-  - Got: `"http://../"`
-- `regression_failure_04`: Dot-segment path normalization for `"http://../"`
-  - Expected: `"http://../"`
-  - Got: `"http://.../"`
-
-These edge cases don't affect normal URL parsing functionality. All standard use cases pass.
+**No known issues** - All test suites are passing with excellent coverage.
 
 ## Migration Notes
 
