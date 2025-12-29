@@ -10,6 +10,7 @@
 #include <string_view>
 #include <limits>
 #include <cstdint>
+#include <vector>
 #include <ranges>  // was: range/v3/view/filter.hpp>
 #include <ranges>  // was: range/v3/view/transform.hpp>
 #include <algorithm>
@@ -86,13 +87,27 @@ inline auto punycode_encode(std::u32string_view input, std::string *output) -> s
     *output += static_cast<char>(delimiter);
   }
 
-  while (h < input.size()) {
-    auto m = std::numeric_limits<uint32_t>::max();
-    for (auto c : input) {
-      if ((static_cast<uint32_t>(c) >= n) && (static_cast<uint32_t>(c) < m)) {
-        m = c;
-      }
+  // Optimization: Pre-compute sorted unique non-ASCII codepoints to avoid O(n²) scanning
+  auto unique_codepoints = std::vector<char32_t>{};
+  for (auto c : input) {
+    if (c >= initial_n) {
+      unique_codepoints.push_back(c);
     }
+  }
+  std::ranges::sort(unique_codepoints);
+  auto unique_end = std::ranges::unique(unique_codepoints);
+  unique_codepoints.erase(unique_end.begin(), unique_codepoints.end());
+  auto codepoint_it = unique_codepoints.begin();
+
+  while (h < input.size()) {
+    // Find next codepoint >= n from pre-sorted list instead of scanning input
+    while (codepoint_it != unique_codepoints.end() && static_cast<uint32_t>(*codepoint_it) < n) {
+      ++codepoint_it;
+    }
+    if (codepoint_it == unique_codepoints.end()) {
+      break;
+    }
+    auto m = static_cast<uint32_t>(*codepoint_it);
 
     if ((m - n) > ((std::numeric_limits<uint32_t>::max() - delta) / (h + 1ul))) {
       return std::unexpected(domain_errc::overflow);
