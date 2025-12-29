@@ -1,0 +1,62 @@
+name: clang-tidy Check
+
+on: [push, pull_request]
+
+jobs:
+  clang-tidy:
+    name: clang-tidy Check
+    runs-on: ubuntu-24.04
+    env:
+      CC: clang-18
+      CXX: clang++-18
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-tidy and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-tidy-18 libc++-18-dev libc++abi-18-dev ninja-build
+
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git ${GITHUB_WORKSPACE}/vcpkg
+          cd ${GITHUB_WORKSPACE}/vcpkg
+          ./bootstrap-vcpkg.sh
+          export CXXFLAGS="-stdlib=libc++"
+          export LDFLAGS="-stdlib=libc++ -lc++abi"
+          ./vcpkg install uni-algo nlohmann-json
+
+      - name: Configure CMake
+        run: |
+          cmake \
+            -B build \
+            -G Ninja \
+            -DCMAKE_CXX_STANDARD=23 \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -Dskyr_BUILD_TESTS=OFF \
+            -Dskyr_BUILD_DOCS=OFF \
+            -Dskyr_BUILD_EXAMPLES=OFF \
+            -Dskyr_BUILD_WITH_LLVM_LIBCXX=ON \
+            -DCMAKE_TOOLCHAIN_FILE=${GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+      - name: Run clang-tidy on headers
+        run: |
+          find include -name '*.hpp' -print0 | \
+            xargs -0 -n1 -P$(nproc) clang-tidy-18 -p build --warnings-as-errors='*'
+
+      - name: Run clang-tidy on tests
+        run: |
+          find tests -name '*.cpp' -print0 | \
+            xargs -0 -n1 -P$(nproc) clang-tidy-18 -p build --warnings-as-errors='*'
+
+      - name: clang-tidy check passed
+        if: success()
+        run: echo "✓ clang-tidy found no issues"
+
+      - name: clang-tidy check failed
+        if: failure()
+        run: |
+          echo "✗ clang-tidy found issues. Review the output above for details."
+          exit 1
