@@ -27,6 +27,13 @@ jobs:
           export LDFLAGS="-stdlib=libc++ -lc++abi"
           ./vcpkg install uni-algo nlohmann-json
 
+      - name: Install Catch2
+        run: |
+          cd ${GITHUB_WORKSPACE}/vcpkg
+          export CXXFLAGS="-stdlib=libc++"
+          export LDFLAGS="-stdlib=libc++ -lc++abi"
+          ./vcpkg install catch2
+
       - name: Configure CMake
         run: |
           cmake \
@@ -35,18 +42,13 @@ jobs:
             -DCMAKE_CXX_STANDARD=23 \
             -DCMAKE_BUILD_TYPE=Debug \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -Dskyr_BUILD_TESTS=OFF \
+            -Dskyr_BUILD_TESTS=ON \
             -Dskyr_BUILD_DOCS=OFF \
             -Dskyr_BUILD_EXAMPLES=OFF \
             -Dskyr_BUILD_WITH_LLVM_LIBCXX=ON \
             -DCMAKE_TOOLCHAIN_FILE=${GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
 
-      - name: Run clang-tidy on headers
-        run: |
-          find include -name '*.hpp' -print0 | \
-            xargs -0 -n1 -P$(nproc) clang-tidy-18 -p build --warnings-as-errors='*'
-
-      - name: Run clang-tidy on tests
+      - name: Run clang-tidy on source files
         run: |
           find tests -name '*.cpp' -print0 | \
             xargs -0 -n1 -P$(nproc) clang-tidy-18 -p build --warnings-as-errors='*'
