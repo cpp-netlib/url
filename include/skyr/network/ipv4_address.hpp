@@ -80,6 +80,11 @@ class ipv4_address {
 };
 
 namespace details {
+/// Computes 256^exp efficiently using bit shifts (256 = 2^8, so 256^n = 2^(8n))
+constexpr inline auto pow256(unsigned int exp) noexcept -> std::uint64_t {
+  return 1ULL << (exp * 8);
+}
+
 constexpr inline auto parse_ipv4_number(std::string_view input, bool *validation_error)
     -> std::expected<std::uint64_t, ipv4_address_errc> {
   auto base = 10;
@@ -170,7 +175,7 @@ constexpr inline auto parse_ipv4_address(std::string_view input, bool *validatio
     return std::unexpected(ipv4_address_errc::overflow);
   }
 
-  if (numbers.back() >= static_cast<std::uint64_t>(std::pow(256, 5 - numbers.size()))) {
+  if (numbers.back() >= details::pow256(5 - numbers.size())) {
     *validation_error |= true;
     return std::unexpected(ipv4_address_errc::overflow);
   }
@@ -180,7 +185,7 @@ constexpr inline auto parse_ipv4_address(std::string_view input, bool *validatio
 
   auto counter = 0UL;
   for (auto &&number : numbers) {
-    ipv4 += number * static_cast<std::uint64_t>(std::pow(256, 3 - counter));
+    ipv4 += number * details::pow256(3 - counter);
     ++counter;
   }
   return ipv4_address(static_cast<unsigned int>(ipv4));
