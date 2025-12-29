@@ -103,19 +103,6 @@ if (skyr_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
-if (NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    add_library(skyr::skyr-url ALIAS skyr-url-v1)
-    add_library(skyr::url ALIAS skyr-url-v1)
-    if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
-        add_library(skyr::skyr-filesystem ALIAS skyr-filesystem-v1)
-        add_library(skyr::filesystem ALIAS skyr-filesystem-v1)
-    endif()
-    if (skyr_ENABLE_JSON_FUNCTIONS)
-        add_library(skyr::skyr-json ALIAS skyr-json-v1)
-        add_library(skyr::json ALIAS skyr-json-v1)
-    endif()
-endif()
-
 ## Install
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -130,12 +117,12 @@ write_basic_package_version_file(
         COMPATIBILITY SameMajorVersion
         ARCH_INDEPENDENT)
 
-set(skyr_TARGETS skyr-url-v1)
+set(skyr_TARGETS skyr-url)
 if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
-    list(APPEND skyr_TARGETS skyr-filesystem-v1)
+    list(APPEND skyr_TARGETS skyr-filesystem)
 endif()
 if (skyr_ENABLE_JSON_FUNCTIONS)
-    list(APPEND skyr_TARGETS skyr-json-v1)
+    list(APPEND skyr_TARGETS skyr-json)
 endif()
 
 install(TARGETS ${skyr_TARGETS}
@@ -160,22 +147,12 @@ install(
         "${PROJECT_SOURCE_DIR}/include/skyr/domain"
         "${PROJECT_SOURCE_DIR}/include/skyr/network"
         "${PROJECT_SOURCE_DIR}/include/skyr/percent_encoding"
+        "${PROJECT_SOURCE_DIR}/include/skyr/unicode"
+        "${PROJECT_SOURCE_DIR}/include/skyr/containers"
+        "${PROJECT_SOURCE_DIR}/include/skyr/concepts"
+        "${PROJECT_SOURCE_DIR}/include/skyr/platform"
         DESTINATION
         include/skyr
-)
-
-install(
-        DIRECTORY
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/core"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/domain"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/network"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/percent_encoding"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/platform"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/string"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/traits"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/unicode"
-        DESTINATION
-        include/skyr/v1
 )
 
 install(
@@ -183,24 +160,15 @@ install(
         "${PROJECT_BINARY_DIR}/include/skyr/version.hpp"
         "${PROJECT_SOURCE_DIR}/include/skyr/config.hpp"
         "${PROJECT_SOURCE_DIR}/include/skyr/url.hpp"
+        "${PROJECT_SOURCE_DIR}/include/skyr/url_search_parameters.hpp"
         DESTINATION
         include/skyr
 )
 
-install(
-        FILES
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/url.hpp"
-        "${PROJECT_SOURCE_DIR}/include/skyr/v1/url_search_parameters.hpp"
-        DESTINATION
-        include/skyr/v1
-)
-
 if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
     install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/skyr/filesystem" DESTINATION include/skyr)
-    install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/skyr/v1/filesystem" DESTINATION include/skyr/v1)
 endif()
 
 if (skyr_ENABLE_JSON_FUNCTIONS)
     install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/skyr/json" DESTINATION include/skyr)
-    install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/skyr/v1/json" DESTINATION include/skyr/v1)
 endif()
