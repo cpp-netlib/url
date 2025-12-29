@@ -35,7 +35,14 @@ inline auto serialize_authority(const url_record &url) -> std::string {
 }
 
 inline auto serialize_path(const std::vector<std::string> &path) -> std::string {
+  // Pre-calculate total size: one '/' per segment plus segment lengths
+  auto total_size = path.size();  // For the '/' characters
+  for (const auto &segment : path) {
+    total_size += segment.size();
+  }
+
   std::string result;
+  result.reserve(total_size);
   for (auto it = path.begin(); it != path.end(); ++it) {
     result.push_back('/');
     result.append(*it);

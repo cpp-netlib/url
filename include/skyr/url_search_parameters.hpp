@@ -112,8 +112,11 @@ class url_search_parameters {
   /// \param name The search parameter name
   /// \returns All search parameter values with the given name
   [[nodiscard]] auto get_all(std::string_view name) const -> std::vector<string_type> {
+    // Count matching parameters first to reserve exact size
+    auto count = std::count_if(parameters_.begin(), parameters_.end(), details::is_name(name));
+
     std::vector<string_type> result;
-    result.reserve(parameters_.size());
+    result.reserve(count);
     for (auto [parameter_name, value] : parameters_) {
       if (parameter_name == name) {
         result.emplace_back(value.value_or(""));

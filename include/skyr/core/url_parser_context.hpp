@@ -857,10 +857,7 @@ class url_parser_context {
   }
 
   void remove_path_element() {
-    auto next_it = std::begin(url.path);
-    ++next_it;
-    std::rotate(std::begin(url.path), next_it, std::end(url.path));
-    url.path.pop_back();
+    url.path.erase(url.path.begin());
   }
 
   void set_path_from_base() {
