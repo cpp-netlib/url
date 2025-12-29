@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <optional>
 #include <cassert>
+#include <new>
 
 namespace skyr {
 ///
@@ -19,10 +20,16 @@ namespace skyr {
 template <class T, std::size_t Capacity>
 class static_vector {
  private:
-  using impl_type = std::array<T, Capacity>;
-
-  impl_type impl_;
+  alignas(T) std::array<std::byte, sizeof(T) * Capacity> storage_;
   std::size_t size_ = 0;
+
+  auto data_ptr() noexcept -> T* {
+    return std::launder(reinterpret_cast<T*>(storage_.data()));
+  }
+
+  auto data_ptr() const noexcept -> const T* {
+    return std::launder(reinterpret_cast<const T*>(storage_.data()));
+  }
 
  public:
   ///
@@ -40,9 +47,9 @@ class static_vector {
   ///
   using difference_type = std::ptrdiff_t;
   ///
-  using const_iterator = typename impl_type::const_iterator;
+  using const_iterator = const T*;
   ///
-  using iterator = typename impl_type::iterator;
+  using iterator = T*;
 
   /// Constructor
   constexpr static_vector() = default;
@@ -61,7 +68,7 @@ class static_vector {
   /// \pre `size_ > 0`
   constexpr auto front() const noexcept -> const_reference {
     assert(size() > 0);
-    return impl_[0];
+    return data_ptr()[0];
   }
 
   /// Gets the first element in the vector
@@ -69,7 +76,7 @@ class static_vector {
   /// \pre `size() > 0`
   constexpr auto front() noexcept -> reference {
     assert(size_ > 0);
-    return impl_[0];
+    return data_ptr()[0];
   }
 
   ///
@@ -77,7 +84,7 @@ class static_vector {
   /// \pre `size() > 0`
   constexpr auto back() const noexcept -> const_reference {
     assert(size_ > 0);
-    return impl_[size_ - 1];
+    return data_ptr()[size_ - 1];
   }
 
   ///
@@ -85,7 +92,7 @@ class static_vector {
   /// \pre `size() > 0`
   constexpr auto back() noexcept -> reference {
     assert(size_ > 0);
-    return impl_[size_ - 1];
+    return data_ptr()[size_ - 1];
   }
 
   ///
@@ -95,8 +102,9 @@ class static_vector {
   /// \post `size() > 0 && size() <= capacity()`
   constexpr auto push_back(const_reference value) noexcept -> reference {
     assert(size_ < Capacity);
-    impl_[size_++] = value;
-    return impl_[size_ - 1];
+    new (&data_ptr()[size_]) T(value);
+    ++size_;
+    return data_ptr()[size_ - 1];
   }
 
   ///
@@ -106,9 +114,10 @@ class static_vector {
   /// \pre `size() < capacity()`
   /// \post `size() > 0 && size() <= capacity()`
   template <class... Args>
-  constexpr auto emplace_back(Args&&... args) noexcept(std::is_trivially_move_assignable_v<T>) -> reference {
+  constexpr auto emplace_back(Args&&... args) noexcept(std::is_nothrow_constructible_v<T, Args...>) -> reference {
     assert(size_ < Capacity);
-    impl_[size_++] = value_type{std::forward<Args>(args)...};
+    new (&data_ptr()[size_]) T(std::forward<Args>(args)...);
+    ++size_;
     return back();
   }
 
@@ -123,13 +132,13 @@ class static_vector {
   ///
   /// \return
   [[nodiscard]] constexpr auto data() noexcept -> pointer {
-    return impl_.data();
+    return data_ptr();
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto data() const noexcept -> const_pointer {
-    return impl_.data();
+    return data_ptr();
   }
 
   ///
@@ -167,29 +176,25 @@ class static_vector {
   ///
   /// \return
   [[nodiscard]] constexpr auto begin() noexcept -> iterator {
-    return impl_.begin();
+    return data_ptr();
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto end() noexcept -> iterator {
-    auto last = impl_.begin();
-    std::advance(last, size_);
-    return last;
+    return data_ptr() + size_;
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto cbegin() const noexcept -> const_iterator {
-    return impl_.begin();
+    return data_ptr();
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto cend() const noexcept -> const_iterator {
-    auto last = impl_.begin();
-    std::advance(last, size_);
-    return last;
+    return data_ptr() + size_;
   }
 
   ///

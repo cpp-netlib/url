@@ -11,12 +11,14 @@ jobs:
 
       - name: Install clang-format
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-format-18
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 21
+          sudo apt-get install -y clang-format-21
 
       - name: Run clang-format
         run: |
-          find include tests -name '*.hpp' -o -name '*.cpp' | xargs clang-format-18 --dry-run --Werror
+          find include tests -name '*.hpp' -o -name '*.cpp' | xargs clang-format-21 --dry-run --Werror
 
       - name: Formatting check passed
         if: success()
