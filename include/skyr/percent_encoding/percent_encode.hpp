@@ -21,8 +21,9 @@ inline auto percent_encode_bytes(std::string_view input, percent_encoding::encod
   };
 
   auto result = std::string{};
+  result.reserve(input.size() * 3);  // Worst case: each byte becomes "%XX"
   for (const auto &encoded : input | std::ranges::views::transform(encode)) {
-    result += std::string(std::cbegin(encoded), std::cend(encoded));
+    result.append(encoded.begin(), encoded.end());
   }
   return result;
 }
