@@ -165,13 +165,16 @@ jobs:
           export
           ./bootstrap-vcpkg.sh
 
-          # For Clang builds, use libc++ for all packages
+          # For Clang builds, use custom triplet with libc++ and set compiler
           if [[ "${{ matrix.config.cxx }}" == clang++* ]]; then
-            export CXXFLAGS="-stdlib=libc++"
-            export LDFLAGS="-stdlib=libc++ -lc++abi"
+            export CC=${{ matrix.config.cc }}
+            export CXX=${{ matrix.config.cxx }}
+            ./vcpkg install catch2 uni-algo nlohmann-json \
+              --triplet x64-linux-libcxx \
+              --overlay-triplets=${GITHUB_WORKSPACE}/cmake/vcpkg-triplets
+          else
+            ./vcpkg install catch2 uni-algo nlohmann-json
           fi
-
-          ./vcpkg install catch2 uni-algo nlohmann-json
 
       - name: Install vcpkg (MacOS)
         id: vcpkg_macos
@@ -230,26 +233,51 @@ jobs:
           # Use libc++ for Linux Clang builds (needed for std::expected in C++23)
           # vcpkg is configured to build with libc++ for Clang as well
           set(USE_LLVM OFF)
+          set(VCPKG_TARGET_TRIPLET "")
+          set(VCPKG_OVERLAY_TRIPLETS_ARG "")
           if ("${{ runner.os }}" STREQUAL "Linux" AND "${{ matrix.config.cxx }}" MATCHES "clang")
             set(USE_LLVM ON)
+            set(VCPKG_TARGET_TRIPLET "x64-linux-libcxx")
+            set(VCPKG_OVERLAY_TRIPLETS_ARG "-D VCPKG_OVERLAY_TRIPLETS=$ENV{GITHUB_WORKSPACE}/cmake/vcpkg-triplets")
           endif()
 
-          execute_process(
-            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake
-              -S .
-              -B build
-              -G Ninja
-              -D CMAKE_CXX_STANDARD:STRING=${{ matrix.config.cxx_standard }}
-              -D skyr_WARNINGS_AS_ERRORS=OFF
-              -D skyr_BUILD_TESTS=ON
-              -D skyr_BUILD_DOCS=OFF
-              -D skyr_BUILD_EXAMPLES=OFF
-              -D skyr_BUILD_WITH_LLVM_LIBCXX=${USE_LLVM}
-              -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-              -D CMAKE_INSTALL_PREFIX=$ENV{GITHUB_WORKSPACE}/install
-              -D CMAKE_TOOLCHAIN_FILE=$ENV{GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
-            RESULT_VARIABLE result
-          )
+          if (VCPKG_TARGET_TRIPLET)
+            execute_process(
+              COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake
+                -S .
+                -B build
+                -G Ninja
+                -D CMAKE_CXX_STANDARD:STRING=${{ matrix.config.cxx_standard }}
+                -D skyr_WARNINGS_AS_ERRORS=OFF
+                -D skyr_BUILD_TESTS=ON
+                -D skyr_BUILD_DOCS=OFF
+                -D skyr_BUILD_EXAMPLES=OFF
+                -D skyr_BUILD_WITH_LLVM_LIBCXX=${USE_LLVM}
+                -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+                -D CMAKE_INSTALL_PREFIX=$ENV{GITHUB_WORKSPACE}/install
+                -D CMAKE_TOOLCHAIN_FILE=$ENV{GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
+                -D VCPKG_TARGET_TRIPLET=${VCPKG_TARGET_TRIPLET}
+                ${VCPKG_OVERLAY_TRIPLETS_ARG}
+              RESULT_VARIABLE result
+            )
+          else()
+            execute_process(
+              COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake
+                -S .
+                -B build
+                -G Ninja
+                -D CMAKE_CXX_STANDARD:STRING=${{ matrix.config.cxx_standard }}
+                -D skyr_WARNINGS_AS_ERRORS=OFF
+                -D skyr_BUILD_TESTS=ON
+                -D skyr_BUILD_DOCS=OFF
+                -D skyr_BUILD_EXAMPLES=OFF
+                -D skyr_BUILD_WITH_LLVM_LIBCXX=${USE_LLVM}
+                -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+                -D CMAKE_INSTALL_PREFIX=$ENV{GITHUB_WORKSPACE}/install
+                -D CMAKE_TOOLCHAIN_FILE=$ENV{GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
+              RESULT_VARIABLE result
+            )
+          endif()
           if (NOT result EQUAL 0)
             message(FATAL_ERROR "Bad exit status")
           endif()
