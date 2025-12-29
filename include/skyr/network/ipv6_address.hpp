@@ -57,8 +57,9 @@ class ipv6_address {
   [[nodiscard]] constexpr auto to_bytes() const noexcept -> std::array<unsigned char, 16> {
     std::array<unsigned char, 16> bytes{};
     for (auto i = 0UL; i < address_.size(); ++i) {
-      bytes[i * 2] = static_cast<unsigned char>(address_[i] >> 8u);  // NOLINT
-      bytes[i * 2 + 1] = static_cast<unsigned char>(address_[i]);    // NOLINT
+      auto piece = from_network_byte_order(address_[i]);
+      bytes[i * 2] = static_cast<unsigned char>(piece >> 8u);  // NOLINT
+      bytes[i * 2 + 1] = static_cast<unsigned char>(piece);    // NOLINT
     }
     return bytes;
   }
@@ -68,13 +69,19 @@ class ipv6_address {
     using namespace std::string_literals;
     using namespace std::string_view_literals;
 
+    // Convert address to host byte order for processing
+    auto address = std::array<unsigned short, 8>{};
+    for (auto i = 0UL; i < address_.size(); ++i) {
+      address[i] = from_network_byte_order(address_[i]);  // NOLINT
+    }
+
     auto output = ""s;
     auto compress = std::optional<std::size_t>();
 
     auto sequences = static_vector<std::pair<std::size_t, std::size_t>, 8>{};
     auto in_sequence = false;
 
-    auto first = std::cbegin(address_), last = std::cend(address_);
+    auto first = std::cbegin(address), last = std::cend(address);
     auto it = first;
     while (true) {
       if (*it == 0) {
@@ -114,7 +121,7 @@ class ipv6_address {
 
     auto ignore0 = false;
     for (auto i = 0UL; i <= 7UL; ++i) {
-      if (ignore0 && (address_[i] == 0)) {  // NOLINT
+      if (ignore0 && (address[i] == 0)) {  // NOLINT
         continue;
       } else if (ignore0) {
         ignore0 = false;
@@ -129,7 +136,7 @@ class ipv6_address {
 
       constexpr auto separator = [](auto i) { return (i != 7) ? ":"sv : ""sv; };
 
-      output += std::format("{:x}{}", address_[i], separator(i));  // NOLINT
+      output += std::format("{:x}{}", address[i], separator(i));  // NOLINT
     }
 
     return output;

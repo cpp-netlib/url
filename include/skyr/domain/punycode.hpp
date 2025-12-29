@@ -162,12 +162,13 @@ constexpr inline auto punycode_decode(StringView input, std::u32string* output) 
     constexpr auto zero = '0';
     constexpr auto upper_a = 'A';
     constexpr auto lower_a = 'a';
+    constexpr auto alphabet_size = 0x1aul;
 
     if ((cp - zero) < 0x10) {
-      return static_cast<std::uint32_t>(cp - zero);
-    } else if ((cp - upper_a) < 0x1a) {
+      return static_cast<std::uint32_t>(cp - zero + alphabet_size);
+    } else if ((cp - upper_a) < alphabet_size) {
       return static_cast<std::uint32_t>(cp - upper_a);
-    } else if ((cp - lower_a) < 0x1a) {
+    } else if ((cp - lower_a) < alphabet_size) {
       return static_cast<std::uint32_t>(cp - lower_a);
     }
     return base;

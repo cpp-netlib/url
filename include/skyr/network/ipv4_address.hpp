@@ -56,8 +56,9 @@ class ipv4_address {
   /// The address in bytes in network byte order
   /// \returns The address in bytes
   [[nodiscard]] constexpr auto to_bytes() const noexcept -> std::array<unsigned char, 4> {
-    return {{static_cast<unsigned char>(address_ >> 24u), static_cast<unsigned char>(address_ >> 16u),
-             static_cast<unsigned char>(address_ >> 8u), static_cast<unsigned char>(address_)}};
+    auto addr = address();
+    return {{static_cast<unsigned char>(addr >> 24u), static_cast<unsigned char>(addr >> 16u),
+             static_cast<unsigned char>(addr >> 8u), static_cast<unsigned char>(addr)}};
   }
 
   /// \returns The address as a string
@@ -68,7 +69,7 @@ class ipv4_address {
     constexpr auto separator = [](auto i) { return (i < 4) ? "."sv : ""sv; };
 
     auto output = ""s;
-    auto n = address_;
+    auto n = address();
     for (auto i = 1U; i <= 4U; ++i) {
       output = std::format("{}{}{}", separator(i), n % 256, output);
       n >>= 8;
