@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <expected>
 #include <algorithm>
-#include <ranges>  // was: range/v3/action/join.hpp>
+#include <ranges>
 #include <skyr/core/errors.hpp>
 #include <skyr/network/ipv4_address.hpp>
 #include <skyr/network/ipv6_address.hpp>
@@ -67,7 +67,7 @@ class host {
   ///
   /// \return The host as a string
   [[nodiscard]] auto serialize() const {
-    constexpr static auto serialize = [](auto &&host) -> std::string {
+    constexpr static auto serialize = [](auto&& host) -> std::string {
       using T = std::decay_t<decltype(host)>;
 
       if constexpr (std::is_same_v<T, ipv4_address>) {
@@ -149,7 +149,7 @@ constexpr static auto is_forbidden_host_point = [](auto byte) {
          (byte == '@') || (byte == '[') || (byte == '\\') || (byte == ']') || (byte == '^');
 };
 
-inline auto parse_opaque_host(std::string_view input, bool *validation_error)
+inline auto parse_opaque_host(std::string_view input, bool* validation_error)
     -> std::expected<opaque_host, url_parse_errc> {
   constexpr auto is_forbidden = [](auto byte) -> bool { return (byte != '%') && is_forbidden_host_point(byte); };
 
@@ -177,7 +177,7 @@ inline auto parse_opaque_host(std::string_view input, bool *validation_error)
 /// \param is_not_special \c true to process only non-special hosts, \c false otherwise
 /// \param validation_error Set to \c true if there was a validation error
 /// \return A host as a domain (std::string), ipv4_address or ipv6_address, or an error code
-inline auto parse_host(std::string_view input, bool is_not_special, bool *validation_error)
+inline auto parse_host(std::string_view input, bool is_not_special, bool* validation_error)
     -> std::expected<host, url_parse_errc> {
   if (input.empty()) {
     return host{empty_host{}};
@@ -204,7 +204,7 @@ inline auto parse_host(std::string_view input, bool is_not_special, bool *valida
 
   if (is_not_special) {
     return details::parse_opaque_host(input, validation_error)
-        .and_then([](auto &&h) -> std::expected<host, url_parse_errc> { return host{h}; });
+        .and_then([](auto&& h) -> std::expected<host, url_parse_errc> { return host{h}; });
   }
 
   auto decoded_domain = std::string{};
@@ -267,7 +267,7 @@ inline auto parse_host(std::string_view input) -> std::expected<host, url_parse_
 /// \param input An input string
 /// \param validation_error Set to \c true if there was a validation error
 /// \return A host as a domain (std::string), ipv4_address or ipv6_address, or an error code
-inline auto parse_host(std::string_view input, bool *validation_error) -> std::expected<host, url_parse_errc> {
+inline auto parse_host(std::string_view input, bool* validation_error) -> std::expected<host, url_parse_errc> {
   return parse_host(input, false, validation_error);
 }
 }  // namespace skyr

@@ -11,7 +11,6 @@
 #include <exception>
 #include <skyr/percent_encoding/percent_decode.hpp>
 
-
 TEST_CASE("percent_decode", "[percent_decode]") {
   using namespace std::string_literals;
 

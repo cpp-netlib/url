@@ -29,7 +29,7 @@ class u32_transform_iterator {
   ///
   using reference = const_reference;
   ///
-  using const_pointer = const value_type *;
+  using const_pointer = const value_type*;
   ///
   using pointer = const_pointer;
   ///
@@ -52,7 +52,7 @@ class u32_transform_iterator {
 
   ///
   /// \return
-  constexpr auto operator++() noexcept -> u32_transform_iterator & {
+  constexpr auto operator++() noexcept -> u32_transform_iterator& {
     ++it_;
     return *this;
   }
@@ -98,7 +98,7 @@ class transform_u32_range {
 
   ///
   /// \param range
-  explicit constexpr transform_u32_range(CodePointRange &&range) : range_(std::forward<CodePointRange>(range)) {
+  explicit constexpr transform_u32_range(CodePointRange&& range) : range_(std::forward<CodePointRange>(range)) {
   }
 
   ///
@@ -142,7 +142,7 @@ struct transform_u32_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  constexpr auto operator()(CodePointRange &&range) const {
+  constexpr auto operator()(CodePointRange&& range) const {
     return transform_u32_range{std::forward<CodePointRange>(range)};
   }
 
@@ -151,7 +151,7 @@ struct transform_u32_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  friend constexpr auto operator|(CodePointRange &&range, const transform_u32_range_fn &) {
+  friend constexpr auto operator|(CodePointRange&& range, const transform_u32_range_fn&) {
     return transform_u32_range{std::forward<CodePointRange>(range)};
   }
 };
@@ -167,7 +167,7 @@ static constexpr transform_u32_range_fn to_u32;
 /// \param range
 /// \return
 template <class Output, class CodePointRange>
-constexpr auto as(transform_u32_range<CodePointRange> &&range) -> std::expected<Output, unicode_errc> {
+constexpr auto as(transform_u32_range<CodePointRange>&& range) -> std::expected<Output, unicode_errc> {
   auto result = Output{};
 
   for (auto it = std::cbegin(range); it != std::cend(range); ++it) {

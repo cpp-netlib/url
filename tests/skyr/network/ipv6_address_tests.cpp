@@ -170,10 +170,24 @@ TEST_CASE("ipv6_address_tests", "[ipv6]") {
   SECTION("loopback_test") {
     auto address = std::array<unsigned short, 8>{{0, 0, 0, 0, 0, 0, 0, 1}};
     auto instance = skyr::ipv6_address(address);
-    std::array<unsigned char, 16> bytes{
-      {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-      }};
+    std::array<unsigned char, 16> bytes{{
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+    }};
     CHECK(bytes == instance.to_bytes());
   }
 }

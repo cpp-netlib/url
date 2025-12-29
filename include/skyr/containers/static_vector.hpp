@@ -28,13 +28,13 @@ class static_vector {
   ///
   using value_type = T;
   ///
-  using const_reference = const T &;
+  using const_reference = const T&;
   ///
-  using reference = T &;
+  using reference = T&;
   ///
-  using const_pointer = const T *;
+  using const_pointer = const T*;
   ///
-  using pointer = T *;
+  using pointer = T*;
   ///
   using size_type = std::size_t;
   ///
@@ -47,10 +47,10 @@ class static_vector {
   /// Constructor
   constexpr static_vector() = default;
 
-  constexpr static_vector(const static_vector &) = default;
-  constexpr static_vector(static_vector &&) noexcept = default;
-  constexpr auto operator=(const static_vector &) -> static_vector & = default;
-  constexpr auto operator=(static_vector &&) noexcept -> static_vector & = default;
+  constexpr static_vector(const static_vector&) = default;
+  constexpr static_vector(static_vector&&) noexcept = default;
+  constexpr auto operator=(const static_vector&) -> static_vector& = default;
+  constexpr auto operator=(static_vector&&) noexcept -> static_vector& = default;
 
   constexpr ~static_vector() {
     clear();
@@ -106,7 +106,7 @@ class static_vector {
   /// \pre `size() < capacity()`
   /// \post `size() > 0 && size() <= capacity()`
   template <class... Args>
-  constexpr auto emplace_back(Args &&... args) noexcept(std::is_trivially_move_assignable_v<T>) -> reference {
+  constexpr auto emplace_back(Args&&... args) noexcept(std::is_trivially_move_assignable_v<T>) -> reference {
     assert(size_ < Capacity);
     impl_[size_++] = value_type{std::forward<Args>(args)...};
     return back();

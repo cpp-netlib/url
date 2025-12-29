@@ -31,7 +31,7 @@ class unchecked_u8_range_iterator {
   ///
   using reference = const_reference;
   ///
-  using const_pointer = const value_type *;
+  using const_pointer = const value_type*;
   ///
   using pointer = const_reference;
   ///
@@ -56,7 +56,7 @@ class unchecked_u8_range_iterator {
 
   ///
   /// \return
-  constexpr auto operator++() noexcept -> unchecked_u8_range_iterator & {
+  constexpr auto operator++() noexcept -> unchecked_u8_range_iterator& {
     assert(it_ != last_);
     increment();
     return *this;
@@ -116,7 +116,7 @@ class view_unchecked_u8_range {
 
   ///
   /// \param range
-  explicit constexpr view_unchecked_u8_range(const OctetRange &range) : it_(std::begin(range), std::end(range)) {
+  explicit constexpr view_unchecked_u8_range(const OctetRange& range) : it_(std::begin(range), std::end(range)) {
   }
 
   ///
@@ -159,7 +159,7 @@ namespace views {
 /// \param range
 /// \return
 template <typename OctetRange>
-[[maybe_unused]] constexpr inline auto unchecked_u8(const OctetRange &range) {
+[[maybe_unused]] constexpr inline auto unchecked_u8(const OctetRange& range) {
   return view_unchecked_u8_range{range};
 }
 }  // namespace views

@@ -25,8 +25,8 @@
 #include <skyr/url_search_parameters.hpp>
 
 #if defined(SKYR_PLATFORM_MSVC)
-#pragma warning(push)
-#pragma warning(disable : 4251 4231 4660)
+#  pragma warning(push)
+#  pragma warning(disable : 4251 4231 4660)
 #endif  // defined(SKYR_PLATFORM_MSVC)
 
 /// \namespace skyr
@@ -34,7 +34,7 @@
 /// name parsing.
 namespace skyr {
 namespace details {
-auto make_url(std::string_view input, const url_record *base) -> std::expected<url, url_parse_errc>;
+auto make_url(std::string_view input, const url_record* base) -> std::expected<url, url_parse_errc>;
 }  // namespace details
 
 /// Thrown when there is an error parsing the URL
@@ -92,7 +92,8 @@ class url {
   /// \param input The input string
   /// \throws url_parse_error on parse errors
   template <class Source>
-  requires is_u8_convertible<Source> explicit url(const Source &input) : url() {
+    requires is_u8_convertible<Source>
+  explicit url(const Source& input) : url() {
     auto bytes = details::to_u8(input);
     if (!bytes) {
       SKYR_EXCEPTIONS_THROW(url_parse_error(make_error_code(url_parse_errc::invalid_unicode_character)));
@@ -108,41 +109,42 @@ class url {
   /// \param base A base URL
   /// \throws url_parse_error on parse errors
   template <class Source>
-  requires is_u8_convertible<Source> url(const Source &input, const url &base) : url() {
+    requires is_u8_convertible<Source>
+  url(const Source& input, const url& base) : url() {
     auto bytes = details::to_u8(input);
     if (!bytes) {
       SKYR_EXCEPTIONS_THROW(url_parse_error(make_error_code(url_parse_errc::invalid_unicode_character)));
     }
-    const auto &base_record = base.record();
+    const auto& base_record = base.record();
     initialize(bytes.value(), &base_record);
   }
 
   /// Constructs a URL from an existing record
   ///
   /// \param input A URL record
-  explicit url(url_record &&input) : url() {
+  explicit url(url_record&& input) : url() {
     update_record(std::forward<url_record>(input));
   }
 
   /// Copy constructor
   /// \param other Another `url` object
-  url(const url &other) : url(url_record(other.url_)) {
+  url(const url& other) : url(url_record(other.url_)) {
   }
 
   /// Move constructor
   /// \param other Another `url` object
-  url(url &&other) noexcept : url(std::move(other.url_)) {
+  url(url&& other) noexcept : url(std::move(other.url_)) {
   }
 
   /// Copy assignment operator
   /// \param other Another `url` object
   /// \return *this
-  url &operator=(const url &other) = default;
+  url& operator=(const url& other) = default;
 
   /// Move assignment operator
   /// \param other Another `url` object
   /// \return *this
-  url &operator=(url &&other) = default;
+  url& operator=(url&& other) = default;
 
   /// Destructor
   ~url() = default;
@@ -150,7 +152,7 @@ class url {
   /// Swaps this `url` object with another
   ///
   /// \param other Another `url` object
-  void swap(url &other) noexcept {
+  void swap(url& other) noexcept {
     using std::swap;
     swap(url_, other.url_);
     swap(href_, other.href_);
@@ -176,7 +178,8 @@ class url {
   /// \param href The input string
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_href(const Source &href) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_href(const Source& href) -> std::error_code {
     auto bytes = details::to_u8(href);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -243,7 +246,8 @@ class url {
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_protocol(const Source &protocol) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_protocol(const Source& protocol) -> std::error_code {
     auto bytes = details::to_u8(protocol);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -283,7 +287,8 @@ class url {
   /// \param username The new username
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_username(const Source &username) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_username(const Source& username) -> std::error_code {
     auto bytes = details::to_u8(username);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -327,7 +332,8 @@ class url {
   /// \param password The new password
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_password(const Source &password) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_password(const Source& password) -> std::error_code {
     auto bytes = details::to_u8(password);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -375,7 +381,8 @@ class url {
   /// \param host The new URL host
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_host(const Source &host) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_host(const Source& host) -> std::error_code {
     auto bytes = details::to_u8(host);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -423,7 +430,8 @@ class url {
   /// \param hostname The new URL host name
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_hostname(const Source &hostname) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_hostname(const Source& hostname) -> std::error_code {
     auto bytes = details::to_u8(hostname);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -523,14 +531,14 @@ class url {
   ///
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
   template <typename intT>
-  [[nodiscard]] auto port(std::enable_if_t<std::is_integral_v<intT>> * = nullptr) const -> std::optional<intT> {
+  [[nodiscard]] auto port(std::enable_if_t<std::is_integral_v<intT>>* = nullptr) const -> std::optional<intT> {
     auto p = port();
     if (p.empty()) {
       return std::nullopt;
     }
 
-    const char *port_first = p.data();
-    char *port_last = nullptr;
+    const char* port_first = p.data();
+    char* port_last = nullptr;
     return static_cast<intT>(std::strtoul(port_first, &port_last, 10));
   }
 
@@ -540,7 +548,8 @@ class url {
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_port(const Source &port) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_port(const Source& port) -> std::error_code {
     auto bytes = details::to_u8(port);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -554,7 +563,8 @@ class url {
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
   template <typename intT>
-  requires std::is_integral_v<intT> auto set_port(intT port) -> std::error_code {
+    requires std::is_integral_v<intT>
+  auto set_port(intT port) -> std::error_code {
     return set_port(string_view(std::to_string(port)));
   }
 
@@ -596,7 +606,7 @@ class url {
     }
 
     auto pathname = string_type("/");
-    for (const auto &segment : url_.path) {
+    for (const auto& segment : url_.path) {
       pathname += segment;
       pathname += "/";
     }
@@ -609,7 +619,8 @@ class url {
   /// \param pathname The new pathname
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_pathname(const Source &pathname) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_pathname(const Source& pathname) -> std::error_code {
     auto bytes = details::to_u8(pathname);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -653,7 +664,8 @@ class url {
   /// \param search The new search string
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_search(const Source &search) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_search(const Source& search) -> std::error_code {
     auto bytes = details::to_u8(search);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -688,12 +700,12 @@ class url {
   }
 
   /// \returns A reference to the search parameters
-  [[nodiscard]] auto search_parameters() -> url_search_parameters & {
+  [[nodiscard]] auto search_parameters() -> url_search_parameters& {
     return parameters_;
   }
 
   /// \returns A reference to the search parameters
-  [[nodiscard]] auto search_parameters() const -> const url_search_parameters & {
+  [[nodiscard]] auto search_parameters() const -> const url_search_parameters& {
     return parameters_;
   }
 
@@ -714,7 +726,8 @@ class url {
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
   template <class Source>
-  requires is_u8_convertible<Source> auto set_hash(const Source &hash) -> std::error_code {
+    requires is_u8_convertible<Source>
+  auto set_hash(const Source& hash) -> std::error_code {
     auto bytes = details::to_u8(hash);
     if (!bytes) {
       return make_error_code(url_parse_errc::invalid_unicode_character);
@@ -750,14 +763,14 @@ class url {
   /// The URL context object
   ///
   /// \returns The underlying `url_record` implementation.
-  [[nodiscard]] auto record() const &noexcept -> const url_record & {
+  [[nodiscard]] auto record() const& noexcept -> const url_record& {
     return url_;
   }
 
   /// The URL context object
   ///
   /// \returns The underlying `url_record` implementation.
-  [[nodiscard]] auto record() &&noexcept -> url_record && {
+  [[nodiscard]] auto record() && noexcept -> url_record&& {
     return std::move(url_);
   }
 
@@ -802,7 +815,7 @@ class url {
   ///
   /// \param other The other `url` object
   /// \returns `href_.compare(other.href_)`
-  [[nodiscard]] auto compare(const url &other) const noexcept {
+  [[nodiscard]] auto compare(const url& other) const noexcept {
     return view_.compare(other.view_);
   }
 
@@ -848,16 +861,16 @@ class url {
   }
 
  private:
-  void initialize(string_view input, const url_record *base) {
+  void initialize(string_view input, const url_record* base) {
     using result_type = std::expected<void, url_parse_errc>;
 
     bool validation_error = false;
     details::parse(input, &validation_error, base)
-        .and_then([this](auto &&url) -> result_type {
+        .and_then([this](auto&& url) -> result_type {
           update_record(std::forward<url_record>(url));
           return {};
         })
-        .or_else([](auto &&error) -> result_type {
+        .or_else([](auto&& error) -> result_type {
           SKYR_EXCEPTIONS_THROW(url_parse_error(error));
           return {};
         });
@@ -867,7 +880,7 @@ class url {
     initialize(input, nullptr);
   }
 
-  void update_record(url_record &&url) {
+  void update_record(url_record&& url) {
     url_ = std::move(url);
     href_ = serialize(url_);
     view_ = string_view(href_);
@@ -886,14 +899,14 @@ class url {
 ///
 /// \param lhs The first `url` object
 /// \param rhs The second `url` object
-inline void swap(url &lhs, url &rhs) noexcept {
+inline void swap(url& lhs, url& rhs) noexcept {
   lhs.swap(rhs);
 }
 
 namespace details {
-inline auto make_url(std::string_view input, const url_record *base) -> std::expected<url, url_parse_errc> {
+inline auto make_url(std::string_view input, const url_record* base) -> std::expected<url, url_parse_errc> {
   bool validation_error = false;
-  return parse(input, &validation_error, base).and_then([](auto &&new_url) -> std::expected<url, url_parse_errc> {
+  return parse(input, &validation_error, base).and_then([](auto&& new_url) -> std::expected<url, url_parse_errc> {
     return url(std::forward<url_record>(new_url));
   });
 }
@@ -906,7 +919,7 @@ inline auto make_url(std::string_view input, const url_record *base) -> std::exp
 /// \param input The input string
 /// \returns A `url` object on success, an error on failure
 template <class Source>
-inline auto make_url(const Source &input) -> std::expected<url, url_parse_errc> {
+inline auto make_url(const Source& input) -> std::expected<url, url_parse_errc> {
   auto bytes = details::to_u8(input);
   if (!bytes) {
     return std::unexpected(url_parse_errc::invalid_unicode_character);
@@ -922,12 +935,12 @@ inline auto make_url(const Source &input) -> std::expected<url, url_parse_errc> 
 /// \param base The base URL
 /// \returns A `url` object on success, an error on failure
 template <class Source>
-inline auto make_url(const Source &input, const url &base) -> std::expected<url, url_parse_errc> {
+inline auto make_url(const Source& input, const url& base) -> std::expected<url, url_parse_errc> {
   auto bytes = details::to_u8(input);
   if (!bytes) {
     return std::unexpected(url_parse_errc::invalid_unicode_character);
   }
-  const auto &base_record = base.record();
+  const auto& base_record = base.record();
   return details::make_url(bytes.value(), &base_record);
 }
 
@@ -937,7 +950,7 @@ inline auto make_url(const Source &input, const url &base) -> std::expected<url,
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `true` if the `url` objects are equal, `false` otherwise
-inline auto operator==(const url &lhs, const url &rhs) noexcept {
+inline auto operator==(const url& lhs, const url& rhs) noexcept {
   return lhs.compare(rhs) == 0;
 }
 
@@ -946,7 +959,7 @@ inline auto operator==(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `!(lhs == rhs)`
-inline auto operator!=(const url &lhs, const url &rhs) noexcept {
+inline auto operator!=(const url& lhs, const url& rhs) noexcept {
   return !(lhs == rhs);
 }
 
@@ -955,7 +968,7 @@ inline auto operator!=(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `lhs.compare(rhs) < 0`
-inline auto operator<(const url &lhs, const url &rhs) noexcept {
+inline auto operator<(const url& lhs, const url& rhs) noexcept {
   return lhs.compare(rhs) < 0;
 }
 
@@ -964,7 +977,7 @@ inline auto operator<(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `lhs.compare(rhs) > 0`
-inline auto operator>(const url &lhs, const url &rhs) noexcept {
+inline auto operator>(const url& lhs, const url& rhs) noexcept {
   return rhs < lhs;
 }
 
@@ -973,7 +986,7 @@ inline auto operator>(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns `!(lhs > rhs)
-inline auto operator<=(const url &lhs, const url &rhs) noexcept {
+inline auto operator<=(const url& lhs, const url& rhs) noexcept {
   return !(lhs > rhs);
 }
 
@@ -982,7 +995,7 @@ inline auto operator<=(const url &lhs, const url &rhs) noexcept {
 /// \param lhs A `url` object
 /// \param rhs A `url` object
 /// \returns !(lhs < rhs)
-inline auto operator>=(const url &lhs, const url &rhs) noexcept {
+inline auto operator>=(const url& lhs, const url& rhs) noexcept {
   return !(lhs < rhs);
 }
 
@@ -990,7 +1003,7 @@ inline auto operator>=(const url &lhs, const url &rhs) noexcept {
 /// \param os
 /// \param url
 /// \returns
-inline auto &operator<<(std::ostream &os, const url &url) {
+inline auto& operator<<(std::ostream& os, const url& url) {
   return os << url.href();
 }
 
@@ -999,7 +1012,7 @@ namespace literals {
 /// \param str
 /// \param length
 /// \return A url
-inline auto operator"" _url(const char *str, std::size_t length) {
+inline auto operator"" _url(const char* str, std::size_t length) {
   return url(std::string_view(str, length));
 }
 
@@ -1015,7 +1028,7 @@ inline auto operator"" _url(const char *str, std::size_t length) {
 /// \param str
 /// \param length
 /// \return
-inline auto operator"" _url(const char16_t *str, std::size_t length) {
+inline auto operator"" _url(const char16_t* str, std::size_t length) {
   return url(std::u16string_view(str, length));
 }
 
@@ -1023,12 +1036,12 @@ inline auto operator"" _url(const char16_t *str, std::size_t length) {
 /// \param str
 /// \param length
 /// \return
-inline auto operator"" _url(const char32_t *str, std::size_t length) {
+inline auto operator"" _url(const char32_t* str, std::size_t length) {
   return url(std::u32string_view(str, length));
 }
 }  // namespace literals
 
-inline url_search_parameters::url_search_parameters(url *url) : url_(url) {
+inline url_search_parameters::url_search_parameters(url* url) : url_(url) {
   if (url_->record().query) {
     initialize(url_->record().query.value());
   }
@@ -1044,7 +1057,7 @@ inline void url_search_parameters::update() {
 }  // namespace skyr
 
 #if defined(SKYR_PLATFORM_MSVC)
-#pragma warning(pop)
+#  pragma warning(pop)
 #endif  // defined(SKYR_PLATFORM_MSVC)
 
 #endif  // SKYR_URL_HPP

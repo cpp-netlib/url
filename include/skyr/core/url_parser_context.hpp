@@ -37,8 +37,8 @@ inline auto port_number(std::string_view port) noexcept -> std::expected<std::ui
     return std::unexpected(url_parse_errc::invalid_port);
   }
 
-  const char *port_first = port.data();
-  char *port_last = nullptr; // NOLINT
+  const char* port_first = port.data();
+  char* port_last = nullptr;  // NOLINT
   auto port_value = std::strtoul(port_first, &port_last, 10);
 
   if (port_first == port_last) {
@@ -83,7 +83,7 @@ constexpr inline auto is_double_dot_path_segment(std::string_view segment) noexc
          (segment == "%2e%2E");
 }
 
-inline void shorten_path(std::string_view scheme, std::vector<std::string> &path) {
+inline void shorten_path(std::string_view scheme, std::vector<std::string>& path) {
   if (!path.empty() && !((scheme == "file"sv) && (path.size() == 1) && is_windows_drive_letter(path.front()))) {
     path.pop_back();
   }
@@ -102,8 +102,8 @@ class url_parser_context {
   url_parse_state state;
   std::string_view input;
   std::string_view::const_iterator input_it;
-  bool *validation_error;
-  const url_record *base;
+  bool* validation_error;
+  const url_record* base;
   std::optional<url_parse_state> state_override;
   std::string buffer;
 
@@ -111,21 +111,21 @@ class url_parser_context {
   bool square_braces_flag;
 
  public:
-  url_parser_context(std::string_view input, bool *validation_error, const url_record *base, const url_record *url,
+  url_parser_context(std::string_view input, bool* validation_error, const url_record* base, const url_record* url,
                      std::optional<url_parse_state> state_override)
-      : input(input),
-        input_it(begin(input)),
-        validation_error(validation_error),
-        base(base),
-        url(url ? *url : url_record{}),
-        state(state_override ? state_override.value() : url_parse_state::scheme_start),
-        state_override(state_override),
-        buffer(),
-        at_flag(false),
-        square_braces_flag(false) {
+      : input(input)
+      , input_it(begin(input))
+      , validation_error(validation_error)
+      , base(base)
+      , url(url ? *url : url_record{})
+      , state(state_override ? state_override.value() : url_parse_state::scheme_start)
+      , state_override(state_override)
+      , buffer()
+      , at_flag(false)
+      , square_braces_flag(false) {
   }
 
-  [[nodiscard]] auto get_url() && -> url_record && {
+  [[nodiscard]] auto get_url() && -> url_record&& {
     return std::move(url);
   }
 
@@ -236,8 +236,7 @@ class url_parser_context {
       buffer.push_back(lower);
     } else if (byte == ':') {
       if (state_override) {
-        if ((url.is_special() && !is_special(buffer)) ||
-            (!url.is_special() && is_special(buffer)) ||
+        if ((url.is_special() && !is_special(buffer)) || (!url.is_special() && is_special(buffer)) ||
             ((url.includes_credentials() || url.port) && (buffer == "file")) ||
             ((url.scheme == "file") && (!url.host || url.host.value().is_empty()))) {
           return std::unexpected(url_parse_errc::cannot_override_scheme);

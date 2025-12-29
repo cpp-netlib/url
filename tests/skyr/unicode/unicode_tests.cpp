@@ -24,56 +24,52 @@ TEST_CASE("unicode_tests", "[unicode]") {
 
   SECTION("utf32_to_bytes_poo_emoji_test") {
     const auto input = U"\x1F4A9"s;
-    auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::transforms::to_u8);
+    auto bytes = skyr::unicode::as<std::string>(input | skyr::unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x92\xa9" == bytes.value());
   }
 
   SECTION("bytes_to_utf32_poo_emoji_test") {
     const auto input = "\xf0\x9f\x92\xa9"s;
-    auto utf32 = skyr::unicode::as<std::u32string>(
-        skyr::unicode::views::as_u8(input) | skyr::unicode::transforms::to_u32);
+    auto utf32 =
+        skyr::unicode::as<std::u32string>(skyr::unicode::views::as_u8(input) | skyr::unicode::transforms::to_u32);
     REQUIRE(utf32);
     CHECK(U"\x1F4A9" == utf32.value());
   }
 
   SECTION("utf16_to_bytes_poo_emoji_test") {
     const auto input = u"\xd83d\xdca9"s;
-    auto bytes = skyr::unicode::as<std::string>(
-        skyr::unicode::views::as_u16(input) | skyr::unicode::transforms::to_u8);
+    auto bytes = skyr::unicode::as<std::string>(skyr::unicode::views::as_u16(input) | skyr::unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x92\xa9" == bytes.value());
   }
 
   SECTION("bytes_to_utf16_poo_emoji_test") {
     const auto input = "\xf0\x9f\x92\xa9"s;
-    auto utf16 = skyr::unicode::as<std::u16string>(
-        skyr::unicode::views::as_u8(input) | skyr::unicode::transforms::to_u16);
+    auto utf16 =
+        skyr::unicode::as<std::u16string>(skyr::unicode::views::as_u8(input) | skyr::unicode::transforms::to_u16);
     REQUIRE(utf16);
     CHECK(u"\xd83d\xdca9" == utf16.value());
   }
 
   SECTION("wstring_to_bytes_poo_emoji_test") {
     const auto input = L"\xd83d\xdca9"s;
-    auto bytes = skyr::unicode::as<std::string>(
-        skyr::unicode::views::as_u16(input) | skyr::unicode::transforms::to_u8);
+    auto bytes = skyr::unicode::as<std::string>(skyr::unicode::views::as_u16(input) | skyr::unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x92\xa9" == bytes.value());
   }
 
   SECTION("bytes_to_wstring_poo_emoji_test") {
     const auto input = "\xf0\x9f\x92\xa9"s;
-    auto utf16 = skyr::unicode::as<std::wstring>(
-        skyr::unicode::views::as_u8(input) | skyr::unicode::transforms::to_u16);
+    auto utf16 =
+        skyr::unicode::as<std::wstring>(skyr::unicode::views::as_u8(input) | skyr::unicode::transforms::to_u16);
     REQUIRE(utf16);
     CHECK(L"\xd83d\xdca9" == utf16.value());
   }
 
   SECTION("utf32_rainbow_flag_test") {
     const auto input = U"\x1F3F3\xFE0F\x200D\x1F308"s;
-    auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::transforms::to_u8);
+    auto bytes = skyr::unicode::as<std::string>(input | skyr::unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK("\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88" == bytes.value());
   }
@@ -81,8 +77,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
   SECTION("u32_to_u8_sv_1") {
     const auto input =
         U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081\x00c9\x00e9"sv;
-    auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::transforms::to_u8);
+    auto bytes = skyr::unicode::as<std::string>(input | skyr::unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK(
         "\x00\x01\x09\x0a\x0d\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28"
@@ -93,8 +88,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
 
   SECTION("u32_to_u8_sv_2") {
     const auto input = U"\x0080\x0081\x00c9\x00e9"sv;
-    auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::transforms::to_u8);
+    auto bytes = skyr::unicode::as<std::string>(input | skyr::unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK("\xc2\x80\xc2\x81\xc3\x89\xc3\xa9"sv == bytes.value());
   }
@@ -102,8 +96,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
   SECTION("u16_to_u8_sv_1") {
     const auto input =
         u"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081\x00c9\x00e9"sv;
-    auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::transforms::to_u8);
+    auto bytes = skyr::unicode::as<std::string>(input | skyr::unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK(
         "\x00\x01\x09\x0a\x0d\x1f\x20\x21\x22\x23\x24\x25\x26\x27\x28"
@@ -114,8 +107,7 @@ TEST_CASE("unicode_tests", "[unicode]") {
 
   SECTION("u16_to_u8_sv_2") {
     const auto input = u"\x0080\x0081\x00c9\x00e9"sv;
-    auto bytes = skyr::unicode::as<std::string>(
-        input | skyr::unicode::transforms::to_u8);
+    auto bytes = skyr::unicode::as<std::string>(input | skyr::unicode::transforms::to_u8);
     REQUIRE(bytes);
     CHECK("\xc2\x80\xc2\x81\xc3\x89\xc3\xa9"sv == bytes.value());
   }

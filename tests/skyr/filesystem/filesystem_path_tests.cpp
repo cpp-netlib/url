@@ -10,7 +10,6 @@
 #include <exception>
 #include <skyr/filesystem/path.hpp>
 
-
 TEST_CASE("filesystem path", "[filesystem_path]") {
   SECTION("empty_path") {
     auto instance = skyr::url{};

@@ -106,7 +106,7 @@ class ipv6_address {
     }
 
     if (!sequences.empty()) {
-      constexpr static auto greater = [](const auto &lhs, const auto &rhs) -> bool { return lhs.second > rhs.second; };
+      constexpr static auto greater = [](const auto& lhs, const auto& rhs) -> bool { return lhs.second > rhs.second; };
 
       std::ranges::stable_sort(sequences, greater);
       compress = sequences.front().first;
@@ -152,7 +152,7 @@ constexpr inline auto hex_to_dec(charT byte) noexcept {
 /// Parses an IPv6 address
 /// \param input An input string
 /// \returns An `ipv6_address` object or an error
-constexpr inline auto parse_ipv6_address(std::string_view input, bool *validation_error)
+constexpr inline auto parse_ipv6_address(std::string_view input, bool* validation_error)
     -> std::expected<ipv6_address, ipv6_address_errc> {
   using namespace std::string_view_literals;
 

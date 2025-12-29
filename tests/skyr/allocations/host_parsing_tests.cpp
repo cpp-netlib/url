@@ -24,10 +24,9 @@ int main() {
       "localhost"sv,
       "a.b.c.d.e.f.g.h.i.j.k.l.example.com"sv,
       "sub.llanfairpwllgwyngyllgogerychwndrwbwllllantysiliogogogoch.com"sv,
-      "i am a terrible host name and n\0t in any way.valid.but. i am useful to validate @llocation"sv
-  };
+      "i am a terrible host name and n\0t in any way.valid.but. i am useful to validate @llocation"sv};
 
-  for (auto &&host_string : host_strings) {
+  for (auto&& host_string : host_strings) {
     SKYR_ALLOCATIONS_START_COUNTING("skyr::parse_host(\"" << host_string << "\")");
     auto host = skyr::parse_host(host_string);
   }

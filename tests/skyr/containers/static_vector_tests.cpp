@@ -8,19 +8,17 @@
 #include <catch2/catch_all.hpp>
 #include <skyr/containers/static_vector.hpp>
 
-
 struct test_destructor_call {
-  bool *destructed = nullptr;
+  bool* destructed = nullptr;
 
-  explicit test_destructor_call(bool *destructed)
-  : destructed(destructed) {
+  explicit test_destructor_call(bool* destructed) : destructed(destructed) {
     *destructed = false;
   }
 
-  test_destructor_call(const test_destructor_call &) = delete;
-  test_destructor_call &operator=(const test_destructor_call &) = delete;
-  test_destructor_call(test_destructor_call &&) = delete;
-  test_destructor_call &operator=(test_destructor_call &&) = delete;
+  test_destructor_call(const test_destructor_call&) = delete;
+  test_destructor_call& operator=(const test_destructor_call&) = delete;
+  test_destructor_call(test_destructor_call&&) = delete;
+  test_destructor_call& operator=(test_destructor_call&&) = delete;
 
   ~test_destructor_call() {
     *destructed = true;

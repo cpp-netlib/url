@@ -26,7 +26,7 @@ struct is_name {
   explicit is_name(std::string_view name) : name_(name) {
   }
 
-  auto operator()(const query_parameter &parameter) noexcept {
+  auto operator()(const query_parameter& parameter) noexcept {
     return name_ == parameter.name;
   }
 
@@ -70,15 +70,17 @@ class url_search_parameters {
 
   /// Constructor
   /// \param parameters
-  explicit url_search_parameters(std::vector<query_parameter> parameters) : parameters_(std::move(parameters)) {}
+  explicit url_search_parameters(std::vector<query_parameter> parameters) : parameters_(std::move(parameters)) {
+  }
 
   /// Constructor
   /// \param parameters
-  url_search_parameters(std::initializer_list<value_type> parameters) : parameters_(parameters) {}
+  url_search_parameters(std::initializer_list<value_type> parameters) : parameters_(parameters) {
+  }
 
   ///
   /// \param other
-  void swap(url_search_parameters &other) noexcept {
+  void swap(url_search_parameters& other) noexcept {
     std::swap(parameters_, other.parameters_);
   }
 
@@ -173,7 +175,7 @@ class url_search_parameters {
   /// assert(url.search() == "?key=e1f7bc78&q=%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88");
   /// ```
   void sort() {
-    static constexpr auto less_name = [](const auto &lhs, const auto &rhs) { return lhs.name < rhs.name; };
+    static constexpr auto less_name = [](const auto& lhs, const auto& rhs) { return lhs.name < rhs.name; };
 
     auto first = std::begin(parameters_), last = std::end(parameters_);
     std::sort(first, last, less_name);
@@ -217,7 +219,7 @@ class url_search_parameters {
     auto result = string_type{};
 
     bool start = true;
-    for (const auto &[name, value] : parameters_) {
+    for (const auto& [name, value] : parameters_) {
       if (start) {
         result.append(percent_encode(name));
         start = false;
@@ -233,7 +235,7 @@ class url_search_parameters {
   }
 
  private:
-  explicit url_search_parameters(url *url);
+  explicit url_search_parameters(url* url);
 
   void initialize(std::string_view query) {
     if (auto parameters = parse_query(query); parameters) {
@@ -248,13 +250,13 @@ class url_search_parameters {
   void update();
 
   std::vector<value_type> parameters_;
-  url *url_ = nullptr;
+  url* url_ = nullptr;
 };
 
 ///
 /// \param lhs
 /// \param rhs
-inline void swap(url_search_parameters &lhs, url_search_parameters &rhs) noexcept {
+inline void swap(url_search_parameters& lhs, url_search_parameters& rhs) noexcept {
   lhs.swap(rhs);
 }
 }  // namespace skyr

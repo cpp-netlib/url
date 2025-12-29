@@ -11,10 +11,8 @@
 #include <limits>
 #include <cstdint>
 #include <vector>
-#include <ranges>  // was: range/v3/view/filter.hpp>
-#include <ranges>  // was: range/v3/view/transform.hpp>
 #include <algorithm>
-#include <ranges>  // was: range/v3/view/take.hpp>
+#include <ranges>
 #include <expected>
 #include <skyr/domain/errors.hpp>
 
@@ -52,11 +50,11 @@ constexpr inline auto adapt(uint32_t delta, uint32_t numpoints, bool firsttime) 
 /// \param input A UTF-32 encoded domain
 /// \param output An ascii string on output
 /// \returns `void` or an error
-inline auto punycode_encode(std::u32string_view input, std::string *output) -> std::expected<void, domain_errc> {
+inline auto punycode_encode(std::u32string_view input, std::string* output) -> std::expected<void, domain_errc> {
   using namespace punycode::constants;
 
-  constexpr auto is_ascii_value = [] (auto c) { return c < 0x80; };
-  constexpr auto to_char = [] (auto c) { return static_cast<char>(c); };
+  constexpr auto is_ascii_value = [](auto c) { return c < 0x80; };
+  constexpr auto to_char = [](auto c) { return static_cast<char>(c); };
 
   // encode_digit(d,flag) returns the basic code point whose value
   // (when used for representing integers) is d, which needs to be in
@@ -154,7 +152,7 @@ inline auto punycode_encode(std::u32string_view input, std::string *output) -> s
 /// \param input An ASCII encoded domain to be decoded
 /// \returns The decoded UTF-8 domain, or an error
 template <class StringView>
-constexpr inline auto punycode_decode(StringView input, std::u32string *output) -> std::expected<void, domain_errc> {
+constexpr inline auto punycode_decode(StringView input, std::u32string* output) -> std::expected<void, domain_errc> {
   using namespace punycode::constants;
 
   // decode_digit(cp) returns the numeric value of a basic code

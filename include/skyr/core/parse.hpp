@@ -16,7 +16,7 @@
 
 namespace skyr {
 namespace details {
-inline auto basic_parse(std::string_view input, bool *validation_error, const url_record *base, const url_record *url,
+inline auto basic_parse(std::string_view input, bool* validation_error, const url_record* base, const url_record* url,
                         std::optional<url_parse_state> state_override) -> std::expected<url_record, url_parse_errc> {
   constexpr auto is_tab_or_newline = [](auto byte) { return (byte == '\t') || (byte == '\r') || (byte == '\n'); };
 
@@ -55,7 +55,7 @@ inline auto basic_parse(std::string_view input, bool *validation_error, const ur
   return std::move(context).get_url();
 }
 
-inline auto parse(std::string_view input, bool *validation_error, const url_record *base)
+inline auto parse(std::string_view input, bool* validation_error, const url_record* base)
     -> std::expected<url_record, url_parse_errc> {
   auto url = basic_parse(input, validation_error, base, nullptr, std::nullopt);
 
@@ -80,16 +80,16 @@ inline auto parse(std::string_view input) -> std::expected<url_record, url_parse
   return details::parse(input, &validation_error, nullptr);
 }
 
-inline auto parse(std::string_view input, bool *validation_error) -> std::expected<url_record, url_parse_errc> {
+inline auto parse(std::string_view input, bool* validation_error) -> std::expected<url_record, url_parse_errc> {
   return details::parse(input, validation_error, nullptr);
 }
 
-inline auto parse(std::string_view input, const url_record &base) -> std::expected<url_record, url_parse_errc> {
+inline auto parse(std::string_view input, const url_record& base) -> std::expected<url_record, url_parse_errc> {
   bool validation_error = false;
   return details::parse(input, &validation_error, &base);
 }
 
-inline auto parse(std::string_view input, const url_record &base, bool *validation_error)
+inline auto parse(std::string_view input, const url_record& base, bool* validation_error)
     -> std::expected<url_record, url_parse_errc> {
   return details::parse(input, validation_error, &base);
 }

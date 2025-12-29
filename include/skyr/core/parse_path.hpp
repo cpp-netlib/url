@@ -15,8 +15,8 @@ namespace skyr {
 /// \param path
 /// \param validation_error
 /// \return
-inline auto parse_path(
-    std::string_view path, bool *validation_error) -> std::expected<std::vector<std::string>, url_parse_errc> {
+inline auto parse_path(std::string_view path, bool* validation_error)
+    -> std::expected<std::vector<std::string>, url_parse_errc> {
   auto url = details::basic_parse(path, validation_error, nullptr, nullptr, url_parse_state::path_start);
   if (url) {
     return std::move(url.value()).path;
@@ -27,8 +27,7 @@ inline auto parse_path(
 ///
 /// \param path
 /// \return
-inline auto parse_path(
-    std::string_view path) -> std::expected<std::vector<std::string>, url_parse_errc> {
+inline auto parse_path(std::string_view path) -> std::expected<std::vector<std::string>, url_parse_errc> {
   [[maybe_unused]] bool validation_error = false;
   return parse_path(path, &validation_error);
 }

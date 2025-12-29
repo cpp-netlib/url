@@ -45,7 +45,7 @@ class percent_decode_iterator {
   ///
   using reference = const_reference;
   ///
-  using const_pointer = const value_type *;
+  using const_pointer = const value_type*;
   ///
   using pointer = const_pointer;
   ///
@@ -68,7 +68,7 @@ class percent_decode_iterator {
 
   ///
   /// \return
-  constexpr auto operator++() noexcept -> percent_decode_iterator & {
+  constexpr auto operator++() noexcept -> percent_decode_iterator& {
     assert(!remainder_.empty());
     increment();
     return *this;

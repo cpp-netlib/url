@@ -24,8 +24,8 @@ enum class json_errc {
   invalid_query = 1,
 };
 
-inline auto encode_query(const nlohmann::json &json, char separator='&', char equal='=')
-  -> std::expected<std::string, json_errc> {
+inline auto encode_query(const nlohmann::json& json, char separator = '&', char equal = '=')
+    -> std::expected<std::string, json_errc> {
   using namespace std::string_literals;
 
   std::string result{};
@@ -34,14 +34,14 @@ inline auto encode_query(const nlohmann::json &json, char separator='&', char eq
     return std::unexpected(json_errc::invalid_query);
   }
 
-  for (auto &[key, value] : json.items()) {
+  for (auto& [key, value] : json.items()) {
     if (value.is_string()) {
-      result += std::format(
-          "{}{}{}{}", percent_encode(key), equal, percent_encode(value.get<std::string>()), separator);
+      result +=
+          std::format("{}{}{}{}", percent_encode(key), equal, percent_encode(value.get<std::string>()), separator);
     } else if (value.is_array()) {
-      for (auto &element : value.items()) {
-        result += std::format(
-            "{}{}{}{}", percent_encode(key), equal, percent_encode(element.value().get<std::string>()), separator);
+      for (auto& element : value.items()) {
+        result += std::format("{}{}{}{}", percent_encode(key), equal,
+                              percent_encode(element.value().get<std::string>()), separator);
       }
     } else {
       result += std::format("{}{}{}", percent_encode(key), equal, separator);
@@ -56,7 +56,7 @@ inline auto decode_query(std::string_view query) -> nlohmann::json {
 
   auto parameters = parse_query(query);
   if (parameters) {
-    for (auto &&[name, value] : parameters.value()) {
+    for (auto&& [name, value] : parameters.value()) {
       const auto name_ = ::skyr::percent_decode(name).value();
       const auto value_ = value ? ::skyr::percent_decode(value.value()).value() : std::string();
 
@@ -78,6 +78,6 @@ inline auto decode_query(std::string_view query) -> nlohmann::json {
   return object;
 }
 }  // namespace json
-}  // namespace skyr::v2
+}  // namespace skyr
 
-#endif //SKYR_JSON_JSON_HPP
+#endif  // SKYR_JSON_JSON_HPP

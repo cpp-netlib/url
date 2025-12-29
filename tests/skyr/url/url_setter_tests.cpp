@@ -373,8 +373,10 @@ TEST_CASE("url_setter_tests", "[url]") {
     auto ec = instance.set_pathname(
         U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081\x00c9\x00e9"sv);
     CHECK_FALSE(ec);
-    CHECK("a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.href());
-    CHECK("/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.pathname());
+    CHECK("a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" ==
+          instance.href());
+    CHECK("/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" ==
+          instance.pathname());
   }
 
   SECTION("test_search_1") {
@@ -408,8 +410,10 @@ TEST_CASE("url_setter_tests", "[url]") {
     auto ec = instance.set_search(
         U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081\x00c9\x00e9"sv);
     CHECK_FALSE(ec);
-    CHECK("a:/?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.href());
-    CHECK("?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.search());
+    CHECK("a:/?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" ==
+          instance.href());
+    CHECK("?%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" ==
+          instance.search());
   }
 
   SECTION("test_hash_1") {
@@ -433,7 +437,8 @@ TEST_CASE("url_setter_tests", "[url]") {
     auto ec = instance.set_hash(
         U"\x0000\x0001\t\n\r\x001f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~\x007f\x0080\x0081\x00c9\x00e9"sv);
     CHECK_FALSE(ec);
-    CHECK("a:/#%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.href());
+    CHECK("a:/#%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" ==
+          instance.href());
     CHECK("#%00%01%1F%20!%22#$%&'()*+,-./09:;%3C=%3E?@AZ[\\]^_%60az{|}~%7F%C2%80%C2%81%C3%89%C3%A9" == instance.hash());
   }
 }

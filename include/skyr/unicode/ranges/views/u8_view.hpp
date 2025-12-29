@@ -35,7 +35,7 @@ class u8_range_iterator {
   /// A reference type
   using reference = const_reference;
   /// A pointer type
-  using const_pointer = const value_type *;
+  using const_pointer = const value_type*;
   /// A pointer type
   using pointer = const_pointer;
   /// \c std::ptrdiff_t
@@ -66,7 +66,7 @@ class u8_range_iterator {
   /// Increments through a code point
   ///
   /// \return \c *this
-  constexpr auto operator++() noexcept -> u8_range_iterator & {
+  constexpr auto operator++() noexcept -> u8_range_iterator& {
     ++it_;
     return *this;
   }
@@ -121,7 +121,7 @@ class view_u8_range {
 
   ///
   /// \param range
-  explicit constexpr view_u8_range(const OctetRange &range) : it_(std::cbegin(range), std::cend(range)) {
+  explicit constexpr view_u8_range(const OctetRange& range) : it_(std::cbegin(range), std::cend(range)) {
   }
 
   ///
@@ -164,7 +164,7 @@ namespace views {
 /// \param range
 /// \return
 template <typename OctetRange>
-constexpr inline auto as_u8(const OctetRange &range) {
+constexpr inline auto as_u8(const OctetRange& range) {
   static_assert(sizeof(traits::range_value_t<OctetRange>) >= 1);
   return view_u8_range{range};
 }

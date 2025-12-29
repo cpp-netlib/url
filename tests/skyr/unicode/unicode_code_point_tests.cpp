@@ -12,7 +12,6 @@
 #include <exception>
 #include <skyr/unicode/code_point.hpp>
 
-
 TEST_CASE("u8 code point tests") {
   using std::begin;
   using std::end;

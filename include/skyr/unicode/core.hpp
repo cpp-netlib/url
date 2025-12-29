@@ -88,7 +88,8 @@ constexpr inline auto sequence_length(uint8_t lead_value) {
 /// \tparam OctetIterator
 template <typename OctetIterator>
 struct sequence_state {
-  constexpr sequence_state(OctetIterator it, char32_t value) : it(it), value(value) {}
+  constexpr sequence_state(OctetIterator it, char32_t value) : it(it), value(value) {
+  }
 
   /// The current iterator
   OctetIterator it;
@@ -205,8 +206,8 @@ constexpr inline auto from_four_byte_sequence(OctetIterator first)
   using result_type = std::expected<sequence_state<OctetIterator>, unicode_errc>;
 
   constexpr auto update_code_point_from_second_byte = [](auto state) -> result_type {
-    return update_value(
-        state, ((state.value << 18) & 0x1fffff) + ((mask8(static_cast<std::uint8_t>(*state.it)) << 12) & 0x3ffff));
+    return update_value(state, ((state.value << 18) & 0x1fffff) +
+                                   ((mask8(static_cast<std::uint8_t>(*state.it)) << 12) & 0x3ffff));
   };
 
   constexpr auto update_code_point_from_third_byte = [](auto state) -> result_type {

@@ -70,7 +70,7 @@ class url_record {
 
   /// Swaps two `url_record` objects
   /// \param other Another `url_record` object
-  void swap(url_record &other) noexcept {
+  void swap(url_record& other) noexcept {
     using std::swap;
     swap(scheme, other.scheme);
     swap(username, other.username);
@@ -90,7 +90,7 @@ class url_record {
 ///
 /// \param lhs A `url_record` object
 /// \param rhs A `url_record` object
-inline void swap(url_record &lhs, url_record &rhs) noexcept {
+inline void swap(url_record& lhs, url_record& rhs) noexcept {
   lhs.swap(rhs);
 }
 }  // namespace skyr

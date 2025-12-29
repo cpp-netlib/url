@@ -33,7 +33,7 @@ class u16_transform_iterator {
   /// \c const_reference
   using reference = const_reference;
   /// \c value_type *
-  using const_pointer = const value_type *;
+  using const_pointer = const value_type*;
   /// \c value_type *
   using pointer = const_pointer;
   /// \c std::ptrdiff_t
@@ -49,7 +49,7 @@ class u16_transform_iterator {
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  constexpr auto operator++() noexcept -> u16_transform_iterator & {
+  constexpr auto operator++() noexcept -> u16_transform_iterator& {
     ++it_;
     return *this;
   }
@@ -105,7 +105,7 @@ class transform_u16_range {
 
   ///
   /// \param range
-  explicit constexpr transform_u16_range(CodePointRange &&range) : range_{std::forward<CodePointRange>(range)} {
+  explicit constexpr transform_u16_range(CodePointRange&& range) : range_{std::forward<CodePointRange>(range)} {
   }
 
   /// Returns an iterator to the beginning
@@ -149,7 +149,7 @@ struct transform_u16_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  constexpr auto operator()(CodePointRange &&range) const {
+  constexpr auto operator()(CodePointRange&& range) const {
     return transform_u16_range{std::forward<CodePointRange>(range)};
   }
 
@@ -158,7 +158,7 @@ struct transform_u16_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  friend constexpr auto operator|(CodePointRange &&range, const transform_u16_range_fn &) {
+  friend constexpr auto operator|(CodePointRange&& range, const transform_u16_range_fn&) {
     return transform_u16_range{std::forward<CodePointRange>(range)};
   }
 };
@@ -174,7 +174,7 @@ static constexpr transform_u16_range_fn to_u16;
 /// \param range
 /// \return
 template <class Output, class CodePointRange>
-auto as(transform_u16_range<CodePointRange> &&range) -> std::expected<Output, unicode_errc> {
+auto as(transform_u16_range<CodePointRange>&& range) -> std::expected<Output, unicode_errc> {
   auto result = Output{};
 
   for (auto it = std::cbegin(range); it != std::cend(range); ++it) {

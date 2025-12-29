@@ -31,7 +31,7 @@ class u8_transform_iterator {
   /// A reference
   using reference = const_reference;
   /// A pointer
-  using const_pointer = const value_type *;
+  using const_pointer = const value_type*;
   /// A pointer
   using pointer = const_pointer;
   /// \c std::ptrdiff_t
@@ -44,11 +44,12 @@ class u8_transform_iterator {
   ///
   /// \param first The first iterator in the code point sequence
   /// \param last The end iterator in the code point sequence
-  constexpr u8_transform_iterator(CodePointIterator first, Sentinel last) : it_(first), last_(last) {}
+  constexpr u8_transform_iterator(CodePointIterator first, Sentinel last) : it_(first), last_(last) {
+  }
 
   /// Pre-increment operator
   /// \return A reference to this iterator
-  constexpr auto operator++() noexcept -> u8_transform_iterator & {
+  constexpr auto operator++() noexcept -> u8_transform_iterator& {
     increment();
     return *this;
   }
@@ -157,7 +158,7 @@ class transform_u8_range {
   /// \c const_reference
   using reference = const_reference;
   /// \c const value_type*
-  using const_pointer = const value_type *;
+  using const_pointer = const value_type*;
   /// \c const value_type*
   using pointer = const_pointer;
   /// \c transform_u8_iterator
@@ -169,7 +170,8 @@ class transform_u8_range {
 
   /// Constructor
   /// \param range A range of code points
-  explicit constexpr transform_u8_range(const CodePointRange &range) : first_(std::cbegin(range), std::cend(range)) {}
+  explicit constexpr transform_u8_range(const CodePointRange& range) : first_(std::cbegin(range), std::cend(range)) {
+  }
 
   /// Returns an iterator to the first element in the code point sequence
   /// \return \c const_iterator
@@ -212,7 +214,7 @@ struct u8_range_fn {
   /// \param range
   /// \return
   template <class CodePointRange>
-  constexpr auto operator()(CodePointRange &&range) const {
+  constexpr auto operator()(CodePointRange&& range) const {
     return transform_u8_range{std::forward<CodePointRange>(range)};
   }
 
@@ -221,7 +223,7 @@ struct u8_range_fn {
   /// \param range
   /// \return
   template <typename CodePointRange>
-  friend constexpr auto operator|(CodePointRange &&range, const u8_range_fn &) {
+  friend constexpr auto operator|(CodePointRange&& range, const u8_range_fn&) {
     return transform_u8_range{std::forward<CodePointRange>(range)};
   }
 };
@@ -236,7 +238,7 @@ static constexpr u8_range_fn to_u8;
 /// \param range
 /// \return
 template <class Output, typename CodePointRange>
-constexpr auto as(transform_u8_range<CodePointRange> &&range) -> std::expected<Output, unicode_errc> {
+constexpr auto as(transform_u8_range<CodePointRange>&& range) -> std::expected<Output, unicode_errc> {
   auto result = Output{};
 
   for (auto it = std::cbegin(range); it != std::cend(range); ++it) {

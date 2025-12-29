@@ -18,9 +18,7 @@
 #include <skyr/platform/endianness.hpp>
 #include <skyr/containers/static_vector.hpp>
 #include <algorithm>
-#include <ranges>  // was: range/v3/view/split.hpp>
-#include <ranges>  // was: range/v3/view/transform.hpp>
-#include <ranges>  // was: range/v3/view/drop_last.hpp>
+#include <ranges>
 #include <format>
 
 namespace skyr {
@@ -85,7 +83,7 @@ constexpr inline auto pow256(unsigned int exp) noexcept -> std::uint64_t {
   return 1ULL << (exp * 8);
 }
 
-constexpr inline auto parse_ipv4_number(std::string_view input, bool *validation_error)
+constexpr inline auto parse_ipv4_number(std::string_view input, bool* validation_error)
     -> std::expected<std::uint64_t, ipv4_address_errc> {
   auto base = 10;
 
@@ -103,7 +101,7 @@ constexpr inline auto parse_ipv4_number(std::string_view input, bool *validation
     return 0ULL;
   }
 
-  char *pos = const_cast<char *>(input.data()) + input.size();  // NOLINT
+  char* pos = const_cast<char*>(input.data()) + input.size();  // NOLINT
   auto number = std::strtoull(input.data(), &pos, base);
   if ((number == ULLONG_MAX) || (pos != input.data() + input.size())) {
     return std::unexpected(ipv4_address_errc::invalid_segment_number);
@@ -115,16 +113,16 @@ constexpr inline auto parse_ipv4_number(std::string_view input, bool *validation
 /// Parses an IPv4 address
 /// \param input An input string
 /// \returns An `ipv4_address` object or an error
-constexpr inline auto parse_ipv4_address(std::string_view input, bool *validation_error)
+constexpr inline auto parse_ipv4_address(std::string_view input, bool* validation_error)
     -> std::expected<ipv4_address, ipv4_address_errc> {
   using namespace std::string_view_literals;
 
-  constexpr auto to_string_view = [](auto &&part) {
+  constexpr auto to_string_view = [](auto&& part) {
     return std::string_view(std::addressof(*std::begin(part)), std::ranges::distance(part));
   };
 
   auto parts = static_vector<std::string_view, 8>{};
-  for (auto &&part : input | std::ranges::views::split('.') | std::ranges::views::transform(to_string_view)) {
+  for (auto&& part : input | std::ranges::views::split('.') | std::ranges::views::transform(to_string_view)) {
     if (parts.size() == parts.max_size()) {
       *validation_error |= true;
       return std::unexpected(ipv4_address_errc::too_many_segments);
@@ -146,7 +144,7 @@ constexpr inline auto parse_ipv4_address(std::string_view input, bool *validatio
 
   auto numbers = static_vector<std::uint64_t, 4>{};
 
-  for (const auto &part : parts) {
+  for (const auto& part : parts) {
     if (part.empty()) {
       *validation_error |= true;
       return std::unexpected(ipv4_address_errc::empty_segment);
@@ -184,7 +182,7 @@ constexpr inline auto parse_ipv4_address(std::string_view input, bool *validatio
   numbers.pop_back();
 
   auto counter = 0UL;
-  for (auto &&number : numbers) {
+  for (auto&& number : numbers) {
     ipv4 += number * details::pow256(3 - counter);
     ++counter;
   }

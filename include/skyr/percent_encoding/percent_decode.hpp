@@ -14,9 +14,10 @@
 namespace skyr {
 /// Percent decodes the input
 /// \returns The percent decoded output when successful, an error otherwise.
-inline auto percent_decode(std::string_view input) -> std::expected<std::string, percent_encoding::percent_encode_errc> {
+inline auto percent_decode(std::string_view input)
+    -> std::expected<std::string, percent_encoding::percent_encode_errc> {
   auto result = std::string{};
-  for (auto &&value : percent_encoding::percent_decode_range{input}) {
+  for (auto&& value : percent_encoding::percent_decode_range{input}) {
     if (!value) {
       return std::unexpected((value).error());
     }

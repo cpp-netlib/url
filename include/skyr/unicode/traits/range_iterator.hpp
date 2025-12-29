@@ -23,7 +23,7 @@ class range_iterator {
 template <typename T, std::size_t N>
 class range_iterator<T[N]> {  // NOLINT
  public:
-  using type = const T *;
+  using type = const T*;
 };
 
 template <class Range>

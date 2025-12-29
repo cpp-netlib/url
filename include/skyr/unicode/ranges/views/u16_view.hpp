@@ -32,7 +32,7 @@ class u16_range_iterator {
   ///
   using reference = const_reference;
   ///
-  using const_pointer = const value_type *;
+  using const_pointer = const value_type*;
   ///
   using pointer = const_reference;
   ///
@@ -56,7 +56,7 @@ class u16_range_iterator {
 
   ///
   /// \return
-  constexpr auto operator++() noexcept -> u16_range_iterator & {
+  constexpr auto operator++() noexcept -> u16_range_iterator& {
     increment();
     return *this;
   }
@@ -173,7 +173,7 @@ namespace views {
 /// \param range
 /// \return
 template <typename U16Range>
-constexpr inline auto as_u16(const U16Range &range) {
+constexpr inline auto as_u16(const U16Range& range) {
   static_assert(sizeof(traits::range_value_t<U16Range>) >= 2);
   return view_u16_range{range};
 }

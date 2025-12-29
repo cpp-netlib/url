@@ -3,7 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-
 #include <exception>
 #include <catch2/catch_all.hpp>
 #include <exception>
@@ -41,21 +40,21 @@ TEST_CASE("json_tests", "[json.query]") {
   }
 
   SECTION("encode_simple_query") {
-    auto json = nlohmann::json{ { "a", "b" }, { "c", "d" } };
+    auto json = nlohmann::json{{"a", "b"}, {"c", "d"}};
     auto query = skyr::json::encode_query(json);
     REQUIRE(query);
     CHECK(query.value() == "a=b&c=d");
   }
 
   SECTION("encode_simple_query_with_multiple_arguments") {
-    auto json = nlohmann::json{ { "a", { "b", "e" } }, { "c", "d" } };
+    auto json = nlohmann::json{{"a", {"b", "e"}}, {"c", "d"}};
     auto query = skyr::json::encode_query(json);
     REQUIRE(query);
     CHECK(query.value() == "a=b&a=e&c=d");
   }
 
   SECTION("encode_simple_query_with_unicode_value") {
-    auto json = nlohmann::json{ { "a", "\xcf\x80" } };
+    auto json = nlohmann::json{{"a", "\xcf\x80"}};
     auto query = skyr::json::encode_query(json);
     REQUIRE(query);
     CHECK(query.value() == "a=%CF%80");
@@ -63,7 +62,7 @@ TEST_CASE("json_tests", "[json.query]") {
 
   SECTION("invalid_query_json") {
     auto json = nlohmann::json{
-      {"I", "am", "not", "a", "valid", "query", "string"},
+        {"I", "am", "not", "a", "valid", "query", "string"},
     };
     auto query = skyr::json::encode_query(json);
     REQUIRE_FALSE(query);

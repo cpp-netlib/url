@@ -19,7 +19,7 @@ namespace skyr::unicode {
 template <typename OctetIterator>
 constexpr inline auto u32_value(u8_code_point_view<OctetIterator> code_point) noexcept
     -> std::expected<char32_t, unicode_errc> {
-  constexpr auto to_value = [](auto &&state) { return state.value; };
+  constexpr auto to_value = [](auto&& state) { return state.value; };
   return find_code_point(code_point.begin()).transform(to_value);
 }
 
@@ -30,7 +30,7 @@ constexpr inline auto u32_value(u8_code_point_view<OctetIterator> code_point) no
 template <typename OctetIterator>
 constexpr inline auto u32_value(std::expected<u8_code_point_view<OctetIterator>, unicode_errc> code_point) noexcept
     -> std::expected<char32_t, unicode_errc> {
-  constexpr auto to_u32 = [](auto &&code_point) { return u32_value(code_point); };
+  constexpr auto to_u32 = [](auto&& code_point) { return u32_value(code_point); };
   return code_point.and_then(to_u32);
 }
 

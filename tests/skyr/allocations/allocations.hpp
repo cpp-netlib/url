@@ -11,7 +11,6 @@
 #include <optional>
 #include <format>
 
-
 auto num_allocations = std::optional<unsigned int>{};
 
 struct skyr_allocation_test_runner {
@@ -23,21 +22,19 @@ struct skyr_allocation_test_runner {
   }
 };
 
-auto operator new (std::size_t num_bytes) -> void * {
+auto operator new(std::size_t num_bytes) -> void* {
   if (num_allocations) {
     std::cout << "[" << std::format("{:3d}", ++num_allocations.value()) << "] " << num_bytes << std::endl;
   }
-  return std::malloc(num_bytes); // NOLINT
+  return std::malloc(num_bytes);  // NOLINT
 }
 
-void operator delete (void *p) noexcept {
-  std::free(p); // NOLINT
+void operator delete(void* p) noexcept {
+  std::free(p);  // NOLINT
 }
 
-
-#define SKYR_ALLOCATIONS_START_COUNTING(message) \
+#define SKYR_ALLOCATIONS_START_COUNTING(message)   \
   std::cout << "::::: " << message << " ----- \n"; \
   [[maybe_unused]] auto counting_object_ = skyr_allocation_test_runner();
-
 
 #endif  // SKYR_ALLOCATIONS_HPP

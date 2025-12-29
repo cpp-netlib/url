@@ -8,8 +8,7 @@
 
 #include <string>
 #include <vector>
-#include <ranges>  // was: range/v3/view/split_when.hpp>
-#include <ranges>  // was: range/v3/view/transform.hpp>
+#include <ranges>
 #include <skyr/core/parse.hpp>
 
 namespace skyr {
@@ -23,20 +22,22 @@ struct query_parameter {
 
   /// Constructor
   /// \param name The parameter name
-  query_parameter(std::string name) : name(std::move(name)) {}
+  query_parameter(std::string name) : name(std::move(name)) {
+  }
 
   /// Constructor
   /// \param name The parameter name
   /// \param value The parameter value
-  query_parameter(std::string name, std::string value) : name(std::move(name)), value(std::move(value)) {}
+  query_parameter(std::string name, std::string value) : name(std::move(name)), value(std::move(value)) {
+  }
 };
 
 ///
 /// \param query
 /// \param validation_error
 /// \return
-inline auto parse_query(
-    std::string_view query, bool *validation_error) -> std::expected<std::vector<query_parameter>, url_parse_errc> {
+inline auto parse_query(std::string_view query, bool* validation_error)
+    -> std::expected<std::vector<query_parameter>, url_parse_errc> {
   if (!query.empty() && (query.front() == '?')) {
     query.remove_prefix(1);
   }
@@ -45,7 +46,7 @@ inline auto parse_query(
   if (url) {
     static constexpr auto is_separator = [](auto c) { return c == '&' || c == ';'; };
 
-    static constexpr auto to_nvp = [](auto &&parameter) -> query_parameter {
+    static constexpr auto to_nvp = [](auto&& parameter) -> query_parameter {
       if (std::ranges::empty(parameter)) {
         return {};
       }
@@ -83,8 +84,7 @@ inline auto parse_query(
 ///
 /// \param query
 /// \return
-inline auto parse_query(
-    std::string_view query) -> std::expected<std::vector<query_parameter>, url_parse_errc> {
+inline auto parse_query(std::string_view query) -> std::expected<std::vector<query_parameter>, url_parse_errc> {
   [[maybe_unused]] bool validation_error = false;
   return parse_query(query, &validation_error);
 }

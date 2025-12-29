@@ -16,18 +16,13 @@ TEST_CASE("valid domains to ascii", "[domain]") {
   using param = std::pair<std::string, std::string>;
 
   auto domain = GENERATE(
-      param{"example.com", "example.com"},
-      param{"sub.example.com", "sub.example.com"},
-      param{"⌘.ws", "xn--bih.ws"},
-      param{"你好你好", "xn--6qqa088eba"},
-      param{"你好你好.com", "xn--6qqa088eba.com"},
-      param{"उदाहरण.परीक्षा", "xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g"},
-      param{"faß.ExAmPlE", "xn--fa-hia.example"},
-      param{"βόλος.com", "xn--nxasmm1c.com"},
-      param{"Ｇｏ.com", "go.com"});
+      param{"example.com", "example.com"}, param{"sub.example.com", "sub.example.com"}, param{"⌘.ws", "xn--bih.ws"},
+      param{"你好你好", "xn--6qqa088eba"}, param{"你好你好.com", "xn--6qqa088eba.com"},
+      param{"उदाहरण.परीक्षा", "xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g"}, param{"faß.ExAmPlE", "xn--fa-hia.example"},
+      param{"βόλος.com", "xn--nxasmm1c.com"}, param{"Ｇｏ.com", "go.com"});
 
   SECTION("domain_to_ascii_tests") {
-    const auto &[input, expected] = domain;
+    const auto& [input, expected] = domain;
     INFO("input = " << input << ", expected = " << expected);
     auto output = std::string{};
     auto result = skyr::domain_to_ascii(input, &output);
@@ -39,16 +34,13 @@ TEST_CASE("valid domains to ascii", "[domain]") {
 TEST_CASE("valid domains from ascii", "[domain]") {
   using param = std::pair<std::string, std::string>;
 
-  auto domain = GENERATE(
-      param{"example.com", "example.com"},
-      param{"⌘.ws", "xn--bih.ws"},
-      param{"你好你好", "xn--6qqa088eba"},
-      param{"你好你好.com", "xn--6qqa088eba.com"},
-      param{"उदाहरण.परीक्षा", "xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g"},
-      param{"βόλος.com", "xn--nxasmm1c.com"});
+  auto domain =
+      GENERATE(param{"example.com", "example.com"}, param{"⌘.ws", "xn--bih.ws"}, param{"你好你好", "xn--6qqa088eba"},
+               param{"你好你好.com", "xn--6qqa088eba.com"},
+               param{"उदाहरण.परीक्षा", "xn--p1b6ci4b4b3a.xn--11b5bs3a9aj6g"}, param{"βόλος.com", "xn--nxasmm1c.com"});
 
   SECTION("ascii_to_domain_tests") {
-    const auto &[expected, input] = domain;
+    const auto& [expected, input] = domain;
     auto output = std::string{};
     auto result = skyr::domain_to_u8(input, &output);
     REQUIRE(result);
@@ -114,7 +106,7 @@ TEST_CASE("web platform tests", "[domain]") {
     REQUIRE_FALSE(instance);
   }
 
-    /// ProcessingOptions is non-transitional
+  /// ProcessingOptions is non-transitional
   SECTION("toascii_08") {
     auto output = std::string{};
     auto instance = skyr::domain_to_ascii("ශ්‍රී", &output);
@@ -129,14 +121,14 @@ TEST_CASE("web platform tests", "[domain]") {
     CHECK("xn--mgba3gch31f060k" == output);
   }
 
-    /// U+FFFD (replacement character)
+  /// U+FFFD (replacement character)
   SECTION("toascii_10") {
     auto output = std::string{};
     auto instance = skyr::domain_to_ascii("\xef\xbf\xbd.com", &output);
     REQUIRE_FALSE(instance);
   }
 
-    /// U+FFFD character encoded in Punycode
+  /// U+FFFD character encoded in Punycode
   SECTION("toascii_11") {
     auto output = std::string{};
     auto instance = skyr::domain_to_ascii("xn--zn7c.com", &output);
