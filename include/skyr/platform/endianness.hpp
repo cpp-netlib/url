@@ -20,7 +20,11 @@ requires std::is_integral_v<intT> constexpr inline auto swap_endianness(intT v) 
   for (auto i = 0ul; i < byte_count; ++i) {
     bytes[i] = static_cast<std::byte>(v >> (i * bit_count));
   }
-  return *static_cast<const intT *>(static_cast<const void *>(bytes.data()));
+  intT result = 0;
+  for (auto i = 0ul; i < byte_count; ++i) {
+    result |= (static_cast<intT>(bytes[byte_count - 1 - i]) << (i * bit_count));
+  }
+  return result;
 }
 }  // namespace details
 

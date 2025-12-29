@@ -150,11 +150,11 @@ constexpr inline auto punycode_decode(StringView input, std::u32string *output) 
     constexpr auto upper_a = 'A';
     constexpr auto lower_a = 'a';
 
-    if ((cp - zero) < '\x10') {
-      return static_cast<std::uint32_t>(cp - '\x16');
-    } else if ((cp - upper_a) < '\x1a') {
+    if ((cp - zero) < 0x10) {
+      return static_cast<std::uint32_t>(cp - zero);
+    } else if ((cp - upper_a) < 0x1a) {
       return static_cast<std::uint32_t>(cp - upper_a);
-    } else if ((cp - lower_a) < '\x1a') {
+    } else if ((cp - lower_a) < 0x1a) {
       return static_cast<std::uint32_t>(cp - lower_a);
     }
     return base;

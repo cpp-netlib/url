@@ -868,7 +868,7 @@ class url {
   }
 
   void update_record(url_record &&url) {
-    url_ = url;
+    url_ = std::move(url);
     href_ = serialize(url_);
     view_ = string_view(href_);
     parameters_.initialize(url_.query ? string_view(url_.query.value()) : string_view{});

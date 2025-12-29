@@ -608,7 +608,7 @@ class url_parser_context {
           return std::unexpected(result.error());
         }
         if (url.host.value().serialize() == "localhost") {
-          url.host.value() = host{empty_host{}};
+          url.host = host{empty_host{}};
         }
 
         if (state_override) {

@@ -15,7 +15,7 @@ namespace skyr {
 /// Percent encodes the input
 /// \returns The percent encoded output when successful, an error otherwise.
 inline auto percent_encode_bytes(std::string_view input, percent_encoding::encode_set encodes) -> std::string {
-  static auto encode = [&encodes] (auto byte) {
+  auto encode = [encodes] (auto byte) {
     using percent_encoding::percent_encode_byte;
     return percent_encode_byte(std::byte(byte), encodes);
   };
