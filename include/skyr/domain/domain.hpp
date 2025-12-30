@@ -6,18 +6,19 @@
 #ifndef SKYR_DOMAIN_DOMAIN_HPP
 #define SKYR_DOMAIN_DOMAIN_HPP
 
+#include <algorithm>
+#include <expected>
+#include <iterator>
+#include <ranges>
 #include <string>
 #include <string_view>
-#include <algorithm>
-#include <iterator>
-#include <expected>
-#include <ranges>
-#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
-#include <skyr/unicode/ranges/transforms/u8_transform.hpp>
-#include <skyr/unicode/ranges/views/u8_view.hpp>
+
 #include <skyr/domain/errors.hpp>
 #include <skyr/domain/idna.hpp>
 #include <skyr/domain/punycode.hpp>
+#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
+#include <skyr/unicode/ranges/transforms/u8_transform.hpp>
+#include <skyr/unicode/ranges/views/u8_view.hpp>
 
 namespace skyr {
 constexpr inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules,

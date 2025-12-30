@@ -6,10 +6,11 @@
 #ifndef SKYR_CORE_URL_RECORD_HPP
 #define SKYR_CORE_URL_RECORD_HPP
 
-#include <vector>
-#include <string>
 #include <cstdint>
 #include <optional>
+#include <string>
+#include <vector>
+
 #include <skyr/core/host.hpp>
 #include <skyr/core/schemes.hpp>
 

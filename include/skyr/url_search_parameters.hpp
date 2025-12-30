@@ -6,17 +6,18 @@
 #ifndef SKYR_URL_SEARCH_PARAMETERS_HPP
 #define SKYR_URL_SEARCH_PARAMETERS_HPP
 
-#include <string>
-#include <string_view>
-#include <vector>
-#include <functional>
-#include <optional>
 #include <algorithm>
 #include <cassert>
 #include <format>
+#include <functional>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include <skyr/core/parse_query.hpp>
-#include <skyr/percent_encoding/percent_encode.hpp>
 #include <skyr/percent_encoding/percent_decode.hpp>
+#include <skyr/percent_encoding/percent_encode.hpp>
 
 namespace skyr {
 class url;

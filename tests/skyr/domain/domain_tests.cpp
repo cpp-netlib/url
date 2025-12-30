@@ -5,11 +5,10 @@
 
 #include <exception>
 #include <string>
-#include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/domain/domain.hpp>
-#include <exception>
 #include <skyr/domain/errors.hpp>
 
 TEST_CASE("valid domains to ascii", "[domain]") {

@@ -7,12 +7,13 @@
 #define SKYR_UNICODE_RANGES_VIEWS_U16_VIEW_HPP
 
 #include <cassert>
+#include <expected>
 #include <iterator>
 #include <type_traits>
-#include <expected>
+
+#include <skyr/unicode/code_points/u16.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/errors.hpp>
-#include <skyr/unicode/code_points/u16.hpp>
 #include <skyr/unicode/ranges/sentinel.hpp>
 #include <skyr/unicode/traits/range_iterator.hpp>
 #include <skyr/unicode/traits/range_value.hpp>

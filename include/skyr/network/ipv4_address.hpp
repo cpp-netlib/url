@@ -6,20 +6,21 @@
 #ifndef SKYR_NETWORK_IPV4_ADDRESS_HPP
 #define SKYR_NETWORK_IPV4_ADDRESS_HPP
 
+#include <algorithm>
 #include <array>
+#include <climits>
+#include <cmath>
+#include <cstdint>
+#include <expected>
+#include <format>
+#include <locale>
+#include <optional>
+#include <ranges>
 #include <string>
 #include <string_view>
-#include <optional>
-#include <cmath>
-#include <climits>
-#include <cstdint>
-#include <locale>
-#include <expected>
-#include <skyr/platform/endianness.hpp>
+
 #include <skyr/containers/static_vector.hpp>
-#include <algorithm>
-#include <ranges>
-#include <format>
+#include <skyr/platform/endianness.hpp>
 
 namespace skyr {
 /// Enumerates IPv4 address parsing errors
@@ -28,7 +29,7 @@ enum class ipv4_address_errc {
   too_many_segments,
   /// The input contains an empty segment
   empty_segment,
-  /// The segment numers invalid
+  /// The segment numbers are invalid
   invalid_segment_number,
   /// Overflow
   overflow,

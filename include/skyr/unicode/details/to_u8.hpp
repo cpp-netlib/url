@@ -7,10 +7,11 @@
 #define SKYR_UNICODE_DETAILS_TO_U8_HPP
 
 #include <string>
+
 #include <skyr/concepts/url_concepts.hpp>
+#include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/ranges/transforms/u8_transform.hpp>
 #include <skyr/unicode/ranges/views/u16_view.hpp>
-#include <skyr/unicode/errors.hpp>
 
 namespace skyr::details {
 template <class Source>

@@ -6,9 +6,9 @@
 #ifndef SKYR_CONCEPTS_URL_CONCEPTS_HPP
 #define SKYR_CONCEPTS_URL_CONCEPTS_HPP
 
-#include <type_traits>
 #include <string>
 #include <string_view>
+#include <type_traits>
 
 namespace skyr {
 template <class T, class charT>

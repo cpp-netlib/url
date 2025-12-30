@@ -3,10 +3,11 @@
 // (See accompanying file LICENSE_1_0.txt of copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <exception>
 #include <algorithm>
 #include <memory>
+
 #include <catch2/catch_all.hpp>
+
 #include <skyr/url.hpp>
 
 using namespace skyr::literals;

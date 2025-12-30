@@ -6,9 +6,10 @@
 #ifndef SKYR_PERCENT_ENCODING_PERCENT_ENCODE_HPP
 #define SKYR_PERCENT_ENCODING_PERCENT_ENCODE_HPP
 
-#include <string_view>
-#include <string>
 #include <ranges>
+#include <string>
+#include <string_view>
+
 #include <skyr/percent_encoding/percent_encoded_char.hpp>
 
 namespace skyr {

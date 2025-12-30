@@ -7,9 +7,10 @@
 #define SKYR_DOMAIN_IDNA_HPP
 
 #include <expected>
+
 #include <skyr/domain/errors.hpp>
-#include <skyr/unicode/traits/range_iterator.hpp>
 #include <skyr/domain/idna_tables.hpp>
+#include <skyr/unicode/traits/range_iterator.hpp>
 
 namespace skyr::idna {
 ///

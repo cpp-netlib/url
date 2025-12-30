@@ -5,11 +5,10 @@
 
 #include <exception>
 #include <string_view>
-#include <exception>
 #include <variant>
-#include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/core/host.hpp>
 
 TEST_CASE("parse_host_tests", "url.parse_host") {

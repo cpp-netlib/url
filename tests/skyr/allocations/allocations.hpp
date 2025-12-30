@@ -6,10 +6,10 @@
 #ifndef SKYR_ALLOCATIONS_HPP
 #define SKYR_ALLOCATIONS_HPP
 
-#include <iostream>
 #include <cstdlib>
-#include <optional>
 #include <format>
+#include <iostream>
+#include <optional>
 
 auto num_allocations = std::optional<unsigned int>{};
 

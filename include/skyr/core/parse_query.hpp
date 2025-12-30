@@ -6,9 +6,10 @@
 #ifndef SKYR_CORE_PARSE_QUERY_HPP
 #define SKYR_CORE_PARSE_QUERY_HPP
 
+#include <ranges>
 #include <string>
 #include <vector>
-#include <ranges>
+
 #include <skyr/core/parse.hpp>
 
 namespace skyr {

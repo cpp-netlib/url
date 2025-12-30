@@ -6,9 +6,9 @@
 #ifndef SKYR_CORE_URL_SCHEMES_HPP
 #define SKYR_CORE_URL_SCHEMES_HPP
 
-#include <string_view>
 #include <cstdint>
 #include <optional>
+#include <string_view>
 
 namespace skyr {
 /// \param scheme

@@ -5,9 +5,9 @@
 
 #include <exception>
 #include <string>
-#include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/domain/punycode.hpp>
 
 TEST_CASE("encode_test", "[punycode]") {

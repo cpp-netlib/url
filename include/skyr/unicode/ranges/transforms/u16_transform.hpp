@@ -6,14 +6,15 @@
 #ifndef SKYR_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP
 #define SKYR_UNICODE_RANGES_TRANSFORMS_U16_TRANSFORM_HPP
 
+#include <expected>
 #include <iterator>
 #include <type_traits>
-#include <expected>
+
+#include <skyr/unicode/code_points/u16.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/errors.hpp>
-#include <skyr/unicode/code_points/u16.hpp>
-#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/unicode/ranges/sentinel.hpp>
+#include <skyr/unicode/ranges/transforms/u32_transform.hpp>
 #include <skyr/unicode/traits/range_iterator.hpp>
 
 namespace skyr::unicode {

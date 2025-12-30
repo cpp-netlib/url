@@ -4,11 +4,11 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
-#include <skyr/url.hpp>
-#include <exception>
+
 #include <skyr/filesystem/path.hpp>
+#include <skyr/url.hpp>
 
 TEST_CASE("filesystem path", "[filesystem_path]") {
   SECTION("empty_path") {

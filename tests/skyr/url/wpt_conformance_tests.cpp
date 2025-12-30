@@ -8,7 +8,9 @@
 // They focus on high-value conformance issues worth fixing.
 
 #include <exception>
+
 #include <catch2/catch_all.hpp>
+
 #include <skyr/url.hpp>
 
 TEST_CASE("wpt_whitespace_handling", "[url][wpt][whitespace]") {

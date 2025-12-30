@@ -6,9 +6,10 @@
 #ifndef SKYR_UNICODE_RANGES_VIEWS_U8_VIEW_HPP
 #define SKYR_UNICODE_RANGES_VIEWS_U8_VIEW_HPP
 
+#include <expected>
 #include <iterator>
 #include <type_traits>
-#include <expected>
+
 #include <skyr/unicode/code_point.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/errors.hpp>

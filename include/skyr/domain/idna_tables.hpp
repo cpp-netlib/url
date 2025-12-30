@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <array>
 #include <iterator>
+
 #include <skyr/domain/idna_status.hpp>
 
 namespace skyr::idna::details {

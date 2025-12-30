@@ -6,10 +6,11 @@
 #ifndef SKYR_UNICODE_CORE_HPP
 #define SKYR_UNICODE_CORE_HPP
 
-#include <string>
-#include <type_traits>
 #include <cstdint>
 #include <expected>
+#include <string>
+#include <type_traits>
+
 #include <skyr/unicode/constants.hpp>
 #include <skyr/unicode/errors.hpp>
 

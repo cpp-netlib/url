@@ -5,11 +5,10 @@
 
 #include <exception>
 #include <iterator>
-#include <exception>
 #include <string_view>
-#include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/unicode/code_point.hpp>
 
 TEST_CASE("u8 code point tests") {
