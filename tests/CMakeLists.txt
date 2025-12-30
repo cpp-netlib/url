@@ -22,3 +22,4 @@ function(skyr_create_test file_name output_dir test_name)
 endfunction()
 
 add_subdirectory(skyr)
+add_subdirectory(wpt)

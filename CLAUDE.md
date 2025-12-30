@@ -63,6 +63,7 @@ cmake --build _build
 
 Key build options:
 - `skyr_BUILD_TESTS` (ON): Build tests
+- `skyr_BUILD_WPT` (OFF): Build Web Platform Tests runner
 - `skyr_ENABLE_FILESYSTEM_FUNCTIONS` (ON): Enable filesystem::path conversion
 - `skyr_ENABLE_JSON_FUNCTIONS` (ON): Enable JSON serialization
 - `skyr_BUILD_WITHOUT_EXCEPTIONS` (OFF): Build without exceptions
@@ -117,6 +118,109 @@ ctest --test-dir _build
        skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/{component} test_name)
    endforeach ()
    ```
+
+## Web Platform Tests (WPT)
+
+**Web Platform Tests** provide conformance testing against the official WhatWG URL specification test suite. Unlike unit tests, WPT generates a **report** showing which edge cases are handled and which are not.
+
+### Philosophy
+
+- **Not pass/fail tests** - WPT is a reporting tool, not a quality gate
+- **Edge case discovery** - Shows which obscure URL patterns are supported
+- **100% is not the goal** - Some edge cases may be intentionally unsupported if they add complexity or hurt performance
+- **Separate from unit tests** - Does not affect CI/PR status
+
+### Building WPT Tests
+
+```bash
+cmake \
+  -B _build \
+  -G "Ninja" \
+  -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake \
+  -Dskyr_BUILD_WPT=ON \
+  .
+cmake --build _build
+```
+
+**Dependencies**: Requires `nlohmann-json` for parsing test data.
+
+### Running WPT Tests
+
+```bash
+# Run with latest test data (downloads from WPT repository)
+./_build/tests/wpt/wpt_runner --force-download
+
+# Run with cached data (if less than 24 hours old)
+./_build/tests/wpt/wpt_runner
+
+# Specify custom cache location
+./_build/tests/wpt/wpt_runner --cache /path/to/urltestdata.json
+```
+
+### Report Format
+
+The runner outputs a comprehensive report:
+
+```
+=================================================
+WPT URL Test Suite Report
+=================================================
+Test Data: https://github.com/web-platform-tests/...
+Generated: 2025-12-30 10:30:00 UTC
+
+SUMMARY:
+  Total Tests:      1,234
+  Successful:       1,150 (93.2%)
+  Failed:            84 (6.8%)
+
+FAILURE BREAKDOWN:
+  Parse Errors:      45 (53.6% of failures)
+  Component Mismatch: 39 (46.4% of failures)
+
+SAMPLE FAILURES (first 20):
+  [1] Input: "http://example.org/foo%2€bar"
+      Expected: parse failure
+      Actual:   parsed successfully
+
+  [2] Input: "http://[::1]:65536/"
+      Expected: parsed successfully
+      Actual:   parse failure (invalid port)
+  ...
+=================================================
+```
+
+### Implementation Details
+
+- **Parallel execution**: Uses `std::execution::par_unseq` to process tests in parallel
+- **Thread-safe aggregation**: Atomic counters and mutex-protected failure collection
+- **Automatic downloads**: Fetches latest `urltestdata.json` from WPT repository
+- **Smart caching**: Reuses cached data if less than 24 hours old
+
+### GitHub Actions
+
+WPT runs automatically via `.github/workflows/wpt-integration.yml`:
+
+**Triggers:**
+- Push to `main` branch
+- Weekly schedule (Mondays at 00:00 UTC)
+- Manual workflow dispatch
+
+**Output:**
+- Report displayed in workflow log
+- Full report uploaded as artifact (90-day retention)
+- Does not fail CI - informational only
+
+**Configuration:**
+- Single build: Linux GCC 14 Release
+- Fast execution: Parallel test processing
+- Always downloads latest test data
+
+### Test Data Source
+
+Test data comes from the official WPT repository:
+`https://github.com/web-platform-tests/wpt/blob/master/url/resources/urltestdata.json`
+
+This ensures compliance testing against the latest WhatWG URL specification test cases.
 
 ## Code Structure
 

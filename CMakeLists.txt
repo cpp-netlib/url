@@ -25,6 +25,7 @@ project(
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 option(skyr_BUILD_TESTS "Build the URL tests." ON)
+option(skyr_BUILD_WPT "Build Web Platform Tests runner (report-only, not unit tests)." OFF)
 option(skyr_BUILD_DOCS "Build the URL documentation." OFF)
 option(skyr_BUILD_EXAMPLES "Build the URL examples." OFF)
 option(skyr_FULL_WARNINGS "Build the library with all warnings turned on." ON)

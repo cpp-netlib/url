@@ -1,0 +1,156 @@
+name: Web Platform Tests
+
+# Run on push to main, weekly schedule, and manual trigger
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    # Run every Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+    # Allow manual triggering
+
+env:
+  CMAKE_VERSION: 3.21.7
+  NINJA_VERSION: 1.11.0
+
+jobs:
+  wpt-report:
+    name: Web Platform Tests Report
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Download Ninja and CMake
+        id: cmake_and_ninja
+        shell: cmake -P {0}
+        run: |
+          set(cmake_version $ENV{CMAKE_VERSION})
+          set(ninja_version $ENV{NINJA_VERSION})
+
+          message(STATUS "Using host CMake version: ${CMAKE_VERSION}")
+
+          set(ninja_suffix "linux.zip")
+          set(cmake_suffix "linux-x86_64.tar.gz")
+          set(cmake_dir "cmake-${cmake_version}-linux-x86_64/bin")
+
+          set(ninja_url "https://github.com/ninja-build/ninja/releases/download/v${ninja_version}/ninja-${ninja_suffix}")
+          file(DOWNLOAD "${ninja_url}" ./ninja.zip SHOW_PROGRESS)
+          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./ninja.zip)
+
+          set(cmake_url "https://github.com/Kitware/CMake/releases/download/v${cmake_version}/cmake-${cmake_version}-${cmake_suffix}")
+          file(DOWNLOAD "${cmake_url}" ./cmake.zip SHOW_PROGRESS)
+          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./cmake.zip)
+
+          # Save the path for other steps
+          file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/${cmake_dir}" cmake_dir)
+          message("::set-output name=cmake_dir::${cmake_dir}")
+
+          execute_process(
+            COMMAND chmod +x ninja
+            COMMAND chmod +x ${cmake_dir}/cmake
+          )
+
+      - name: Install vcpkg
+        id: vcpkg
+        shell: bash
+        run: |
+          mkdir -p ${GITHUB_WORKSPACE}/vcpkg
+          cd ${GITHUB_WORKSPACE}/vcpkg
+          git init
+          git remote add origin https://github.com/microsoft/vcpkg.git
+          git fetch origin master
+          git checkout -b master origin/master
+          ./bootstrap-vcpkg.sh
+          ./vcpkg install uni-algo nlohmann-json
+
+      - name: Configure
+        shell: cmake -P {0}
+        working-directory: ${{ env.HOME }}
+        run: |
+          set(ENV{CC} gcc-14)
+          set(ENV{CXX} g++-14)
+
+          set(path_separator ":")
+          set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}${path_separator}$ENV{PATH}")
+
+          execute_process(
+            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake
+              -S .
+              -B build
+              -G Ninja
+              -D CMAKE_CXX_STANDARD:STRING=23
+              -D skyr_WARNINGS_AS_ERRORS=OFF
+              -D skyr_BUILD_TESTS=OFF
+              -D skyr_BUILD_WPT=ON
+              -D skyr_BUILD_DOCS=OFF
+              -D skyr_BUILD_EXAMPLES=OFF
+              -D CMAKE_BUILD_TYPE=RelWithDebInfo
+              -D CMAKE_TOOLCHAIN_FILE=$ENV{GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake
+            RESULT_VARIABLE result
+          )
+          if (NOT result EQUAL 0)
+            message(FATAL_ERROR "Configuration failed")
+          endif()
+
+      - name: Build
+        shell: cmake -P {0}
+        working-directory: ${{ env.HOME }}
+        run: |
+          set(ENV{NINJA_STATUS} "[%f/%t %o/sec] ")
+
+          set(path_separator ":")
+          set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}${path_separator}$ENV{PATH}")
+
+          execute_process(
+            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake --build build
+            RESULT_VARIABLE result
+          )
+          if (NOT result EQUAL 0)
+            message(FATAL_ERROR "Build failed")
+          endif()
+
+      - name: Run Web Platform Tests
+        shell: bash
+        working-directory: ${{ env.HOME }}
+        run: |
+          echo "Running Web Platform Tests..."
+          ./build/tests/wpt/wpt_runner --force-download 2>&1 | tee wpt-report.txt
+          echo "WPT_EXIT_CODE=${PIPESTATUS[0]}" >> $GITHUB_ENV
+
+      - name: Display Report Summary
+        if: always()
+        shell: bash
+        run: |
+          echo "==================================================="
+          echo "Web Platform Tests Report Summary"
+          echo "==================================================="
+          if [ -f wpt-report.txt ]; then
+            # Extract summary section from report
+            sed -n '/SUMMARY:/,/^$/p' wpt-report.txt
+          else
+            echo "Report file not found!"
+          fi
+
+      - name: Upload Full Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wpt-report
+          path: wpt-report.txt
+          retention-days: 90
+
+      - name: Job Status
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ env.WPT_EXIT_CODE }}" -eq "0" ]; then
+            echo "✅ Web Platform Tests completed successfully"
+            echo "📊 Full report available as workflow artifact"
+          else
+            echo "⚠️ Web Platform Tests exited with code ${{ env.WPT_EXIT_CODE }}"
+            echo "📊 Check the report for details"
+            exit 0  # Don't fail the workflow - this is just a report
+          fi
