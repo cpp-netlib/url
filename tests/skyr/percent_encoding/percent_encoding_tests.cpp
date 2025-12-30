@@ -4,11 +4,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 
 #include <exception>
+
 #include <catch2/catch_all.hpp>
 #define FMT_HEADER_ONLY
 #include <exception>
 #include <format>
-#include <exception>
+
 #include <skyr/percent_encoding/percent_encoded_char.hpp>
 
 TEST_CASE("encode fragment", "[percent_encoding]") {

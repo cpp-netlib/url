@@ -4,10 +4,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <exception>
-#include <catch2/catch_all.hpp>
-#include <exception>
 #include <vector>
-#include <exception>
+
+#include <catch2/catch_all.hpp>
+
 #include <skyr/json/json.hpp>
 
 TEST_CASE("json_tests", "[json.query]") {

@@ -6,20 +6,21 @@
 #ifndef SKYR_CORE_URL_PARSER_CONTEXT_HPP
 #define SKYR_CORE_URL_PARSER_CONTEXT_HPP
 
+#include <array>
 #include <cassert>
-#include <string_view>
-#include <optional>
+#include <expected>
 #include <iterator>
 #include <limits>
-#include <array>
 #include <locale>
-#include <expected>
-#include <skyr/domain/domain.hpp>
-#include <skyr/core/schemes.hpp>
-#include <skyr/core/host.hpp>
+#include <optional>
+#include <string_view>
+
 #include <skyr/core/errors.hpp>
-#include <skyr/core/url_record.hpp>
+#include <skyr/core/host.hpp>
+#include <skyr/core/schemes.hpp>
 #include <skyr/core/url_parse_state.hpp>
+#include <skyr/core/url_record.hpp>
+#include <skyr/domain/domain.hpp>
 #include <skyr/percent_encoding/percent_encoded_char.hpp>
 
 namespace skyr {

@@ -6,10 +6,11 @@
 #ifndef SKYR_UNICODE_CODE_POINTS_U16_HPP
 #define SKYR_UNICODE_CODE_POINTS_U16_HPP
 
+#include <expected>
+
 #include <skyr/unicode/constants.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/errors.hpp>
-#include <expected>
 
 namespace skyr::unicode {
 ///

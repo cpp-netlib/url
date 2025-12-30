@@ -5,7 +5,9 @@
 
 #include <exception>
 #include <memory>
+
 #include <catch2/catch_all.hpp>
+
 #include <skyr/containers/static_vector.hpp>
 
 struct test_destructor_call {

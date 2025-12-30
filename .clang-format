@@ -75,7 +75,7 @@ DerivePointerAlignment: false
 PointerAlignment: Left
 ReferenceAlignment: Left
 ReflowComments: true
-SortIncludes: false
+SortIncludes: CaseSensitive
 SortUsingDeclarations: false
 MaxEmptyLinesToKeep: 1
 
@@ -93,7 +93,24 @@ IndentRequiresClause: true
 SpaceAroundPointerQualifiers: Default
 
 # Include formatting
-IncludeBlocks: Preserve
+IncludeBlocks: Regroup
+IncludeCategories:
+  # 1. Main header (e.g., foo.cpp includes foo.hpp first)
+  - Regex:           '^".*\.hpp"$'
+    Priority:        1
+    SortPriority:    1
+  # 2. C++ standard library
+  - Regex:           '^<[^/]+>$'
+    Priority:        2
+    SortPriority:    2
+  # 3. Third-party libraries (uni-algo, catch2, nlohmann)
+  - Regex:           '^<(uni|catch2|nlohmann)/'
+    Priority:        3
+    SortPriority:    3
+  # 4. Project headers (skyr/...)
+  - Regex:           '^<skyr/'
+    Priority:        4
+    SortPriority:    4
 
 # Namespace formatting
 CompactNamespaces: false

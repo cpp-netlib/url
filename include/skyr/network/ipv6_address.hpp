@@ -6,19 +6,19 @@
 #ifndef SKYR_NETWORK_IPV6_ADDRESS_HPP
 #define SKYR_NETWORK_IPV6_ADDRESS_HPP
 
-#include <string>
-#include <string_view>
-#include <array>
-#include <optional>
-#include <cstdint>
 #include <algorithm>
+#include <array>
+#include <cstdint>
+#include <expected>
+#include <format>
 #include <iterator>
 #include <locale>
-#include <expected>
-#include <algorithm>
+#include <optional>
+#include <string>
+#include <string_view>
+
 #include <skyr/containers/static_vector.hpp>
 #include <skyr/platform/endianness.hpp>
-#include <format>
 
 namespace skyr {
 /// Enumerates IPv6 address parsing errors

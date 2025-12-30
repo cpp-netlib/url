@@ -6,10 +6,11 @@
 #ifndef SKYR_PERCENT_DECODING_PERCENT_DECODE_HPP
 #define SKYR_PERCENT_DECODING_PERCENT_DECODE_HPP
 
-#include <string_view>
 #include <expected>
-#include <skyr/percent_encoding/percent_decode_range.hpp>
+#include <string_view>
+
 #include <skyr/percent_encoding/errors.hpp>
+#include <skyr/percent_encoding/percent_decode_range.hpp>
 
 namespace skyr {
 /// Percent decodes the input

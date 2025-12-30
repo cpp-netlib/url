@@ -6,12 +6,12 @@
 #ifndef SKYR_CONTAINERS_STATIC_VECTOR_HPP
 #define SKYR_CONTAINERS_STATIC_VECTOR_HPP
 
-#include <cstdlib>
 #include <array>
-#include <type_traits>
-#include <optional>
 #include <cassert>
+#include <cstdlib>
 #include <new>
+#include <optional>
+#include <type_traits>
 
 namespace skyr {
 ///

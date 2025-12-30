@@ -5,9 +5,9 @@
 
 #include <exception>
 #include <vector>
-#include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/url.hpp>
 
 TEST_CASE("url_vector_tests", "[url]") {

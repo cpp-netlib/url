@@ -5,19 +5,14 @@
 
 #include <exception>
 #include <iterator>
-#include <exception>
 #include <string_view>
-#include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/unicode/ranges/transforms/u16_transform.hpp>
-#include <exception>
 #include <skyr/unicode/ranges/transforms/u32_transform.hpp>
-#include <exception>
 #include <skyr/unicode/ranges/transforms/u8_transform.hpp>
-#include <exception>
 #include <skyr/unicode/ranges/views/u16_view.hpp>
-#include <exception>
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 
 namespace unicode = skyr::unicode;

@@ -6,9 +6,9 @@
 #ifndef SKYR_PLATFORM_ENDIANNESS_HPP
 #define SKYR_PLATFORM_ENDIANNESS_HPP
 
+#include <array>
 #include <bit>
 #include <type_traits>
-#include <array>
 
 namespace skyr {
 namespace details {

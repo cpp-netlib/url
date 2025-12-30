@@ -6,11 +6,12 @@
 #ifndef SKYR_UNICODE_CODE_POINTS_U8_HPP
 #define SKYR_UNICODE_CODE_POINTS_U8_HPP
 
+#include <expected>
+
 #include <skyr/unicode/constants.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/errors.hpp>
 #include <skyr/unicode/traits/range_iterator.hpp>
-#include <expected>
 
 namespace skyr::unicode {
 /// This class defines a view over a code point in raw bytes,

@@ -4,10 +4,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/v1/url.hpp>
-#include <exception>
 #include <skyr/v1/url_search_parameters.hpp>
 
 TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {

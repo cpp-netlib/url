@@ -6,9 +6,10 @@
 #ifndef SKYR_URL_PARSE_STATE_HPP
 #define SKYR_URL_PARSE_STATE_HPP
 
-#include <string>
-#include <optional>
 #include <expected>
+#include <optional>
+#include <string>
+
 #include <skyr/core/url_record.hpp>
 
 namespace skyr {

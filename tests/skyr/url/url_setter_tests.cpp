@@ -4,8 +4,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/url.hpp>
 
 TEST_CASE("url_setter_tests", "[url]") {

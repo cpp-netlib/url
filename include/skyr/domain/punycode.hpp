@@ -6,14 +6,15 @@
 #ifndef SKYR_DOMAIN_PUNYCODE_HPP
 #define SKYR_DOMAIN_PUNYCODE_HPP
 
+#include <algorithm>
+#include <cstdint>
+#include <expected>
+#include <limits>
+#include <ranges>
 #include <string>
 #include <string_view>
-#include <limits>
-#include <cstdint>
 #include <vector>
-#include <algorithm>
-#include <ranges>
-#include <expected>
+
 #include <skyr/domain/errors.hpp>
 
 namespace skyr {

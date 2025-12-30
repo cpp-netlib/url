@@ -6,22 +6,23 @@
 #ifndef SKYR_URL_HPP
 #define SKYR_URL_HPP
 
+#include <expected>
 #include <ostream>
 #include <string>
 #include <string_view>
 #include <type_traits>
-#include <expected>
+
 #include <skyr/config.hpp>
-#include <skyr/network/ipv4_address.hpp>
-#include <skyr/network/ipv6_address.hpp>
-#include <skyr/unicode/details/to_u8.hpp>
-#include <skyr/percent_encoding/percent_encoded_char.hpp>
-#include <skyr/domain/domain.hpp>
 #include <skyr/core/errors.hpp>
-#include <skyr/core/url_record.hpp>
-#include <skyr/core/url_parse_state.hpp>
 #include <skyr/core/parse.hpp>
 #include <skyr/core/serialize.hpp>
+#include <skyr/core/url_parse_state.hpp>
+#include <skyr/core/url_record.hpp>
+#include <skyr/domain/domain.hpp>
+#include <skyr/network/ipv4_address.hpp>
+#include <skyr/network/ipv6_address.hpp>
+#include <skyr/percent_encoding/percent_encoded_char.hpp>
+#include <skyr/unicode/details/to_u8.hpp>
 #include <skyr/url_search_parameters.hpp>
 
 #if defined(SKYR_PLATFORM_MSVC)

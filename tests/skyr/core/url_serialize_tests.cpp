@@ -4,10 +4,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/core/parse.hpp>
-#include <exception>
 #include <skyr/core/serialize.hpp>
 
 TEST_CASE("url_serialize_tests", "[ipv6]") {

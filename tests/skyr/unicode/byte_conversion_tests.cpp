@@ -5,9 +5,9 @@
 
 #include <exception>
 #include <string>
-#include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/unicode/details/to_u8.hpp>
 
 TEST_CASE("weird_01", "byte_conversion_tests") {

@@ -3,16 +3,14 @@
 // (See accompanying file LICENSE_1_0.txt of copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include "allocations.hpp"
+
 #include <exception>
 #include <iostream>
-#include <exception>
 #include <string_view>
-#include <exception>
 #include <vector>
-#include <exception>
+
 #include <skyr/core/host.hpp>
-#include <exception>
-#include "allocations.hpp"
 
 using namespace std::string_view_literals;
 

@@ -6,10 +6,10 @@
 #ifndef SKYR_CORE_CHECK_INPUT_HPP
 #define SKYR_CORE_CHECK_INPUT_HPP
 
-#include <locale>
-#include <string>
 #include <algorithm>
 #include <iterator>
+#include <locale>
+#include <string>
 
 namespace skyr {
 constexpr static auto is_c0_control_or_space = [](auto byte) {

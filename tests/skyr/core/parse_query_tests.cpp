@@ -4,8 +4,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <exception>
+
 #include <catch2/catch_all.hpp>
-#include <exception>
+
 #include <skyr/core/parse_query.hpp>
 
 TEST_CASE("query_parsing_example_tests", "[parse]") {

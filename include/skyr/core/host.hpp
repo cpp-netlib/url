@@ -6,19 +6,19 @@
 #ifndef SKYR_CORE_HOST_HPP
 #define SKYR_CORE_HOST_HPP
 
-#include <variant>
-#include <string>
+#include <algorithm>
 #include <cassert>
-#include <algorithm>
 #include <expected>
-#include <algorithm>
 #include <ranges>
+#include <string>
+#include <variant>
+
 #include <skyr/core/errors.hpp>
+#include <skyr/domain/domain.hpp>
 #include <skyr/network/ipv4_address.hpp>
 #include <skyr/network/ipv6_address.hpp>
-#include <skyr/percent_encoding/percent_encoded_char.hpp>
 #include <skyr/percent_encoding/percent_decode.hpp>
-#include <skyr/domain/domain.hpp>
+#include <skyr/percent_encoding/percent_encoded_char.hpp>
 
 namespace skyr {
 /// Represents a domain name in a [URL host](https://url.spec.whatwg.org/#host-representation)

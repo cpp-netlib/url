@@ -7,6 +7,7 @@
 #define SKYR_UNICODE_CODE_POINT_HPP
 
 #include <expected>
+
 #include <skyr/unicode/code_points/u16.hpp>
 #include <skyr/unicode/code_points/u8.hpp>
 #include <skyr/unicode/errors.hpp>

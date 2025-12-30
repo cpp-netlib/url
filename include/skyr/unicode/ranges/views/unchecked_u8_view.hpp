@@ -6,15 +6,16 @@
 #ifndef SKYR_UNICODE_RANGES_VIEWS_UNCHECKED_U8_VIEW_HPP
 #define SKYR_UNICODE_RANGES_VIEWS_UNCHECKED_U8_VIEW_HPP
 
-#include <iterator>
 #include <algorithm>
 #include <cassert>
 #include <expected>
+#include <iterator>
+
 #include <skyr/unicode/code_point.hpp>
 #include <skyr/unicode/core.hpp>
 #include <skyr/unicode/errors.hpp>
-#include <skyr/unicode/traits/range_iterator.hpp>
 #include <skyr/unicode/ranges/sentinel.hpp>
+#include <skyr/unicode/traits/range_iterator.hpp>
 
 namespace skyr::unicode {
 ///

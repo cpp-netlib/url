@@ -6,15 +6,17 @@
 #ifndef SKYR_JSON_JSON_HPP
 #define SKYR_JSON_JSON_HPP
 
-#include <string>
-#include <optional>
-#include <vector>
 #include <expected>
-#include <nlohmann/json.hpp>
 #include <format>
+#include <optional>
+#include <string>
+#include <vector>
+
+#include <nlohmann/json.hpp>
+
 #include <skyr/core/parse_query.hpp>
-#include <skyr/percent_encoding/percent_encode.hpp>
 #include <skyr/percent_encoding/percent_decode.hpp>
+#include <skyr/percent_encoding/percent_encode.hpp>
 
 namespace skyr {
 namespace json {
