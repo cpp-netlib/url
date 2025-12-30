@@ -5,10 +5,8 @@
 
 #include <exception>
 #include <catch2/catch_all.hpp>
-#include <exception>
-#include <skyr/v1/url.hpp>
-#include <exception>
-#include <skyr/v1/url_search_parameters.hpp>
+#include <skyr/url.hpp>
+#include <skyr/url_search_parameters.hpp>
 
 TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
   SECTION("empty_query") {
@@ -24,19 +22,19 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     CHECK("a=b" == parameters.to_string());
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("a" == it->first);
-    CHECK("b" == it->second);
+    CHECK("a" == it->name);
+    CHECK("b" == it->value);
     ++it;
     CHECK(it == parameters.end());
   }
 
-  SECTION("query_with_single_kvp_in_initalizer_list") {
+  SECTION("query_with_single_kvp_in_initializer_list") {
     skyr::url_search_parameters parameters{"a=b"};
 
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("a" == it->first);
-    CHECK("b" == it->second);
+    CHECK("a" == it->name);
+    CHECK("b" == it->value);
     ++it;
     CHECK(it == parameters.end());
   }
@@ -46,12 +44,12 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
 
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("a" == it->first);
-    CHECK("b" == it->second);
+    CHECK("a" == it->name);
+    CHECK("b" == it->value);
     ++it;
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("c" == it->first);
-    CHECK("d" == it->second);
+    CHECK("c" == it->name);
+    CHECK("d" == it->value);
     ++it;
     CHECK(it == parameters.end());
   }
@@ -61,12 +59,12 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
 
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("a" == it->first);
-    CHECK("b" == it->second);
+    CHECK("a" == it->name);
+    CHECK("b" == it->value);
     ++it;
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("c" == it->first);
-    CHECK("d" == it->second);
+    CHECK("c" == it->name);
+    CHECK("d" == it->value);
     ++it;
     CHECK(it == parameters.end());
   }
@@ -77,12 +75,12 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
     CHECK("a=b&c=d" == parameters.to_string());
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("a" == it->first);
-    CHECK("b" == it->second);
+    CHECK("a" == it->name);
+    CHECK("b" == it->value);
     ++it;
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("c" == it->first);
-    CHECK("d" == it->second);
+    CHECK("c" == it->name);
+    CHECK("d" == it->value);
     ++it;
     CHECK(it == parameters.end());
   }
@@ -93,8 +91,8 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
 
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("a" == it->first);
-    CHECK("b" == it->second);
+    CHECK("a" == it->name);
+    CHECK("b" == it->value);
     ++it;
     CHECK(it == parameters.end());
   }
@@ -106,11 +104,11 @@ TEST_CASE("url_search_parameters_test", "[url_search_parameters]") {
 
     auto it = parameters.begin();
     REQUIRE_FALSE(it == parameters.end());
-    CHECK("a" == it->first);
-    CHECK("b" == it->second);
+    CHECK("a" == it->name);
+    CHECK("b" == it->value);
     ++it;
-    CHECK("c" == it->first);
-    CHECK("d" == it->second);
+    CHECK("c" == it->name);
+    CHECK("d" == it->value);
     ++it;
     CHECK(it == parameters.end());
   }
@@ -294,10 +292,10 @@ TEST_CASE("url") {
 
     auto first = std::begin(url.search_parameters()), last = std::end(url.search_parameters());
     REQUIRE(first != last);
-    CHECK("key" == first->first);
+    CHECK("key" == first->name);
     ++first;
     REQUIRE(first != last);
-    CHECK("q" == first->first);
+    CHECK("q" == first->name);
     ++first;
     REQUIRE(first == last);
   }

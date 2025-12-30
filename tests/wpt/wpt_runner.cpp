@@ -10,6 +10,7 @@
 #include <format>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -251,6 +252,183 @@ TestResult run_test_case(const TestCase& test_case) {
   }
 }
 
+enum class FailureCategory {
+  WhitespaceHandling,
+  PercentEncoding,
+  InvalidCharacterAccepted,
+  IPv4PercentEncoded,
+  DomainEdgeCases,
+  Other
+};
+
+struct CategorizedFailure {
+  FailureCategory category;
+  TestResult result;
+};
+
+bool contains_whitespace_chars(const std::string& str) {
+  return str.find('\t') != std::string::npos || str.find('\n') != std::string::npos ||
+         str.find('\r') != std::string::npos;
+}
+
+FailureCategory categorize_failure(const TestResult& result) {
+  const auto& input = result.test_case.input;
+  const auto& details = result.mismatch_details;
+
+  // Check for whitespace handling issues (tabs, newlines in input)
+  if (contains_whitespace_chars(input)) {
+    return FailureCategory::WhitespaceHandling;
+  }
+
+  // Check for percent encoding issues
+  if (details.find("password:") != std::string::npos || details.find("username:") != std::string::npos ||
+      details.find("pathname:") != std::string::npos && input.find(" ") != std::string::npos) {
+    return FailureCategory::PercentEncoding;
+  }
+
+  // Check for IPv4 percent-encoded hostnames
+  if (input.find("%30") != std::string::npos || input.find("%78") != std::string::npos) {
+    return FailureCategory::IPv4PercentEncoded;
+  }
+
+  // Check for domain edge cases (. and .. as domains)
+  if (input.find("http://.") != std::string::npos && details.find("host:") != std::string::npos) {
+    return FailureCategory::DomainEdgeCases;
+  }
+
+  // Check for invalid character accepted (parse should have failed)
+  if (details.find("Parse succeeded (expected failure)") != std::string::npos) {
+    return FailureCategory::InvalidCharacterAccepted;
+  }
+
+  return FailureCategory::Other;
+}
+
+std::string category_to_string(FailureCategory cat) {
+  switch (cat) {
+    case FailureCategory::WhitespaceHandling:
+      return "Whitespace Handling";
+    case FailureCategory::PercentEncoding:
+      return "Percent Encoding";
+    case FailureCategory::InvalidCharacterAccepted:
+      return "Invalid Character Accepted";
+    case FailureCategory::IPv4PercentEncoded:
+      return "IPv4 Percent-Encoded";
+    case FailureCategory::DomainEdgeCases:
+      return "Domain Edge Cases";
+    case FailureCategory::Other:
+      return "Other";
+  }
+  return "Unknown";
+}
+
+void write_categorized_report(const Statistics& stats, const std::string& output_file) {
+  // Categorize all failures
+  std::map<FailureCategory, std::vector<TestResult>> categorized;
+
+  for (const auto& failure : stats.failures) {
+    auto category = categorize_failure(failure);
+    categorized[category].push_back(failure);
+  }
+
+  // Write to file
+  std::ofstream out(output_file);
+  if (!out) {
+    std::cerr << "Failed to open output file: " << output_file << "\n";
+    return;
+  }
+
+  out << "WPT URL Test Suite - Categorized Failure Report\n";
+  out << "================================================\n\n";
+
+  out << "SUMMARY BY CATEGORY:\n";
+  out << "--------------------\n";
+
+  // Count by category
+  struct CategoryInfo {
+    std::string name;
+    size_t count;
+    bool worth_fixing;
+  };
+
+  std::vector<CategoryInfo> category_summary;
+  category_summary.push_back({"Whitespace Handling", categorized[FailureCategory::WhitespaceHandling].size(), true});
+  category_summary.push_back({"Percent Encoding", categorized[FailureCategory::PercentEncoding].size(), true});
+  category_summary.push_back(
+      {"Invalid Character Accepted", categorized[FailureCategory::InvalidCharacterAccepted].size(), true});
+  category_summary.push_back({"IPv4 Percent-Encoded", categorized[FailureCategory::IPv4PercentEncoded].size(), false});
+  category_summary.push_back({"Domain Edge Cases", categorized[FailureCategory::DomainEdgeCases].size(), false});
+  category_summary.push_back({"Other", categorized[FailureCategory::Other].size(), false});
+
+  size_t worth_fixing_total = 0;
+  for (const auto& info : category_summary) {
+    std::string status = info.worth_fixing ? "[WORTH FIXING]" : "[Consider/Skip]";
+    out << std::format("  {:<30} {:>4} {}\n", info.name + ":", info.count, status);
+    if (info.worth_fixing) {
+      worth_fixing_total += info.count;
+    }
+  }
+
+  out << "\nTotal failures worth fixing: " << worth_fixing_total << " / " << stats.failures.size() << "\n";
+  out << "\n\n";
+
+  // Print detailed failures by category
+  auto print_category = [&](FailureCategory cat, bool is_worth_fixing) {
+    if (categorized[cat].empty())
+      return;
+
+    out << "================================================================================\n";
+    out << category_to_string(cat) << " (" << categorized[cat].size() << " failures)\n";
+    out << (is_worth_fixing ? "[WORTH FIXING - affects correctness/common cases]\n"
+                            : "[Consider carefully - edge cases, may not be worth the complexity]\n");
+    out << "================================================================================\n\n";
+
+    for (size_t i = 0; i < categorized[cat].size(); ++i) {
+      const auto& failure = categorized[cat][i];
+      out << std::format("[{}] Input: \"{}\"\n", i + 1, failure.test_case.input);
+
+      if (!failure.test_case.base.empty()) {
+        out << std::format("    Base: \"{}\"\n", failure.test_case.base);
+      }
+
+      if (!failure.test_case.comment.empty()) {
+        out << std::format("    Comment: {}\n", failure.test_case.comment);
+      }
+
+      if (failure.status == TestResult::Status::ParseFailure) {
+        out << "    Expected: parsed successfully\n";
+        out << "    Actual: parse failure\n";
+      } else {
+        out << std::format("    Details: {}\n", failure.mismatch_details);
+      }
+
+      out << "\n";
+    }
+
+    out << "\n";
+  };
+
+  // Print worth-fixing categories first
+  out << "################################################################################\n";
+  out << "#                           WORTH FIXING FAILURES                              #\n";
+  out << "################################################################################\n\n";
+
+  print_category(FailureCategory::WhitespaceHandling, true);
+  print_category(FailureCategory::PercentEncoding, true);
+  print_category(FailureCategory::InvalidCharacterAccepted, true);
+
+  out << "\n\n";
+  out << "################################################################################\n";
+  out << "#                      CONSIDER/SKIP FAILURES                                  #\n";
+  out << "################################################################################\n\n";
+
+  print_category(FailureCategory::IPv4PercentEncoded, false);
+  print_category(FailureCategory::DomainEdgeCases, false);
+  print_category(FailureCategory::Other, false);
+
+  std::cout << "Categorized report written to: " << output_file << "\n";
+}
+
 void print_report(const Statistics& stats) {
   auto total = stats.total;
   auto successful = stats.successful;
@@ -329,6 +507,7 @@ int main(int argc, char* argv[]) {
     // Determine cache path (in current directory or specified location)
     std::filesystem::path cache_path = CACHE_FILE;
     bool force_download = false;
+    std::string categorize_output;
 
     for (int i = 1; i < argc; ++i) {
       std::string arg = argv[i];
@@ -337,6 +516,12 @@ int main(int argc, char* argv[]) {
       } else if (arg == "--cache" || arg == "-c") {
         if (i + 1 < argc) {
           cache_path = argv[++i];
+        }
+      } else if (arg == "--categorize") {
+        if (i + 1 < argc) {
+          categorize_output = argv[++i];
+        } else {
+          categorize_output = "wpt_failures_categorized.txt";
         }
       }
     }
@@ -385,6 +570,12 @@ int main(int argc, char* argv[]) {
 
     // Print report
     print_report(stats);
+
+    // Write categorized report if requested
+    if (!categorize_output.empty()) {
+      std::cout << "\n";
+      write_categorized_report(stats, categorize_output);
+    }
 
     return 0;
 
