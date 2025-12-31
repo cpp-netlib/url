@@ -413,12 +413,26 @@ class url_parser_context {
     if (byte == '@') {
       *validation_error |= true;
       if (at_flag) {
-        buffer.insert(0, "%40");
+        // Subsequent @ characters
+        // If we already have a password (from first @ segment containing ':'),
+        // append to password. Otherwise, parse normally as username:password.
+        if (!url.password.empty()) {
+          url.password += "%40";
+          for (auto c : buffer) {
+            auto pct_encoded = percent_encode_byte(std::byte(c), percent_encoding::encode_set::userinfo);
+            url.password += pct_encoded.to_string();
+          }
+          buffer.clear();
+        } else {
+          buffer.insert(0, "%40");
+          set_credentials_from_buffer();
+          buffer.clear();
+        }
+      } else {
+        at_flag = true;
+        set_credentials_from_buffer();
+        buffer.clear();
       }
-      at_flag = true;
-
-      set_credentials_from_buffer();
-      buffer.clear();
     } else if (((is_eof()) || (byte == '/') || (byte == '?') || (byte == '#')) ||
                (url.is_special() && (byte == '\\'))) {
       if (at_flag && buffer.empty()) {
