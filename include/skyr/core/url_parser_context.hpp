@@ -674,7 +674,10 @@ class url_parser_context {
         add_empty_path_element();
       } else if (!details::is_single_dot_path_segment(buffer)) {
         if ((url.scheme == "file") && url.path.empty() && details::is_windows_drive_letter(buffer)) {
-          if (!url.host || !url.host.value().is_empty()) {
+          // For file URLs with Windows drive letters, the host should be empty
+          // UNLESS it was inherited from a file base URL (per WPT test expectations)
+          bool inherited_from_file_base = (base && base->scheme == "file");
+          if (!inherited_from_file_base && (!url.host || !url.host.value().is_empty())) {
             *validation_error |= true;
             set_empty_host();
           }
