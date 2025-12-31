@@ -298,11 +298,11 @@ jobs:
           if [[ "${{ matrix.config.cxx }}" == clang++* ]]; then
             export CC=${{ matrix.config.cc }}
             export CXX=${{ matrix.config.cxx }}
-            ./vcpkg install catch2 uni-algo nlohmann-json \
+            ./vcpkg install catch2 nlohmann-json \
               --triplet x64-linux-libcxx \
               --overlay-triplets=${GITHUB_WORKSPACE}/cmake/vcpkg-triplets
           else
-            ./vcpkg install catch2 uni-algo nlohmann-json
+            ./vcpkg install catch2 nlohmann-json
           fi
 
       - name: Install LLVM Clang on macOS
@@ -338,7 +338,7 @@ jobs:
           git checkout -b master origin/master
           export
           ./bootstrap-vcpkg.sh
-          ./vcpkg install catch2 uni-algo nlohmann-json
+          ./vcpkg install catch2 nlohmann-json
 
       - name: Install vcpkg (Windows)
         id: vcpkg_windows
@@ -348,7 +348,7 @@ jobs:
           git clone https://github.com/microsoft/vcpkg.git ${Env:GITHUB_WORKSPACE}\vcpkg
           cd ${Env:GITHUB_WORKSPACE}\vcpkg
           .\bootstrap-vcpkg.bat
-          vcpkg install catch2 uni-algo nlohmann-json --triplet x64-windows
+          vcpkg install catch2 nlohmann-json --triplet x64-windows
           
 
       - name: Configure

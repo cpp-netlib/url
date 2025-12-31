@@ -115,17 +115,6 @@ jobs:
           git checkout -b master origin/master
           ./bootstrap-vcpkg.sh
 
-          # For Clang builds, use custom triplet with libc++ and set compiler
-          if [[ "${{ matrix.config.use_libcxx }}" == "true" ]]; then
-            export CC=${{ matrix.config.cc }}
-            export CXX=${{ matrix.config.cxx }}
-            ./vcpkg install uni-algo \
-              --triplet x64-linux-libcxx \
-              --overlay-triplets=${GITHUB_WORKSPACE}/cmake/vcpkg-triplets
-          else
-            ./vcpkg install uni-algo
-          fi
-
       - name: Configure
         shell: cmake -P {0}
         run: |

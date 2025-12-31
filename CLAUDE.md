@@ -295,12 +295,30 @@ Performance:
 
 To find actual performance bottlenecks, use profiling tools:
 
-**macOS (Instruments):**
+**macOS (Instruments - requires Xcode):**
+```bash
+# First, install Xcode from App Store or https://developer.apple.com/download/
+# Verify: xctrace version
+
+cmake -B _build -G Ninja -Dskyr_BUILD_BENCHMARKS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build _build --target url_parsing_bench
+
+# Profile with xctrace (modern replacement for 'instruments' command)
+xctrace record --template 'Time Profiler' \
+  --output /tmp/url_bench.trace \
+  --launch ./_build/benchmark/url_parsing_bench 50000
+
+# Open results in Instruments GUI
+open /tmp/url_bench.trace
+```
+
+**macOS (sample - built-in, no Xcode needed):**
 ```bash
 cmake -B _build -G Ninja -Dskyr_BUILD_BENCHMARKS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo
 cmake --build _build --target url_parsing_bench
-instruments -t "Time Profiler" -D /tmp/url_bench.trace ./_build/benchmark/url_parsing_bench 50000
-open /tmp/url_bench.trace
+sample url_parsing_bench 10 -file /tmp/profile.txt &
+./_build/benchmark/url_parsing_bench 50000
+open /tmp/profile.txt
 ```
 
 **Linux (perf):**
@@ -313,8 +331,11 @@ perf report
 
 **All platforms (Valgrind):**
 ```bash
+cmake -B _build -G Ninja -Dskyr_BUILD_BENCHMARKS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build _build --target url_parsing_bench
 valgrind --tool=callgrind ./_build/benchmark/url_parsing_bench 1000
-qcachegrind callgrind.out  # or kcachegrind on Linux
+qcachegrind callgrind.out  # macOS: brew install qcachegrind
+                           # Linux: kcachegrind
 ```
 
 ### Test Coverage

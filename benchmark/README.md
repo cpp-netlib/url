@@ -35,6 +35,32 @@ Default: 10,000 iterations × 34 URLs = 340,000 parses
 
 ### macOS (with Xcode Instruments)
 
+**Requires Xcode** - Install from App Store or https://developer.apple.com/download/
+
+```bash
+# Verify Xcode tools are installed
+xctrace version
+
+# Build with debug symbols
+cmake -B _build -G Ninja \
+  -Dskyr_BUILD_BENCHMARKS=ON \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo
+
+cmake --build _build --target url_parsing_bench
+
+# Profile with xctrace (modern replacement for 'instruments' command)
+xctrace record --template 'Time Profiler' \
+  --output /tmp/url_bench.trace \
+  --launch ./_build/benchmark/url_parsing_bench 50000
+
+# Open results in Instruments GUI
+open /tmp/url_bench.trace
+```
+
+### macOS (with sample - no Xcode needed)
+
+**Built-in** - No installation required
+
 ```bash
 # Build with debug symbols
 cmake -B _build -G Ninja \
@@ -43,13 +69,12 @@ cmake -B _build -G Ninja \
 
 cmake --build _build --target url_parsing_bench
 
-# Profile with Instruments
-instruments -t "Time Profiler" \
-  -D /tmp/url_bench.trace \
-  ./_build/benchmark/url_parsing_bench 50000
+# Profile with sample (10 second sample)
+sample url_parsing_bench 10 -file /tmp/profile.txt &
+./_build/benchmark/url_parsing_bench 50000
 
-# Open results
-open /tmp/url_bench.trace
+# View results
+open /tmp/profile.txt
 ```
 
 ### Linux (with perf)

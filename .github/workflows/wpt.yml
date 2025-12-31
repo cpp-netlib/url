@@ -61,7 +61,7 @@ jobs:
           git fetch origin master
           git checkout -b master origin/master
           ./bootstrap-vcpkg.sh
-          ./vcpkg install uni-algo nlohmann-json
+          ./vcpkg install nlohmann-json
 
       - name: Configure
         shell: cmake -P {0}

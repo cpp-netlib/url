@@ -28,7 +28,7 @@ jobs:
           ./bootstrap-vcpkg.sh
           export CXXFLAGS="-stdlib=libc++"
           export LDFLAGS="-stdlib=libc++ -lc++abi"
-          ./vcpkg install uni-algo nlohmann-json
+          ./vcpkg install nlohmann-json
 
       - name: Install Catch2
         run: |

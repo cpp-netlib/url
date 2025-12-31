@@ -103,8 +103,8 @@ IncludeCategories:
   - Regex:           '^<[^/]+>$'
     Priority:        2
     SortPriority:    2
-  # 3. Third-party libraries (uni-algo, catch2, nlohmann)
-  - Regex:           '^<(uni|catch2|nlohmann)/'
+  # 3. Third-party libraries (catch2, nlohmann)
+  - Regex:           '^<(catch2|nlohmann)/'
     Priority:        3
     SortPriority:    3
   # 4. Project headers (skyr/...)
