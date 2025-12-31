@@ -19,20 +19,22 @@ namespace skyr {
 namespace details {
 inline auto basic_parse(std::string_view input, bool* validation_error, const url_record* base, const url_record* url,
                         std::optional<url_parse_state> state_override) -> std::expected<url_record, url_parse_errc> {
-  constexpr auto is_tab_or_newline = [](auto byte) { return (byte == '\t') || (byte == '\r') || (byte == '\n'); };
+  // Remove tabs and newlines from the input according to WhatWG spec
+  std::string cleaned_input;
+  std::string_view input_view;
 
   if (url == nullptr) {
     input = remove_leading_c0_control_or_space(input, validation_error);
     input = remove_trailing_c0_control_or_space(input, validation_error);
+    // Remove all tabs and newlines from the input
+    cleaned_input = remove_tabs_and_newlines(input, validation_error);
+    input_view = cleaned_input;
+  } else {
+    input_view = input;
   }
 
-  auto context = url_parser_context(input, validation_error, base, url, state_override);
+  auto context = url_parser_context(input_view, validation_error, base, url, state_override);
   while (true) {
-    // remove tabs and new lines
-    while (!context.is_eof() && is_tab_or_newline(context.next_byte())) {
-      context.increment();
-    }
-
     auto action = context.parse_next();
     if (!action) {
       return std::unexpected(action.error());
