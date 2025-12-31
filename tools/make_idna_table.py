@@ -80,15 +80,15 @@ def main():
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYR_V2_DOMAIN_IDNA_TABLES_HPP
-#define SKYR_V2_DOMAIN_IDNA_TABLES_HPP
+#ifndef SKYR_DOMAIN_IDNA_TABLES_HPP
+#define SKYR_DOMAIN_IDNA_TABLES_HPP
 
 #include <algorithm>
 #include <array>
 #include <iterator>
-#include <skyr/v2/domain/idna_status.hpp>
+#include <skyr/domain/idna_status.hpp>
 
-namespace skyr::inline v2::idna::details {
+namespace skyr::idna::details {
 struct code_point_range {
   char32_t first;
   char32_t last;
@@ -116,9 +116,9 @@ struct mapped_32_code_point {
 constexpr static auto mapped_32 = std::array<mapped_32_code_point, {{ mapped_entries_32|length }}>{% raw %}{{{% endraw %}
 {% for code_point in mapped_entries_32 %}  { U'\\x{{ '%04x' % code_point.range[0] }}', U'\\x{{ '%04x' % code_point.mapped }}' },
 {% endfor %}{% raw %}}}{% endraw %};
-}  // namespace skyr::inline v2::idna::details
+}  // namespace skyr::idna::details
 
-#endif  // SKYR_V2_DOMAIN_IDNA_TABLES_HPP
+#endif  // SKYR_DOMAIN_IDNA_TABLES_HPP
 
 """)
 

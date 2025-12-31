@@ -4,8 +4,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <iostream>
-#include <skyr/url.hpp>
+
 #include <skyr/percent_encoding/percent_decode.hpp>
+#include <skyr/url.hpp>
 
 int main() {
   auto url = skyr::url("http://example.org/\xf0\x9f\x92\xa9");

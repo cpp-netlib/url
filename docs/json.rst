@@ -24,6 +24,6 @@ API
 JSON
 ^^^^
 
-.. doxygenfunction:: skyr::v1::json::encode_query
+.. doxygenfunction:: skyr::json::encode_query
 
-.. doxygenfunction:: skyr::v1::json::decode_query
+.. doxygenfunction:: skyr::json::decode_query

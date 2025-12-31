@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <string_view>
+
 #include <skyr/core/host.hpp>
 
 using namespace std::string_view_literals;

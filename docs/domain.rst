@@ -50,4 +50,4 @@ Domain to ASCII
 Error codes
 ^^^^^^^^^^^
 
-.. doxygenenum:: skyr::v1::domain_errc
+.. doxygenenum:: skyr::domain_errc

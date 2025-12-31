@@ -18,6 +18,6 @@ if (NOT skyr_BUILD_WITHOUT_EXCEPTIONS)
             url_tests_with_exceptions.cpp
             url_literal_tests.cpp
             )
-        skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test_name v1)
+        skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test_name)
     endforeach()
 endif()

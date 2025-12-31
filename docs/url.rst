@@ -44,7 +44,7 @@ API
 ``skyr::url`` class
 ^^^^^^^^^^^^^^^^^^^
 
-.. doxygenclass:: skyr::v1::url
+.. doxygenclass:: skyr::url
     :members:
 
 ``skyr::url`` functions
@@ -59,13 +59,13 @@ API
 ``skyr::url`` error codes
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. doxygenenum:: skyr::v1::url_parse_errc
+.. doxygenenum:: skyr::url_parse_errc
 
-.. doxygenclass:: skyr::v1::url_parse_error
+.. doxygenclass:: skyr::url_parse_error
     :members:
 
 ``skyr::url_search_parameters`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. doxygenclass:: skyr::v1::url_search_parameters
+.. doxygenclass:: skyr::url_search_parameters
     :members:

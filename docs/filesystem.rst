@@ -35,11 +35,11 @@ API
 Path
 ^^^^
 
-.. doxygenfunction:: skyr::v1::filesystem::from_path
+.. doxygenfunction:: skyr::filesystem::from_path
 
-.. doxygenfunction:: skyr::v1::filesystem::to_path
+.. doxygenfunction:: skyr::filesystem::to_path
 
 Error codes
 ^^^^^^^^^^^
 
-.. doxygenenum:: skyr::v1::filesystem::path_errc
+.. doxygenenum:: skyr::filesystem::path_errc

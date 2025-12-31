@@ -37,11 +37,11 @@ API
 IPv4
 ^^^^
 
-.. doxygenclass:: skyr::v1::ipv4_address
+.. doxygenclass:: skyr::ipv4_address
     :members:
 
 IPv6
 ^^^^
 
-.. doxygenclass:: skyr::v1::ipv6_address
+.. doxygenclass:: skyr::ipv6_address
     :members:

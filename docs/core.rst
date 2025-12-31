@@ -53,13 +53,13 @@ API
 ``skyr::host`` class
 ^^^^^^^^^^^^^^^^^^^^
 
-.. doxygenclass:: skyr::v1::host
+.. doxygenclass:: skyr::host
     :members:
 
 ``skyr::url_record`` class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. doxygenclass:: skyr::v1::url_record
+.. doxygenclass:: skyr::url_record
     :members:
 
 ``skyr::url_record`` functions
