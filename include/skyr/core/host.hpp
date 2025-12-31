@@ -146,7 +146,7 @@ namespace details {
 constexpr static auto is_forbidden_host_point = [](auto byte) {
   return (byte == '\0') || (byte == '\t') || (byte == '\n') || (byte == '\r') || (byte == ' ') || (byte == '#') ||
          (byte == '%') || (byte == '/') || (byte == ':') || (byte == '<') || (byte == '>') || (byte == '?') ||
-         (byte == '@') || (byte == '[') || (byte == '\\') || (byte == ']') || (byte == '^');
+         (byte == '@') || (byte == '[') || (byte == '\\') || (byte == ']') || (byte == '^') || (byte == '|');
 };
 
 inline auto parse_opaque_host(std::string_view input, bool* validation_error)

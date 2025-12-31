@@ -8,7 +8,7 @@ foreach (file_name
         url_vector_tests.cpp
         url_setter_tests.cpp
         url_search_parameters_tests.cpp
-        # wpt_conformance_tests.cpp
+        wpt_conformance_tests.cpp
         )
     skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test_name)
 endforeach ()
