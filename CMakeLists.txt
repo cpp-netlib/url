@@ -94,6 +94,15 @@ if (skyr_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
+# Sanitizer tests (independent, no Catch2 needed)
+if (skyr_ENABLE_SANITIZERS)
+    message(STATUS "[skyr-url] Configuring sanitizer tests")
+    if (NOT skyr_BUILD_TESTS)
+        enable_testing()  # Only call this if not already enabled
+    endif()
+    add_subdirectory(tests/sanitizers)
+endif()
+
 # Documentation
 if (skyr_BUILD_DOCS)
     message(STATUS "[skyr-url] Configuring documentation")
