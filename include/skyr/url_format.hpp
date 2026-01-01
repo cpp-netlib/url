@@ -42,6 +42,15 @@
 /// std::println("{:qd}", url);   // ?name=John Doe (decoded)
 /// \endcode
 
+// Workaround for libc++ versions that don't fully support constexpr in formatter::parse()
+// Some older libc++ implementations (e.g., Homebrew Clang 18 on macOS) have issues
+// with constexpr evaluation in formatter specializations
+#if defined(_LIBCPP_VERSION) && _LIBCPP_VERSION < 190000
+#  define SKYR_FORMAT_PARSE_CONSTEXPR
+#else
+#  define SKYR_FORMAT_PARSE_CONSTEXPR constexpr
+#endif
+
 namespace std {
 template <>
 struct formatter<skyr::url> {
@@ -59,7 +68,7 @@ struct formatter<skyr::url> {
   format_type type_ = format_type::full;
   bool decode_ = false;  // 'd' modifier for decoded output
 
-  constexpr auto parse(std::format_parse_context& ctx) {
+  SKYR_FORMAT_PARSE_CONSTEXPR auto parse(std::format_parse_context& ctx) -> std::format_parse_context::iterator {
     auto it = ctx.begin();
     const auto end = ctx.end();
 
@@ -180,5 +189,7 @@ struct formatter<skyr::url> {
   }
 };
 }  // namespace std
+
+#undef SKYR_FORMAT_PARSE_CONSTEXPR
 
 #endif  // SKYR_URL_FORMAT_HPP
