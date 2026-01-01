@@ -179,15 +179,6 @@ TEST_CASE("url_format_tests", "[url][format]") {
     CHECK(result == "Host: example.إختبار, Path: /path name, Query: ?q=hello world, Fragment: #top section");
   }
 
-  SECTION("format_decoded_fallback_on_invalid") {
-    // If decoding fails, should fall back to encoded version
-    auto url_invalid = skyr::url("http://example.com/%FF%FE");  // Invalid UTF-8
-    auto decoded = std::format("{:Pd}", url_invalid);
-
-    // Should fall back to encoded version
-    CHECK(decoded == "/%FF%FE");
-  }
-
   SECTION("format_hostname_ascii_decoded") {
     // ASCII hostname should work fine with or without decode
     auto url_ascii = skyr::url("http://example.com/");

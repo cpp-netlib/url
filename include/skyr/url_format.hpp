@@ -42,8 +42,9 @@
 /// std::println("{:qd}", url);   // ?name=John Doe (decoded)
 /// \endcode
 
+namespace std {
 template <>
-struct std::formatter<skyr::url> {
+struct formatter<skyr::url> {
   enum class format_type {
     full,      // Full URL (default)
     scheme,    // s - scheme
@@ -178,5 +179,6 @@ struct std::formatter<skyr::url> {
     }
   }
 };
+}  // namespace std
 
 #endif  // SKYR_URL_FORMAT_HPP
