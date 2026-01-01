@@ -136,9 +136,10 @@ URL string and to process the components:
 ```c++
 // url_parts.cpp
 
+#include <print>
+
 #include <skyr/url.hpp>
-#include <skyr/percent_encoding/percent_decode.hpp>
-#include <iostream>
+#include <skyr/url_format.hpp>
 
 int main() {
   using namespace skyr::literals;
@@ -146,21 +147,19 @@ int main() {
   auto url =
       "http://sub.example.إختبار:8090/\xcf\x80?a=1&c=2&b=\xe2\x80\x8d\xf0\x9f\x8c\x88"_url;
 
-  std::cout << "Protocol: " << url.protocol() << std::endl;
 
-  std::cout << "Domain?   " << std::boolalpha << url.is_domain() << std::endl;
-  std::cout << "Domain:   " << url.hostname() << std::endl;
-  std::cout << "Domain:   " << url.u8domain().value() << std::endl;
+  std::println("Origin: {:o}", url);
+  std::println("Protocol: {:s}", url);
+  std::println("Domain?   {}", url.is_domain());
+  std::println("Domain:   {:h}", url);   // Encoded (punycode)
+  std::println("Domain:   {:hd}", url);  // Decoded (unicode)
+  std::println("Port:     {:p}", url);
+  std::println("Pathname: {:Pd}", url);  // Decoded pathname
 
-  std::cout << "Port:     " << url.port<std::uint16_t>().value() << std::endl;
-
-  std::cout << "Pathname: "
-            << skyr::percent_decode(url.pathname()).value() << std::endl;
-
-  std::cout << "Search parameters:" << std::endl;
+  std::println("Search parameters:");
   const auto &search = url.search_parameters();
   for (const auto &[key, value] : search) {
-    std::cout << "  " << "key: " << key << ", value = " << value << std::endl;
+    std::println("  key: {}, value = {}", key, value);
   }
 }
 ```
@@ -189,7 +188,8 @@ target_link_libraries(url_parts PRIVATE skyr::skyr-url)
 The output of this program is:
 
 ```bash
-Protocol: http:
+Origin: http://sub.example.xn--kgbechtv:8090
+Protocol: http
 Domain?   true
 Domain:   sub.example.xn--kgbechtv
 Domain:   sub.example.إختبار
