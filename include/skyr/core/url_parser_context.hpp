@@ -114,12 +114,12 @@ class url_parser_context {
  public:
   url_parser_context(std::string_view input, bool* validation_error, const url_record* base, const url_record* url,
                      std::optional<url_parse_state> state_override)
-      : input(input)
+      : url(url ? *url : url_record{})
+      , state(state_override ? state_override.value() : url_parse_state::scheme_start)
+      , input(input)
       , input_it(begin(input))
       , validation_error(validation_error)
       , base(base)
-      , url(url ? *url : url_record{})
-      , state(state_override ? state_override.value() : url_parse_state::scheme_start)
       , state_override(state_override)
       , buffer()
       , at_flag(false)

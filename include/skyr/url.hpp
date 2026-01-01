@@ -840,6 +840,60 @@ class url {
     update_record(url_record{});
   }
 
+  /// Returns a sanitized copy of this URL with credentials and fragment removed
+  ///
+  /// \returns A new URL object without credentials and fragment
+  [[nodiscard]] auto sanitize() const -> url {
+    auto sanitized_record = url_;
+
+    // Clear credentials
+    sanitized_record.username.clear();
+    sanitized_record.password.clear();
+
+    // Clear fragment
+    sanitized_record.fragment.reset();
+
+    auto result = url();
+    result.update_record(std::move(sanitized_record));
+    return result;
+  }
+
+  /// Returns a copy of this URL with the query string removed
+  ///
+  /// \returns A new URL object without the query string
+  [[nodiscard]] auto without_query() const -> url {
+    auto new_record = url_;
+    new_record.query.reset();
+
+    auto result = url();
+    result.update_record(std::move(new_record));
+    return result;
+  }
+
+  /// Returns a copy of this URL with the fragment removed
+  ///
+  /// \returns A new URL object without the fragment
+  [[nodiscard]] auto without_fragment() const -> url {
+    auto new_record = url_;
+    new_record.fragment.reset();
+
+    auto result = url();
+    result.update_record(std::move(new_record));
+    return result;
+  }
+
+  /// Returns a copy of this URL with specified query parameters removed
+  ///
+  /// \param params List of parameter names to remove
+  /// \returns A new URL object without the specified query parameters
+  [[nodiscard]] auto without_params(std::initializer_list<std::string_view> params) const -> url {
+    auto result = *this;
+    for (const auto& param : params) {
+      result.search_parameters().remove(param);
+    }
+    return result;
+  }
+
   /// Returns the underlying byte buffer
   ///
   /// \returns `href_.c_str()`

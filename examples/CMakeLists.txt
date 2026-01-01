@@ -18,6 +18,7 @@ foreach(
         example_09.cpp
         example_10.cpp
         example_11.cpp
+        example_12.cpp
 )
     skyr_remove_extension(${file_name} example)
     add_executable(${example} ${file_name})
