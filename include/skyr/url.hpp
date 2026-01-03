@@ -1339,7 +1339,7 @@ inline auto operator>(const url& lhs, const url& rhs) noexcept {
 ///
 /// \param lhs A `url` object
 /// \param rhs A `url` object
-/// \returns `!(lhs > rhs)
+/// \returns `!(lhs > rhs)`
 inline auto operator<=(const url& lhs, const url& rhs) noexcept {
   return !(lhs > rhs);
 }

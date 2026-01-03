@@ -20,7 +20,7 @@ Example
 .. code-block:: c++
 
    #include <skyr/url.hpp>
-   #include <iostream>
+   #include <print>
    #include <cassert>
 
    int main() {
@@ -28,7 +28,7 @@ Example
 
      auto url = "http://[1080:0:0:0:8:800:200C:417A]:8090/"_url;
      assert(url.is_ipv6_address());
-     std::cout << "IPv6 Host: " << urlhostname() << std::endl;
+     std::println("IPv6 Host: {}", url.hostname());
    }
 
 API

@@ -158,6 +158,7 @@ constexpr inline auto hex_to_dec(charT byte) noexcept {
 
 /// Parses an IPv6 address
 /// \param input An input string
+/// \param validation_error Optional pointer to a bool that will be set if a validation error occurs
 /// \returns An `ipv6_address` object or an error
 constexpr inline auto parse_ipv6_address(std::string_view input, bool* validation_error)
     -> std::expected<ipv6_address, ipv6_address_errc> {

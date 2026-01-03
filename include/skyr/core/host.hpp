@@ -60,7 +60,7 @@ class host {
   }
 
   /// Constructor
-  /// \param hsost An empty host
+  /// \param host An empty host
   constexpr explicit host(empty_host host) : host_(host) {
   }
 

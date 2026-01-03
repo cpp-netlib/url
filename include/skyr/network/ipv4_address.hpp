@@ -114,6 +114,7 @@ constexpr inline auto parse_ipv4_number(std::string_view input, bool* validation
 
 /// Parses an IPv4 address
 /// \param input An input string
+/// \param validation_error Optional pointer to a bool that will be set if a validation error occurs
 /// \returns An `ipv4_address` object or an error
 constexpr inline auto parse_ipv4_address(std::string_view input, bool* validation_error)
     -> std::expected<ipv4_address, ipv4_address_errc> {

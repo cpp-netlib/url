@@ -14,15 +14,18 @@ This library provides:
 - A `skyr::url` class that implements a generic URL parser,
   conforming with the WhatWG URL specification
 - URL serialization and comparison
+- **Immutable URL transformations** with `with_*` methods for functional-style URL building
+- **URL sanitization** methods to remove credentials, fragments, and query parameters
+- **Custom `std::format` support** with format specifiers for URL components
 - Percent encoding and decoding functions
 - IDNA and Punycode functions for domain name parsing
-- Basic Unicode conversion functions
+- Unicode conversion utilities
 
 Quick Start
 -----------
 
-This project requires the availability of a C++17 compliant compiler
-and standard library.
+This project requires a **C++23 compliant compiler** (GCC 13+, Clang 19+, MSVC 2022+)
+and has **zero external dependencies** for core URL parsing.
 
 1. Download ``vcpkg`` and install the dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -45,36 +48,24 @@ and standard library.
    // url_test.cpp
 
    #include <skyr/url.hpp>
-   #include <skyr/percent_encoding/percent_decode.hpp>
-   #include <iostream>
+   #include <skyr/url_format.hpp>
+   #include <print>
 
    int main() {
-     using namespace skyr::literals;
+     auto url = skyr::url("http://sub.example.إختبار:8090/\xcf\x80?a=1&c=2&b=\xe2\x80\x8d\xf0\x9f\x8c\x88");
 
-     try {
-       auto url =
-           "http://sub.example.إختبار:8090/\xcf\x80?a=1&c=2&b=\xe2\x80\x8d\xf0\x9f\x8c\x88"_url;
+     // Using std::format support
+     std::println("Scheme:   {:s}", url);
+     std::println("Domain?   {}", url.is_domain());
+     std::println("Domain:   {:h}", url);    // Encoded (punycode)
+     std::println("Domain:   {:hd}", url);   // Decoded (unicode)
+     std::println("Port:     {:p}", url);
+     std::println("Pathname: {:Pd}", url);   // Decoded pathname
 
-       std::cout << "Protocol: " << url.protocol() << std::endl;
-
-       std::cout << "Domain?   " << std::boolalpha << url.is_domain() << std::endl;
-       std::cout << "Domain:   " << url.hostname() << std::endl;
-       std::cout << "Domain:   "
-                 << skyr::domain_to_u8(url.hostname()).value() << std::endl;
-
-       std::cout << "Port:     " << url.port<std::uint16_t>().value() << std::endl;
-
-       std::cout << "Pathname: "
-                 << skyr::percent_decode<std::string>(url.pathname()).value() << std::endl;
-
-       std::cout << "Search parameters" << std::endl;
-       const auto &search = url.search_parameters();
-       for (const auto &[key, value] : search) {
-         std::cout << "  " << "key: " << key << ", value = " << value << std::endl;
-       }
-     }
-     catch (const skyr::url_parse_error &e) {
-       std::cout << e.code().message() << std::endl;
+     std::println("\nSearch parameters:");
+     const auto &search = url.search_parameters();
+     for (const auto &[key, value] : search) {
+       std::println("  key: {}, value = {}", key, value);
      }
    }
 
@@ -85,12 +76,12 @@ and standard library.
 
    # CMakeLists.txt
 
+   cmake_minimum_required(VERSION 3.21)
    project(my_project)
 
-   find_package(tl-expected CONFIG REQUIRED)
    find_package(skyr-url CONFIG REQUIRED)
 
-   set(CMAKE_CXX_STANDARD 17)
+   set(CMAKE_CXX_STANDARD 23)
 
    add_executable(url_test url_test.cpp)
    target_link_libraries(url_test PRIVATE skyr::skyr-url)
@@ -112,13 +103,13 @@ and standard library.
 Design objectives
 ^^^^^^^^^^^^^^^^^
 
-* Uses modern C++17 features
-* Cross-platform
-* Easy to use and read
-* Compliant to the the WhatWG URL standard
-* Works naturally with Unicode strings
-* Uses modern CMake and is available as a dependency using a package
-  manager
+* Uses modern C++23 features (``std::expected``, ``std::format``, ``std::ranges``)
+* Header-only library with zero external dependencies
+* Cross-platform (Linux, macOS, Windows)
+* Easy to use and read with immutable, functional-style API
+* Compliant with the WhatWG URL specification
+* Works naturally with Unicode strings (IDNA/Punycode support)
+* Uses modern CMake and is available via vcpkg
 
 Documentation
 -------------

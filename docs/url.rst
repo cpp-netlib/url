@@ -5,8 +5,17 @@ Description
 -----------
 
 The ``skyr::url`` class parses a URL in the constructor and provides
-a rich interface to access and process the URL components. The
-``skyr::url`` constructor throws a ``skyr::url_parse_error`` on failure.
+a rich interface to access and process the URL components. The library
+uses C++23 ``std::expected`` for error handling, providing type-safe
+error propagation without exceptions.
+
+Key features:
+
+* Immutable URL transformations with ``with_*`` methods
+* URL sanitization methods to remove credentials, fragments, and query parameters
+* Custom ``std::format`` support with format specifiers for URL components
+* Percent encoding and decoding
+* IDNA and Punycode for internationalized domain names
 
 Headers
 -------
@@ -15,27 +24,65 @@ Headers
 
     #include <skyr/url.hpp>
 
-Example
--------
+Basic Example
+-------------
 
 .. code-block:: c++
 
     #include <skyr/url.hpp>
-    #include <iostream>
+    #include <print>
 
     int main() {
-      using namespace skyr::literals;
+      auto url = skyr::url("http://example.com/path?query=1");
 
-      try {
-        auto url = "http://example.com/"_url;
+      std::println("Scheme:   {}", url.scheme());
+      std::println("Hostname: {}", url.hostname());
+      std::println("Pathname: {}", url.pathname());
+      std::println("Search:   {}", url.search());
+    }
 
-        std::cout << "Protocol: " << url.protocol() << std::endl;
-        std::cout << "Hostname: " << url.hostname() << std::endl;
-        std::cout << "Pathname: " << url.pathname() << std::endl;
+Immutable Transformations
+--------------------------
+
+.. code-block:: c++
+
+    #include <skyr/url.hpp>
+    #include <print>
+
+    int main() {
+      auto dev_url = skyr::url("http://localhost:3000/api/v1/users");
+
+      // Transform development URL to production
+      auto prod_url = dev_url.with_scheme("https")
+                          .and_then([](auto&& u) { return u.with_hostname("api.example.com"); })
+                          .and_then([](auto&& u) { return u.with_port(""); })
+                          .and_then([](auto&& u) { return u.with_pathname("/api/v2/users"); });
+
+      if (prod_url) {
+        std::println("Production: {}", prod_url->href());
       }
-      catch (const skyr::url_parse_error &e) {
-        std::cout << e.code().message() << std::endl;
-      }
+    }
+
+URL Sanitization
+----------------
+
+.. code-block:: c++
+
+    #include <skyr/url.hpp>
+    #include <print>
+
+    int main() {
+      auto url = skyr::url("http://user:pass@example.com/path?debug=true&id=123#section");
+
+      // Remove credentials and fragment
+      auto safe_url = url.sanitize();
+      std::println("{}", safe_url.href());
+      // Output: http://example.com/path?debug=true&id=123
+
+      // Chain operations to remove specific parameters
+      auto clean_url = url.sanitize().without_params({"debug"});
+      std::println("{}", clean_url.href());
+      // Output: http://example.com/path?id=123
     }
 
 API

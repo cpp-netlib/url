@@ -134,7 +134,7 @@ class percent_decode_range {
   using size_type = std::size_t;
 
   ///
-  /// \param range
+  /// \param s The string view to decode
   constexpr explicit percent_decode_range(std::string_view s) : it_(s) {
   }
 

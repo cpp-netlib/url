@@ -245,8 +245,9 @@ inline auto domain_to_ascii(std::string_view domain_name, std::string* ascii_dom
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
 ///
 /// \param domain_name A domain
+/// \param ascii_domain Output pointer to store the ASCII domain
 /// \param be_strict Tells the processor to be strict
-/// \param validation_error
+/// \param validation_error Optional pointer to a bool that will be set if a validation error occurs
 /// \returns An ASCII domain, or an error
 inline auto domain_to_ascii(std::string_view domain_name, std::string* ascii_domain, bool be_strict,
                             bool* validation_error) -> std::expected<void, domain_errc> {
@@ -264,6 +265,7 @@ inline auto domain_to_ascii(std::string_view domain_name, std::string* ascii_dom
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
 ///
 /// \param domain_name A domain
+/// \param ascii_domain Output pointer to store the ASCII domain
 /// \param be_strict Tells the processor to be strict
 /// \returns An ASCII domain, or an error
 inline auto domain_to_ascii(std::string_view domain_name, std::string* ascii_domain, bool be_strict)
@@ -276,7 +278,8 @@ inline auto domain_to_ascii(std::string_view domain_name, std::string* ascii_dom
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
 ///
 /// \param domain_name A domain
-/// \param validation_error
+/// \param ascii_domain Output pointer to store the ASCII domain
+/// \param validation_error Optional pointer to a bool that will be set if a validation error occurs
 /// \returns An ASCII domain, or an error
 inline auto domain_to_ascii(std::string_view domain_name, std::string* ascii_domain, bool* validation_error) {
   return domain_to_ascii(domain_name, ascii_domain, false, validation_error);
@@ -286,6 +289,7 @@ inline auto domain_to_ascii(std::string_view domain_name, std::string* ascii_dom
 /// [IDNA processing](https://www.domain.org/reports/tr46/#Processing)
 ///
 /// \param domain_name A domain
+/// \param ascii_domain Output pointer to store the ASCII domain
 /// \returns An ASCII domain, or an error
 inline auto domain_to_ascii(std::string_view domain_name, std::string* ascii_domain) {
   [[maybe_unused]] bool validation_error = false;
@@ -350,6 +354,8 @@ inline auto domain_to_u8_impl(domain_to_u8_context&& context) -> std::expected<v
 /// Converts a Punycode encoded domain to UTF-8
 ///
 /// \param domain_name A Punycode encoded domain
+/// \param u8_domain Output pointer to store the UTF-8 domain
+/// \param validation_error Optional pointer to a bool that will be set if a validation error occurs
 /// \returns A valid UTF-8 encoded domain, or an error
 inline auto domain_to_u8(std::string_view domain_name, std::string* u8_domain, [[maybe_unused]] bool* validation_error)
     -> std::expected<void, domain_errc> {
@@ -360,6 +366,7 @@ inline auto domain_to_u8(std::string_view domain_name, std::string* u8_domain, [
 /// Converts a Punycode encoded domain to UTF-8
 ///
 /// \param domain_name A Punycode encoded domain
+/// \param u8_domain Output pointer to store the UTF-8 domain
 /// \returns A valid UTF-8 encoded domain, or an error
 inline auto domain_to_u8(std::string_view domain_name, std::string* u8_domain) -> std::expected<void, domain_errc> {
   [[maybe_unused]] bool validation_error = false;

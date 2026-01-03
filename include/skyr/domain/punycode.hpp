@@ -151,6 +151,7 @@ inline auto punycode_encode(std::u32string_view input, std::string* output) -> s
 /// defined in [RFC 3492](https://tools.ietf.org/html/rfc3492)
 ///
 /// \param input An ASCII encoded domain to be decoded
+/// \param output The output UTF-32 string to store the decoded result
 /// \returns The decoded UTF-8 domain, or an error
 template <class StringView>
 constexpr inline auto punycode_decode(StringView input, std::u32string* output) -> std::expected<void, domain_errc> {

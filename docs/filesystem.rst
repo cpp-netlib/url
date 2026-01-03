@@ -21,12 +21,12 @@ Example
 
    #include <skyr/url.hpp>
    #include <skyr/filesystem/path.hpp>
-   #include <iostream>
+   #include <print>
 
    int main() {
      auto path = std::filesystem::path("/usr/bin/clang");
      auto url = skyr::filesystem::from_path(path).value();
-     std::cout << url << std::endl;
+     std::println(url);
    }
 
 API
