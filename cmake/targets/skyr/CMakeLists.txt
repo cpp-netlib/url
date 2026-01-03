@@ -28,43 +28,36 @@ add_library(skyr::url ALIAS skyr-url)
 
 #################################################
 # skyr-filesystem
+# Always available (C++23 guarantees std::filesystem)
 #################################################
 
-if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
-    add_library(skyr-filesystem INTERFACE)
+add_library(skyr-filesystem INTERFACE)
 
-    target_compile_features(skyr-filesystem INTERFACE cxx_std_23)
+target_compile_features(skyr-filesystem INTERFACE cxx_std_23)
 
-    skyr_check_filesystem(filesystem_definitions)
-    target_compile_definitions(
-            skyr-filesystem
-            INTERFACE
-            ${filesystem_definitions}
-    )
+target_link_libraries(
+        skyr-filesystem
+        INTERFACE
+        skyr-url
+)
 
-    target_link_libraries(
-            skyr-filesystem
-            INTERFACE
-            skyr-url
-    )
+target_include_directories(
+        skyr-filesystem
+        INTERFACE
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+)
 
-    target_include_directories(
-            skyr-filesystem
-            INTERFACE
-            $<INSTALL_INTERFACE:include>
-            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-            )
-
-    add_library(skyr::skyr-filesystem ALIAS skyr-filesystem)
-    add_library(skyr::filesystem ALIAS skyr-filesystem)
-endif()
+add_library(skyr::skyr-filesystem ALIAS skyr-filesystem)
+add_library(skyr::filesystem ALIAS skyr-filesystem)
 
 #################################################
 # skyr-json
+# Optional - only available if nlohmann_json is found
 #################################################
 
-if (skyr_ENABLE_JSON_FUNCTIONS)
+if (skyr_HAS_JSON_SUPPORT)
     add_library(skyr-json INTERFACE)
 
     target_compile_features(skyr-json INTERFACE cxx_std_23)

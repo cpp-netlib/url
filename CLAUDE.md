@@ -64,9 +64,9 @@ Key build options:
 - `skyr_BUILD_TESTS` (ON): Build tests
 - `skyr_BUILD_WPT` (OFF): Build Web Platform Tests runner
 - `skyr_BUILD_BENCHMARKS` (OFF): Build performance benchmarks
-- `skyr_ENABLE_FILESYSTEM_FUNCTIONS` (ON): Enable filesystem::path conversion
-- `skyr_ENABLE_JSON_FUNCTIONS` (ON): Enable JSON serialization
 - `skyr_BUILD_WITHOUT_EXCEPTIONS` (OFF): Build without exceptions
+
+**Note**: Filesystem functions are always available (C++23 guarantees `std::filesystem`). JSON functions are automatically enabled when `nlohmann-json` is found.
 
 ## Testing
 

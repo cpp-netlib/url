@@ -24,25 +24,5 @@ function(skyr_remove_extension file_name basename)
 endfunction()
 
 
-function(skyr_check_filesystem compile_definitions)
-    check_cxx_source_compiles("#include <filesystem>
-int main() { std::filesystem::path p{}; }" SKYR_USE_CXX17_FILESYSTEM)
-    if (SKYR_USE_CXX17_FILESYSTEM)
-        set(_compile_definitions "-DSKYR_USE_CXX17_FILESYSTEM")
-    else()
-        check_cxx_source_compiles("#include <experimental/filesystem>
-int main() { std::experimental::filesystem::path p{}; }" SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-        if (SKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM)
-            set(_compile_definitions "-DSKYR_USE_CXX17_EXPERIMENTAL_FILESYSTEM")
-            if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU OR ${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
-                set(_compile_definitions "${_compile_definitions} -D_LIBCPP_NO_EXPERIMENTAL_DEPRECATION_WARNING_FILESYSTEM")
-            elseif (${CMAKE_CXX_COMPILER_ID} MATCHES MSVC)
-                set(_compile_definitions "${_compile_definitions} -D_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING")
-            endif()
-        else()
-            message(FATAL_ERROR "Filesystem operations are not supported")
-        endif()
-    endif()
-
-    set(${compile_definitions} ${_compile_definitions} PARENT_SCOPE)
-endfunction()
+# Legacy filesystem check function removed
+# C++23 guarantees std::filesystem support, so no checks are needed

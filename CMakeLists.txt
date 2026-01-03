@@ -35,8 +35,6 @@ option(skyr_BUILD_WITHOUT_EXCEPTIONS "Build without exceptions." OFF)
 option(skyr_BUILD_WITHOUT_RTTI "Build without RTTI." OFF)
 option(skyr_USE_STATIC_CRT "Use static C Runtime library (/MT or MTd)." ON)
 option(skyr_BUILD_WITH_LLVM_LIBCXX "Instruct Clang to use LLVM's implementation of C++ standard library" OFF)
-option(skyr_ENABLE_FILESYSTEM_FUNCTIONS "Enable functions to convert URL to std::filesystem::path" ON)
-option(skyr_ENABLE_JSON_FUNCTIONS "Enable functions to convert URL components to JSON" ON)
 option(skyr_ENABLE_SANITIZERS "Enable sanitizers (address, undefined, etc.) for tests and examples" OFF)
 option(skyr_CXX_STANDARD_LIBRARY "Path to non-system C++ standard library" "")
 
@@ -51,13 +49,14 @@ if (skyr_IS_TOP_LEVEL_PROJECT)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
-if (skyr_ENABLE_JSON_FUNCTIONS)
-    find_package(nlohmann_json CONFIG)
-    if (NOT nlohmann_json_FOUND)
-        message(WARNING "nlohmann_json not found. Install with: vcpkg install nlohmann-json")
-        message(WARNING "JSON functions will be disabled.")
-        set(skyr_ENABLE_JSON_FUNCTIONS OFF)
-    endif()
+# JSON functions are optional and only available if nlohmann_json is found
+find_package(nlohmann_json CONFIG)
+if (NOT nlohmann_json_FOUND)
+    message(WARNING "nlohmann_json not found. Install with: vcpkg install nlohmann-json")
+    message(WARNING "JSON functions will be disabled.")
+    set(skyr_HAS_JSON_SUPPORT OFF)
+else()
+    set(skyr_HAS_JSON_SUPPORT ON)
 endif()
 
 if (skyr_USE_STATIC_CRT AND (CMAKE_CXX_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_SIMULATE_ID MATCHES "MSVC"))
@@ -129,11 +128,8 @@ write_basic_package_version_file(
         COMPATIBILITY SameMajorVersion
         ARCH_INDEPENDENT)
 
-set(skyr_TARGETS skyr-url)
-if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
-    list(APPEND skyr_TARGETS skyr-filesystem)
-endif()
-if (skyr_ENABLE_JSON_FUNCTIONS)
+set(skyr_TARGETS skyr-url skyr-filesystem)
+if (skyr_HAS_JSON_SUPPORT)
     list(APPEND skyr_TARGETS skyr-json)
 endif()
 
@@ -177,10 +173,10 @@ install(
         include/skyr
 )
 
-if (skyr_ENABLE_FILESYSTEM_FUNCTIONS)
-    install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/skyr/filesystem" DESTINATION include/skyr)
-endif()
+# Filesystem functions are always installed (C++23 guarantees std::filesystem)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/skyr/filesystem" DESTINATION include/skyr)
 
-if (skyr_ENABLE_JSON_FUNCTIONS)
+# JSON functions are only installed if nlohmann_json is available
+if (skyr_HAS_JSON_SUPPORT)
     install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/skyr/json" DESTINATION include/skyr)
 endif()
