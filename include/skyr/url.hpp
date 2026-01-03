@@ -741,9 +741,10 @@ class url {
   /// \param hash The new hash string
   /// \returns An error on failure to parse the new URL
   auto set_hash(string_view hash) -> std::error_code {
+    auto url = url_;  // Copy first to avoid self-move
     if (hash.empty()) {
-      url_.fragment = std::nullopt;
-      update_record(std::move(url_));
+      url.fragment = std::nullopt;
+      update_record(std::move(url));
       return {};
     }
 
@@ -751,9 +752,9 @@ class url {
       hash.remove_prefix(1);
     }
 
-    url_.fragment = "";
+    url.fragment = "";
     bool validation_error = false;
-    auto new_url = details::basic_parse(hash, &validation_error, nullptr, &url_, url_parse_state::fragment);
+    auto new_url = details::basic_parse(hash, &validation_error, nullptr, &url, url_parse_state::fragment);
     if (!new_url) {
       return new_url.error();
     }
@@ -890,6 +891,304 @@ class url {
     auto result = *this;
     for (const auto& param : params) {
       result.search_parameters().remove(param);
+    }
+    return result;
+  }
+
+  // Immutable transformation methods (with_* methods)
+
+  /// Returns a copy of this URL with the scheme changed
+  ///
+  /// \tparam Source The input string type
+  /// \param scheme The new URL scheme
+  /// \returns A new URL with the updated scheme, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_scheme(const Source& scheme) const -> std::expected<url, std::error_code> {
+    auto bytes = details::to_u8(scheme);
+    if (!bytes) {
+      return std::unexpected(make_error_code(url_parse_errc::invalid_unicode_character));
+    }
+    return with_scheme(std::string_view(bytes.value()));
+  }
+
+  /// Returns a copy of this URL with the scheme changed
+  ///
+  /// \param scheme The new URL scheme
+  /// \returns A new URL with the updated scheme, or an error on validation failure
+  [[nodiscard]] auto with_scheme(string_view scheme) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_protocol(scheme)) {
+      return std::unexpected(ec);
+    }
+    return result;
+  }
+
+  /// Returns a copy of this URL with the hostname changed
+  ///
+  /// \tparam Source The input string type
+  /// \param hostname The new hostname
+  /// \returns A new URL with the updated hostname, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_hostname(const Source& hostname) const -> std::expected<url, std::error_code> {
+    auto bytes = details::to_u8(hostname);
+    if (!bytes) {
+      return std::unexpected(make_error_code(url_parse_errc::invalid_unicode_character));
+    }
+    return with_hostname(std::string_view(bytes.value()));
+  }
+
+  /// Returns a copy of this URL with the hostname changed
+  ///
+  /// \param hostname The new hostname
+  /// \returns A new URL with the updated hostname, or an error on validation failure
+  [[nodiscard]] auto with_hostname(string_view hostname) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_hostname(hostname)) {
+      return std::unexpected(ec);
+    }
+    return result;
+  }
+
+  /// Returns a copy of this URL with the port changed
+  ///
+  /// \tparam Source The input string type
+  /// \param port The new port
+  /// \returns A new URL with the updated port, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_port(const Source& port) const -> std::expected<url, std::error_code> {
+    auto bytes = details::to_u8(port);
+    if (!bytes) {
+      return std::unexpected(make_error_code(url_parse_errc::invalid_unicode_character));
+    }
+    return with_port(std::string_view(bytes.value()));
+  }
+
+  /// Returns a copy of this URL with the port changed
+  ///
+  /// \tparam intT An integral type
+  /// \param port The new port number
+  /// \returns A new URL with the updated port, or an error on validation failure
+  template <typename intT>
+    requires std::is_integral_v<intT>
+  [[nodiscard]] auto with_port(intT port) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_port(port)) {
+      return std::unexpected(ec);
+    }
+    return result;
+  }
+
+  /// Returns a copy of this URL with the port changed
+  ///
+  /// \param port The new port (empty string clears the port)
+  /// \returns A new URL with the updated port, or an error on validation failure
+  [[nodiscard]] auto with_port(string_view port) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_port(port)) {
+      return std::unexpected(ec);
+    }
+    return result;
+  }
+
+  /// Returns a copy of this URL with the pathname changed
+  ///
+  /// \tparam Source The input string type
+  /// \param pathname The new pathname
+  /// \returns A new URL with the updated pathname, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_pathname(const Source& pathname) const -> std::expected<url, std::error_code> {
+    auto bytes = details::to_u8(pathname);
+    if (!bytes) {
+      return std::unexpected(make_error_code(url_parse_errc::invalid_unicode_character));
+    }
+    return with_pathname(std::string_view(bytes.value()));
+  }
+
+  /// Returns a copy of this URL with the pathname changed
+  ///
+  /// \param pathname The new pathname
+  /// \returns A new URL with the updated pathname, or an error on validation failure
+  [[nodiscard]] auto with_pathname(string_view pathname) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_pathname(pathname)) {
+      return std::unexpected(ec);
+    }
+    return result;
+  }
+
+  /// Returns a copy of this URL with the query/search string changed
+  ///
+  /// \tparam Source The input string type
+  /// \param search The new query string (with or without leading '?')
+  /// \returns A new URL with the updated query, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_search(const Source& search) const -> std::expected<url, std::error_code> {
+    auto bytes = details::to_u8(search);
+    if (!bytes) {
+      return std::unexpected(make_error_code(url_parse_errc::invalid_unicode_character));
+    }
+    return with_search(std::string_view(bytes.value()));
+  }
+
+  /// Returns a copy of this URL with the query/search string changed
+  ///
+  /// \param search The new query string (with or without leading '?', empty clears query)
+  /// \returns A new URL with the updated query, or an error on validation failure
+  [[nodiscard]] auto with_search(string_view search) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_search(search)) {
+      return std::unexpected(ec);
+    }
+    return result;
+  }
+
+  /// Alias for with_search()
+  ///
+  /// \tparam Source The input string type
+  /// \param query The new query string
+  /// \returns A new URL with the updated query, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_query(const Source& query) const -> std::expected<url, std::error_code> {
+    return with_search(query);
+  }
+
+  /// Alias for with_search()
+  ///
+  /// \param query The new query string
+  /// \returns A new URL with the updated query, or an error on validation failure
+  [[nodiscard]] auto with_query(string_view query) const -> std::expected<url, std::error_code> {
+    return with_search(query);
+  }
+
+  /// Returns a copy of this URL with the fragment/hash changed
+  ///
+  /// \tparam Source The input string type
+  /// \param hash The new fragment (with or without leading '#')
+  /// \returns A new URL with the updated fragment, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_hash(const Source& hash) const -> std::expected<url, std::error_code> {
+    auto bytes = details::to_u8(hash);
+    if (!bytes) {
+      return std::unexpected(make_error_code(url_parse_errc::invalid_unicode_character));
+    }
+    return with_hash(std::string_view(bytes.value()));
+  }
+
+  /// Returns a copy of this URL with the fragment/hash changed
+  ///
+  /// \param hash The new fragment (with or without leading '#', empty clears fragment)
+  /// \returns A new URL with the updated fragment, or an error on validation failure
+  [[nodiscard]] auto with_hash(string_view hash) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_hash(hash)) {
+      return std::unexpected(ec);
+    }
+    return result;
+  }
+
+  /// Alias for with_hash()
+  ///
+  /// \tparam Source The input string type
+  /// \param fragment The new fragment
+  /// \returns A new URL with the updated fragment, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_fragment(const Source& fragment) const -> std::expected<url, std::error_code> {
+    return with_hash(fragment);
+  }
+
+  /// Alias for with_hash()
+  ///
+  /// \param fragment The new fragment
+  /// \returns A new URL with the updated fragment, or an error on validation failure
+  [[nodiscard]] auto with_fragment(string_view fragment) const -> std::expected<url, std::error_code> {
+    return with_hash(fragment);
+  }
+
+  /// Returns a copy of this URL with the username changed
+  ///
+  /// \tparam Source The input string type
+  /// \param username The new username
+  /// \returns A new URL with the updated username, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_username(const Source& username) const -> std::expected<url, std::error_code> {
+    auto bytes = details::to_u8(username);
+    if (!bytes) {
+      return std::unexpected(make_error_code(url_parse_errc::invalid_unicode_character));
+    }
+    return with_username(std::string_view(bytes.value()));
+  }
+
+  /// Returns a copy of this URL with the username changed
+  ///
+  /// \param username The new username
+  /// \returns A new URL with the updated username, or an error on validation failure
+  [[nodiscard]] auto with_username(string_view username) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_username(username)) {
+      return std::unexpected(ec);
+    }
+    return result;
+  }
+
+  /// Returns a copy of this URL with the password changed
+  ///
+  /// \tparam Source The input string type
+  /// \param password The new password
+  /// \returns A new URL with the updated password, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_password(const Source& password) const -> std::expected<url, std::error_code> {
+    auto bytes = details::to_u8(password);
+    if (!bytes) {
+      return std::unexpected(make_error_code(url_parse_errc::invalid_unicode_character));
+    }
+    return with_password(std::string_view(bytes.value()));
+  }
+
+  /// Returns a copy of this URL with the password changed
+  ///
+  /// \param password The new password
+  /// \returns A new URL with the updated password, or an error on validation failure
+  [[nodiscard]] auto with_password(string_view password) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_password(password)) {
+      return std::unexpected(ec);
+    }
+    return result;
+  }
+
+  /// Returns a copy of this URL with the host (hostname + port) changed
+  ///
+  /// \tparam Source The input string type
+  /// \param host The new host (can include port like "example.com:8080")
+  /// \returns A new URL with the updated host, or an error on validation failure
+  template <class Source>
+    requires is_u8_convertible<Source>
+  [[nodiscard]] auto with_host(const Source& host) const -> std::expected<url, std::error_code> {
+    auto bytes = details::to_u8(host);
+    if (!bytes) {
+      return std::unexpected(make_error_code(url_parse_errc::invalid_unicode_character));
+    }
+    return with_host(std::string_view(bytes.value()));
+  }
+
+  /// Returns a copy of this URL with the host (hostname + port) changed
+  ///
+  /// \param host The new host (can include port like "example.com:8080")
+  /// \returns A new URL with the updated host, or an error on validation failure
+  [[nodiscard]] auto with_host(string_view host) const -> std::expected<url, std::error_code> {
+    auto result = *this;
+    if (auto ec = result.set_host(host)) {
+      return std::unexpected(ec);
     }
     return result;
   }
@@ -1067,7 +1366,7 @@ namespace literals {
 /// \param str
 /// \param length
 /// \return A url
-inline auto operator"" _url(const char* str, std::size_t length) {
+inline auto operator""_url(const char* str, std::size_t length) {
   return url(std::string_view(str, length));
 }
 
@@ -1075,15 +1374,15 @@ inline auto operator"" _url(const char* str, std::size_t length) {
 ///// \param str
 ///// \param length
 ///// \return
-// inline auto operator "" _url(const wchar_t *str, std::size_t length) {
-//  return url(std::wstring_view(str, length));
-//}
+inline auto operator""_url(const wchar_t* str, std::size_t length) {
+  return url(std::wstring_view(str, length));
+}
 
 ///
 /// \param str
 /// \param length
 /// \return
-inline auto operator"" _url(const char16_t* str, std::size_t length) {
+inline auto operator""_url(const char16_t* str, std::size_t length) {
   return url(std::u16string_view(str, length));
 }
 
@@ -1091,7 +1390,7 @@ inline auto operator"" _url(const char16_t* str, std::size_t length) {
 /// \param str
 /// \param length
 /// \return
-inline auto operator"" _url(const char32_t* str, std::size_t length) {
+inline auto operator""_url(const char32_t* str, std::size_t length) {
   return url(std::u32string_view(str, length));
 }
 }  // namespace literals

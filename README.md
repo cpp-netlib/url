@@ -20,6 +20,9 @@ This library provides:
 * A ``skyr::url`` class that implements a generic URL parser,
   conforming with the [WhatWG URL specification](https://url.spec.whatwg.org/#url-class)
 * URL serialization and comparison
+* **Immutable URL transformations** with `with_*` methods for functional-style URL building
+* **URL sanitization** methods to remove credentials, fragments, and query parameters
+* **`std::format` support** with custom format specifiers for URL components
 * Percent encoding and decoding functions
 * IDNA and Punycode functions for domain name parsing
 * Unicode conversion utilities
@@ -36,7 +39,7 @@ This library provides:
 ## Using the library
 
 This project requires:
-* A **C++23 compliant compiler** (GCC 13+, Clang 16+, MSVC 2022 17.6+)
+* A **C++23 compliant compiler** (GCC 13+, Clang 19+, MSVC 2022+)
 * **No external dependencies** for core URL parsing
 
 ### ``vcpkg``
@@ -101,30 +104,25 @@ On Windows, replace the target with ``RUN_TESTS``:
 > cmake --build _build --target RUN_TESTS
 ```
 
-To install the library:
+To install the library (optional):
 
 ```bash
 > cmake --build _build --target install
 ```
 
-## Testing and installing the project
-
-### Installing with `CMake` and `Ninja`
+Or with a custom install prefix:
 
 ```bash
-> cmake .. \
+> cmake \
+    -B _build \
     -G "Ninja" \
     -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-    -DCMAKE_INSTALL_PREFIX=$PREFIX
-> ninja
-> ninja test
-> ninja install
+    -DCMAKE_INSTALL_PREFIX=/your/install/path \
+    .
+> cmake --build _build --target install
 ```
 
-Where `$PREFIX` is the location where you want to install the
-library. Depending on the location of `$PREFIX`, you may need to run
-the install command as an administrator (e.g. on Linux as `sudo`).
-
+**Note**: Depending on the install location, you may need administrator privileges (e.g., `sudo` on Linux).
 
 ## Example usage
 

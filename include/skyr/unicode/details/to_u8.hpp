@@ -16,14 +16,38 @@
 namespace skyr::details {
 template <class Source>
   requires is_string_container<Source, char>
-inline auto to_u8(const Source& source) -> std::expected<std::string, unicode::unicode_errc> {
-  return std::string(source);
+auto to_u8(const Source& source) -> std::expected<std::string, unicode::unicode_errc> {
+  // For char arrays/pointers (null-terminated), find the actual end excluding null terminator
+  auto begin = std::cbegin(source);
+  auto end = std::cend(source);
+
+  // If this is a null-terminated string, exclude the null terminator
+  if constexpr (is_char_array<Source, char> || is_char_pointer<Source, char>) {
+    // Find the actual end (before null terminator)
+    while (begin != end && *(end - 1) == char{0}) {
+      --end;
+    }
+  }
+
+  return std::string(begin, end);
 }
 
 template <class Source>
   requires is_string_container<Source, char8_t>
-inline auto to_u8(const Source& source) -> std::expected<std::string, unicode::unicode_errc> {
-  return std::string(std::cbegin(source), std::cend(source));
+auto to_u8(const Source& source) -> std::expected<std::string, unicode::unicode_errc> {
+  // For char8_t arrays/pointers (null-terminated), find the actual end excluding null terminator
+  auto begin = std::cbegin(source);
+  auto end = std::cend(source);
+
+  // If this is a null-terminated string, exclude the null terminator
+  if constexpr (is_char_array<Source, char8_t> || is_char_pointer<Source, char8_t>) {
+    // Find the actual end (before null terminator)
+    while (begin != end && *(end - 1) == char8_t{0}) {
+      --end;
+    }
+  }
+
+  return std::string(begin, end);
 }
 
 template <class Source>

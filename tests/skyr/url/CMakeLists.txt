@@ -10,6 +10,7 @@ foreach (file_name
         url_search_parameters_tests.cpp
         url_sanitize_tests.cpp
         url_format_tests.cpp
+        url_with_methods_tests.cpp
         wpt_conformance_tests.cpp
         )
     skyr_create_test(${file_name} ${PROJECT_BINARY_DIR}/tests/url test_name)
