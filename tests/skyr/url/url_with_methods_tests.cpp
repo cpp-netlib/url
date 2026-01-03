@@ -344,7 +344,7 @@ TEST_CASE("url_with_methods_tests", "[url][with_methods]") {
 
   SECTION("with_hostname_utf8") {
     auto url = skyr::url("http://example.com/");
-    auto result = url.with_hostname(u8"münchen.de");
+    auto result = url.with_hostname("m\xc3\xbcnchen.de");
 
     REQUIRE(result.has_value());
     // Should be punycoded
@@ -353,7 +353,7 @@ TEST_CASE("url_with_methods_tests", "[url][with_methods]") {
 
   SECTION("with_search_utf8") {
     auto url = skyr::url("http://example.com/");
-    auto result = url.with_search(u8"query=café");
+    auto result = url.with_search("query=caf\xc3\xa9");
 
     REQUIRE(result.has_value());
     // Should be percent-encoded
@@ -362,7 +362,7 @@ TEST_CASE("url_with_methods_tests", "[url][with_methods]") {
 
   SECTION("with_pathname_utf8") {
     auto url = skyr::url("http://example.com/");
-    auto result = url.with_pathname(u8"/path/café");
+    auto result = url.with_pathname("/path/caf\xc3\xa9");
 
     REQUIRE(result.has_value());
     CHECK(result->pathname() == "/path/caf%C3%A9");
@@ -370,7 +370,8 @@ TEST_CASE("url_with_methods_tests", "[url][with_methods]") {
 
   SECTION("with_username_utf8") {
     auto url = skyr::url("http://example.com/");
-    auto result = url.with_username(u8"usér");
+    // "usér" - é = 0xC3 0xA9 in UTF-8
+    auto result = url.with_username("us\xc3\xa9r");
 
     REQUIRE(result.has_value());
     CHECK(result->username() == "us%C3%A9r");
