@@ -16,14 +16,14 @@ Headers
 
 .. code-block:: c++
 
-    #include <skyr/json/json.hpp>
+    #include <skyr/json.hpp>
 
 Example
 -------
 
 .. code-block:: c++
 
-    #include <skyr/json/json.hpp>
+    #include <skyr/json.hpp>
     #include <nlohmann/json.hpp>
     #include <print>
 

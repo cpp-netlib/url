@@ -12,7 +12,7 @@ Headers
 
 .. code-block:: c++
 
-    #include <skyr/filesystem/path.hpp>
+   #include <skyr/filesystem.hpp>
 
 Example
 -------
@@ -20,7 +20,7 @@ Example
 .. code-block:: c++
 
    #include <skyr/url.hpp>
-   #include <skyr/filesystem/path.hpp>
+   #include <skyr/filesystem.hpp>
    #include <print>
    #include <filesystem>
 

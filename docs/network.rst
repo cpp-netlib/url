@@ -13,8 +13,7 @@ Headers
 
 .. code-block:: c++
 
-    #include <skyr/network/ipv4_address.hpp>
-    #include <skyr/network/ipv6_address.hpp>
+   #include <skyr/network.hpp>
 
 Example
 -------
@@ -22,8 +21,7 @@ Example
 .. code-block:: c++
 
    #include <skyr/url.hpp>
-   #include <skyr/network/ipv4_address.hpp>
-   #include <skyr/network/ipv6_address.hpp>
+   #include <skyr/network.hpp>
    #include <print>
 
    int main() {

@@ -16,15 +16,14 @@ Headers
 
 .. code-block:: c++
 
-    #include <skyr/domain/punycode.hpp>
-    #include <skyr/domain/domain.hpp>
+   #include <skyr/domain.hpp>
 
 Example
 -------
 
 .. code-block:: c++
 
-   #include <skyr/domain/domain.hpp>
+   #include <skyr/domain.hpp>
    #include <print>
 
    int main() {

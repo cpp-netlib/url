@@ -16,16 +16,14 @@ Headers
 
 .. code-block:: c++
 
-    #include <skyr/percent_encoding/percent_encode.hpp>
-    #include <skyr/percent_encoding/percent_decode.hpp>
+   #include <skyr/percent_encoding.hpp>
 
 Example
 -------
 
 .. code-block:: c++
 
-   #include <skyr/percent_encoding/percent_encode.hpp>
-   #include <skyr/percent_encoding/percent_decode.hpp>
+   #include <skyr/percent_encoding.hpp>
    #include <print>
 
    int main() {
