@@ -19,67 +19,67 @@ namespace skyr::unicode {
 /// \param octet
 /// \return
 template <class uintT>
-constexpr inline auto mask8(uintT value) {
+constexpr auto mask8(uintT value) {
   static_assert(std::is_unsigned_v<uintT>, "unsigned integral types only");
-  return static_cast<uintT>(0xffu & value);
+  return static_cast<uintT>(0xffu & value);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 }
 
 ///
 /// \param value
 /// \return
 template <class uintT>
-constexpr inline auto mask16(uintT value) {
+constexpr auto mask16(uintT value) {
   static_assert(std::is_unsigned_v<uintT>, "unsigned integral types only");
-  return static_cast<uintT>(0xffffu & value);
+  return static_cast<uintT>(0xffffu & value);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 }
 
 ///
 /// \param octet
 /// \return
-constexpr inline auto is_trail(uint8_t octet) {
-  return ((mask8(octet) >> 6u) == 0x2u);
+constexpr auto is_trail(uint8_t octet) {
+  return ((mask8(octet) >> 6u) == 0x2u);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 }
 
 ///
 /// \param code_point
 /// \return
-constexpr inline auto is_lead_surrogate(char16_t code_point) {
+constexpr auto is_lead_surrogate(char16_t code_point) {
   return (code_point >= constants::surrogates::lead_min) && (code_point <= constants::surrogates::lead_max);
 }
 
 ///
 /// \param value
 /// \return
-constexpr inline auto is_trail_surrogate(char16_t value) {
+constexpr auto is_trail_surrogate(char16_t value) {
   return (value >= constants::surrogates::trail_min) && (value <= constants::surrogates::trail_max);
 }
 
 ///
 /// \param value
 /// \return
-constexpr inline auto is_surrogate(char16_t value) {
+constexpr auto is_surrogate(char16_t value) {
   return (value >= constants::surrogates::lead_min) && (value <= constants::surrogates::trail_max);
 }
 
 /// Tests if the code point is a valid value.
 /// \param code_point
 /// \return \c true if it has a valid value, \c false otherwise
-constexpr inline auto is_valid_code_point(char32_t code_point) {
+constexpr auto is_valid_code_point(char32_t code_point) {
   return (code_point <= constants::code_points::max) && !is_surrogate(static_cast<char16_t>(code_point));
 }
 
 /// Returns the size of the sequnce given the lead octet value.
 /// \param lead_value
 /// \return 1, 2, 3 or 4
-constexpr inline auto sequence_length(uint8_t lead_value) {
+constexpr auto sequence_length(uint8_t lead_value) {
   auto lead = mask8(lead_value);
-  if (lead < 0x80u) {
+  if (lead < 0x80u) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     return 1;
-  } else if ((lead >> 5u) == 0x6u) {
+  } else if ((lead >> 5u) == 0x6u) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     return 2;
-  } else if ((lead >> 4u) == 0xeu) {
+  } else if ((lead >> 4u) == 0xeu) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     return 3;
-  } else if ((lead >> 3u) == 0x1eu) {
+  } else if ((lead >> 3u) == 0x1eu) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     return 4;
   }
   return 0;
@@ -107,7 +107,7 @@ struct sequence_state {
 /// \return A sequence_state with a value of 0, and the iterator
 ///         pointing to the lead value
 template <class OctetIterator>
-constexpr inline auto make_state(OctetIterator it) -> std::expected<sequence_state<OctetIterator>, unicode_errc> {
+constexpr auto make_state(OctetIterator it) -> std::expected<sequence_state<OctetIterator>, unicode_errc> {
   return sequence_state<OctetIterator>(it, 0);
 }
 
@@ -118,8 +118,7 @@ constexpr inline auto make_state(OctetIterator it) -> std::expected<sequence_sta
 /// \param value The updated value
 /// \return A new state with an updateds value
 template <class OctetIterator>
-constexpr inline auto update_value(sequence_state<OctetIterator> state, char32_t value)
-    -> sequence_state<OctetIterator> {
+constexpr auto update_value(sequence_state<OctetIterator> state, char32_t value) -> sequence_state<OctetIterator> {
   return {state.it, value};
 }
 
@@ -129,7 +128,7 @@ constexpr inline auto update_value(sequence_state<OctetIterator> state, char32_t
 /// \return The new state with the updated iterator, on an error if
 ///         the sequence isn't valid
 template <typename OctetIterator>
-constexpr inline auto increment(sequence_state<OctetIterator> state)
+constexpr auto increment(sequence_state<OctetIterator> state)
     -> std::expected<sequence_state<OctetIterator>, unicode_errc> {
   ++state.it;
   if (!is_trail(*state.it)) {
@@ -144,7 +143,7 @@ namespace details {
 /// \param state
 /// \return
 template <typename OctetIterator>
-constexpr inline auto mask_byte(sequence_state<OctetIterator> state)
+constexpr auto mask_byte(sequence_state<OctetIterator> state)
     -> std::expected<sequence_state<OctetIterator>, unicode_errc> {
   return update_value(state, static_cast<char32_t>(mask8(static_cast<std::uint8_t>(*state.it))));
 }
@@ -175,7 +174,7 @@ constexpr auto from_two_byte_sequence(OctetIterator first)
 /// \param first
 /// \return
 template <typename OctetIterator>
-constexpr inline auto from_three_byte_sequence(OctetIterator first)
+constexpr auto from_three_byte_sequence(OctetIterator first)
     -> std::expected<sequence_state<OctetIterator>, unicode_errc> {
   using result_type = std::expected<sequence_state<OctetIterator>, unicode_errc>;
 
@@ -202,7 +201,7 @@ constexpr inline auto from_three_byte_sequence(OctetIterator first)
 /// \param first
 /// \return
 template <typename OctetIterator>
-constexpr inline auto from_four_byte_sequence(OctetIterator first)
+constexpr auto from_four_byte_sequence(OctetIterator first)
     -> std::expected<sequence_state<OctetIterator>, unicode_errc> {
   using result_type = std::expected<sequence_state<OctetIterator>, unicode_errc>;
 
@@ -237,8 +236,7 @@ constexpr inline auto from_four_byte_sequence(OctetIterator first)
 /// \param first
 /// \return
 template <typename OctetIterator>
-constexpr inline auto find_code_point(OctetIterator first)
-    -> std::expected<sequence_state<OctetIterator>, unicode_errc> {
+constexpr auto find_code_point(OctetIterator first) -> std::expected<sequence_state<OctetIterator>, unicode_errc> {
   const auto length = sequence_length(*first);
   switch (length) {
     case 1:

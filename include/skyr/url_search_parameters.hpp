@@ -31,7 +31,7 @@ struct is_name {
     return name_ == parameter.name;
   }
 
-  std::string_view name_;
+  std::string_view name_{};
 };
 }  // namespace details
 
@@ -250,7 +250,7 @@ class url_search_parameters {
 
   void update();
 
-  std::vector<value_type> parameters_;
+  std::vector<value_type> parameters_{};
   url* url_ = nullptr;
 };
 

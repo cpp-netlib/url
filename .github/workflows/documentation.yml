@@ -43,6 +43,7 @@ jobs:
         run: |
           git clone https://github.com/Microsoft/vcpkg.git
           ./vcpkg/bootstrap-vcpkg.sh
+          vcpkg install nlohmann-json
 
       - name: Configure CMake
         run: |
@@ -51,6 +52,8 @@ jobs:
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -Dskyr_BUILD_TESTS=OFF \
+            -Dskyr_BUILD_DOCS=ON \
             .
 
       - name: Build documentation

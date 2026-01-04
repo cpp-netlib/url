@@ -15,8 +15,8 @@
 namespace skyr {
 ///
 struct query_parameter {
-  std::string name;
-  std::optional<std::string> value;
+  std::string name{};
+  std::optional<std::string> value{};
 
   /// Constructor
   query_parameter() = default;

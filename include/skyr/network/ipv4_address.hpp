@@ -57,9 +57,11 @@ class ipv4_address {
   /// The address in bytes in network byte order
   /// \returns The address in bytes
   [[nodiscard]] constexpr auto to_bytes() const noexcept -> std::array<unsigned char, 4> {
-    auto addr = address();
-    return {{static_cast<unsigned char>(addr >> 24u), static_cast<unsigned char>(addr >> 16u),
-             static_cast<unsigned char>(addr >> 8u), static_cast<unsigned char>(addr)}};
+    const auto addr = address();
+    return {{static_cast<unsigned char>(addr >> 24u),
+             static_cast<unsigned char>(addr >> 16u),  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+             static_cast<unsigned char>(addr >> 8u),
+             static_cast<unsigned char>(addr)}};  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
   }
 
   /// \returns The address as a string
@@ -67,13 +69,15 @@ class ipv4_address {
     using namespace std::string_literals;
     using namespace std::string_view_literals;
 
-    constexpr auto separator = [](auto i) { return (i < 4) ? "."sv : ""sv; };
+    constexpr auto separator = [](auto i) {
+      return (i < 4) ? "."sv : ""sv;
+    };  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 
     auto output = ""s;
     auto n = address();
     for (auto i = 1U; i <= 4U; ++i) {
       output = std::format("{}{}{}", separator(i), n % 256, output);
-      n >>= 8;
+      n >>= 8;  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     }
     return output;
   }
@@ -81,22 +85,22 @@ class ipv4_address {
 
 namespace details {
 /// Computes 256^exp efficiently using bit shifts (256 = 2^8, so 256^n = 2^(8n))
-constexpr inline auto pow256(unsigned int exp) noexcept -> std::uint64_t {
-  return 1ULL << (exp * 8);
+constexpr auto pow256(unsigned int exp) noexcept -> std::uint64_t {
+  return 1ULL << (exp * 8);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 }
 
-constexpr inline auto parse_ipv4_number(std::string_view input, bool* validation_error)
+constexpr auto parse_ipv4_number(std::string_view input, bool* validation_error)
     -> std::expected<std::uint64_t, ipv4_address_errc> {
-  auto base = 10;
+  auto base = 10;  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 
   if ((input.size() >= 2) && (input[0] == '0') && (std::tolower(input[1], std::locale::classic()) == 'x')) {
     *validation_error |= true;
     input = input.substr(2);
-    base = 16;
+    base = 16;  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
   } else if ((input.size() >= 2) && (input[0] == '0')) {
     *validation_error |= true;
     input = input.substr(1);
-    base = 8;
+    base = 8;  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
   }
 
   if (input.empty()) {
@@ -116,7 +120,7 @@ constexpr inline auto parse_ipv4_number(std::string_view input, bool* validation
 /// \param input An input string
 /// \param validation_error Optional pointer to a bool that will be set if a validation error occurs
 /// \returns An `ipv4_address` object or an error
-constexpr inline auto parse_ipv4_address(std::string_view input, bool* validation_error)
+constexpr auto parse_ipv4_address(std::string_view input, bool* validation_error)
     -> std::expected<ipv4_address, ipv4_address_errc> {
   using namespace std::string_view_literals;
 
@@ -162,7 +166,9 @@ constexpr inline auto parse_ipv4_address(std::string_view input, bool* validatio
     numbers.push_back(number.value());
   }
 
-  constexpr auto greater_than_255 = [](auto number) { return number > 255; };
+  constexpr auto greater_than_255 = [](auto number) {
+    return number > 255;
+  };  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 
   if (std::ranges::cend(numbers) != std::ranges::find_if(numbers, greater_than_255)) {
     *validation_error |= true;
@@ -176,7 +182,7 @@ constexpr inline auto parse_ipv4_address(std::string_view input, bool* validatio
     return std::unexpected(ipv4_address_errc::overflow);
   }
 
-  if (numbers.back() >= details::pow256(5 - numbers.size())) {
+  if (numbers.back() >= details::pow256(5 - numbers.size())) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     *validation_error |= true;
     return std::unexpected(ipv4_address_errc::overflow);
   }
@@ -186,7 +192,7 @@ constexpr inline auto parse_ipv4_address(std::string_view input, bool* validatio
 
   auto counter = 0UL;
   for (auto&& number : numbers) {
-    ipv4 += number * details::pow256(3 - counter);
+    ipv4 += number * details::pow256(3 - counter);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     ++counter;
   }
   return ipv4_address(static_cast<unsigned int>(ipv4));

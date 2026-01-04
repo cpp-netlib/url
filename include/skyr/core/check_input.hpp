@@ -16,7 +16,7 @@ constexpr static auto is_c0_control_or_space = [](auto byte) {
   return std::iscntrl(byte, std::locale::classic()) || std::isspace(byte, std::locale::classic());
 };
 
-constexpr inline auto remove_leading_c0_control_or_space(std::string_view input, bool* validation_error) {
+constexpr auto remove_leading_c0_control_or_space(std::string_view input, bool* validation_error) {
   auto first = std::cbegin(input), last = std::cend(input);
   auto it = std::find_if_not(first, last, is_c0_control_or_space);
   *validation_error |= (it != first);
@@ -24,7 +24,7 @@ constexpr inline auto remove_leading_c0_control_or_space(std::string_view input,
   return input;
 }
 
-constexpr inline auto remove_trailing_c0_control_or_space(std::string_view input, bool* validation_error) {
+constexpr auto remove_trailing_c0_control_or_space(std::string_view input, bool* validation_error) {
   auto first = std::crbegin(input), last = std::crend(input);
   auto it = std::find_if_not(first, last, is_c0_control_or_space);
   *validation_error |= (it != first);

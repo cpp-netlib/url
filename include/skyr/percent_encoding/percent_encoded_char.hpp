@@ -16,7 +16,7 @@ namespace details {
 ///
 /// \param value
 /// \return
-inline constexpr auto hex_to_alnum(std::byte value) noexcept {
+constexpr auto hex_to_alnum(std::byte value) noexcept {
   if ((value >= std::byte(0x00)) && (value < std::byte(0x0a))) {
     return static_cast<char>(std::to_integer<unsigned>(value) + '0');
   }
@@ -31,14 +31,14 @@ inline constexpr auto hex_to_alnum(std::byte value) noexcept {
 ///
 /// \param value
 /// \return
-inline constexpr auto is_c0_control_byte(std::byte value) noexcept {
+constexpr auto is_c0_control_byte(std::byte value) noexcept {
   return (value <= std::byte(0x1f)) || (value > std::byte(0x7e));
 }
 
 ///
 /// \param value
 /// \return
-inline constexpr auto is_fragment_byte(std::byte value) {
+constexpr auto is_fragment_byte(std::byte value) {
   return is_c0_control_byte(value) || (value == std::byte(0x20)) || (value == std::byte(0x22)) ||
          (value == std::byte(0x3c)) || (value == std::byte(0x3e)) || (value == std::byte(0x60));
 }
@@ -46,7 +46,7 @@ inline constexpr auto is_fragment_byte(std::byte value) {
 ///
 /// \param value
 /// \return
-inline constexpr auto is_query_byte(std::byte value) {
+constexpr auto is_query_byte(std::byte value) {
   return is_c0_control_byte(value) || (value == std::byte(0x20)) || (value == std::byte(0x22)) ||
          (value == std::byte(0x23)) || (value == std::byte(0x3c)) || (value == std::byte(0x3e));
 }
@@ -54,14 +54,14 @@ inline constexpr auto is_query_byte(std::byte value) {
 ///
 /// \param value
 /// \return
-inline constexpr auto is_special_query_byte(std::byte value) {
+constexpr auto is_special_query_byte(std::byte value) {
   return is_query_byte(value) || (value == std::byte(0x27));
 }
 
 ///
 /// \param value
 /// \return
-inline constexpr auto is_path_byte(std::byte value) {
+constexpr auto is_path_byte(std::byte value) {
   return is_query_byte(value) || (value == std::byte(0x3f)) || (value == std::byte(0x5e)) ||
          (value == std::byte(0x60)) || (value == std::byte(0x7b)) || (value == std::byte(0x7d));
 }
@@ -69,7 +69,7 @@ inline constexpr auto is_path_byte(std::byte value) {
 ///
 /// \param value
 /// \return
-inline constexpr auto is_userinfo_byte(std::byte value) {
+constexpr auto is_userinfo_byte(std::byte value) {
   return is_path_byte(value) || (value == std::byte(0x2f)) || (value == std::byte(0x3a)) ||
          (value == std::byte(0x3b)) || (value == std::byte(0x3d)) || (value == std::byte(0x40)) ||
          (value == std::byte(0x5b)) || (value == std::byte(0x5c)) || (value == std::byte(0x5d)) ||
@@ -79,7 +79,7 @@ inline constexpr auto is_userinfo_byte(std::byte value) {
 ///
 /// \param value
 /// \return
-inline constexpr auto is_component_byte(std::byte value) {
+constexpr auto is_component_byte(std::byte value) {
   return is_userinfo_byte(value) || (value == std::byte(0x24)) || (value == std::byte(0x25)) ||
          (value == std::byte(0x26)) || (value == std::byte(0x2b)) || (value == std::byte(0x2c));
 }
@@ -187,7 +187,7 @@ struct percent_encoded_char {
   }
 
  private:
-  impl_type impl_;
+  impl_type impl_{};
 };
 
 ///

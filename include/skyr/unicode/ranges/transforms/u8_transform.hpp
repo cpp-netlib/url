@@ -121,11 +121,11 @@ class u8_transform_iterator {
  private:
   constexpr void increment() {
     constexpr auto octet_count = [](char32_t code_point) {
-      if (code_point < 0x80u) {
+      if (code_point < 0x80u) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
         return 1;
-      } else if (code_point < 0x800u) {
+      } else if (code_point < 0x800u) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
         return 2;
-      } else if (code_point < 0x10000u) {
+      } else if (code_point < 0x10000u) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
         return 3;
       } else {
         return 4;
@@ -205,7 +205,7 @@ class transform_u8_range {
   }
 
  private:
-  iterator_type first_;
+  iterator_type first_{};
 };
 
 ///

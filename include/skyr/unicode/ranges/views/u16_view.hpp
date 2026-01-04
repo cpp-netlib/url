@@ -174,7 +174,7 @@ namespace views {
 /// \param range
 /// \return
 template <typename U16Range>
-constexpr inline auto as_u16(const U16Range& range) {
+constexpr auto as_u16(const U16Range& range) {
   static_assert(sizeof(traits::range_value_t<U16Range>) >= 2);
   return view_u16_range{range};
 }

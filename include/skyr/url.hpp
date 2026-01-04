@@ -52,7 +52,7 @@ class url_parse_error : public std::runtime_error {
   }
 
  private:
-  std::error_code code_;
+  std::error_code code_{};
 };
 
 /// This class represents a URL. Parsing on construction is
@@ -1242,9 +1242,9 @@ class url {
   }
 
   url_record url_;
-  std::string href_;
-  string_view view_;
-  url_search_parameters parameters_;
+  std::string href_{};
+  string_view view_{};
+  url_search_parameters parameters_{};
 };
 
 /// Swaps two `url` objects

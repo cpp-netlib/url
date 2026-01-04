@@ -139,7 +139,7 @@ class host {
   }
 
  private:
-  host_types host_;
+  host_types host_{};
 };
 
 namespace details {

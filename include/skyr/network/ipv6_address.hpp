@@ -120,7 +120,7 @@ class ipv6_address {
     }
 
     auto ignore0 = false;
-    for (auto i = 0UL; i <= 7UL; ++i) {
+    for (auto i = 0UL; i <= 7UL; ++i) {    // NOLINT(cppcoreguidelines-avoid-magic-numbers)
       if (ignore0 && (address[i] == 0)) {  // NOLINT
         continue;
       } else if (ignore0) {
@@ -145,7 +145,7 @@ class ipv6_address {
 
 namespace details {
 template <class intT, class charT>
-constexpr inline auto hex_to_dec(charT byte) noexcept {
+constexpr auto hex_to_dec(charT byte) noexcept {
   assert(std::isxdigit(byte, std::locale::classic()));
 
   if (std::isdigit(byte, std::locale::classic())) {
@@ -160,7 +160,7 @@ constexpr inline auto hex_to_dec(charT byte) noexcept {
 /// \param input An input string
 /// \param validation_error Optional pointer to a bool that will be set if a validation error occurs
 /// \returns An `ipv6_address` object or an error
-constexpr inline auto parse_ipv6_address(std::string_view input, bool* validation_error)
+constexpr auto parse_ipv6_address(std::string_view input, bool* validation_error)
     -> std::expected<ipv6_address, ipv6_address_errc> {
   using namespace std::string_view_literals;
 
@@ -181,7 +181,7 @@ constexpr inline auto parse_ipv6_address(std::string_view input, bool* validatio
   }
 
   while (it != last) {
-    if (piece_index == 8) {
+    if (piece_index == 8) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
       *validation_error |= true;
       return std::unexpected(ipv6_address_errc::invalid_piece);
     }
@@ -202,7 +202,8 @@ constexpr inline auto parse_ipv6_address(std::string_view input, bool* validatio
     auto length = 0;
 
     while ((it != last) && ((length < 4) && std::isxdigit(*it, std::locale::classic()))) {
-      value = value * 0x10 + details::hex_to_dec<decltype(value)>(*it);
+      value =
+          (value * 0x10) + details::hex_to_dec<decltype(value)>(*it);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
       ++it;
       ++length;
     }
@@ -215,7 +216,7 @@ constexpr inline auto parse_ipv6_address(std::string_view input, bool* validatio
 
       std::ranges::advance(it, -length);
 
-      if (piece_index > 6) {
+      if (piece_index > 6) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
         *validation_error |= true;
         return std::unexpected(ipv6_address_errc::invalid_ipv4_segment_number);
       }
@@ -226,7 +227,7 @@ constexpr inline auto parse_ipv6_address(std::string_view input, bool* validatio
         auto ipv4_piece = std::optional<int>();
 
         if (numbers_seen > 0) {
-          if ((*it == '.') && (numbers_seen < 4)) {
+          if ((*it == '.') && (numbers_seen < 4)) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
             ++it;
           } else {
             *validation_error |= true;
@@ -247,10 +248,10 @@ constexpr inline auto parse_ipv6_address(std::string_view input, bool* validatio
             *validation_error |= true;
             return std::unexpected(ipv6_address_errc::invalid_ipv4_segment_number);
           } else {
-            ipv4_piece = ipv4_piece.value() * 10 + number;
+            ipv4_piece = (ipv4_piece.value() * 10) + number;  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
           }
 
-          if (ipv4_piece.value() > 255) {
+          if (ipv4_piece.value() > 255) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
             *validation_error |= true;
             return std::unexpected(ipv6_address_errc::invalid_ipv4_segment_number);
           }
@@ -258,7 +259,8 @@ constexpr inline auto parse_ipv6_address(std::string_view input, bool* validatio
           ++it;
         }
 
-        address[piece_index] = static_cast<std::uint16_t>((address[piece_index] << 8) + ipv4_piece.value());  // NOLINT
+        address[piece_index] = static_cast<std::uint16_t>(
+            (address[piece_index] << 8) + ipv4_piece.value());  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
         ++numbers_seen;
 
         if ((numbers_seen == 2) || (numbers_seen == 4)) {
@@ -288,13 +290,14 @@ constexpr inline auto parse_ipv6_address(std::string_view input, bool* validatio
 
   if (compress) {
     auto swaps = piece_index - compress.value();
-    piece_index = 7;
+    piece_index = 7;  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     while ((piece_index != 0) && (swaps > 0)) {
-      std::swap(address[piece_index], address[compress.value() + swaps - 1]);  // NOLINT
+      std::swap(address[piece_index],
+                address[compress.value() + swaps - 1]);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
       --piece_index;
       --swaps;
     }
-  } else if (!compress && (piece_index != 8)) {
+  } else if (!compress && (piece_index != 8)) {  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
     *validation_error |= true;
     return std::unexpected(ipv6_address_errc::compress_expected);
   }

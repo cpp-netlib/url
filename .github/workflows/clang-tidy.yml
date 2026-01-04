@@ -54,7 +54,7 @@ jobs:
       - name: Run clang-tidy on source files
         if: false  # Disabled for now
         run: |
-          find tests -name '*.cpp' -print0 | \
+          find examples -name '*.cpp' -print0 | \
             xargs -0 -n1 -P$(nproc) clang-tidy-21 -p build
 
       - name: clang-tidy check passed

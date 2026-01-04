@@ -98,7 +98,7 @@ class u8_code_point_view {
 /// \param range
 /// \return
 template <typename OctetRange>
-inline constexpr auto u8_code_point(const OctetRange& range)
+constexpr auto u8_code_point(const OctetRange& range)
     -> std::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc> {
   auto first = std::begin(range), last = std::end(range);
   auto length = sequence_length(*first);
@@ -115,7 +115,7 @@ inline constexpr auto u8_code_point(const OctetRange& range)
 /// \param range
 /// \return
 template <typename OctetRange>
-inline constexpr auto checked_u8_code_point(const OctetRange& range) {
+constexpr auto checked_u8_code_point(const OctetRange& range) {
   using result_type = std::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc>;
 
   constexpr auto check_code_point = [](auto&& code_point) -> result_type {
