@@ -18,7 +18,7 @@ namespace skyr::unicode {
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-constexpr inline auto u32_value(u8_code_point_view<OctetIterator> code_point) noexcept
+constexpr auto u32_value(u8_code_point_view<OctetIterator> code_point) noexcept
     -> std::expected<char32_t, unicode_errc> {
   constexpr auto to_value = [](auto&& state) { return state.value; };
   return find_code_point(code_point.begin()).transform(to_value);
@@ -29,7 +29,7 @@ constexpr inline auto u32_value(u8_code_point_view<OctetIterator> code_point) no
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-constexpr inline auto u32_value(std::expected<u8_code_point_view<OctetIterator>, unicode_errc> code_point) noexcept
+constexpr auto u32_value(std::expected<u8_code_point_view<OctetIterator>, unicode_errc> code_point) noexcept
     -> std::expected<char32_t, unicode_errc> {
   constexpr auto to_u32 = [](auto&& code_point) { return u32_value(code_point); };
   return code_point.and_then(to_u32);
@@ -38,14 +38,14 @@ constexpr inline auto u32_value(std::expected<u8_code_point_view<OctetIterator>,
 ///
 /// \param code_point
 /// \return
-constexpr inline auto u32_value(u16_code_point_t code_point) noexcept -> std::expected<char32_t, unicode_errc> {
+constexpr auto u32_value(u16_code_point_t code_point) noexcept -> std::expected<char32_t, unicode_errc> {
   return code_point.u32_value();
 }
 
 ///
 /// \param code_point
 /// \return
-constexpr inline auto u32_value(std::expected<u16_code_point_t, unicode_errc> code_point) noexcept
+constexpr auto u32_value(std::expected<u16_code_point_t, unicode_errc> code_point) noexcept
     -> std::expected<char32_t, unicode_errc> {
   constexpr auto to_u32 = [](auto code_point) { return code_point.u32_value(); };
   return code_point.and_then(to_u32);
@@ -54,14 +54,14 @@ constexpr inline auto u32_value(std::expected<u16_code_point_t, unicode_errc> co
 ///
 /// \param code_point
 /// \return
-constexpr inline auto u32_value(char32_t code_point) noexcept -> std::expected<char32_t, unicode_errc> {
+constexpr auto u32_value(char32_t code_point) noexcept -> std::expected<char32_t, unicode_errc> {
   return code_point;
 }
 
 ///
 /// \param code_point
 /// \return
-constexpr inline auto u32_value(std::expected<char32_t, unicode_errc> code_point) noexcept
+constexpr auto u32_value(std::expected<char32_t, unicode_errc> code_point) noexcept
     -> std::expected<char32_t, unicode_errc> {
   return code_point;
 }
@@ -71,7 +71,7 @@ constexpr inline auto u32_value(std::expected<char32_t, unicode_errc> code_point
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-constexpr inline auto u16_value(u8_code_point_view<OctetIterator> code_point)
+constexpr auto u16_value(u8_code_point_view<OctetIterator> code_point)
     -> std::expected<u16_code_point_t, unicode_errc> {
   return u16_code_point(u32_value(code_point));
 }
@@ -81,7 +81,7 @@ constexpr inline auto u16_value(u8_code_point_view<OctetIterator> code_point)
 /// \param code_point
 /// \return
 template <typename OctetIterator>
-constexpr inline auto u16_value(std::expected<u8_code_point_view<OctetIterator>, unicode_errc> code_point) {
+constexpr auto u16_value(std::expected<u8_code_point_view<OctetIterator>, unicode_errc> code_point) {
   constexpr auto to_u16 = [](auto code_point) { return u16_code_point(code_point); };
   return u32_value(code_point).transform(to_u16);
 }

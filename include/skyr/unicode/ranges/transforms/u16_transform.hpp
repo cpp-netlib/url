@@ -106,7 +106,7 @@ class transform_u16_range {
 
   ///
   /// \param range
-  explicit constexpr transform_u16_range(CodePointRange&& range) : range_{std::forward<CodePointRange>(range)} {
+  explicit constexpr transform_u16_range(CodePointRange&& range) : range_{std::move(range)} {
   }
 
   /// Returns an iterator to the beginning
@@ -175,7 +175,7 @@ static constexpr transform_u16_range_fn to_u16;
 /// \param range
 /// \return
 template <class Output, class CodePointRange>
-auto as(transform_u16_range<CodePointRange>&& range) -> std::expected<Output, unicode_errc> {
+auto as(const transform_u16_range<CodePointRange>& range) -> std::expected<Output, unicode_errc> {
   auto result = Output{};
 
   for (auto it = std::cbegin(range); it != std::cend(range); ++it) {

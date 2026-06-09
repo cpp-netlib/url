@@ -6,10 +6,12 @@
 #ifndef SKYR_DOMAIN_ERRORS_HPP
 #define SKYR_DOMAIN_ERRORS_HPP
 
+#include <cstdint>
+
 namespace skyr {
 /// \enum domain_errc
 /// Enumerates domain processing errors
-enum class domain_errc {
+enum class domain_errc : std::uint8_t {
   /// The domain code point is disallowed
   disallowed_code_point = 1,
   /// The encoder or decoder received bad input

@@ -96,7 +96,7 @@ class u8_range_iterator {
   }
 
  private:
-  iterator_type it_;
+  iterator_type it_{};
 };
 
 ///
@@ -156,7 +156,7 @@ class view_u8_range {
   }
 
  private:
-  iterator_type it_;
+  iterator_type it_{};
 };
 
 namespace views {
@@ -165,7 +165,7 @@ namespace views {
 /// \param range
 /// \return
 template <typename OctetRange>
-constexpr inline auto as_u8(const OctetRange& range) {
+constexpr auto as_u8(const OctetRange& range) {
   static_assert(sizeof(traits::range_value_t<OctetRange>) >= 1);
   return view_u8_range{range};
 }

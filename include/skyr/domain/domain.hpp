@@ -21,10 +21,9 @@
 #include <skyr/unicode/ranges/views/u8_view.hpp>
 
 namespace skyr {
-constexpr inline auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules,
-                                     bool check_hyphens, [[maybe_unused]] bool check_bidi,
-                                     [[maybe_unused]] bool check_joiners, bool transitional_processing)
-    -> std::expected<void, domain_errc> {
+constexpr auto validate_label(std::u32string_view label, [[maybe_unused]] bool use_std3_ascii_rules, bool check_hyphens,
+                              [[maybe_unused]] bool check_bidi, [[maybe_unused]] bool check_joiners,
+                              bool transitional_processing) -> std::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#Validity_Criteria;
 
   if (check_hyphens) {
@@ -66,21 +65,21 @@ constexpr inline auto validate_label(std::u32string_view label, [[maybe_unused]]
 ///
 struct domain_to_ascii_context {
   /// Stores the domain as UTF-32
-  std::u32string domain_name;
+  std::u32string domain_name{};
 
   /// Parameters
-  std::string* ascii_domain;
-  bool check_hyphens;
-  bool check_bidi;
-  bool check_joiners;
-  bool use_std3_ascii_rules;
-  bool transitional_processing;
-  bool verify_dns_length;
+  std::string* ascii_domain{};
+  bool check_hyphens{};
+  bool check_bidi{};
+  bool check_joiners{};
+  bool use_std3_ascii_rules{};
+  bool transitional_processing{};
+  bool verify_dns_length{};
 
   // These are intermediate buffers
-  std::vector<std::u32string> labels;
-  std::string punycode_encoded;
-  std::u32string punycode_decoded;
+  std::vector<std::u32string> labels{};
+  std::string punycode_encoded{};
+  std::u32string punycode_decoded{};
 };
 
 ///
@@ -118,7 +117,7 @@ inline auto create_domain_to_ascii_context(std::string_view domain_name, std::st
 ///
 /// \param context
 /// \return
-inline auto domain_to_ascii_impl(domain_to_ascii_context&& context) -> std::expected<void, domain_errc> {
+inline auto domain_to_ascii_impl(domain_to_ascii_context context) -> std::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#ToASCII
 
   constexpr auto map_domain_name =
@@ -210,7 +209,7 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context&& context) -> std::expe
     return std::move(ctx);
   };
 
-  constexpr auto copy_to_output = [](domain_to_ascii_context&& ctx) -> std::expected<void, domain_errc> {
+  constexpr auto copy_to_output = [](domain_to_ascii_context ctx) -> std::expected<void, domain_errc> {
     for (auto it = ctx.labels.begin(); it != ctx.labels.end(); ++it) {
       if (it != ctx.labels.begin()) {
         ctx.ascii_domain->push_back('.');
@@ -297,21 +296,21 @@ inline auto domain_to_ascii(std::string_view domain_name, std::string* ascii_dom
 }
 
 struct domain_to_u8_context {
-  std::string_view domain_name;
+  std::string_view domain_name{};
 
   /// Parameters
-  std::string* u8_domain;
+  std::string* u8_domain{};
 
-  std::vector<std::string> labels;
+  std::vector<std::string> labels{};
 
   /// This is used as an intermediate buffer
-  std::u32string punycode_decoded;
+  std::u32string punycode_decoded{};
 };
 
 ///
 /// \param context
 /// \return
-inline auto domain_to_u8_impl(domain_to_u8_context&& context) -> std::expected<void, domain_errc> {
+inline auto domain_to_u8_impl(domain_to_u8_context context) -> std::expected<void, domain_errc> {
   static constexpr auto to_string_view = [](auto&& label) {
     return std::string_view(std::addressof(*std::begin(label)), std::ranges::distance(label));
   };

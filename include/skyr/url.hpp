@@ -52,7 +52,7 @@ class url_parse_error : public std::runtime_error {
   }
 
  private:
-  std::error_code code_;
+  std::error_code code_{};
 };
 
 /// This class represents a URL. Parsing on construction is
@@ -124,7 +124,7 @@ class url {
   ///
   /// \param input A URL record
   explicit url(url_record&& input) : url() {
-    update_record(std::forward<url_record>(input));
+    update_record(std::move(input));
   }
 
   /// Copy constructor
@@ -262,10 +262,10 @@ class url {
   /// \param protocol The new URL protocol
   /// \returns An error on failure to parse the new URL
   auto set_protocol(string_view protocol) -> std::error_code {
-    auto protocol_ = static_cast<string_type>(protocol);
-    if (protocol_.back() != ':') {
-      protocol_ += ':';
-      protocol = string_view(protocol_);
+    auto protocol_copy = static_cast<string_type>(protocol);
+    if (protocol_copy.back() != ':') {
+      protocol_copy += ':';
+      protocol = string_view(protocol_copy);
     }
 
     bool validation_error = false;
@@ -531,8 +531,8 @@ class url {
   /// Returns the [URL port](https://url.spec.whatwg.org/#dom-url-port)
   ///
   /// \returns The [URL port](https://url.spec.whatwg.org/#dom-url-port)
-  template <typename intT>
-  [[nodiscard]] auto port(std::enable_if_t<std::is_integral_v<intT>>* = nullptr) const -> std::optional<intT> {
+  template <typename IntT>
+  [[nodiscard]] auto port(std::enable_if_t<std::is_integral_v<IntT>>* = nullptr) const -> std::optional<IntT> {
     auto p = port();
     if (p.empty()) {
       return std::nullopt;
@@ -540,7 +540,7 @@ class url {
 
     const char* port_first = p.data();
     char* port_last = nullptr;
-    return static_cast<intT>(std::strtoul(port_first, &port_last, 10));
+    return static_cast<IntT>(std::strtoul(port_first, &port_last, 10));
   }
 
   /// Sets the [URL port](https://url.spec.whatwg.org/#dom-url-port)
@@ -563,9 +563,9 @@ class url {
   /// \tparam intT The input type
   /// \param port The new port
   /// \returns An error on failure to parse the new URL
-  template <typename intT>
-    requires std::is_integral_v<intT>
-  auto set_port(intT port) -> std::error_code {
+  template <typename IntT>
+    requires std::is_integral_v<IntT>
+  auto set_port(IntT port) -> std::error_code {
     return set_port(string_view(std::to_string(port)));
   }
 
@@ -971,9 +971,9 @@ class url {
   /// \tparam intT An integral type
   /// \param port The new port number
   /// \returns A new URL with the updated port, or an error on validation failure
-  template <typename intT>
-    requires std::is_integral_v<intT>
-  [[nodiscard]] auto with_port(intT port) const -> std::expected<url, std::error_code> {
+  template <typename IntT>
+    requires std::is_integral_v<IntT>
+  [[nodiscard]] auto with_port(IntT port) const -> std::expected<url, std::error_code> {
     auto result = *this;
     if (auto ec = result.set_port(port)) {
       return std::unexpected(ec);
@@ -1242,9 +1242,9 @@ class url {
   }
 
   url_record url_;
-  std::string href_;
-  string_view view_;
-  url_search_parameters parameters_;
+  std::string href_{};
+  string_view view_{};
+  url_search_parameters parameters_{};
 };
 
 /// Swaps two `url` objects

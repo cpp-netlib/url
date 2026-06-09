@@ -6,10 +6,12 @@
 #ifndef SKYR_UNICODE_ERRORS_HPP
 #define SKYR_UNICODE_ERRORS_HPP
 
+#include <cstdint>
+
 namespace skyr::unicode {
 /// \enum unicode_errc
 /// Enumerates Unicode errors
-enum class unicode_errc {
+enum class unicode_errc : std::uint8_t {
   /// Overflow
   overflow,
   /// Invalid lead code point

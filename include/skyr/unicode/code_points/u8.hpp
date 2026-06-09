@@ -42,7 +42,7 @@ class u8_code_point_view {
   /// \brief Constructor
   /// \param first An iterator at the beginning of the code point
   /// \param last An iterator at the end of the code point
-  constexpr u8_code_point_view(OctetIterator first, OctetIterator last) : first(first), last(last) {
+  constexpr u8_code_point_view(OctetIterator first, OctetIterator last) : first_(first), last_(last) {
   }
 
   /// \brief Constructor. The length of the code point sequence is
@@ -55,13 +55,13 @@ class u8_code_point_view {
   /// Returns an iterator to the beginning
   /// \return \c const_iterator
   [[nodiscard]] constexpr auto begin() const noexcept {
-    return first;
+    return first_;
   }
 
   /// Returns an iterator to the end
   /// \return \c const_iterator
   [[nodiscard]] constexpr auto end() const noexcept {
-    return last;
+    return last_;
   }
 
   /// Returns an iterator to the beginning
@@ -79,18 +79,19 @@ class u8_code_point_view {
   /// \brief Returns the length in bytes of this code point.
   /// \return
   [[nodiscard]] constexpr auto size() const noexcept -> size_type {
-    return sequence_length(*first);
+    return sequence_length(*first_);
   }
 
   ///
   /// \return
   [[nodiscard]] constexpr auto u32_value() const noexcept {
     constexpr auto to_u32 = [](auto&& state) { return state.value; };
-    return find_code_point(first).transform(to_u32).value();
+    return find_code_point(first_).transform(to_u32).value();
   }
 
  private:
-  OctetIterator first, last;
+  OctetIterator first_;
+  OctetIterator last_;
 };
 
 ///
@@ -98,9 +99,10 @@ class u8_code_point_view {
 /// \param range
 /// \return
 template <typename OctetRange>
-inline constexpr auto u8_code_point(const OctetRange& range)
+constexpr auto u8_code_point(const OctetRange& range)
     -> std::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc> {
-  auto first = std::begin(range), last = std::end(range);
+  auto first = std::begin(range);
+  auto last = std::end(range);
   auto length = sequence_length(*first);
   if (std::distance(first, last) > length) {
     return std::unexpected(unicode_errc::overflow);
@@ -115,7 +117,7 @@ inline constexpr auto u8_code_point(const OctetRange& range)
 /// \param range
 /// \return
 template <typename OctetRange>
-inline constexpr auto checked_u8_code_point(const OctetRange& range) {
+constexpr auto checked_u8_code_point(const OctetRange& range) {
   using result_type = std::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc>;
 
   constexpr auto check_code_point = [](auto&& code_point) -> result_type {

@@ -24,14 +24,14 @@ class url;
 
 namespace details {
 struct is_name {
-  explicit is_name(std::string_view name) : name_(name) {
+  explicit is_name(std::string_view input_name) : name(input_name) {
   }
 
   auto operator()(const query_parameter& parameter) noexcept {
-    return name_ == parameter.name;
+    return name == parameter.name;
   }
 
-  std::string_view name_;
+  std::string_view name{};
 };
 }  // namespace details
 
@@ -98,7 +98,8 @@ class url_search_parameters {
   ///
   /// \param name The name of the parameter to remove
   void remove(std::string_view name) {
-    auto first = std::begin(parameters_), last = std::end(parameters_);
+    auto first = std::begin(parameters_);
+    auto last = std::end(parameters_);
     auto it = std::remove_if(first, last, details::is_name(name));
     parameters_.erase(it, last);
     update();
@@ -107,7 +108,8 @@ class url_search_parameters {
   /// \param name The search parameter name
   /// \returns The first search parameter value with the given name
   [[nodiscard]] auto get(std::string_view name) const -> std::optional<string_type> {
-    auto first = std::cbegin(parameters_), last = std::cend(parameters_);
+    auto first = std::cbegin(parameters_);
+    auto last = std::cend(parameters_);
     auto it = std::find_if(first, last, details::is_name(name));
     return (it != last) ? it->value : std::nullopt;
   }
@@ -134,7 +136,8 @@ class url_search_parameters {
   /// \returns `true` if the value is in the search parameters,
   /// `false` otherwise.
   [[nodiscard]] auto contains(std::string_view name) const noexcept -> bool {
-    auto first = std::cbegin(parameters_), last = std::cend(parameters_);
+    auto first = std::cbegin(parameters_);
+    auto last = std::cend(parameters_);
     return std::find_if(first, last, details::is_name(name)) != last;
   }
 
@@ -143,7 +146,8 @@ class url_search_parameters {
   /// \param name The search parameter name
   /// \param value The search parameter value
   void set(std::string_view name, std::string_view value) {
-    auto first = std::begin(parameters_), last = std::end(parameters_);
+    auto first = std::begin(parameters_);
+    auto last = std::end(parameters_);
     auto it = std::find_if(first, last, details::is_name(name));
     if (it != last) {
       it->value = value;
@@ -178,7 +182,8 @@ class url_search_parameters {
   void sort() {
     static constexpr auto less_name = [](const auto& lhs, const auto& rhs) { return lhs.name < rhs.name; };
 
-    auto first = std::begin(parameters_), last = std::end(parameters_);
+    auto first = std::begin(parameters_);
+    auto last = std::end(parameters_);
     std::sort(first, last, less_name);
     update();
   }
@@ -241,16 +246,16 @@ class url_search_parameters {
   void initialize(std::string_view query) {
     if (auto parameters = parse_query(query); parameters) {
       for (auto [name, value] : parameters.value()) {
-        auto name_ = percent_decode(name).value_or(std::string(name));
-        auto value_ = value ? percent_decode(value.value()).value_or(std::string(value.value())) : std::string();
-        parameters_.emplace_back(name_, value_);
+        auto decoded_name = percent_decode(name).value_or(std::string(name));
+        auto decoded_value = value ? percent_decode(value.value()).value_or(std::string(value.value())) : std::string();
+        parameters_.emplace_back(decoded_name, decoded_value);
       }
     }
   }
 
   void update();
 
-  std::vector<value_type> parameters_;
+  std::vector<value_type> parameters_{};
   url* url_ = nullptr;
 };
 

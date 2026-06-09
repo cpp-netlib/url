@@ -20,7 +20,7 @@ namespace skyr {
 template <class T, std::size_t Capacity>
 class static_vector {
  private:
-  alignas(T) std::array<std::byte, sizeof(T) * Capacity> storage_;
+  alignas(T) std::array<std::byte, sizeof(T) * Capacity> storage_{};
   std::size_t size_ = 0;
 
   auto data_ptr() noexcept -> T* {

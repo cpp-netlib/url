@@ -6,6 +6,7 @@
 #ifndef SKYR_URL_PARSE_STATE_HPP
 #define SKYR_URL_PARSE_STATE_HPP
 
+#include <cstdint>
 #include <expected>
 #include <optional>
 #include <string>
@@ -14,7 +15,7 @@
 
 namespace skyr {
 /// States of the URL parser
-enum class url_parse_state {
+enum class url_parse_state : std::uint8_t {
   /// Pointer is at the scheme start
   scheme_start,
   /// Pointer is at the scheme part

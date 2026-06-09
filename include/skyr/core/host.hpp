@@ -67,17 +67,17 @@ class host {
   ///
   /// \return The host as a string
   [[nodiscard]] auto serialize() const {
-    constexpr static auto serialize = [](auto&& host) -> std::string {
-      using T = std::decay_t<decltype(host)>;
+    constexpr static auto serialize = []<typename T>(T&& host) -> std::string {
+      using host_t = std::decay_t<T>;
 
-      if constexpr (std::is_same_v<T, ipv4_address>) {
+      if constexpr (std::is_same_v<host_t, ipv4_address>) {
         return host.serialize();
-      } else if constexpr (std::is_same_v<T, ipv6_address>) {
+      } else if constexpr (std::is_same_v<host_t, ipv6_address>) {
         return std::format("[{}]", host.serialize());
-      } else if constexpr (std::is_same_v<T, domain_name> || std::is_same_v<T, opaque_host>) {
+      } else if constexpr (std::is_same_v<host_t, domain_name> || std::is_same_v<host_t, opaque_host>) {
         return host.name;
       } else {
-        return std::string();
+        return {};
       }
     };
 
@@ -139,7 +139,7 @@ class host {
   }
 
  private:
-  host_types host_;
+  host_types host_{};
 };
 
 namespace details {
