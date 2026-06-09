@@ -124,7 +124,7 @@ class url {
   ///
   /// \param input A URL record
   explicit url(url_record&& input) : url() {
-    update_record(std::forward<url_record>(input));
+    update_record(std::move(input));
   }
 
   /// Copy constructor

@@ -239,7 +239,7 @@ static constexpr u8_range_fn to_u8;
 /// \param range
 /// \return
 template <class Output, typename CodePointRange>
-constexpr auto as(transform_u8_range<CodePointRange>&& range) -> std::expected<Output, unicode_errc> {
+constexpr auto as(const transform_u8_range<CodePointRange>& range) -> std::expected<Output, unicode_errc> {
   auto result = Output{};
 
   for (auto it = std::cbegin(range); it != std::cend(range); ++it) {

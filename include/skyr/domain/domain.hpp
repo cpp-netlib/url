@@ -117,7 +117,7 @@ inline auto create_domain_to_ascii_context(std::string_view domain_name, std::st
 ///
 /// \param context
 /// \return
-inline auto domain_to_ascii_impl(domain_to_ascii_context&& context) -> std::expected<void, domain_errc> {
+inline auto domain_to_ascii_impl(domain_to_ascii_context context) -> std::expected<void, domain_errc> {
   /// https://www.unicode.org/reports/tr46/#ToASCII
 
   constexpr auto map_domain_name =
@@ -209,7 +209,7 @@ inline auto domain_to_ascii_impl(domain_to_ascii_context&& context) -> std::expe
     return std::move(ctx);
   };
 
-  constexpr auto copy_to_output = [](domain_to_ascii_context&& ctx) -> std::expected<void, domain_errc> {
+  constexpr auto copy_to_output = [](domain_to_ascii_context ctx) -> std::expected<void, domain_errc> {
     for (auto it = ctx.labels.begin(); it != ctx.labels.end(); ++it) {
       if (it != ctx.labels.begin()) {
         ctx.ascii_domain->push_back('.');
@@ -310,7 +310,7 @@ struct domain_to_u8_context {
 ///
 /// \param context
 /// \return
-inline auto domain_to_u8_impl(domain_to_u8_context&& context) -> std::expected<void, domain_errc> {
+inline auto domain_to_u8_impl(domain_to_u8_context context) -> std::expected<void, domain_errc> {
   static constexpr auto to_string_view = [](auto&& label) {
     return std::string_view(std::addressof(*std::begin(label)), std::ranges::distance(label));
   };
