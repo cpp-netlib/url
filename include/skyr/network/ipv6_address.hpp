@@ -81,7 +81,8 @@ class ipv6_address {
     auto sequences = static_vector<std::pair<std::size_t, std::size_t>, 8>{};
     auto in_sequence = false;
 
-    auto first = std::cbegin(address), last = std::cend(address);
+    auto first = std::cbegin(address);
+    auto last = std::cend(address);
     auto it = first;
     while (true) {
       if (*it == 0) {
@@ -168,7 +169,8 @@ constexpr auto parse_ipv6_address(std::string_view input, bool* validation_error
   auto piece_index = 0;
   auto compress = std::optional<decltype(piece_index)>();
 
-  auto first = std::cbegin(input), last = std::cend(input);
+  auto first = std::cbegin(input);
+  auto last = std::cend(input);
   auto it = first;
 
   if (input.starts_with("::"sv)) {

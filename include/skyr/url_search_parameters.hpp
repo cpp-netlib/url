@@ -98,7 +98,8 @@ class url_search_parameters {
   ///
   /// \param name The name of the parameter to remove
   void remove(std::string_view name) {
-    auto first = std::begin(parameters_), last = std::end(parameters_);
+    auto first = std::begin(parameters_);
+    auto last = std::end(parameters_);
     auto it = std::remove_if(first, last, details::is_name(name));
     parameters_.erase(it, last);
     update();
@@ -107,7 +108,8 @@ class url_search_parameters {
   /// \param name The search parameter name
   /// \returns The first search parameter value with the given name
   [[nodiscard]] auto get(std::string_view name) const -> std::optional<string_type> {
-    auto first = std::cbegin(parameters_), last = std::cend(parameters_);
+    auto first = std::cbegin(parameters_);
+    auto last = std::cend(parameters_);
     auto it = std::find_if(first, last, details::is_name(name));
     return (it != last) ? it->value : std::nullopt;
   }
@@ -134,7 +136,8 @@ class url_search_parameters {
   /// \returns `true` if the value is in the search parameters,
   /// `false` otherwise.
   [[nodiscard]] auto contains(std::string_view name) const noexcept -> bool {
-    auto first = std::cbegin(parameters_), last = std::cend(parameters_);
+    auto first = std::cbegin(parameters_);
+    auto last = std::cend(parameters_);
     return std::find_if(first, last, details::is_name(name)) != last;
   }
 
@@ -143,7 +146,8 @@ class url_search_parameters {
   /// \param name The search parameter name
   /// \param value The search parameter value
   void set(std::string_view name, std::string_view value) {
-    auto first = std::begin(parameters_), last = std::end(parameters_);
+    auto first = std::begin(parameters_);
+    auto last = std::end(parameters_);
     auto it = std::find_if(first, last, details::is_name(name));
     if (it != last) {
       it->value = value;
@@ -178,7 +182,8 @@ class url_search_parameters {
   void sort() {
     static constexpr auto less_name = [](const auto& lhs, const auto& rhs) { return lhs.name < rhs.name; };
 
-    auto first = std::begin(parameters_), last = std::end(parameters_);
+    auto first = std::begin(parameters_);
+    auto last = std::end(parameters_);
     std::sort(first, last, less_name);
     update();
   }

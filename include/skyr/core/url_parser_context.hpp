@@ -29,7 +29,8 @@ using namespace std::string_view_literals;
 
 namespace details {
 constexpr auto contains(std::string_view view, char element) noexcept {
-  auto first = std::cbegin(view), last = std::cend(view);
+  auto first = std::cbegin(view);
+  auto last = std::cend(view);
   return last != std::find(first, last, element);
 }
 

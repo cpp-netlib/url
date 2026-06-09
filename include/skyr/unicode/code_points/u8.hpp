@@ -100,7 +100,8 @@ class u8_code_point_view {
 template <typename OctetRange>
 constexpr auto u8_code_point(const OctetRange& range)
     -> std::expected<u8_code_point_view<traits::range_iterator_t<OctetRange>>, unicode_errc> {
-  auto first = std::begin(range), last = std::end(range);
+  auto first = std::begin(range);
+  auto last = std::end(range);
   auto length = sequence_length(*first);
   if (std::distance(first, last) > length) {
     return std::unexpected(unicode_errc::overflow);
