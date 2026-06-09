@@ -92,7 +92,7 @@ inline void shorten_path(std::string_view scheme, std::vector<std::string>& path
 }
 }  // namespace details
 
-enum class url_parse_action {
+enum class url_parse_action : std::uint8_t {
   success = 0,
   increment,
   continue_,

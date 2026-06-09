@@ -6,6 +6,7 @@
 #ifndef SKYR_FILESYSTEM_PATH_HPP
 #define SKYR_FILESYSTEM_PATH_HPP
 
+#include <cstdint>
 #include <expected>
 #include <filesystem>
 
@@ -18,7 +19,7 @@ namespace skyr {
 /// vice versa
 namespace filesystem {
 ///
-enum class path_errc {
+enum class path_errc : std::uint8_t {
   ///
   invalid_path = 1,
   ///

@@ -6,12 +6,13 @@
 #ifndef SKYR_CORE_ERRORS_HPP
 #define SKYR_CORE_ERRORS_HPP
 
+#include <cstdint>
 #include <system_error>
 
 namespace skyr {
 /// \enum url_parse_errc
 /// Enumerates URL parser errors
-enum class url_parse_errc {
+enum class url_parse_errc : std::uint8_t {
   /// The string contains an invalid Unicode character
   invalid_unicode_character = 1,
   /// A character is not a valid scheme character

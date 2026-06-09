@@ -6,6 +6,7 @@
 #ifndef SKYR_JSON_JSON_HPP
 #define SKYR_JSON_JSON_HPP
 
+#include <cstdint>
 #include <expected>
 #include <format>
 #include <optional>
@@ -21,7 +22,7 @@
 namespace skyr {
 namespace json {
 ///
-enum class json_errc {
+enum class json_errc : std::uint8_t {
   ///
   invalid_query = 1,
 };

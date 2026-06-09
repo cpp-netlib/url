@@ -6,13 +6,15 @@
 #ifndef SKYR_DOMAIN_IDNA_STATUS_HPP
 #define SKYR_DOMAIN_IDNA_STATUS_HPP
 
+#include <cstdint>
+
 namespace skyr::idna {
 /// \enum idna_status
 /// The status values come from the IDNA mapping table in domain TR46:
 ///
 /// https://domain.org/reports/tr46/#IDNA_Mapping_Table
 ///
-enum class idna_status {
+enum class idna_status : std::uint8_t {
   /// The code point is disallowed
   disallowed = 1,
   /// The code point is disallowed, but can be treated as valid when using std 3

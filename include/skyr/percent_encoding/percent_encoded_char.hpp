@@ -7,6 +7,7 @@
 #define SKYR_PERCENT_ENCODING_PERCENT_ENCODED_CHAR_HPP
 
 #include <cstddef>
+#include <cstdint>
 #include <locale>
 #include <string>
 
@@ -86,7 +87,7 @@ constexpr auto is_component_byte(std::byte value) {
 }  // namespace details
 
 ///
-enum class encode_set {
+enum class encode_set : std::uint8_t {
   ///
   any = 0,
   ///

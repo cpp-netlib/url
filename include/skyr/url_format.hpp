@@ -6,6 +6,7 @@
 #ifndef SKYR_URL_FORMAT_HPP
 #define SKYR_URL_FORMAT_HPP
 
+#include <cstdint>
 #include <format>
 
 #include <skyr/percent_encoding/percent_decode.hpp>
@@ -45,7 +46,7 @@
 namespace std {
 template <>
 struct formatter<skyr::url> {
-  enum class format_type {
+  enum class format_type : std::uint8_t {
     full,      // Full URL (default)
     scheme,    // s - scheme
     hostname,  // h - hostname

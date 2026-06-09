@@ -24,7 +24,7 @@
 
 namespace skyr {
 /// Enumerates IPv4 address parsing errors
-enum class ipv4_address_errc {
+enum class ipv4_address_errc : std::uint8_t {
   /// The input contains more than 4 segments
   too_many_segments,
   /// The input contains an empty segment

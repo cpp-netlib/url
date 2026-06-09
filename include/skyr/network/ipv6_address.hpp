@@ -22,7 +22,7 @@
 
 namespace skyr {
 /// Enumerates IPv6 address parsing errors
-enum class ipv6_address_errc {
+enum class ipv6_address_errc : std::uint8_t {
   /// IPv6 address does not start with a double colon
   does_not_start_with_double_colon,
   /// IPv6 piece is not valid
