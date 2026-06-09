@@ -11,22 +11,22 @@
 #include <type_traits>
 
 namespace skyr {
-template <class T, class charT>
-concept is_basic_string = std::is_same_v<std::remove_cv_t<T>, std::basic_string<charT>>;
+template <class T, class CharT>
+concept is_basic_string = std::is_same_v<std::remove_cv_t<T>, std::basic_string<CharT>>;
 
-template <class T, class charT>
-concept is_basic_string_view = std::is_same_v<std::remove_cv_t<T>, std::basic_string_view<charT>>;
+template <class T, class CharT>
+concept is_basic_string_view = std::is_same_v<std::remove_cv_t<T>, std::basic_string_view<CharT>>;
 
-template <class T, class charT>
+template <class T, class CharT>
 concept is_char_array =
-    std::conjunction_v<std::is_array<T>, std::is_same<std::remove_cv_t<std::remove_extent_t<T>>, charT>>;
+    std::conjunction_v<std::is_array<T>, std::is_same<std::remove_cv_t<std::remove_extent_t<T>>, CharT>>;
 
-template <class T, class charT>
-concept is_char_pointer = std::conjunction_v<std::is_pointer<T>, std::is_same<std::remove_pointer_t<T>, charT>>;
+template <class T, class CharT>
+concept is_char_pointer = std::conjunction_v<std::is_pointer<T>, std::is_same<std::remove_pointer_t<T>, CharT>>;
 
-template <class T, class charT>
+template <class T, class CharT>
 concept is_string_container =
-    is_basic_string<T, charT> || is_basic_string_view<T, charT> || is_char_array<T, charT> || is_char_pointer<T, charT>;
+    is_basic_string<T, CharT> || is_basic_string_view<T, CharT> || is_char_array<T, CharT> || is_char_pointer<T, CharT>;
 
 template <typename T>
 concept is_u8_convertible =

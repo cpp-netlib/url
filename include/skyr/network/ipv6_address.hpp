@@ -145,15 +145,15 @@ class ipv6_address {
 };
 
 namespace details {
-template <class intT, class charT>
-constexpr auto hex_to_dec(charT byte) noexcept {
+template <class IntT, class CharT>
+constexpr auto hex_to_dec(CharT byte) noexcept {
   assert(std::isxdigit(byte, std::locale::classic()));
 
   if (std::isdigit(byte, std::locale::classic())) {
-    return static_cast<intT>(byte - '0');
+    return static_cast<IntT>(byte - '0');
   }
 
-  return static_cast<intT>(std::tolower(byte, std::locale::classic()) - 'a' + 10);
+  return static_cast<IntT>(std::tolower(byte, std::locale::classic()) - 'a' + 10);
 }
 }  // namespace details
 

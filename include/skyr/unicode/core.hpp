@@ -18,19 +18,19 @@ namespace skyr::unicode {
 ///
 /// \param octet
 /// \return
-template <class uintT>
-constexpr auto mask8(uintT value) {
-  static_assert(std::is_unsigned_v<uintT>, "unsigned integral types only");
-  return static_cast<uintT>(0xffu & value);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+template <class UintT>
+constexpr auto mask8(UintT value) {
+  static_assert(std::is_unsigned_v<UintT>, "unsigned integral types only");
+  return static_cast<UintT>(0xffu & value);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 }
 
 ///
 /// \param value
 /// \return
-template <class uintT>
-constexpr auto mask16(uintT value) {
-  static_assert(std::is_unsigned_v<uintT>, "unsigned integral types only");
-  return static_cast<uintT>(0xffffu & value);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+template <class UintT>
+constexpr auto mask16(UintT value) {
+  static_assert(std::is_unsigned_v<UintT>, "unsigned integral types only");
+  return static_cast<UintT>(0xffffu & value);  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 }
 
 ///

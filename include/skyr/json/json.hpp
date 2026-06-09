@@ -60,21 +60,21 @@ inline auto decode_query(std::string_view query) -> nlohmann::json {
   auto parameters = parse_query(query);
   if (parameters) {
     for (auto&& [name, value] : parameters.value()) {
-      const auto name_ = ::skyr::percent_decode(name).value();
-      const auto value_ = value ? ::skyr::percent_decode(value.value()).value() : std::string();
+      const auto decoded_name = ::skyr::percent_decode(name).value();
+      const auto decoded_value = value ? ::skyr::percent_decode(value.value()).value() : std::string();
 
-      if (object.contains(name_)) {
-        auto current_value = object[name_];
+      if (object.contains(decoded_name)) {
+        auto current_value = object[decoded_name];
         if (current_value.is_string()) {
           auto prev_value = current_value.get<std::string>();
-          object[name_] = std::vector<std::string>{prev_value, value_};
+          object[decoded_name] = std::vector<std::string>{prev_value, decoded_value};
         } else if (current_value.is_array()) {
           auto values = current_value.get<std::vector<std::string>>();
-          values.emplace_back(value_);
-          object[name_] = values;
+          values.emplace_back(decoded_value);
+          object[decoded_name] = values;
         }
       } else {
-        object[name_] = value_;
+        object[decoded_name] = decoded_value;
       }
     }
   }

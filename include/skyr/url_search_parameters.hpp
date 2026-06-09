@@ -24,14 +24,14 @@ class url;
 
 namespace details {
 struct is_name {
-  explicit is_name(std::string_view name) : name_(name) {
+  explicit is_name(std::string_view input_name) : name(input_name) {
   }
 
   auto operator()(const query_parameter& parameter) noexcept {
-    return name_ == parameter.name;
+    return name == parameter.name;
   }
 
-  std::string_view name_{};
+  std::string_view name{};
 };
 }  // namespace details
 
@@ -246,9 +246,9 @@ class url_search_parameters {
   void initialize(std::string_view query) {
     if (auto parameters = parse_query(query); parameters) {
       for (auto [name, value] : parameters.value()) {
-        auto name_ = percent_decode(name).value_or(std::string(name));
-        auto value_ = value ? percent_decode(value.value()).value_or(std::string(value.value())) : std::string();
-        parameters_.emplace_back(name_, value_);
+        auto decoded_name = percent_decode(name).value_or(std::string(name));
+        auto decoded_value = value ? percent_decode(value.value()).value_or(std::string(value.value())) : std::string();
+        parameters_.emplace_back(decoded_name, decoded_value);
       }
     }
   }
